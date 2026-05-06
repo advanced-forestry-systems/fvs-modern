@@ -827,13 +827,13 @@ subroutine errMsg(msg)
       write(JOSTND,'(/a12, 1x, 1x, a8,"   KEYWORD IGNORED, ", &
        "MAX # KEYWORDS EXCEEDED FOR THIS SPECIES: ", a, &
        ", UNITS-OF-MEASURE: ", a, ", & DIAMETER CLASS:", f5.1, &
-       ", RECORD:", i4)')  warn, KEYWRD, NSP(i,1)(1:2),        !NSP(i,1)(1:2) is character species code not including tree value class &
+       ", RECORD:", i4)')  warn, KEYWRD, NSP(i,1)(1:2), &
        trim(UNITS_LABEL(units)), realFields(3), IRECNT
    case (revDuplicate)
       write(JOSTND,'(/a12, 1x, 1x, a8, "   KEYWORD IGNORED, ", &
        "VALUES PREVIOUSLY SET FOR THIS SPECIES: ", a, &
        ", UNITS-OF-MEASURE: ", a, ", & DIAMETER CLASS:", &
-       f5.1, ", RECORD:", i4)') warn, KEYWRD, NSP(i,1)(1:2),  !NSP(i,1)(1:2) is character species code not including tree value class &
+       f5.1, ", RECORD:", i4)') warn, KEYWRD, NSP(i,1)(1:2), &
        trim(UNITS_LABEL(units)), realFields(3), IRECNT
    case (lbsDupSp)
       write(JOSTND,'(/a12, 1x, a8, "   KEYWORD IGNORED, ", &

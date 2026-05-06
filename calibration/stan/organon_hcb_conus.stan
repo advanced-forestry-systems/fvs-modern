@@ -39,6 +39,12 @@ data {
   array[N] int<lower=1, upper=N_ecodiv> ecodiv_id;
 }
 
+transformed data {
+  // Cap posterior-predictive and log_lik arrays at 2000 obs so they fit in
+  // memory and the Stan compiler accepts a data-time size expression.
+  int<lower=0> M = min(N, 2000);
+}
+
 parameters {
   // Hierarchical intercept
   real mu_b0;
@@ -105,7 +111,6 @@ model {
 }
 
 generated quantities {
-  int M = min(N, 2000);
   vector[M] hcb_rep;
   vector[M] log_lik;
 

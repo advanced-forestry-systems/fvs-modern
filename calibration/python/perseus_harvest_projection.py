@@ -106,6 +106,9 @@ from perseus_100yr_projection import (
 from perseus_uncertainty_projection import (
     aggregate_with_uncertainty,
 )
+from config.uncertainty import UncertaintyEngine
+
+from perseus_uncertainty_projection import run_fvs_with_draw  # added for draw support
 from perseus_climate_projection import (
     load_si_ratios,
     get_plot_si_multiplier,
@@ -478,10 +481,28 @@ STOP
 """
 
 
+
+def _compute_current_ba(tree_init_df) -> float:
+    """Compute stand basal area (sq ft/ac) from a fvs_treeinit DataFrame.
+
+    BA per tree (sq ft) = 0.005454 * diameter^2 (DBH in inches).
+    BA per acre = sum over trees of (tree_count * 0.005454 * diameter^2).
+    """
+    if tree_init_df is None or len(tree_init_df) == 0:
+        return 0.0
+    if "diameter" not in tree_init_df.columns or "tree_count" not in tree_init_df.columns:
+        return 0.0
+    dbh = tree_init_df["diameter"].astype(float)
+    tpa = tree_init_df["tree_count"].astype(float)
+    ba_per_tree = 0.005454 * (dbh ** 2)
+    return float((tpa * ba_per_tree).sum())
+
+
 def generate_harvest_keywords(
     harvest_cycles: list[int],
     inv_year: int,
     cycle_length: int = CYCLE_LENGTH,
+    current_ba: float | None = None,
 ) -> str:
     """Generate FVS ThinBBA keywords for scheduled harvest cycles.
 
@@ -509,19 +530,24 @@ def generate_harvest_keywords(
     if not harvest_cycles:
         return "** NO HARVEST TREATMENT"
 
-    lines = ["** HARVEST: 50% BA removal from below"]
+    # PATCH 27 April 2026: switch to absolute residual target. Original code
+    # used negative target (-0.5) interpreted by FVS-NE as a clearcut sentinel
+    # and silently cancelled by FVS-ACD. Absolute target = 0.5 * current_ba
+    # produces intended ~50% retention in NE. ACD cut routine still broken
+    # at executable level (see PATCH_fvs_acd_harvest.md).
+    if current_ba is None or current_ba <= 0:
+        target_ba = 50.0
+    else:
+        target_ba = max(10.0, 0.5 * current_ba)
+
+    lines = [f"** HARVEST: thin to absolute residual {target_ba:.1f} sq ft/ac (50% retention)"]
 
     for cycle in sorted(harvest_cycles):
-        # Calendar year at start of this cycle
         harvest_year = inv_year + (cycle - 1) * cycle_length
-
-        # ThinBBA keyword: 10-character fixed-width fields
-        # Field 1 = year, Field 2 = -0.50 (retain 50%), Field 3 = 1.0,
-        # Field 4 = 0 (min DBH), Field 5 = 999 (max DBH), Field 6 = 0 (all spp)
         line = (
             f"ThinBBA   "
             f"{harvest_year:>10d}"
-            f"      -0.5"
+            f"{target_ba:>10.1f}"
             f"       1.0"
             f"         0"
             f"       999"
@@ -546,6 +572,7 @@ def run_fvs_harvest_projection(
     config_version: str = "calibrated",
     num_cycles: int = NUM_CYCLES,
     cycle_length: int = CYCLE_LENGTH,
+    draw_keywords: str | None = None,
 ) -> dict:
     """Run FVS projection with harvest keywords injected.
 
@@ -561,7 +588,10 @@ def run_fvs_harvest_projection(
 
         # Calibration keywords
         cal_keywords = ""
-        if config_version == "calibrated":
+        if draw_keywords is not None:
+            # Use posterior draw keywords directly (bypasses config loading)
+            cal_keywords = draw_keywords
+        elif config_version == "calibrated":
             try:
                 from config.config_loader import FvsConfigLoader
                 loader = FvsConfigLoader(
@@ -573,9 +603,10 @@ def run_fvs_harvest_projection(
             except Exception as e:
                 logger.warning(f"Could not load calibrated config for {variant}: {e}")
 
-        # Harvest keywords
+        # Harvest keywords (compute current_ba so target = 0.5 * BA)
+        current_ba = _compute_current_ba(tree_init_df)
         harvest_kw = generate_harvest_keywords(
-            harvest_cycles, inv_year, cycle_length
+            harvest_cycles, inv_year, cycle_length, current_ba=current_ba
         )
 
         keyfile_content = HARVEST_KEYFILE_TEMPLATE.format(
@@ -634,6 +665,9 @@ def process_plot_harvest(
     variants: list[str] = None,
     configs: list[str] = None,
     seed: int = 42,
+    engines: dict | None = None,
+    n_draws: int = 0,
+    default_configs: dict | None = None,
 ) -> list[dict]:
     """Process one PERSEUS plot under a harvest + climate scenario.
 
@@ -832,6 +866,108 @@ def process_plot_harvest(
                 )
                 break
 
+        # --- Posterior draws for this variant --------------------------------
+        engine = (engines or {}).get(variant)
+        if engine is not None and engine.draws_available and n_draws > 0:
+            draw_limit = min(n_draws, engine.n_draws)
+            for draw_idx in range(draw_limit):
+                try:
+                    draw_obj = engine.get_draw(int(draw_idx))
+                    draw_kw = engine.generate_keywords_for_draw(
+                        draw_obj,
+                        (default_configs or {}).get(variant, None),
+                        draw_idx=int(draw_idx),
+                    )
+                    # PATCH 28 April 2026: keyword renamed GROWMULT -> BAIMULT
+                    # in config/uncertainty.py + config_loader.py to match FVS-NE
+                    # spec. The old filter is now a no-op since BAIMULT is valid;
+                    # left commented for reference.
+                    # draw_kw = "\n".join(line for line in draw_kw.splitlines() if not line.startswith("GROWMULT"))
+                except Exception as e:
+                    logger.warning(
+                        f"Plot {plot_id}/{variant}/draw{draw_idx} generate_keywords_for_draw: {e}"
+                    )
+                    continue
+                scenario = f"{harvest_label}_{rcp_label}_draw{draw_idx:04d}"
+                # Initial condition row (year 0)
+                results.append({
+                    "PLOT": plot_id,
+                    "FIRST_PLTCN": plt_cn,
+                    "YEAR": inv_year,
+                    "PROJ_YEAR": 0,
+                    "PROJ_YEAR_BIN": 0,
+                    "VARIANT": variant.upper(),
+                    "CONFIG": "draw",
+                    "DRAW": int(draw_idx),
+                    "SCENARIO": scenario,
+                    "RCP": rcp,
+                    "HARVEST": do_harvest,
+                    "N_HARVESTS": len(harvest_cycles),
+                    "HARVEST_CYCLES": ",".join(str(c) for c in harvest_cycles) if harvest_cycles else "",
+                    "SI_MULT": round(si_mult, 4),
+                    "SI_DELTA_FT": round(si_delta_ft, 2),
+                    "AGB_TONS_AC": round(initial_agb, 4),
+                })
+                try:
+                    if harvest_cycles:
+                        fvs_result = run_fvs_safe(
+                            run_fvs_harvest_projection,
+                            stand_df_base, tree_df, stand_id, variant,
+                            harvest_cycles=harvest_cycles,
+                            inv_year=inv_year,
+                            draw_keywords=draw_kw,
+                            num_cycles=NUM_CYCLES,
+                            cycle_length=CYCLE_LENGTH,
+                        )
+                    else:
+                        # No-harvest draws route through KEYFILE_TEMPLATE
+                        # (HARVEST_KEYFILE_TEMPLATE with draw_keywords returns
+                        # FVS STOP 20; baseline uncertainty pipeline proves
+                        # run_fvs_with_draw works for draw-only runs.)
+                        fvs_result = run_fvs_safe(
+                            run_fvs_with_draw,
+                            stand_df_base, tree_df, stand_id, variant,
+                            draw_keywords=draw_kw,
+                            num_cycles=NUM_CYCLES,
+                            cycle_length=CYCLE_LENGTH,
+                        )
+                    ec = fvs_result.get("exit_code", 0)
+                    if ec not in (0, 10):
+                        logger.warning(
+                            f"Plot {plot_id}/{variant}/draw{draw_idx}: exit code {ec}"
+                        )
+                        continue
+                    for cycle_year, treelist in sorted(
+                        fvs_result["treelists"].items()
+                    ):
+                        proj_year = cycle_year - inv_year
+                        if proj_year <= 0:
+                            continue
+                        proj_year_bin = round(proj_year / CYCLE_LENGTH) * CYCLE_LENGTH
+                        agb = compute_plot_agb(treelist, nsbe)
+                        results.append({
+                            "PLOT": plot_id,
+                            "FIRST_PLTCN": plt_cn,
+                            "YEAR": cycle_year,
+                            "PROJ_YEAR": proj_year,
+                            "PROJ_YEAR_BIN": proj_year_bin,
+                            "VARIANT": variant.upper(),
+                            "CONFIG": "draw",
+                            "DRAW": int(draw_idx),
+                            "SCENARIO": scenario,
+                            "RCP": rcp,
+                            "HARVEST": do_harvest,
+                            "N_HARVESTS": len(harvest_cycles),
+                            "HARVEST_CYCLES": ",".join(str(c) for c in harvest_cycles) if harvest_cycles else "",
+                            "SI_MULT": round(si_mult, 4),
+                            "SI_DELTA_FT": round(si_delta_ft, 2),
+                            "AGB_TONS_AC": round(agb, 4),
+                        })
+                except Exception as e:
+                    logger.error(
+                        f"Plot {plot_id}/{variant}/draw{draw_idx}: {e}"
+                    )
+
     return results
 
 
@@ -875,6 +1011,12 @@ def main():
     parser.add_argument("--end-year", type=int, default=2004)
     parser.add_argument("--expansion-csv", type=str, default=None)
     parser.add_argument("--output-dir", type=str, default=OUTPUT_DIR)
+    parser.add_argument("--n-draws", type=int, default=0,
+                        help="Posterior draws per variant per plot (0 = off)")
+    parser.add_argument("--seed-draws", type=int, default=42,
+                        help="Seed for UncertaintyEngine")
+    parser.add_argument("--exclude-plots", type=str, default="",
+                        help="Comma-separated plot IDs to skip, or path to file")
     args = parser.parse_args()
 
     # Determine which harvest/climate combos to run
@@ -922,6 +1064,31 @@ def main():
         f"Filtered to {n_total} plots with FIRST_INVYR in "
         f"[{args.start_year}, {args.end_year}]"
     )
+
+    # Apply plot exclusion filter (e.g., for pathological plots that hang FVS)
+    if args.exclude_plots:
+        _raw = args.exclude_plots
+        if os.path.exists(_raw):
+            with open(_raw) as f:
+                _excludes = {line.strip() for line in f if line.strip()}
+        else:
+            _excludes = {s.strip() for s in _raw.split(",") if s.strip()}
+        if _excludes:
+            # Normalize both sides: accept "2869", "2869.0", "2869.00" etc.
+            def _norm(x):
+                try:
+                    return str(int(float(x)))
+                except Exception:
+                    return str(x).strip()
+            _norm_excludes = {_norm(x) for x in _excludes}
+            _before = len(perseus_full)
+            perseus_full = perseus_full.loc[
+                ~perseus_full["PLOT"].apply(_norm).isin(_norm_excludes)
+            ].copy()
+            logger.info(
+                f"Excluded {_before - len(perseus_full)} plot(s): "
+                f"{sorted(_excludes)}"
+            )
 
     # Load FIA tree data for all plots
     plt_cns = [
@@ -973,6 +1140,34 @@ def main():
 
     # Initialize NSBE calculator
     nsbe = NSBECalculator(NSBE_ROOT)
+    # Initialize uncertainty engines + default configs once (if --n-draws > 0)
+    engines = {}
+    default_configs = {}
+    if args.n_draws > 0:
+        for _v in args.variants:
+            try:
+                _eng = UncertaintyEngine(
+                    _v, config_dir=CONFIG_DIR, seed=args.seed_draws
+                )
+                if _eng.draws_available:
+                    engines[_v] = _eng
+                    logger.info(
+                        f"{_v.upper()} has {_eng.n_draws} posterior draws available"
+                    )
+                else:
+                    logger.warning(f"{_v.upper()} no draws available")
+            except Exception as _e:
+                logger.warning(f"{_v} UncertaintyEngine init failed: {_e}")
+            # Load default config (needed for generate_keywords_for_draw)
+            try:
+                from config.config_loader import FvsConfigLoader
+                _loader = FvsConfigLoader(
+                    _v, version="default", config_dir=CONFIG_DIR
+                )
+                default_configs[_v] = _loader.config
+            except Exception as _e:
+                logger.warning(f"{_v} default config load failed: {_e}")
+
 
     # Process each scenario
     for do_harvest, rcp in scenarios:
@@ -1004,6 +1199,9 @@ def main():
                     variants=args.variants,
                     configs=args.configs,
                     seed=args.seed,
+                    engines=engines,
+                    n_draws=args.n_draws,
+                    default_configs=default_configs,
                 )
                 all_results.extend(results)
             except Exception as exc:

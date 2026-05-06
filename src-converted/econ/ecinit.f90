@@ -1,12 +1,15 @@
-SUBROUTINE ECINIT &
-   ializes defaults for ECON extension variables at beginning of each simulation. &
-   ed from INITRE, once for each simulated stand.
+SUBROUTINE ECINIT
+!----------
+! ECON $Id$
+!----------
+! Initializes defaults for ECON extension variables at beginning of each simulation.
+! Called from INITRE, once for each simulated stand.
 
 implicit none
 
 include 'PRGPRM.f90'
 include 'ECNCOM.f90'
-   nitialize control variables
+! Initialize control variables
 discountRate    =    0.0
 econStartYear   =  -9999                                           !Used to ensure correct start year
 noLogStockTable = .false.
@@ -18,23 +21,23 @@ pctMinVolume    =    0.0
 isFirstEcon     = .true.
 doSev           = .false.
 sevInput        =    0.0
-call setPretendStatus() &  !Entry in ecstatus.f, initializes PRETEND state
-   nitialize volume accumulators.  Set here 1st for use in echarv.f, then re-set each cycle in eccalc.f
+call setPretendStatus()  !Entry in ecstatus.f, initializes PRETEND state
+! Initialize volume accumulators. Set here first for use in echarv.f, then reset each cycle in eccalc.f
 dbhSq     = 0.0
 harvest   = 0.0                                                    !Harvest volume array (TPA : FT3_100)
 hrvCostBf = 0.0; hrvCostFt3 = 0.0; hrvCostTpa = 0.0                !Harvest volume by cost type arrays (1:MAX_KEYWORDS)
 pctBf     = 0.0; pctFt3     = 0.0; pctTpa     = 0.0                !PCT harvest volume by cost type arrays (1:MAX_KEYWORDS)
-revVolume = 0.0 &  !Array(1:MAXSP, 1:MAX_REV_UNITS, 1:MAX_KEYWORDS)
-   ialize indvidual tree and log accumulatiors. Set heare 1st for use in ecvol.f, then reset by tree in ecvol.f
+revVolume = 0.0   !Array(1:MAXSP, 1:MAX_REV_UNITS, 1:MAX_KEYWORDS)
+! Initialize individual tree and log accumulators. Set here first for use in ecvol.f, then reset by tree in ecvol.f
 logBfVol  = 0.0; logDibBf   = 0.0; logFt3Vol  = 0.0                !Log arrays (1:MAXTRE, 1:MAX_LOGS)
-logDibFt3 = 0.0 &
-   nitialize revenue arrays recieving their value from keyword entries
+logDibFt3 = 0.0
+! Initialize revenue arrays receiving their value from keyword entries
 hrvRevCnt   =   0                                                  !Array(1:MAXSP, 1:MAX_REV_UNITS)
 hrvRevDia   = 0.0                                                  !Array(1:MAXSP, 1:MAX_REV_UNITS, 1:MAX_KEYWORDS)
 hrvRevPrice = 0.0                                                  !Array(1:MAXSP, 1:MAX_REV_UNITS, 1:MAX_KEYWORDS)
 hrvRevDur   =   0                                                  !Array(1:MAXSP, 1:MAX_REV_UNITS, 1:MAX_KEYWORDS, 1:MAX_RATES)
-hrvRevRate  = 0.0 &  !Array(1:MAXSP, 1:MAX_REV_UNITS, 1:MAX_KEYWORDS, 1:MAX_RATES)
-   nitialize cost variable arrays.
+hrvRevRate  = 0.0   !Array(1:MAXSP, 1:MAX_REV_UNITS, 1:MAX_KEYWORDS, 1:MAX_RATES)
+! Initialize cost variable arrays.
 annCostCnt      =    0
 annCostAmt      =   0.0                                            !Array(1:MAX_KEYWORDS)
 annRevCnt       =     0
@@ -57,8 +60,8 @@ varPctAmt       =   0.0                                            !Array(1:MAX_
 varPctCnt       =     0
 varPctDbhLo     =   0.0                                            !Array(1:MAX_KEYWORDS)
 varPctDbhHi     = 999.0                                            !Array(1:MAX_KEYWORDS)
-varPctUnits     =     0 &  !Array(1:MAX_KEYWORDS)
-   nitialize cost & rate/duration arrays, needed as not all elements may have values assigned.
+varPctUnits     =     0   !Array(1:MAX_KEYWORDS)
+! Initialize cost and rate/duration arrays, needed as not all elements may have values assigned.
 annCostRate  = 0.0                                                 !Array(1:MAX_KEYWORDS, 1:MAX_RATES)
 annCostDur   =   0                                                 !Array(1:MAX_KEYWORDS, 1:MAX_RATES)
 annRevRate   = 0.0                                                 !Array(1:MAX_KEYWORDS, 1:MAX_RATES)

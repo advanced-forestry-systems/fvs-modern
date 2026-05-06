@@ -148,11 +148,18 @@ for var in "${VARIANTS[@]}"; do
             objpath="$VARDIR/${dirprefix}_${objname}"
         fi
 
-        # Collect include directories
-        INCDIRS="-I$SOURCE_DIR/base -I$SOURCE_DIR/$var"
+        # Collect include directories. Variant-specific paths come BEFORE
+        # base/ so that PRGPRM.f90 and other shared header names resolve
+        # to the variant's own copy (with the variant-specific MAXSP and
+        # other parameters). Without this, files like vwc/morts.f90 that
+        # are shared between PN and WC and depend on MAXSP=39 would
+        # silently pick up base/PRGPRM.f90's MAXSP=23 and fail to
+        # compile their 39-element DATA arrays.
+        INCDIRS="-I$SOURCE_DIR/$var"
+        [ -d "$SOURCE_DIR/$var/common" ] && INCDIRS="$INCDIRS -I$SOURCE_DIR/$var/common"
+        INCDIRS="$INCDIRS -I$SOURCE_DIR/base"
         [ -d "$SOURCE_DIR/base/common" ] && INCDIRS="$INCDIRS -I$SOURCE_DIR/base/common"
         [ -d "$SOURCE_DIR/vbase" ] && INCDIRS="$INCDIRS -I$SOURCE_DIR/vbase"
-        [ -d "$SOURCE_DIR/$var/common" ] && INCDIRS="$INCDIRS -I$SOURCE_DIR/$var/common"
         [ -d "$SOURCE_DIR/common" ] && INCDIRS="$INCDIRS -I$SOURCE_DIR/common"
         [ -d "$SOURCE_DIR/fire/base/common" ] && INCDIRS="$INCDIRS -I$SOURCE_DIR/fire/base/common"
         [ -d "$SOURCE_DIR/fire/$var/common" ] && INCDIRS="$INCDIRS -I$SOURCE_DIR/fire/$var/common"

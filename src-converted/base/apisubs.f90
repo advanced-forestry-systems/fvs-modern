@@ -50,7 +50,7 @@ include "PRGPRM.f90"
 include "CONTRL.f90"
 include "PLOT.f90"
 
-!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE,ALIAS:'FVSDIMSIZES'::FVSDIMSIZES
+!!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE,ALIAS:'FVSDIMSIZES'::FVSDIMSIZES  ! suppressed for Linux ld
 !DEC$ ATTRIBUTES REFERENCE :: NTREES, NCYCLES, NPLOTS, MAXTREES
 !DEC$ ATTRIBUTES REFERENCE :: MAXSPECIES, MAXPLOTS, MAXCYCLES
 
@@ -78,7 +78,7 @@ include "PRGPRM.f90"
 include "CONTRL.f90"
 include "OUTCOM.f90"
 
-!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE,ALIAS:'FVSSUMMARY'::FVSSUMMARY
+!!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE,ALIAS:'FVSSUMMARY'::FVSSUMMARY  ! suppressed for Linux ld
 !DEC$ ATTRIBUTES REFERENCE :: SUMMARY, ICYCLE, NCYCLES, MAXROW
 !DEC$ ATTRIBUTES REFERENCE :: MAXCOL, RTNCODE
 
@@ -105,9 +105,9 @@ implicit none
 !     C-callable version of fvsTreeAttr where namei and actioni are
 !     C-bindings of their correspoinding arguments.
 
-integer(c_int), bind(c) :: nch,rtnCode,ntrees
-real(c_double), dimension(ntrees), bind(c) :: attr
-character(c_char), dimension(10), bind(c) :: namei,actioni
+integer(c_int) :: nch,rtnCode,ntrees
+real(c_double), dimension(ntrees) :: attr
+character(c_char), dimension(10) :: namei,actioni
 character name*10,action*4
 integer i
 
@@ -147,7 +147,7 @@ include "ARRAYS.f90"
 include "CONTRL.f90"
 include "VARCOM.f90"
 
-!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE,ALIAS:'FVSTREEATTR'::FVSTREEATTR
+!!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE,ALIAS:'FVSTREEATTR'::FVSTREEATTR  ! suppressed for Linux ld
 !DEC$ ATTRIBUTES REFERENCE :: NAME, NCH, ACTION, NTREES, ATTR, RTNCODE
 
 integer :: nch,rtnCode,ntrees,ntest
@@ -287,9 +287,9 @@ implicit none
 
 include "PRGPRM.f90"
 
-integer(c_int), bind(c) :: nch,rtnCode
-real(c_double), dimension(MAXSP), bind(c) :: attr
-character(c_char), dimension(10), bind(c) :: namei,actioni
+integer(c_int) :: nch,rtnCode
+real(c_double), dimension(MAXSP) :: attr
+character(c_char), dimension(10) :: namei,actioni
 character name*10,action*4
 integer i
 
@@ -325,8 +325,8 @@ include 'VOLSTD.f90'
 include 'CONTRL.f90'
 include 'MULTCM.f90'
 
-!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE:: FVSSPECIESATTR
-!DEC$ ATTRIBUTES ALIAS:'FVSSPECIESATTR'::FVSSPECIESATTR
+!!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE:: FVSSPECIESATTR  ! suppressed for Linux ld
+!!DEC$ ATTRIBUTES ALIAS:'FVSSPECIESATTR'::FVSSPECIESATTR  ! suppressed for Linux ld
 !DEC$ ATTRIBUTES REFERENCE :: NAME, NCH, ACTION, ATTR, RTNCODE
 
 integer :: nch,rtnCode
@@ -435,9 +435,9 @@ implicit none
 !     C-callable version of fvsSpeciesAttr where namei and actioni are
 !     C-bindings of their correspoinding arguments.
 
-integer(c_int), bind(c) :: nch,rtnCode
-real(c_double), bind(c) :: attr
-character(c_char), dimension(9), bind(c) :: namei,actioni
+integer(c_int) :: nch,rtnCode
+real(c_double) :: attr
+character(c_char), dimension(9) :: namei,actioni
 character name*9,action*4
 integer i
 
@@ -473,7 +473,7 @@ include "FMCOM.f90"
 include "ARRAYS.f90"
 include "OPCOM.f90"
 
-!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE,ALIAS:'FVSEVMONATTR'::FVSEVMONATTR
+!!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE,ALIAS:'FVSEVMONATTR'::FVSEVMONATTR  ! suppressed for Linux ld
 !DEC$ ATTRIBUTES REFERENCE :: NAME, NCH, ACTION, ATTR, RTNCODE
 
 integer :: nch,rtncode,iv,i
@@ -858,7 +858,7 @@ include "VARCOM.f90"
 include "ESTREE.f90"
 include "STDSTK.f90"
 
-!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE,ALIAS:'FVSADDTREES'::FVSADDTREES
+!!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE,ALIAS:'FVSADDTREES'::FVSADDTREES  ! suppressed for Linux ld
 !DEC$ ATTRIBUTES REFERENCE :: IN_DBH, IN_SPECIES, IN_HT, IN_CRATIO
 !DEC$ ATTRIBUTES REFERENCE :: IN_PLOT, IN_TPA, NTREES, RTNCODE
 
@@ -960,7 +960,7 @@ implicit none
 include "PRGPRM.f90"
 include "PLOT.f90"
 
-!DEC$ ATTRIBUTES DLLEXPORT,ALIAS:'FVSSPECIESCODE'::FVSSPECIESCODE
+!!DEC$ ATTRIBUTES DLLEXPORT,ALIAS:'FVSSPECIESCODE'::FVSSPECIESCODE  ! suppressed for Linux ld
 !DEC$ ATTRIBUTES C,DECORATE :: FVSSPECIESCODE
 !DEC$ ATTRIBUTES REFERENCE :: FVS_CODE, FIA_CODE, PLANT_CODE, INDX
 !DEC$ ATTRIBUTES REFERENCE :: NCHFVS, NCHFIA, NCHPLANT, RTNCODE
@@ -1000,11 +1000,11 @@ implicit none
 include "PRGPRM.f90"
 include "PLOT.f90"
 
-integer(c_int), bind(c) :: indx
+integer(c_int) :: indx
 integer i,nch
-character(c_char), dimension(5), bind(c) :: fvs_code
-character(c_char), dimension(5), bind(c) :: fia_code
-character(c_char), dimension(7), bind(c) :: plant_code
+character(c_char), dimension(5) :: fvs_code
+character(c_char), dimension(5) :: fia_code
+character(c_char), dimension(7) :: plant_code
 if (indx == 0 .or. indx > MAXSP) then
   fvs_code(1)  =char(0)
   fia_code(1)  =char(0)
@@ -1036,7 +1036,7 @@ include "PRGPRM.f90"
 include "ARRAYS.f90"
 include "CONTRL.f90"
 
-!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE,ALIAS:'FVSCUTTREES'::FVSCUTTREES
+!!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE,ALIAS:'FVSCUTTREES'::FVSCUTTREES  ! suppressed for Linux ld
 !DEC$ ATTRIBUTES REFERENCE :: PTOCUT, NTREES, RTNCODE
 
 integer :: ntrees,rtnCode
@@ -1063,10 +1063,10 @@ include "PLOT.f90"
 include "DBSCOM.f90"
 
 integer i,ncsID,ncCN,ncmID,ncCase
-character(c_char), dimension(len(NPLT  )+1), bind(c) :: sID
-character(c_char), dimension(len(DBCN  )+1), bind(c) :: sCN
-character(c_char), dimension(len(MGMID )+1), bind(c) :: mID
-character(c_char), dimension(len(CASEID)+1), bind(c) :: mCase
+character(c_char), dimension(len(NPLT  )+1) :: sID
+character(c_char), dimension(len(DBCN  )+1) :: sCN
+character(c_char), dimension(len(MGMID )+1) :: mID
+character(c_char), dimension(len(CASEID)+1) :: mCase
 
 ncsID  = len_trim(NPLT)
 ncCN   = len_trim(DBCN)
@@ -1097,7 +1097,7 @@ subroutine fvsStandID(sID,sCN,mID,ncsID,ncCN,ncmID)
 include "PRGPRM.f90"
 include "PLOT.f90"
 
-!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE,ALIAS:'FVSSTANDID'::FVSSTANDID
+!!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE,ALIAS:'FVSSTANDID'::FVSSTANDID  ! suppressed for Linux ld
 !DEC$ ATTRIBUTES REFERENCE :: SID, SCN, MID, NCSID, NCCN, NCMID
 
 integer :: ncsID,ncCN,ncmID
@@ -1121,9 +1121,9 @@ subroutine fvsCloseFileC(filenamei,nch) &
 use iso_c_binding
 implicit none
 
-integer(c_int), bind(c) :: nch
+integer(c_int) :: nch
 integer i
-character(c_char), dimension(nch), bind(c) :: filenamei
+character(c_char), dimension(nch) :: filenamei
 character*255 filename
 
 do i=1,nch
@@ -1137,7 +1137,7 @@ end
 subroutine fvsCloseFile(filename,nch)
 implicit none
 
-!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE,ALIAS:'FVSCLOSEFILE'::FVSCLOSEFILE
+!!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE,ALIAS:'FVSCLOSEFILE'::FVSCLOSEFILE  ! suppressed for Linux ld
 !DEC$ ATTRIBUTES REFERENCE :: FILENAME, NCH
 
 !     this routine closes "filename" if it is opened, it is not called
@@ -1164,7 +1164,7 @@ implicit none
 include "PRGPRM.f90"
 include "CONTRL.f90"
 
-!DEC$ ATTRIBUTES DLLEXPORT,ALIAS:'FVSADDACTIVITY'::FVSADDACTIVITY
+!!DEC$ ATTRIBUTES DLLEXPORT,ALIAS:'FVSADDACTIVITY'::FVSADDACTIVITY  ! suppressed for Linux ld
 !DEC$ ATTRIBUTES C,DECORATE :: FVSADDACTIVITY
 !DEC$ ATTRIBUTES REFERENCE :: IDT, IACTK, INPRMS, NPRMS, RTNCODE
 
@@ -1195,8 +1195,8 @@ include "PRGPRM.f90"
 include "SVDATA.f90"
 include "SVDEAD.f90"
 
-!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE :: FVSSVSDIMSIZES
-!DEC$ ATTRIBUTES ALIAS:'FVSSVSDIMSIZES':: FVSSVSDIMSIZES
+!!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE :: FVSSVSDIMSIZES  ! suppressed for Linux ld
+!!DEC$ ATTRIBUTES ALIAS:'FVSSVSDIMSIZES':: FVSSVSDIMSIZES  ! suppressed for Linux ld
 !DEC$ ATTRIBUTES REFERENCE :: NSVSOBJS,NDEADOBJS,NCWDOBJS
 !DEC$ ATTRIBUTES REFERENCE :: MXSVSOBJS,MXDEADOBJS,MXCWDOBJS
 
@@ -1220,9 +1220,9 @@ implicit none
 
 !     C-callable version of fvsSVSObjData
 
-integer(c_int), bind(c) :: nch,rtnCode,nobjs
-real(c_double), dimension(nobjs), bind(c) :: attr
-character(c_char), dimension(10), bind(c) :: namei,actioni
+integer(c_int) :: nch,rtnCode,nobjs
+real(c_double), dimension(nobjs) :: attr
+character(c_char), dimension(10) :: namei,actioni
 character name*10,action*4
 integer i
 
@@ -1262,8 +1262,8 @@ include "PLOT.f90"
 include "SVDATA.f90"
 include "SVDEAD.f90"
 
-!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE :: FVSSVSOBJDATA
-!DEC$ ATTRIBUTES ALIAS:'FVSSVSOBJDATA':: FVSSVSOBJDATA
+!!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE :: FVSSVSOBJDATA  ! suppressed for Linux ld
+!!DEC$ ATTRIBUTES ALIAS:'FVSSVSOBJDATA':: FVSSVSOBJDATA  ! suppressed for Linux ld
 !DEC$ ATTRIBUTES REFERENCE :: NAME, NCH, ACTION, NOBJS, ATTR, RTNCODE
 
 integer :: nch,rtnCode,nobjs
@@ -1572,9 +1572,9 @@ implicit none
 !     C-callable version of fvsTreeAttr where namei and actioni are
 !     C-bindings of their correspoinding arguments.
 
-integer(c_int), bind(c) :: nch,rtnCode,nobjs
-real(c_double), dimension(nobjs), bind(c) :: attr
-character(c_char), dimension(10), bind(c) :: namei,actioni
+integer(c_int) :: nch,rtnCode,nobjs
+real(c_double), dimension(nobjs) :: attr
+character(c_char), dimension(10) :: namei,actioni
 character name*10,action*4
 integer i
 
@@ -1612,8 +1612,8 @@ include "PRGPRM.f90"
 include 'FMPARM.f90'
 include 'FMCOM.f90'
 
-!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE :: FVSFFEATTRS
-!DEC$ ATTRIBUTES ALIAS:'FVSFFEATTRS':: FVSFFEATTRS
+!!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE :: FVSFFEATTRS  ! suppressed for Linux ld
+!!DEC$ ATTRIBUTES ALIAS:'FVSFFEATTRS':: FVSFFEATTRS  ! suppressed for Linux ld
 !DEC$ ATTRIBUTES REFERENCE :: NAME, NCH, ACTION, NOBJS, ATTR, RTNCODE
 
 integer :: nch,rtnCode,nobjs
@@ -1704,9 +1704,9 @@ implicit none
 !     C-callable version of fvsUnitConversionC where namei is a
 !     C-bindings of name
 
-integer(c_int), bind(c) :: nch,rtnCode
-real(c_double), bind(c) :: value
-character(c_char), dimension(15), bind(c) :: namei
+integer(c_int) :: nch,rtnCode
+real(c_double) :: value
+character(c_char), dimension(15) :: namei
 character name*15
 integer i
 
@@ -1731,8 +1731,8 @@ implicit none
 !     rtnCode = 0 is OK,
 !               1= "name" not found,
 
-!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE :: FVSUNITCONVERSION
-!DEC$ ATTRIBUTES ALIAS:'FVSUNITCONVERSION'::FVSUNITCONVERSION
+!!DEC$ ATTRIBUTES DLLEXPORT,C,DECORATE :: FVSUNITCONVERSION  ! suppressed for Linux ld
+!!DEC$ ATTRIBUTES ALIAS:'FVSUNITCONVERSION'::FVSUNITCONVERSION  ! suppressed for Linux ld
 !DEC$ ATTRIBUTES REFERENCE :: NAME, NCH, VALUE, RTNCODE
 
 include "METRIC.f90"

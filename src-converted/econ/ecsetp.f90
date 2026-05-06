@@ -26,13 +26,13 @@ real, dimension(3)  :: parms = 0.0                                 !1=maximum nu
 if (.not.isEconToBe) then
    econStartYear = 9999
    return
-end if &
-   heck for absence of STRTECON keywords and if none submitted, set econStartYear to beginning of FVS
+end if
+   ! heck for absence of STRTECON keywords and if none submitted, set econStartYear to beginning of FVS
 if (econStartYear == -9999) then                                   !No valid STRTECON keyword read
    call OPNEW(KODE, IY(1), ECON_START_YEAR, 3, parms)
    econStartYear = 9999
-end if &
-   oad sorted indexes to harvest revenue array values, in descending order of DIB or DBH
+end if
+   ! oad sorted indexes to harvest revenue array values, in descending order of DIB or DBH
 do i = 1, MAXSP
    do j = 1, MAX_REV_UNITS
       if (hrvRevCnt(i,j) > 0) then

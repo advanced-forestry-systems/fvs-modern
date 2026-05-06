@@ -1,24 +1,28 @@
-SUBROUTINE ECVOL(treeId, LOGDIA, LOGVOL, isCubic) &
-   s gross log volumes and dibs for every FVS tree into an array by treeId by log for later use. &
-   ndency: requires consistency of tree ids between VOLS.F, CUTS.F and log arrays used by ECHARV. &
-    logs of trees with net volume need to be tracked because ECHARV filters on net tree volumes. &
-
-   ed from VOLS, once for each tree, need to visit each tree to zero log arrays &
-
-! 0/12/2012 eliminated species identifier as provided duplicate information to treeId
-
-   ables from FVS &
-   ubic - logical to deal with possilbly different merchantability specifications for cubic versus board foot volume &
-   DIA - array of log diameters by log, by type (1=scale diameter, 2=DIB, 3=DOB), as defined in VOLSTD.f77.
-      Logs numbered from bottom 1st log to top of last log; 1=butt 1st log, 2=top 1st log, 3=top 2nd log, etc.,
-         with any trim ignored.
-      Scale diameter is used, which is DIB but may be rounded or truncated depending on volume equation/region. &
-   VOL - array of log volume by type by log - opposite indexing from LOGDIA, where type is: 1=GROSS SCRIBNER BF,
-         2=GROSS REMOVED SCRIBNER BF, 3=NET SCRIBNER BF, 4=GROSS CU, 5=GROSS REMOVED CU, 6=NET CU,
-         7=GROSS INTERNATIONAL 1/4 BF, as defined in VOLSTD.f77.
-      Gross board feet (1) and gross cubic feet (4) used, as net and removed are not calculated by FVS.
-      Net voluemes computed in echarv.f based on whole tree defect &
-   eId - FVS internal sequential tree index number, 1 to number of trees in simulation.
+SUBROUTINE ECVOL(treeId, LOGDIA, LOGVOL, isCubic)
+!----------
+! ECON $Id$
+!----------
+! Author Fred Martin, WA DNR,
+! Loads gross log volumes and dibs for every FVS tree into an array by treeId by log for later use.
+! Dependency: requires consistency of tree ids between VOLS.F, CUTS.F and log arrays used by ECHARV.
+! Only logs of trees with net volume need to be tracked because ECHARV filters on net tree volumes.
+!
+! Called from VOLS, once for each tree, need to visit each tree to zero log arrays
+!
+! 10/12/2012 eliminated species identifier as provided duplicate information to treeId
+!
+! Variables from FVS
+!  isCubic - logical to deal with possibly different merchantability specifications for cubic vs board foot volume
+!  LOGDIA - array of log diameters by log, by type (1=scale diameter, 2=DIB, 3=DOB), as defined in VOLSTD.f77.
+!           Logs numbered from bottom 1st log to top of last log; 1=butt 1st log, 2=top 1st log, etc.,
+!              with any trim ignored.
+!           Scale diameter is used, which is DIB but may be rounded or truncated depending on volume equation/region.
+!  LOGVOL - array of log volume by type by log - opposite indexing from LOGDIA, where type is: 1=GROSS SCRIBNER BF,
+!              2=GROSS REMOVED SCRIBNER BF, 3=NET SCRIBNER BF, 4=GROSS CU, 5=GROSS REMOVED CU, 6=NET CU,
+!              7=GROSS INTERNATIONAL 1/4 BF, as defined in VOLSTD.f77.
+!           Gross board feet (1) and gross cubic feet (4) used, as net and removed are not calculated by FVS.
+!           Net volumes computed in echarv.f based on whole tree defect
+!  treeId - FVS internal sequential tree index number, 1 to number of trees in simulation.
 
 implicit none
 

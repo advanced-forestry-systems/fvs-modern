@@ -526,8 +526,8 @@ ELSE
   ENDIF
   IF(BBFV.LT.0.)BBFV=0.
 ENDIF
-IF(DEBUG)WRITE(JOSTND,*)'  IN FVSVOL D, VN, VM, VMAX, BBFV = ', &
-                               D, VN, VM, VMAX, BBFV
+IF(DEBUG)WRITE(JOSTND,*)'  IN FVSVOL D, VMAX, BBFV = ', &
+                               D, VMAX, BBFV
 CTKFLG = .TRUE.
 BTKFLG = .TRUE.
 RETURN

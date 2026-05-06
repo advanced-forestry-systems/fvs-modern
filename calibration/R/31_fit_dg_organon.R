@@ -151,6 +151,7 @@ make_stan_data_direct <- function(prep) {
     sqrt_ba    = dat$sqrt_ba,
     rd         = dat$rd,                           # relative density
     ln_bal     = dat$ln_bal,                       # log-BAL for interactions
+    bal_ratio  = dat$BAL1_metric / log(dat$DBH1_cm + 2.7),    # K4=2.7
     clim1      = if ("clim_pca1" %in% names(dat)) dat$clim_pca1 else rep(0, nrow(dat)),
     clim2      = if ("clim_pca2" %in% names(dat)) dat$clim_pca2 else rep(0, nrow(dat)),
     years      = dat$YEARS,
@@ -254,7 +255,8 @@ predict_dg_annualized <- function(params, dat) {
 
 fit_dg_direct <- function(prep, stan_file = STAN_DIRECT,
                           chains = 4, iter_warmup = 1000,
-                          iter_sampling = 1000, seed = 42) {
+                          iter_sampling = 1000, seed = 42,
+                          max_treedepth = 10, adapt_delta = 0.9) {
 
   message("Compiling Stan model: ", stan_file)
   mod <- cmdstan_model(stan_file)
@@ -266,6 +268,34 @@ fit_dg_direct <- function(prep, stan_file = STAN_DIRECT,
   message("  Warmup: ", iter_warmup)
   message("  Sampling: ", iter_sampling)
 
+  # Prior-centered init list per chain, matching organon_dg_conus.stan
+  # parameter names exactly. (Replaces an earlier HG-templated init that
+  # referenced a0..a8/gamma/z_L1/L2/L3 which do not exist in this Stan file.)
+  N_species <- stan_data$N_species
+  N_ecodiv  <- stan_data$N_ecodiv
+  init_fn <- function(chain_id) {
+    set.seed(seed + chain_id)
+    list(
+      mu_b0     = rnorm(1, -2.0, 0.3),
+      sigma_sp  = 0.30,
+      sigma_eco = 0.30,
+      z_sp      = rnorm(N_species, 0, 0.10),
+      z_eco     = rnorm(N_ecodiv,  0, 0.10),
+      K1        = 1.0,
+      K2        = 0.8,
+      b1        = rnorm(1,  0.40, 0.10),
+      b2        = rnorm(1, -0.02, 0.01),
+      b3        = rnorm(1,  0.80, 0.10),
+      b4        = rnorm(1,  0.30, 0.10),
+      b5        = rnorm(1, -0.005, 0.002),
+      b6        = rnorm(1, -0.03,  0.01),
+      b7        = rnorm(1,  0.0,   0.005),
+      b8        = rnorm(1,  0.0,   0.005),
+      b9        = rnorm(1,  0.0,   0.005),
+      b10       = rnorm(1,  0.0,   0.005),
+      sigma     = 0.5
+    )
+  }
   fit <- mod$sample(
     data            = stan_data,
     chains          = chains,
@@ -273,8 +303,9 @@ fit_dg_direct <- function(prep, stan_file = STAN_DIRECT,
     iter_warmup     = iter_warmup,
     iter_sampling   = iter_sampling,
     seed            = seed,
-    max_treedepth   = 12,
-    adapt_delta     = 0.9,
+    max_treedepth   = max_treedepth,
+    adapt_delta     = adapt_delta,
+    init            = lapply(seq_len(chains), init_fn),
     refresh         = 100
   )
 
@@ -373,8 +404,11 @@ validate_annualized <- function(fit, prep) {
 
   message("Running annualized validation...")
 
-  ## Extract posterior medians for all parameters
-  summ <- fit$summary()
+  ## Targeted posterior medians for the scalar parameters used in
+  ## annualized validation (mu_b0, b1..b10, K1, K2). Skips the slow
+  ## fit$summary() across thousands of random-effect entries.
+  median_targets <- c("mu_b0", paste0("b", 1:10), "K1", "K2")
+  summ <- fit$summary(variables = median_targets)
   get_median <- function(var) summ %>% filter(variable == var) %>% pull(median)
 
   ## Build per-observation intercepts (species + ecodiv)
@@ -434,34 +468,87 @@ validate_annualized <- function(fit, prep) {
 
 if (sys.nframe() == 0) {
 
-  ## Parse command-line arguments
+  ## Parse command-line arguments. Supports old-style boolean flags
+  ## (--bgi, --annualized) plus key=value pairs needed for production
+  ## tuning (--n, --max_treedepth, --chains, --warmup, --sampling,
+  ## --adapt_delta, --seed, --data, --out, --save_draws).
   args <- commandArgs(trailingOnly = TRUE)
-  site_var <- if ("--bgi" %in% args) "bgi" else "climate_si"
+  arg_value <- function(flag, default = NULL, coerce = identity) {
+    idx <- which(args == flag)
+    if (length(idx) > 0 && idx + 1 <= length(args)) coerce(args[idx + 1]) else default
+  }
+  site_var <- if ("--bgi" %in% args) "bgi" else if ("--site" %in% args) args[which(args == "--site") + 1] else "climate_si"
   method   <- if ("--annualized" %in% args) "annualized" else "direct"
+  n_sub    <- arg_value("--n",             0L,    as.integer)
+  max_td   <- arg_value("--max_treedepth", 10L,   as.integer)
+  adapt_d  <- arg_value("--adapt_delta",   0.9,   as.numeric)
+  n_chain  <- arg_value("--chains",        4L,    as.integer)
+  n_warm   <- arg_value("--warmup",        1000L, as.integer)
+  n_samp   <- arg_value("--sampling",      1000L, as.integer)
+  rseed    <- arg_value("--seed",          42L,   as.integer)
+  data_file <- arg_value("--data",   "calibration/data/conus_remeasurement_pairs.rds")
+  out_dir   <- arg_value("--out",    "calibration/output/conus/dg")
+  stan_file <- arg_value("--stan_file", STAN_DIRECT)
+  save_draws <- "--save_draws" %in% args
 
   message("=== ORGANON DG CONUS-wide Model Fitting ===")
-  message("Site variable: ", site_var)
-  message("Method: ", method)
+  message("Site variable : ", site_var)
+  message("Method        : ", method)
+  message("Subsample (n) : ", n_sub)
+  message("Chains        : ", n_chain)
+  message("max_treedepth : ", max_td)
+  message("adapt_delta   : ", adapt_d)
+  message("warmup/samp   : ", n_warm, "/", n_samp)
+  message("data file     : ", data_file)
+  message("out dir       : ", out_dir)
 
-  ## Load data (assumes 30_build_conus_dataset.R has been run)
-  data_file <- "calibration/data/conus_remeasurement_pairs.rds"
   if (!file.exists(data_file)) {
-    stop("Data file not found: ", data_file,
-         "\nRun 30_build_conus_dataset.R first.")
+    stop("Data file not found: ", data_file)
   }
   raw_data <- readRDS(data_file)
 
   ## Prepare data
   prep <- prepare_dg_data(raw_data, site_var = site_var)
 
+  ## Optional row-subsample after prep. Keep prep$species and prep$ecodiv
+  ## level vectors as-is so Stan still allocates their REs (some indices
+  ## may have zero observations after subsampling, which Stan handles).
+  if (n_sub > 0L && nrow(prep$data) > n_sub) {
+    set.seed(rseed)
+    sub_idx <- sample(nrow(prep$data), n_sub)
+    prep$data <- prep$data[sub_idx]
+    message("Subsampled to ", format(n_sub, big.mark = ","), " rows post-prep")
+  }
+
   ## Fit model
   if (method == "direct") {
-    fit <- fit_dg_direct(prep)
+    fit <- fit_dg_direct(prep, stan_file = stan_file, chains = n_chain,
+                         iter_warmup = n_warm, iter_sampling = n_samp,
+                         seed = rseed, max_treedepth = max_td,
+                         adapt_delta = adapt_d)
     summ <- check_convergence(fit)
     posts <- export_posteriors(fit, prep)
 
     ## Run annualized validation on direct fit
     val <- validate_annualized(fit, prep)
+
+    ## Save fit object if requested (needed for downstream modifier work)
+    if (save_draws) {
+      dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+      tag <- sprintf("dg_organon_%s_traits1", site_var)
+      fit$save_object(file.path(out_dir, sprintf("%s_fit.rds", tag)))
+      saveRDS(list(
+        site_var   = site_var,
+        prep_meta  = list(species = prep$species, ecodiv = prep$ecodiv,
+                          cspi_shift = prep$cspi_shift),
+        n_obs      = nrow(prep$data),
+        chains     = n_chain,
+        max_td     = max_td,
+        adapt_d    = adapt_d,
+        n_sub      = n_sub
+      ), file.path(out_dir, sprintf("%s_meta.rds", tag)))
+      message("Saved fit + meta under ", out_dir)
+    }
 
   } else {
     message("Full annualized fitting not yet implemented in Stan.")

@@ -297,6 +297,11 @@ def process_plot_with_uncertainty(
             draw_keywords = engine.generate_keywords_for_draw(
                 draw, default_cfg, draw_idx=int(draw_idx)
             )
+            # GROWMULT keywords trigger FVS STOP 20; filter them out
+            draw_keywords = "\n".join(
+                line for line in draw_keywords.splitlines()
+                if not line.startswith("GROWMULT")
+            )
 
             # Add initial condition for this draw
             draw_results.append({
@@ -491,6 +496,12 @@ def main():
         help="CSV with PLOT and EXPNS columns"
     )
     parser.add_argument("--output-dir", type=str, default=OUTPUT_DIR)
+    parser.add_argument(
+        "--exclude-plots", type=str, default="",
+        help="Comma-separated plot IDs to skip (e.g., 2869.0,3104.5), or path to "
+             "a text file with one plot ID per line. Plots are matched against "
+             "PLOT column in perseus_plots.csv as string."
+    )
     args = parser.parse_args()
 
     # Load PERSEUS plots and filter to requested year range
@@ -510,6 +521,32 @@ def main():
     year_counts = perseus["FIRST_INVYR"].value_counts().sort_index()
     for yr, cnt in year_counts.items():
         logger.info(f"  FIRST_INVYR={yr}: {cnt} plots")
+
+    # Apply plot exclusion filter (for pathological plots that hang FVS)
+    if args.exclude_plots:
+        raw = args.exclude_plots
+        if os.path.exists(raw):
+            with open(raw) as f:
+                excludes = {line.strip() for line in f if line.strip()}
+        else:
+            excludes = {s.strip() for s in raw.split(",") if s.strip()}
+        if excludes:
+            # Type-robust normalization: "2869", "2869.0", 2869, 2869.0 all match
+            def _norm(x):
+                try:
+                    return str(int(float(x)))
+                except Exception:
+                    return str(x).strip()
+            norm_excludes = {_norm(x) for x in excludes}
+            before = len(perseus)
+            perseus = perseus.loc[
+                ~perseus["PLOT"].apply(_norm).isin(norm_excludes)
+            ].copy()
+            dropped = before - len(perseus)
+            logger.info(
+                f"Excluded {dropped} plot(s) matching "
+                f"{sorted(excludes)} (requested {len(excludes)})"
+            )
 
     # Batch slicing
     if args.batch_id is not None:

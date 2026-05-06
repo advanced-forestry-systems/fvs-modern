@@ -34,12 +34,12 @@ integer fsql3_bind_double,fsql3_finalize,fsql3_errmsg, &
      fsql3_bind_int,fsql3_bind_text,fsql3_exec,fsql3_tableexists, &
      fsql3_prepare,fsql3_step
 
-if (IDBSECON == 0) return &
-   ake sure we have an up-to-date case ID.
+if (IDBSECON == 0) return
+!   ake sure we have an up-to-date case ID.
 
 call DBSCASE(1)
 
-Ensure that the FVS_EconSummary table exists in the DB.
+!Ensure that the FVS_EconSummary table exists in the DB.
 iRet = fsql3_tableexists(IoutDBref,"FVS_EconSummary"//CHAR(0))
 IF(iRet.EQ.0) THEN
    SQLStmtStr = 'CREATE TABLE FVS_EconSummary (' &

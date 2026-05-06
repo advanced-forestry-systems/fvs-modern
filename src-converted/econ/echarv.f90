@@ -1,34 +1,34 @@
 SUBROUTINE ECHARV (bfPerTree, dbh, ft3PerTree, GROSPC, PREM2, &
-                                              spId, treeId, ICYC, IY) &
+                                              spId, treeId, ICYC, IY)
 !----------
 ! ECON $Id$
 !----------
 ! Author Fred Martin, WA DNR,
-
-   mulates tpa and volume harvested amounts from each harvested tree record into ECON arrays. &
-   cumulates harvest in total harvest arrays, but accumulates harvest associated with specific ECON &
-   eywords, e.g., varaiable harvest costs or harvest revenues, only if harvest is from diameter &
-   lasses or species for which ECON keywords were submitted. &
-
-   ed from CUTS once for each tree.
-
-diameter (DIB/DBH) of the tree is indexed relative to cost or revenue keywords, then tpa and &
-   umes are accumulated in arrays sequenced by the same cost and revenue keyword-values. &
-   mes accumulated for board-foot logs or whole tree, not both, depends on volume calculation method and &
-   mitted revenue keywords. Tree-volumes from input parameters, log-volumes dependent on and from arrays &
-   igned values in ECVOL.F &
-
-   ables from FVS &
-   erTree  - net board-foot volume of passed tree, as a whole, single tree. &
-           - dbh of passed tree. &
-   PerTree - net merchantable cubic-foot volume of passed tree, as a whole, single tree. &
-   SPC     - multiplier to compensate for non-stockable points - computed in INITRE &
-   C       - cycle number of current cycle.
-        - array storing beginning year of each cycle. &
-   SP      - maximum number of species codes used by a specific variant, from PRGPRM.F77. &
-   M2      - removed trees per acre for the treeId record. &
-   d       - internal FVS species identifier, ISPC=FVS variable name. &
-   eId     - index to passed tree in list of all trees.
+!
+! Accumulates tpa and volume harvested amounts from each harvested tree record into ECON arrays.
+!   Accumulates harvest in total harvest arrays, but accumulates harvest associated with specific ECON
+!    keywords, e.g., variable harvest costs or harvest revenues, only if harvest is from diameter
+!    classes or species for which ECON keywords were submitted.
+!
+! Called from CUTS once for each tree.
+!
+! The diameter (DIB/DBH) of the tree is indexed relative to cost or revenue keywords, then tpa and
+!  volumes are accumulated in arrays sequenced by the same cost and revenue keyword-values.
+! Volumes accumulated for board-foot logs or whole tree, not both, depending on volume calculation
+!  method and submitted revenue keywords. Tree-volumes from input parameters, log-volumes dependent
+!  on and from arrays of values assigned in ECVOL.F
+!
+! Variables from FVS
+!  bfPerTree  - net board-foot volume of passed tree, as a whole, single tree.
+!  dbh        - dbh of passed tree.
+!  ft3PerTree - net merchantable cubic-foot volume of passed tree, as a whole, single tree.
+!  GROSPC     - multiplier to compensate for non-stockable points - computed in INITRE
+!  ICYC       - cycle number of current cycle.
+!  IY         - array storing beginning year of each cycle.
+!  MAXSP      - maximum number of species codes used by a specific variant, from PRGPRM.F77.
+!  PREM2      - removed trees per acre for the treeId record.
+!  spId       - internal FVS species identifier, ISPC=FVS variable name.
+!  treeId     - index to passed tree in list of all trees.
 
 implicit none
 
@@ -139,9 +139,9 @@ if (hrvRevCnt(spId,TPA) > 0) then                                  !HRVRVN keywo
 end if
 return
 
-contains &
-   eturns the index-location of the input value in the classes array, or -1 if value is not w/in classes. &
-   sortIndex" is descending sorted index of "classes" array, used to access "classes" array values
+contains
+!    Returns the index-location of the input value in the classes array, or -1 if value is not w/in classes.
+!    "sortIndex" is descending sorted index of "classes" array, used to access "classes" array values
 pure function getDiaGrp(value, cntClasses, classes, sortIndex) &
                                                          result(indx)
    implicit none

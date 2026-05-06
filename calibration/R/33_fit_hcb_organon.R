@@ -26,8 +26,10 @@ library(cmdstanr)
 library(posterior)
 library(bayesplot)
 
-## Source project utilities
-if (file.exists("calibration/R/00_setup.R")) source("calibration/R/00_setup.R")
+## Source project utilities (skipped on Cardinal; other production drivers
+## do not source 00_setup.R either. The fitted environment is expected to
+## have R module + cmdstanr + required packages already installed).
+# if (file.exists("calibration/R/00_setup.R")) source("calibration/R/00_setup.R")
 
 ##-----------------------------------------------------------------------------
 ## 1. Configuration

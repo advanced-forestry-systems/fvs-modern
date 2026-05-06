@@ -57,19 +57,19 @@ logical       :: isHarvestPct = .FALSE.
 
 real, parameter     :: NEAR_ZERO = 0.01
 real                :: harvCst, harvRvn, irr, pctCst, sevSum
-real, dimension(2)  :: parms &  !2=maximum number of Event Monitor parms used in ECCALC
-   ossible initiation and re-initiation of ECON calculations
-1. ECON starts at beginnning of cycle and no re-initialization is requested
-2. ECON starts after the beginning of cycle and no re-initialization is requested
-3. ECON starts at beginning of cycle and re-initialization is requested in same cycle
-4. ECON starts after the beginning of cycle and re-initialization is requested in same cycle
+real, dimension(2)  :: parms   !2=maximum number of Event Monitor parms used in ECCALC
+! Possible initiation and re-initiation of ECON calculations
+! 1. ECON starts at beginnning of cycle and no re-initialization is requested
+! 2. ECON starts after the beginning of cycle and no re-initialization is requested
+! 3. ECON starts at beginning of cycle and re-initialization is requested in same cycle
+! 4. ECON starts after the beginning of cycle and re-initialization is requested in same cycle
 
 
 if (econStartYear >= IY(ICYC+1)) then                              !IY(ICYC+1) = begining year of next cycle
    return
 else
    call resetLocalCycleVariables()
-  Reset ECON Event Monitor variables prior to each call of ECON, table 4 values (4)30-(4)39, (4)46-(4)50
+!  Reset ECON Event Monitor variables prior to each call of ECON, table 4 values (4)30-(4)39, (4)46-(4)50
    do i = 30,39
      call EVUST4(i)
    end do
@@ -96,13 +96,13 @@ else
       call processEconStart
    end if
 
-  Calculate over entire cycle or remaining portion of a cycle
+!  Calculate over entire cycle or remaining portion of a cycle
    beginTime = beginAnalYear - startYear + 1
    endTime   = endAnalYear   - startYear + 1
    call valueHarvest()
    call calcEcon()
-end if &
-   ubtract "pretend" harvests from accumulators, harvest always occur 1st year of a cycle
+end if
+! Subtract "pretend" harvests from accumulators, harvest always occur 1st year of a cycle
 if (isPretendActive .and. harvest(TPA) > 0.0) then
    undiscCost(beginTime) = undiscCost(beginTime) - &
                                         (harvCst + pctCst)
@@ -119,8 +119,8 @@ call resetSavedCycleVariables()                                         !Ensure 
 return                                                             !End main ECCALC subroutine
 
 
-contains &
-   heck for re-initialization of investment period and calculate years within current cycle prior to re-initialization if needed
+contains
+! Check for re-initialization of investment period and calculate years within current cycle prior to re-initialization if needed
 subroutine processEconStart()
    integer               :: evntYear = 0
    integer, dimension(1) :: econStart = (/ECON_START_YEAR/)
@@ -142,7 +142,7 @@ subroutine processEconStart()
       call resetSavedCycleVariables()                                   !Since 1st year of cycle processed, reset harvest variables
       call resetLocalCycleVariables()
    end if
-  Re-initiallize variables & time to begin a new period of ECON calculations
+!  Re-initiallize variables and time to begin a new period of ECON calculations
    call initializeSavedVariables()
    discountRate  = strtParms(1)
    call EVSET4(EV_DISCRATE, discountRate)                          !Entry point in EVSET, register discount rate w/ Event Monitor
@@ -155,8 +155,8 @@ subroutine processEconStart()
    endAnalYear   = IY(ICYC+1) - 1                                  !IY(ICYC+1)= beginning year of next cycle
    if (doSEV) call calcAnnCostRevSEV()                             !Annual costs & revenues can be done once for an infinite time horizon
    return
-end subroutine processEconStart &
-   et/Reset accumulation values for ECON initiation/re-initiation that are saved across cycles
+end subroutine processEconStart
+! Set/Reset accumulation values for ECON initiation/re-initiation that are saved across cycles
 subroutine initializeSavedVariables()
    costDisc    = 0.0; costUndisc = 0.0
    hrvCstCnt   = 0; hrvRvnCnt = 0; burnCnt    = 0; mechCnt   =   0
@@ -166,25 +166,25 @@ subroutine initializeSavedVariables()
    revDisc     = 0.0; revUndisc  = 0.0
    undiscCost  = 0.0; undiscRev  = 0.0                            !Arrays by year
    return
-end subroutine initializeSavedVariables &
-   eset harvest & control variable values used within a single cycle but needed externally for next cycle, used 1st in echarv.f, initially set in ecinit.f
+end subroutine initializeSavedVariables
+! Reset harvest and control variable values used within a single cycle but needed externally for next cycle, used 1st in echarv.f, initially set in ecinit.f
 subroutine resetSavedCycleVariables()
-  Duplicate code from ecinit.f to initialize variables used in echarv.f & eccalc.f
+!  Duplicate code from ecinit.f to initialize variables used in echarv.f and eccalc.f
    dbhSq     = 0.0
    harvest   = 0.0                                                 !Harvest volume array (TPA : FT3_100)
    hrvCostBf = 0.0; hrvCostFt3 = 0.0; hrvCostTpa = 0.0             !Harvest volume by cost type arrays (1:MAX_KEYWORDS)
    pctBf     = 0.0; pctFt3     = 0.0; pctTpa     = 0.0             !PCT harvest volume by cost type arrays (1:MAX_KEYWORDS)
    revVolume = 0.0                                                 !Array(1:MAXSP, 1:MAX_REV_UNITS, 1:MAX_KEYWORDS)
    return
-end subroutine resetSavedCycleVariables &
-   eset local harvest and control variable values used within a single cycle
+end subroutine resetSavedCycleVariables
+! Reset local harvest and control variable values used within a single cycle
 subroutine resetLocalCycleVariables()
    isHarvestPct = .FALSE.
    harvCst   = 0.0; harvRvn    = 0.0; pctCst    = 0.0
    sevSum    = 0.0
    return
-end subroutine resetLocalCycleVariables &
-   alue the harvests by accumulating harvest/thinning costs and revenues, must run before calcEcon
+end subroutine resetLocalCycleVariables
+! Value the harvests by accumulating harvest/thinning costs and revenues, must run before calcEcon
 subroutine valueHarvest()
    implicit none
    integer :: cstCnt, evntTime, i, j, k, rvncnt, time
@@ -326,8 +326,8 @@ subroutine valueHarvest()
       end if
    end if
 return
-end subroutine valueHarvest &
-   ccumulate costs and revenues, compute ECON measures, and output results
+end subroutine valueHarvest
+! Accumulate costs and revenues, compute ECON measures, and output results
 subroutine calcEcon()
    implicit none
 
@@ -362,7 +362,7 @@ subroutine calcEcon()
 
    if (doSev) sevSum = sevSum - sevAnnCst + sevAnnRvn
 
-  Compute appreciated/depreciated annual costs from each ANNUCST keyword for each year of cycle
+  ! Compute appreciated/depreciated annual costs from each ANNUCST keyword for each year of cycle
    do i = 1, annCostCnt
       do j = beginTime, endTime, 1
          time = beginAnalYear - econStartYear + j - 1             !Appreciation time from start of ECON, cost from beginning of year
@@ -372,7 +372,7 @@ subroutine calcEcon()
       end do
    end do
 
-  Compute appreciated/depreciated annual revenues from each ANNURVN keyword for each year of cycle
+  ! Compute appreciated/depreciated annual revenues from each ANNURVN keyword for each year of cycle
    do i = 1, annRevCnt
       do j = beginTime, endTime, 1
          time = beginAnalYear - econStartYear + j                 !Appreciation time from start of ECON, revenue at end of year
@@ -382,7 +382,7 @@ subroutine calcEcon()
       end do
    end do
 
-  Query for and accumulate any SPECCST keywords - need OPGET2 for w/in cycle accumulation
+  ! Query for and accumulate any SPECCST keywords - need OPGET2 for w/in cycle accumulation
    do
       call OPGET2(SPEC_COST_ACTIVITY, IDT, beginAnalYear, &
                      endAnalYear, 1, 1, parmsCnt, parms, KODE)       !1=1st activity, 1=parms dimension, returns IDT, parmsCnt, parms, and KODE=0 if ok, else=1
@@ -393,7 +393,7 @@ subroutine calcEcon()
                      endAnalYear, 1, KODE)                           !IDT=year to mark activity as done, 1=1st activity, returns KODE=1 if not marked as done
       if (doSev) specCstCnt = specCstCnt + 1
    end do
-  Accumulate SEV of all previous special costs
+  ! Accumulate SEV of all previous special costs
    if (specCstCnt > 0 .and. doSev) then
       ISQNUM = 0
       do
@@ -413,7 +413,7 @@ subroutine calcEcon()
       end do
    end if
 
-  Query for and accumulate any SPECRVN keywords - need OPGET2 for w/in cycle accumulation
+  ! Query for and accumulate any SPECRVN keywords - need OPGET2 for w/in cycle accumulation
    do
       call OPGET2(SPEC_REV_ACTIVITY, IDT, beginAnalYear, &
                      endAnalYear, 1, 1, parmsCnt, parms, KODE)       !1=1st activity, 1=parms dimension, returns IDT, parmsCnt, parms, and KODE
@@ -424,7 +424,7 @@ subroutine calcEcon()
                      endAnalYear, 1, KODE)                           !IDT=year to mark activity as done, 1=1st activity, returns KODE=1 if not marked as done
       if (doSev) specRvnCnt = specRvnCnt + 1
    end do
-  Accumulate SEV of all previous special revenues
+  ! Accumulate SEV of all previous special revenues
    if (specRvnCnt > 0 .and. doSev) then
       ISQNUM = 0
       do
@@ -444,9 +444,9 @@ subroutine calcEcon()
       end do
    end if
 
-  Compute appreciated/depreciated establishment costs - plant, mechanical prep & burn prep
-   Get each activity w/in time period (OPSTUS) & the date accomplished (ISTAT>0=yr accomplished, 0,-1=not done)
-   ISSUE: OPSTUS & OPGET3 return activities in scheduled, not completed, order - per acre cost by individual year could be compromised
+  ! Compute appreciated/depreciated establishment costs - plant, mechanical prep & burn prep
+!  Get each activity w/in time period (OPSTUS) and the date accomplished (ISTAT>0=yr accomplished, 0,-1=not done)
+!  ISSUE: OPSTUS and OPGET3 return activities in scheduled, not completed, order - per acre cost by individual year could be compromised
    if (plntCostCnt > 0) then
       prevTime = -1                                                !Initialize to a nonsensical value
       ISQNUM   =  0
@@ -484,7 +484,7 @@ subroutine calcEcon()
          end if
       end do
    end if                                                         !End planting cost accumulation
-  Accumulate SEV of all previous planting actions
+  ! Accumulate SEV of all previous planting actions
    if (plntCostCnt > 0 .and. doSev) then
       prevTime = -1                                               !Initialize to a nonsensical value
       ISQNUM = 0
@@ -519,7 +519,7 @@ subroutine calcEcon()
       end do
    end if
 
-  Add any mechanical site prep costs
+  ! Add any mechanical site prep costs
    if (mechCostAmt > 0) then
       prevTime = -1                                                !Initialize to a nonsensical value
       ISQNUM = 0                                                   !Activity occurrence id
@@ -542,7 +542,7 @@ subroutine calcEcon()
          endif
       end do
    end if
-  Accumulate SEV of all previous mechanical site prep actions
+  ! Accumulate SEV of all previous mechanical site prep actions
    if (mechCnt > 0 .and. doSev) then
       prevTime = -1                                                !Initialize to a nonsensical value
       ISQNUM = 0
@@ -563,7 +563,7 @@ subroutine calcEcon()
       end do
    end if
 
-  Add any bruning site prep costs
+  ! Add any bruning site prep costs
    if (burnCostAmt > 0) then
       prevTime = -1                                                !Initialize to a nonsensical value
       ISQNUM = 0                                                   !Activity occurrence id
@@ -586,7 +586,7 @@ subroutine calcEcon()
          endif
       end do
    end if
-  Accumulate SEV of all previous burning site prep actions
+  ! Accumulate SEV of all previous burning site prep actions
    if (burnCnt > 0 .and. doSev) then
       prevTime = -1                                               !Initialize to a nonsensical value
       ISQNUM = 0
@@ -607,7 +607,7 @@ subroutine calcEcon()
       end do
    end if
 
-  Accumulate undiscounted & discounted costs & revenues by year
+  ! Accumulate undiscounted & discounted costs & revenues by year
    do i = beginTime, endTime
       costUndisc = costUndisc + undiscCost(i)
       revUndisc  = revUndisc  + undiscRev(i)
@@ -619,7 +619,7 @@ subroutine calcEcon()
       call EVSET4 (EV_UNDISRVN, revUndisc)
    end do
 
-  Compute PNV, and/or forest and tree values, and/or SEV values
+  ! Compute PNV, and/or forest and tree values, and/or SEV values
    if (isPretendActive) then
       pretend = 'YES'
    else
@@ -649,7 +649,7 @@ subroutine calcEcon()
       call EVSET4 (EV_SEV, sevSum)                                !Entry point in EVSET - register variables w/ event monitor
    end if
 
-  Compute internal rate of return, B/C ratio, and realizable rate of return
+!  Compute internal rate of return, B/C ratio, and realizable rate of return
    bcRatioChar = BLANK6; irrChar = BLANK6; rrrChar = BLANK6
    bcRatioCalculated = .FALSE.; irrCalculated = .FALSE.
    rrrCalculated     = .FALSE.
@@ -674,8 +674,8 @@ subroutine calcEcon()
         rrrCalculated = .TRUE.
         write(rrrChar,'(f6.1)') rrr
       end if
-   end if &
-   te harvested cubic and board foot volumes that were valued, & then output to Event Monitor
+   end if
+   ! te harvested cubic and board foot volumes that were valued, & then output to Event Monitor
   ft3Total = 0.0; bfTotal = 0.0
   if (harvest(TPA) > 0.0 .and. (.not. isHarvestPct)) then         !Only get volumes that were actually valued
      do i = 1, MAXSP                                              !Loop over species
@@ -694,7 +694,7 @@ subroutine calcEcon()
   call EVSET4(EV_ECCUFT, ft3Total)
   call EVSET4(EV_ECBDFT, bfTotal)
 
-  Write Summary Table for this investment period
+  ! Write Summary Table for this investment period
    call GETLUN(IOUT)                                               !Returns logical unit number for writing output
    call getDbsEconStatus(dbOutput)                                 !Returns DB output: 0=no output, 1=summary table, 2=summary & harvest table
    if (dbOutput > 0 .or. (.not. noOutputTables)) then              !Options are no tables or no log/stock table, can't have log/stock table w/o summary table
@@ -705,8 +705,8 @@ subroutine calcEcon()
                  forestValue, forestValueCalculated, reprodValue, &
                  reprodValueCalculated, nint(ft3Total), &
                  nint(bfTotal), discountRate, sevInput, sevInputUsed)
-   if (.not. noOutputTables) &  !Options are no tables or no log/stock table, can't have log/stock table w/o summary table
-            write (IOUT,'(1x, i5, t8, i5, t16, i4, t22, a3,          !Add 7 extra columns to tabs to account for TableId &
+   if (.not. noOutputTables) &
+            write (IOUT,'(1x, i5, t8, i5, t16, i4, t22, a3, &
                    t29, i7, t38, i7, t46, i7, &
                    t56, i6, t62, i6, t69, a6, t76, a6, &
                    t82, a6, t88, a6, t95, a6, t102, a6, &
@@ -719,7 +719,7 @@ subroutine calcEcon()
                   sevGivenChar
    endif
 
-  Write Log Stock Volume/Value Table, only trees described by HRVRVN keywords are included
+  ! Write Log Stock Volume/Value Table, only trees described by HRVRVN keywords are included
    if (.not.(noLogStockTable) .or. dbOutput == 2) then            !Output table or database output requested
       if (harvest(TPA) > 0.0 .and. isHarvestPct) then             !Only a PCT was done - costs only, no harvested tree data
          if (.not. noLogStockTable) &
@@ -804,7 +804,7 @@ subroutine calcEcon()
                      bfValue      = nint(amt)
                      call accumulate(bfValueTotal, amt)
                   end select
-                 Write rows of values by species and diameter
+                 ! Write rows of values by species and diameter
                   call DBSECHARV_insert(beginAnalYear, i, minDia, &  ! i = speciesId
                           maxDia, minDbh, maxDbh, tpaCut, tpaValue, &
                           tonsPerAcre, ft3Volume, ft3Value, bfVolume, &
@@ -848,7 +848,7 @@ subroutine calcEcon()
          write (outChar(8),'(i7)') nint(max(0.0, tpaValueTotal) &  !Any of these three "total" variables may equal -1.0 (i.e., "empty")
                 + max(0.0, ft3ValueTotal) + max(0.0, bfValueTotal))
 
-        Write totals, add 7 extra columns to tabs or GENRPT throws runtime error
+        ! Write totals, add 7 extra columns to tabs or GENRPT throws runtime error
          if (.not. noLogStockTable) then
           write (IOUT,'(1x, i5, t49, "-------", t58, "--------", &
              t68, "-------", t77, "-------", t86, "--------", &
@@ -893,8 +893,8 @@ pure character(len=7) function itoc(n)
   itoc = '       '
   if (n /= -1) write(itoc, '(i7)') n
   return
-end function itoc &
-   omputes internal rate of return defined as interest rate at which pnv=0, rates are in decimal.
+end function itoc
+! Computes internal rate of return defined as interest rate at which pnv=0, rates are in decimal.
 real function computeIRR(rate, irrCalculated, pnv)
    implicit none
    logical, intent(out) :: irrCalculated
@@ -966,8 +966,8 @@ real function computeIRR(rate, irrCalculated, pnv)
       end if
    end if
    return
-end function computeIRR &
-   omputes the present value of an amount for a given rate and time period
+end function computeIRR
+! Computes the present value of an amount for a given rate and time period
 pure real function computePV(amt, time, rate)
    integer, intent(in) :: time
    real,    intent(in) :: amt, rate
@@ -979,8 +979,8 @@ pure real function computePV(amt, time, rate)
       computePV = amt / (1.0 + rate)**time
    end if
    return
-end function computePV &
-   omputes net present value for a given rate, for all costs & revenues since ECON start
+end function computePV
+! omputes net present value for a given rate, for all costs & revenues since ECON start
 pure real function computePNV(rate)
   implicit none
   integer          :: i
@@ -996,12 +996,12 @@ pure real function computePNV(rate)
 
   computePNV = discRev - discCst
   return
-end function computePNV &
-   alculate undiscounted appreciated/depreciated values resulting from rate changes.
- All "valueRates" up to the current time are applied based on their "valueDuration" assuming
- value-rate records are in sorted order.  "valueRates" accrue from the time that ECON is first
- started (not the beginning time of a re-initilization of an ECON analysis).
- "valueRates" are cummulative, all rates up to the end of the current analysis time are included.
+end function computePNV
+! Calculate undiscounted appreciated/depreciated values resulting from rate changes.
+! All "valueRates" up to the current time are applied based on their "valueDuration" assuming
+! value-rate records are in sorted order.  "valueRates" accrue from the time that ECON is first
+! started (not the beginning time of a re-initilization of an ECON analysis).
+! "valueRates" are cummulative, all rates up to the end of the current analysis time are included.
 real function calcAppreAmt(amt, valueRate, valueDuration, &
                                                     apprecTime, done)
    implicit none
@@ -1038,10 +1038,10 @@ real function calcAppreAmt(amt, valueRate, valueDuration, &
       i = i + 1
    end do
    return
-end function calcAppreAmt &
-   allculate SEV including all potential rate changes for a single cost or revenue
-The cost or revenue occurs only once during an FVS cycle and then is evaluated over perpetual
-   rotations, assuming it occurs at the same time within all future rotations.
+end function calcAppreAmt
+! Calculate SEV including all potential rate changes for a single cost or revenue
+! The cost or revenue occurs only once during an FVS cycle and then is evaluated over perpetual
+! rotations, assuming it occurs at the same time within all future rotations.
 real function calcAppreSev(amt, priceOrCost, valueRate, &
                                              valueDuration, evntTime)
    implicit none
@@ -1077,8 +1077,8 @@ real function calcAppreSev(amt, priceOrCost, valueRate, &
    calcAppreSev = npv + (undiscAmt * factor) / (factor - 1.0) / &
                                                (1.0 + rate)**discTime
    return
-end function calcAppreSev &
-   ompute SEV for all previous harvest costs
+end function calcAppreSev
+! ompute SEV for all previous harvest costs
 real function sevHrvCosts()
    implicit none
    integer :: evntTime, i, kw, units
@@ -1126,8 +1126,8 @@ real function sevHrvCosts()
       end select
       sevHrvCosts = sevHrvCosts + cost
    end do
-end function sevHrvCosts &
-   ompute SEV for all previous harvest revenues
+end function sevHrvCosts
+! ompute SEV for all previous harvest revenues
 real function sevHrvRevenues()
    implicit none
    integer :: i, j, k, l
@@ -1142,8 +1142,8 @@ real function sevHrvRevenues()
                              hrvRevPrice(i,j,k), hrvRevRate(i,j,k,:), &
                                    hrvRevDur(i,j,k,:), hrvRvnTime(l))
    end do
-end function sevHrvRevenues &
-   Computes appreciation of annual costs and revenues for computing sev over an infinite time horizon
+end function sevHrvRevenues
+! Computes appreciation of annual costs and revenues for computing sev over an infinite time horizon
 subroutine calcAnnCostRevSEV()
    endTime = 1; sevAnnCst = 0.0; sevAnnRvn = 0.0                   !endTime required by calcAppreSev
    do i = 1, annCostCnt
@@ -1166,13 +1166,13 @@ subroutine writeTableHeaders()
    call GETID (logTableId)
    call GETLUN(IOUT)                                               !Returns logical unit number for writing output
 
-  Write ECON header
+!  Write ECON header
    write (IOUT,'(1x, i5, " $#*%", ///, 132("-"), /, &
             50x, "FVS/ECON EXTENSION VERSION 1.0", /, &
             "STAND ID: ", a26, 2x, "MANAGEMENT CODE: ", a4,2x, a72 /, &
             132("-"), /, "$#*%")') headTableId, NPLT, MGMID, ITITLE
 
-  Write summary output table heading
+  ! Write summary output table heading
    write (IOUT,'(1x, i5, " $#*%", /, "ECONOMIC ANALYSIS SUMMARY ", &
                                     "REPORT", /,"$#*%" )') sumTableId
 
@@ -1190,7 +1190,7 @@ subroutine writeTableHeaders()
           t103, "HARV", t110,  "HARV", t117, "GIVEN", t124, "GIVEN"/, &
         132("-"), /, "$#*%" )') sumTableId
 
-  Write Log Stock Volume/Value table header
+  ! Write Log Stock Volume/Value table header
    if (.not. noLogStockTable) then
       write (IOUT,'(1X, I5," $#*%", ///,"HARVEST VOLUME AND ", &
            "GROSS VALUE REPORT", /, 115("-"), /, "$#*%")') logTableId

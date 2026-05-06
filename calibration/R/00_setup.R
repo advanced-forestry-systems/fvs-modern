@@ -119,16 +119,29 @@ if (!require("cmdstanr", quietly = TRUE)) {
 
 cat("\nConfiguring CmdStan...\n")
 
-# Set up cmdstanr to use OSC's compiler environment
-cmdstanr::cmdstan_make_local(
-  new_local = file.path(calibration_dir, "cmdstan_make_local.txt"),
-  overwrite = TRUE
+# Set up cmdstanr to use OSC's compiler environment.
+# cmdstan_make_local() in current cmdstanr (>=0.7) takes cpp_options /
+# stanc_options / append only; it writes to ~/.cmdstan/cmdstan-*/make/local.
+# The previous call used new_local / overwrite args that no longer exist.
+# Wrapped in try() so a cmdstanr version change does not halt the driver.
+try(
+  cmdstanr::cmdstan_make_local(
+    cpp_options = list(STAN_CPP_OPTIMS = FALSE),  # -fgraphite unsupported on Cardinal GCC
+    append      = TRUE
+  ),
+  silent = TRUE
 )
 
-# Install cmdstan if not already present
-if (!cmdstanr::cmdstan_installed()) {
+# Install cmdstan if not already present. API probe first: older cmdstanr had
+# cmdstan_installed(); 0.9+ dropped it in favor of cmdstan_version() which
+# returns a version string when installed or errors otherwise.
+has_cmdstan <- tryCatch({
+  v <- cmdstanr::cmdstan_version(error_on_NA = FALSE)
+  !is.null(v) && nzchar(as.character(v))
+}, error = function(e) FALSE)
+if (!has_cmdstan) {
   cat("Installing CmdStan (this may take a few minutes)...\n")
-  cmdstanr::install_cmdstan(cores = parallel::detectCores())
+  try(cmdstanr::install_cmdstan(cores = parallel::detectCores()), silent = TRUE)
 }
 
 # ============================================================================

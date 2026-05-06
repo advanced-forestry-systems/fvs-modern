@@ -640,7 +640,7 @@ class UncertaintyEngine:
             lines.append("!! Growth multipliers (posterior draw)")
             for i, mult in enumerate(multipliers["growth_mult"]):
                 if abs(mult - 1.0) > 0.01:
-                    lines.append(f"GROWMULT        {i + 1:10d}{mult:10.4f}")
+                    lines.append(f"BAIMULT         {i + 1:10d}{mult:10.4f}")
 
         # Height growth multipliers
         if "hg_mult" in multipliers:

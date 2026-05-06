@@ -34,8 +34,8 @@ logical, intent(out) :: isPretend
 real, dimension(1)       :: pretendDuration(1)
 real, dimension(3)       :: strtParms(3)
 
-if (.not.isEconToBe) return &
-   etermine 1st econStartYear to ensure PRETEND is not activated before ECON starts
+if (.not.isEconToBe) return
+! Determine 1st econStartYear to ensure PRETEND is not activated before ECON starts
 if (econStartYear > IY(ICYC)) then                                 !Intial econStartYear = 9999
    call OPFIND (1, econStart, evntCnt)                             !1=#event types, activity type, returns evntCnt=#found events
    if (evntCnt > 0) then
@@ -50,8 +50,8 @@ if (econStartYear > IY(ICYC)) then                                 !Intial econS
       doSev            = .FALSE.
       if (strtParms(3) > 0.0) doSev = .TRUE.
    end if
-end if &
-   apture all PRETEND activites to preserve even before ECON starts
+end if
+! Capture all PRETEND activites to preserve even before ECON starts
 call OPFIND(1, pretend, evntCnt)                                   !1=array size of pretend actions, returns evntCnt for this cycle
 do i = 1, evntCnt
    CALL OPGET(i, 1, IDT, IACTK, parmsCnt, pretendDuration)         !Entry in OPFIND, i=event #, 1=parms dimension, returns IDT, IACTK, parmsCnt, & parms
@@ -79,9 +79,9 @@ return
 
 entry getIsPretendActive(isPretend)
    isPretend = isPretendActive
-return &
-   et "saved/common" variables to an intial state before each simulation &
-   alled in ecininit.f
+return
+! Set "saved/common" variables to an initial state before each simulation
+! Called in ecininit.f
 entry setPretendStatus()
    isPretendActive  = .FALSE.
    pretendStartYear = 0

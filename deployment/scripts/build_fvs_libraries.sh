@@ -82,16 +82,16 @@ compile_file() {
 
     case "$ext" in
         f|F|f90|F90)
-            $FC $FFLAGS $incdirs -c "$src" -o "$obj" 2>/dev/null
+            $FC $FFLAGS $incdirs -c "$src" -o "$obj"
             ;;
         for)
-            $FC $FFLAGS $incdirs -c "$src" -o "$obj" 2>/dev/null
+            $FC $FFLAGS $incdirs -c "$src" -o "$obj"
             ;;
         c)
-            $CC $CFLAGS $incdirs -c "$src" -o "$obj" 2>/dev/null
+            $CC $CFLAGS $incdirs -c "$src" -o "$obj"
             ;;
         cpp|cxx|C)
-            $CXX $CXXFLAGS $incdirs -c "$src" -o "$obj" 2>/dev/null
+            $CXX $CXXFLAGS $incdirs -c "$src" -o "$obj"
             ;;
     esac
 }

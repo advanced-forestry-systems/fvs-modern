@@ -105,9 +105,9 @@ implicit none
 !     C-callable version of fvsTreeAttr where namei and actioni are
 !     C-bindings of their correspoinding arguments.
 
-integer(c_int), bind(c) :: nch,rtnCode,ntrees
-real(c_double), dimension(ntrees), bind(c) :: attr
-character(c_char), dimension(10), bind(c) :: namei,actioni
+integer(c_int):: nch,rtnCode,ntrees
+real(c_double), dimension(ntrees):: attr
+character(c_char), dimension(10):: namei,actioni
 character name*10,action*4
 integer i
 
@@ -287,9 +287,9 @@ implicit none
 
 include "PRGPRM.f90"
 
-integer(c_int), bind(c) :: nch,rtnCode
-real(c_double), dimension(MAXSP), bind(c) :: attr
-character(c_char), dimension(10), bind(c) :: namei,actioni
+integer(c_int):: nch,rtnCode
+real(c_double), dimension(MAXSP):: attr
+character(c_char), dimension(10):: namei,actioni
 character name*10,action*4
 integer i
 
@@ -435,9 +435,9 @@ implicit none
 !     C-callable version of fvsSpeciesAttr where namei and actioni are
 !     C-bindings of their correspoinding arguments.
 
-integer(c_int), bind(c) :: nch,rtnCode
-real(c_double), bind(c) :: attr
-character(c_char), dimension(9), bind(c) :: namei,actioni
+integer(c_int):: nch,rtnCode
+real(c_double):: attr
+character(c_char), dimension(9):: namei,actioni
 character name*9,action*4
 integer i
 
@@ -1000,11 +1000,11 @@ implicit none
 include "PRGPRM.f90"
 include "PLOT.f90"
 
-integer(c_int), bind(c) :: indx
+integer(c_int):: indx
 integer i,nch
-character(c_char), dimension(5), bind(c) :: fvs_code
-character(c_char), dimension(5), bind(c) :: fia_code
-character(c_char), dimension(7), bind(c) :: plant_code
+character(c_char), dimension(5):: fvs_code
+character(c_char), dimension(5):: fia_code
+character(c_char), dimension(7):: plant_code
 if (indx == 0 .or. indx > MAXSP) then
   fvs_code(1)  =char(0)
   fia_code(1)  =char(0)
@@ -1063,10 +1063,10 @@ include "PLOT.f90"
 include "DBSCOM.f90"
 
 integer i,ncsID,ncCN,ncmID,ncCase
-character(c_char), dimension(len(NPLT  )+1), bind(c) :: sID
-character(c_char), dimension(len(DBCN  )+1), bind(c) :: sCN
-character(c_char), dimension(len(MGMID )+1), bind(c) :: mID
-character(c_char), dimension(len(CASEID)+1), bind(c) :: mCase
+character(c_char), dimension(len(NPLT  )+1):: sID
+character(c_char), dimension(len(DBCN  )+1):: sCN
+character(c_char), dimension(len(MGMID )+1):: mID
+character(c_char), dimension(len(CASEID)+1):: mCase
 
 ncsID  = len_trim(NPLT)
 ncCN   = len_trim(DBCN)
@@ -1121,9 +1121,9 @@ subroutine fvsCloseFileC(filenamei,nch) &
 use iso_c_binding
 implicit none
 
-integer(c_int), bind(c) :: nch
+integer(c_int):: nch
 integer i
-character(c_char), dimension(nch), bind(c) :: filenamei
+character(c_char), dimension(nch):: filenamei
 character*255 filename
 
 do i=1,nch
@@ -1220,9 +1220,9 @@ implicit none
 
 !     C-callable version of fvsSVSObjData
 
-integer(c_int), bind(c) :: nch,rtnCode,nobjs
-real(c_double), dimension(nobjs), bind(c) :: attr
-character(c_char), dimension(10), bind(c) :: namei,actioni
+integer(c_int):: nch,rtnCode,nobjs
+real(c_double), dimension(nobjs):: attr
+character(c_char), dimension(10):: namei,actioni
 character name*10,action*4
 integer i
 
@@ -1572,9 +1572,9 @@ implicit none
 !     C-callable version of fvsTreeAttr where namei and actioni are
 !     C-bindings of their correspoinding arguments.
 
-integer(c_int), bind(c) :: nch,rtnCode,nobjs
-real(c_double), dimension(nobjs), bind(c) :: attr
-character(c_char), dimension(10), bind(c) :: namei,actioni
+integer(c_int):: nch,rtnCode,nobjs
+real(c_double), dimension(nobjs):: attr
+character(c_char), dimension(10):: namei,actioni
 character name*10,action*4
 integer i
 
@@ -1704,9 +1704,9 @@ implicit none
 !     C-callable version of fvsUnitConversionC where namei is a
 !     C-bindings of name
 
-integer(c_int), bind(c) :: nch,rtnCode
-real(c_double), bind(c) :: value
-character(c_char), dimension(15), bind(c) :: namei
+integer(c_int):: nch,rtnCode
+real(c_double):: value
+character(c_char), dimension(15):: namei
 character name*15
 integer i
 

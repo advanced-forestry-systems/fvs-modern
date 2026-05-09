@@ -97,8 +97,35 @@ compile_file() {
 }
 
 # Build each variant
+
+build_stubs() {
+    local stub_dir="${SOURCE_DIR}/stubs"
+    if [ ! -d "$stub_dir" ]; then
+        echo "[stubs] no stub dir at $stub_dir, skipping"
+        return 0
+    fi
+    local FC_LOCAL="${FC:-gfortran}"
+    if ! command -v "$FC_LOCAL" >/dev/null 2>&1; then
+        FC_LOCAL=$(command -v ifort 2>/dev/null || command -v ifx 2>/dev/null || command -v gfortran 2>/dev/null)
+    fi
+    for stub_src in "$stub_dir"/*.f; do
+        [ -f "$stub_src" ] || continue
+        local base=$(basename "$stub_src" .f)
+        local lib_out="${OUTPUT_DIR}/lib${base}.so"
+        echo -n "[stubs] Building $(basename "$lib_out") ... "
+        local obj="${BUILD_DIR}/${base}.o"
+        if "$FC_LOCAL" -fPIC -c "$stub_src" -o "$obj" 2>/tmp/stub_${base}.err && "$FC_LOCAL" -shared "$obj" -o "$lib_out" 2>>/tmp/stub_${base}.err; then
+            echo "OK"
+        else
+            echo "FAIL (see /tmp/stub_${base}.err)"
+        fi
+    done
+}
+
 BUILT=0
 FAILED=0
+
+build_stubs
 
 for var in "${VARIANTS[@]}"; do
     SRCLIST="$SOURCE_DIR/bin/FVS${var}_sourceList.txt"
@@ -120,6 +147,17 @@ for var in "${VARIANTS[@]}"; do
         line=$(echo "$line" | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
         [ -z "$line" ] && continue
         [[ "$line" == "#"* ]] && continue
+
+        # Skip rd/ INCLUDE-only files (referenced via INCLUDE 'RD*.f90'
+        # in rd/rd*.f90 sources). Compiling them as standalone units
+        # pollutes the link namespace with COMMON-block declarations,
+        # breaking keyrdr.f90 at runtime on PN/IE.
+        case "$line" in
+            */rd/RDADD.f90|*/rd/RDARRY.f90|*/rd/RDCOM.f90|*/rd/RDCRY.f90|*/rd/RDPARM.f90)
+                continue
+                ;;
+        esac
+
 
         # Resolve path relative to bin/
         srcfile="$SOURCE_DIR/bin/$line"

@@ -220,7 +220,8 @@ extract_modifier_summary <- function(component_dir, base_model, model_id, out_di
 # ---------------------------------------------------------------------------
 
 extract_component <- function(component, model = NULL,
-                              spcd_lookup = NULL, ecodiv_lookup = NULL) {
+                              spcd_lookup_fallback = NULL,
+                              ecodiv_lookup_fallback = NULL) {
   if (is.null(model)) model <- DEFAULT_MODELS[[component]]
   if (is.null(model)) stop("Unknown component: ", component)
 
@@ -231,6 +232,14 @@ extract_component <- function(component, model = NULL,
     log_error("Missing fit file: {fit_path}")
     return(invisible(FALSE))
   }
+
+  ## Prefer meta.rds lookups (per-component, current); fall back to global CSVs
+  meta_lookups <- load_meta_lookups(component_dir, model)
+  spcd_lookup   <- meta_lookups$spcd %||% spcd_lookup_fallback
+  ecodiv_lookup <- meta_lookups$ecodiv %||% ecodiv_lookup_fallback
+
+  if (is.null(spcd_lookup))   log_warn("No SPCD lookup; species output will use raw Stan index for {model}")
+  if (is.null(ecodiv_lookup)) log_warn("No ecodiv lookup; ecodiv output will use raw Stan index for {model}")
 
   log_info("=== Extracting {component} / {model} ===")
   log_info("Loading {fit_path} ...")
@@ -251,31 +260,73 @@ extract_component <- function(component, model = NULL,
   invisible(TRUE)
 }
 
+## Null-coalesce helper (since base R has no %||%)
+`%||%` <- function(a, b) if (is.null(a)) b else a
+
 # ---------------------------------------------------------------------------
 # Lookup tables
 #
-# These map the integer index used by the Stan posterior into the actual
-# species code (SPCD) or ecodivision code (e.g., "M211") via the modeling
-# data list. Adjust this loader if your fitting pipeline uses a different
-# naming convention.
+# Map the integer Stan index in z_sp[i] / z_eco[i] back to the real codes
+# (SPCD, ecodivision). Two sources, in priority order:
+#
+# 1. Per-component meta.rds — the fitting scripts (31, 32, 33, 34, ...) save
+#    a list that includes the sp_levels and ecodiv_levels vectors. This is
+#    the source of truth when present.
+#
+# 2. Fallback CSVs at calibration/data/conus_{species,ecodiv}_index.csv —
+#    only used if the meta.rds doesn't include the lookup vectors.
+#
+# The meta.rds layout per the existing fitting scripts is approximately:
+#   meta$prep$sp_levels   # integer vector of sorted unique SPCDs
+#   meta$prep$ecodiv_levels  # character vector of sorted unique ecodiv codes
+# Some older scripts use meta$species / meta$ecodivs instead; we try both.
 # ---------------------------------------------------------------------------
 
-load_spcd_lookup <- function() {
+load_meta_lookups <- function(component_dir, model_id) {
+  meta_path <- file.path(component_dir, paste0(model_id, "_meta.rds"))
+  if (!file.exists(meta_path)) {
+    log_info("No meta.rds at {meta_path}")
+    return(list(spcd = NULL, ecodiv = NULL))
+  }
+  meta <- readRDS(meta_path)
+
+  ## Try a few possible field names that the fitting scripts use
+  pull_field <- function(obj, names) {
+    for (n in names) {
+      if (!is.null(obj[[n]])) return(obj[[n]])
+      if (!is.null(obj$prep) && !is.null(obj$prep[[n]])) return(obj$prep[[n]])
+    }
+    NULL
+  }
+
+  spcd_vec <- pull_field(meta, c("sp_levels", "species", "spcd_levels", "SPCD"))
+  eco_vec  <- pull_field(meta, c("ecodiv_levels", "ecodivs", "ecodivision_levels", "ecodiv"))
+
+  spcd_lookup <- if (!is.null(spcd_vec)) {
+    tibble(idx = seq_along(spcd_vec), SPCD = as.integer(spcd_vec))
+  } else NULL
+
+  ecodiv_lookup <- if (!is.null(eco_vec)) {
+    tibble(idx = seq_along(eco_vec), ecodiv = as.character(eco_vec))
+  } else NULL
+
+  list(spcd = spcd_lookup, ecodiv = ecodiv_lookup)
+}
+
+load_spcd_lookup_fallback <- function() {
   path <- file.path(calibration_dir, "data", "conus_species_index.csv")
   if (file.exists(path)) {
     read_csv(path, col_types = cols())
   } else {
-    log_warn("SPCD lookup {path} not found; species output will use raw index")
     NULL
   }
 }
 
-load_ecodiv_lookup <- function() {
+load_ecodiv_lookup_fallback <- function() {
   path <- file.path(calibration_dir, "data", "conus_ecodiv_index.csv")
   if (file.exists(path)) {
     read_csv(path, col_types = cols())
   } else {
-    log_warn("Ecodiv lookup {path} not found; ecodiv output will use raw index")
     NULL
   }
 }
@@ -287,8 +338,9 @@ load_ecodiv_lookup <- function() {
 main <- function() {
   args <- parse_args(commandArgs(trailingOnly = TRUE))
 
-  spcd_lookup <- load_spcd_lookup()
-  ecodiv_lookup <- load_ecodiv_lookup()
+  ## Fallbacks for cases where meta.rds doesn't include the lookup vectors
+  spcd_fallback <- load_spcd_lookup_fallback()
+  ecodiv_fallback <- load_ecodiv_lookup_fallback()
 
   if (isTRUE(args$all)) {
     components <- names(DEFAULT_MODELS)
@@ -300,8 +352,8 @@ main <- function() {
 
   results <- map_lgl(components, function(c) {
     extract_component(c, model = args$model,
-                      spcd_lookup = spcd_lookup,
-                      ecodiv_lookup = ecodiv_lookup)
+                      spcd_lookup_fallback = spcd_fallback,
+                      ecodiv_lookup_fallback = ecodiv_fallback)
   })
 
   ok <- sum(results)

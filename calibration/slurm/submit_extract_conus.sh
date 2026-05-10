@@ -36,7 +36,12 @@ module load R/4.4.0
 COMPONENT="${COMPONENT:-hg}"
 MODEL="${MODEL:-}"
 
-cd "${FVS_PROJECT_ROOT:-$HOME/fvs-modern}"
+# FVS_PROJECT_ROOT must point AT the fvs-modern dir, not its parent.
+# 61_extract_conus_summaries.R uses Sys.getenv("FVS_PROJECT_ROOT", "..").
+# The default ".." is wrong when launched from inside fvs-modern, so we
+# export it explicitly here.
+export FVS_PROJECT_ROOT="${FVS_PROJECT_ROOT:-$HOME/fvs-modern}"
+cd "$FVS_PROJECT_ROOT"
 echo "=== Extraction job ==="
 echo "host:     $(hostname)"
 echo "time:     $(date)"

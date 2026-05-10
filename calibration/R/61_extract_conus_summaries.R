@@ -92,18 +92,41 @@ extract_fixed_effects <- function(fit, model_id, out_dir) {
   ## otherwise blow up the draws CSV to multi-GB.
   no_index <- !grepl("\\[", param_names)
 
-  ## Rule 2: name must match a top-level fixed-effect pattern.
-  ## - mu_*       (e.g. mu_b0)
-  ## - b<N>       (b1, b2, ..., b10)
-  ## - K<N>       (K1, K2)
-  ## - sigma, sigma_sp, sigma_eco, sigma_*
-  ## - alpha, beta, gamma, delta (single-letter Greek roots when scalar)
+  ## Rule 2: name must match a top-level fixed-effect pattern. The CONUS
+  ## Phase 4 models use varying conventions, so the pattern is broad but
+  ## still excludes a few well-known non-parameter scalars (lp__, log_lik,
+  ## any "raw" parameterizations from non-centered draws).
+  ##
+  ## Names that should match (across the 6 components):
+  ## - DG Kuehne / Organon: mu_b0, b1..b10, K1, K2, sigma_sp, sigma_eco, sigma
+  ## - HG Organon fixedK:   a0..a8, mu_a, sigma_sp, sigma_L1..L3, sigma
+  ## - HT-DBH Wykoff lognormal: mu_b1, b2, b3, sigma_sp, sigma_eco, sigma
+  ## - HCB Organon:         mu_b0, b1..b4, sigma_sp, sigma_eco, sigma
+  ## - Mortality logit:     mu_alpha, beta_dbh, beta_ba, beta_csi, sigma_sp, sigma_eco
+  ## - Crown recession:     mu_b0, b1..b2, sigma_sp, sigma_eco, sigma
   pattern_ok <- grepl(
-    "^(mu_|b[0-9]+$|K[0-9]+$|sigma$|sigma_[a-z]+$|alpha$|beta_[a-z0-9]+$|gamma_[a-z0-9]+$|delta_[a-z0-9]+$|tau$|tau_[a-z]+$|phi$|nu$|kappa$)",
+    paste0(
+      "^(",
+      "mu_[a-z_][a-z0-9_]*$|",        # mu_b0, mu_a, mu_alpha
+      "[ab][0-9]+$|",                   # a0..a8, b0..b10
+      "K[0-9]+[a-z]?$|",                # K1, K2, K1h, K4h
+      "sigma$|sigma_[a-zA-Z0-9_]+$|",  # sigma, sigma_sp, sigma_eco, sigma_L1
+      "alpha$|alpha_[a-z]+$|",
+      "beta_[a-zA-Z0-9_]+$|",          # beta_dbh, beta_ba, beta_csi
+      "gamma_[a-zA-Z0-9_]+$|",
+      "delta_[a-zA-Z0-9_]+$|",
+      "tau$|tau_[a-z]+$|",
+      "phi$|nu$|kappa$",
+      ")"
+    ),
     param_names
   )
 
-  is_fixed <- no_index & pattern_ok
+  ## Explicit blocklist of non-parameter scalars and raw/auxiliary terms
+  is_aux <- param_names %in% c("lp__", "lp_approx__") |
+            grepl("_raw$|^log_lik|^trait_effect", param_names)
+
+  is_fixed <- no_index & pattern_ok & !is_aux
   fixed_names <- param_names[is_fixed]
   log_info("Fixed-effect filter: kept {length(fixed_names)} of {length(param_names)} parameters")
 

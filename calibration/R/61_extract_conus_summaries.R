@@ -87,13 +87,25 @@ extract_fixed_effects <- function(fit, model_id, out_dir) {
   draws_df <- as_draws_df(fit)
   param_names <- variables(draws_df)
 
-  ## Conservative match: keep mu_*, b0..b20, K1, K2, sigma, sigma_sp, sigma_eco
-  ## Drop: per-species z_*, per-ecodiv z_*, modifier coefficients, log-likelihood
-  is_fixed <- grepl(
-    "^(mu_|b[0-9]+$|K[0-9]+$|sigma$|sigma_sp$|sigma_eco$)",
+  ## Rule 1: name must not contain a bracket — that excludes all indexed
+  ## random effects (z_sp[i], z_eco[i], b_sp[i,j], etc.) which would
+  ## otherwise blow up the draws CSV to multi-GB.
+  no_index <- !grepl("\\[", param_names)
+
+  ## Rule 2: name must match a top-level fixed-effect pattern.
+  ## - mu_*       (e.g. mu_b0)
+  ## - b<N>       (b1, b2, ..., b10)
+  ## - K<N>       (K1, K2)
+  ## - sigma, sigma_sp, sigma_eco, sigma_*
+  ## - alpha, beta, gamma, delta (single-letter Greek roots when scalar)
+  pattern_ok <- grepl(
+    "^(mu_|b[0-9]+$|K[0-9]+$|sigma$|sigma_[a-z]+$|alpha$|beta_[a-z0-9]+$|gamma_[a-z0-9]+$|delta_[a-z0-9]+$|tau$|tau_[a-z]+$|phi$|nu$|kappa$)",
     param_names
   )
+
+  is_fixed <- no_index & pattern_ok
   fixed_names <- param_names[is_fixed]
+  log_info("Fixed-effect filter: kept {length(fixed_names)} of {length(param_names)} parameters")
 
   if (length(fixed_names) == 0) {
     log_warn("No fixed effects matched for {model_id}; check parameter names")

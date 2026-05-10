@@ -1,0 +1,311 @@
+#!/usr/bin/env Rscript
+# =============================================================================
+# 61_extract_conus_summaries.R
+#
+# Extract posterior summaries from a CONUS Phase 4 component fit into the
+# CSVs used by 62_conus_to_variant_json.R for per-variant integration.
+#
+# Reads:
+#   calibration/output/conus/{component}/{model}_cspi_traits1_fit.rds
+#   calibration/output/conus/{component}/modifier/{model}_modifier_lambda{lam}_fit.rds
+#
+# Writes (under calibration/output/conus/):
+#   {model}_fixed_draws.csv         full posterior of fixed effects
+#   {model}_fixed_summary.csv       mean / sd / q025 / q500 / q975 per fixed param
+#   {model}_species_intercepts.csv  SPCD-keyed posterior mean random intercept
+#   {model}_ecodiv_intercepts.csv   ecodivision-keyed posterior mean random intercept
+#   {model}_modifier_summary.csv    per-lambda modifier coefficient summary
+#
+# Usage:
+#   Rscript 61_extract_conus_summaries.R --component dg --model dg_kuehne
+#   Rscript 61_extract_conus_summaries.R --component hg --model hg_organon_fixedK
+#   Rscript 61_extract_conus_summaries.R --component all   # iterate all 6
+#
+# Tested model patterns per component:
+#   dg              dg_kuehne, dg_organon
+#   hg              hg_organon_fixedK
+#   ht_dbh          htdbh_wykoff_lognormal
+#   hcb             hcb_organon
+#   mortality       mort_logit_simple, mort_gompit
+#   crown_recession cr_recession
+# =============================================================================
+
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(posterior)
+  library(jsonlite)
+  library(logger)
+})
+
+# ---------------------------------------------------------------------------
+# Configuration
+# ---------------------------------------------------------------------------
+
+project_root    <- Sys.getenv("FVS_PROJECT_ROOT", normalizePath(".."))
+calibration_dir <- file.path(project_root, "calibration")
+conus_dir       <- file.path(calibration_dir, "output", "conus")
+
+# Component -> default model mapping (override via --model)
+DEFAULT_MODELS <- list(
+  dg              = "dg_kuehne_cspi_traits1",
+  hg              = "hg_organon_fixedK_cspi_traits1",
+  ht_dbh          = "htdbh_wykoff_lognormal_cspi_traits1",
+  hcb             = "hcb_organon_cspi_traits1",
+  mortality       = "mort_logit_simple_cspi_traits1",
+  crown_recession = "cr_recession_cspi_traits1"
+)
+
+LAMBDAS_TO_SUMMARIZE <- c(5, 10, 20)
+
+# ---------------------------------------------------------------------------
+# Argument parsing
+# ---------------------------------------------------------------------------
+
+parse_args <- function(args) {
+  out <- list(component = NULL, model = NULL, all = FALSE)
+  i <- 1
+  while (i <= length(args)) {
+    if (args[i] == "--component" && i < length(args)) {
+      out$component <- args[i + 1]; i <- i + 2
+    } else if (args[i] == "--model" && i < length(args)) {
+      out$model <- args[i + 1]; i <- i + 2
+    } else if (args[i] == "--all") {
+      out$all <- TRUE; i <- i + 1
+    } else {
+      i <- i + 1
+    }
+  }
+  out
+}
+
+# ---------------------------------------------------------------------------
+# Core extractors
+# ---------------------------------------------------------------------------
+
+extract_fixed_effects <- function(fit, model_id, out_dir) {
+  ## Identify fixed effect parameters by name pattern. Adjust per model family.
+  draws_df <- as_draws_df(fit)
+  param_names <- variables(draws_df)
+
+  ## Conservative match: keep mu_*, b0..b20, K1, K2, sigma, sigma_sp, sigma_eco
+  ## Drop: per-species z_*, per-ecodiv z_*, modifier coefficients, log-likelihood
+  is_fixed <- grepl(
+    "^(mu_|b[0-9]+$|K[0-9]+$|sigma$|sigma_sp$|sigma_eco$)",
+    param_names
+  )
+  fixed_names <- param_names[is_fixed]
+
+  if (length(fixed_names) == 0) {
+    log_warn("No fixed effects matched for {model_id}; check parameter names")
+    return(invisible(NULL))
+  }
+
+  fixed_draws <- draws_df %>%
+    select(all_of(fixed_names), .chain, .iteration, .draw)
+
+  fixed_draws_path <- file.path(out_dir, paste0(model_id, "_fixed_draws.csv"))
+  write_csv(fixed_draws, fixed_draws_path)
+  log_info("Wrote {fixed_draws_path} ({nrow(fixed_draws)} draws x {ncol(fixed_draws)-3} params)")
+
+  fixed_summary <- summarise_draws(
+    select(fixed_draws, all_of(fixed_names)),
+    mean, sd, ~quantile(.x, c(0.025, 0.5, 0.975)),
+    rhat, ess_bulk, ess_tail
+  )
+  fixed_summary_path <- file.path(out_dir, paste0(model_id, "_fixed_summary.csv"))
+  write_csv(fixed_summary, fixed_summary_path)
+  log_info("Wrote {fixed_summary_path}")
+
+  invisible(fixed_summary)
+}
+
+extract_species_intercepts <- function(fit, model_id, out_dir, spcd_lookup) {
+  ## Look for parameters of form b0_sp[i] or z_sp[i] or alpha_sp[i]
+  draws_df <- as_draws_df(fit)
+  pn <- variables(draws_df)
+  is_sp <- grepl("^(b0_sp|z_sp|alpha_sp|sp_int)\\[[0-9]+\\]$", pn)
+
+  if (!any(is_sp)) {
+    log_warn("No species random intercepts found for {model_id}")
+    return(invisible(NULL))
+  }
+
+  sp_summary <- draws_df %>%
+    select(all_of(pn[is_sp])) %>%
+    summarise_draws(mean, sd, rhat) %>%
+    mutate(
+      idx = as.integer(gsub(".*\\[(\\d+)\\].*", "\\1", variable))
+    )
+
+  ## Map index to SPCD via spcd_lookup if provided
+  if (!is.null(spcd_lookup)) {
+    sp_summary <- sp_summary %>%
+      left_join(spcd_lookup, by = "idx")
+  }
+
+  sp_path <- file.path(out_dir, paste0(model_id, "_species_intercepts.csv"))
+  write_csv(sp_summary, sp_path)
+  log_info("Wrote {sp_path} ({nrow(sp_summary)} species)")
+
+  invisible(sp_summary)
+}
+
+extract_ecodiv_intercepts <- function(fit, model_id, out_dir, ecodiv_lookup) {
+  draws_df <- as_draws_df(fit)
+  pn <- variables(draws_df)
+  is_eco <- grepl("^(b0_eco|z_eco|alpha_eco|eco_int)\\[[0-9]+\\]$", pn)
+
+  if (!any(is_eco)) {
+    log_warn("No ecodivision random intercepts found for {model_id}")
+    return(invisible(NULL))
+  }
+
+  eco_summary <- draws_df %>%
+    select(all_of(pn[is_eco])) %>%
+    summarise_draws(mean, sd, rhat) %>%
+    mutate(
+      idx = as.integer(gsub(".*\\[(\\d+)\\].*", "\\1", variable))
+    )
+
+  if (!is.null(ecodiv_lookup)) {
+    eco_summary <- eco_summary %>%
+      left_join(ecodiv_lookup, by = "idx")
+  }
+
+  eco_path <- file.path(out_dir, paste0(model_id, "_ecodiv_intercepts.csv"))
+  write_csv(eco_summary, eco_path)
+  log_info("Wrote {eco_path} ({nrow(eco_summary)} ecodivisions)")
+
+  invisible(eco_summary)
+}
+
+extract_modifier_summary <- function(component_dir, base_model, model_id, out_dir) {
+  modifier_dir <- file.path(component_dir, "modifier")
+  if (!dir.exists(modifier_dir)) {
+    log_info("No modifier dir for {model_id}; skipping")
+    return(invisible(NULL))
+  }
+
+  modifier_summary <- map_dfr(LAMBDAS_TO_SUMMARIZE, function(lam) {
+    pattern <- sprintf("%s_modifier_lambda%d_(meta|fit)\\.rds$", base_model, lam)
+    candidates <- list.files(modifier_dir, pattern = pattern, full.names = TRUE)
+    fit_path <- candidates[grepl("_fit\\.rds$", candidates)][1]
+    if (is.na(fit_path) || !file.exists(fit_path)) {
+      log_warn("Modifier lambda={lam} fit missing for {model_id}")
+      return(tibble())
+    }
+    fit <- readRDS(fit_path)
+    draws <- as_draws_df(fit)
+    pn <- variables(draws)
+    coef_names <- pn[grepl("^(beta|gamma|mod)_", pn)]
+    if (length(coef_names) == 0) return(tibble(lambda = lam))
+    summary <- draws %>%
+      select(all_of(coef_names)) %>%
+      summarise_draws(mean, sd, rhat) %>%
+      mutate(lambda = lam)
+    summary
+  })
+
+  if (nrow(modifier_summary) > 0) {
+    out_path <- file.path(out_dir, paste0(model_id, "_modifier_summary.csv"))
+    write_csv(modifier_summary, out_path)
+    log_info("Wrote {out_path} ({nrow(modifier_summary)} rows across lambdas)")
+  }
+
+  invisible(modifier_summary)
+}
+
+# ---------------------------------------------------------------------------
+# Per-component driver
+# ---------------------------------------------------------------------------
+
+extract_component <- function(component, model = NULL,
+                              spcd_lookup = NULL, ecodiv_lookup = NULL) {
+  if (is.null(model)) model <- DEFAULT_MODELS[[component]]
+  if (is.null(model)) stop("Unknown component: ", component)
+
+  component_dir <- file.path(conus_dir, component)
+  fit_path <- file.path(component_dir, paste0(model, "_fit.rds"))
+
+  if (!file.exists(fit_path)) {
+    log_error("Missing fit file: {fit_path}")
+    return(invisible(FALSE))
+  }
+
+  log_info("=== Extracting {component} / {model} ===")
+  log_info("Loading {fit_path} ...")
+  fit <- readRDS(fit_path)
+
+  out_dir <- conus_dir  # write CSVs at top of conus/ for easy discovery
+
+  extract_fixed_effects(fit, model, out_dir)
+  extract_species_intercepts(fit, model, out_dir, spcd_lookup)
+  extract_ecodiv_intercepts(fit, model, out_dir, ecodiv_lookup)
+  extract_modifier_summary(component_dir,
+                           sub("_cspi_traits1$", "", model),
+                           model, out_dir)
+
+  rm(fit); gc()
+
+  log_info("=== Done {component} / {model} ===\n")
+  invisible(TRUE)
+}
+
+# ---------------------------------------------------------------------------
+# Lookup tables
+#
+# These map the integer index used by the Stan posterior into the actual
+# species code (SPCD) or ecodivision code (e.g., "M211") via the modeling
+# data list. Adjust this loader if your fitting pipeline uses a different
+# naming convention.
+# ---------------------------------------------------------------------------
+
+load_spcd_lookup <- function() {
+  path <- file.path(calibration_dir, "data", "conus_species_index.csv")
+  if (file.exists(path)) {
+    read_csv(path, col_types = cols())
+  } else {
+    log_warn("SPCD lookup {path} not found; species output will use raw index")
+    NULL
+  }
+}
+
+load_ecodiv_lookup <- function() {
+  path <- file.path(calibration_dir, "data", "conus_ecodiv_index.csv")
+  if (file.exists(path)) {
+    read_csv(path, col_types = cols())
+  } else {
+    log_warn("Ecodiv lookup {path} not found; ecodiv output will use raw index")
+    NULL
+  }
+}
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
+main <- function() {
+  args <- parse_args(commandArgs(trailingOnly = TRUE))
+
+  spcd_lookup <- load_spcd_lookup()
+  ecodiv_lookup <- load_ecodiv_lookup()
+
+  if (isTRUE(args$all)) {
+    components <- names(DEFAULT_MODELS)
+  } else if (!is.null(args$component)) {
+    components <- args$component
+  } else {
+    stop("Specify --component <name> or --all")
+  }
+
+  results <- map_lgl(components, function(c) {
+    extract_component(c, model = args$model,
+                      spcd_lookup = spcd_lookup,
+                      ecodiv_lookup = ecodiv_lookup)
+  })
+
+  ok <- sum(results)
+  log_info("Extraction complete: {ok}/{length(components)} components ok")
+}
+
+if (!interactive()) main()

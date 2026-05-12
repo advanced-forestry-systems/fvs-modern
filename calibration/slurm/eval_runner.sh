@@ -97,6 +97,45 @@ EOF
   done
 }
 
+submit_cluster_response_extrap() {
+  for spec in "hg b1" "hg b2" "dg_kue b1" "dg_kue b2"; do
+    set -- $spec
+    MODEL=$1; VARIANT=$2
+    cat > /tmp/eval_resp_extrap_${MODEL}_${VARIANT}.sh << EOF
+#!/bin/bash
+#SBATCH --job-name=eval_re_${MODEL}_${VARIANT}
+#SBATCH --time=02:00:00
+#SBATCH --mem=64G
+#SBATCH --cpus-per-task=4
+#SBATCH --account=PUOM0008
+#SBATCH --output=${PROJ_ROOT}/logs/eval_re_${MODEL}_${VARIANT}_%j.out
+#SBATCH --error=${PROJ_ROOT}/logs/eval_re_${MODEL}_${VARIANT}_%j.err
+
+module load gcc/12.3.0 R/4.4.0
+cd ${PROJ_ROOT}
+Rscript --vanilla calibration/R/eval/60_response_curves.R \\
+  --model=${MODEL} --variant=${VARIANT}
+Rscript --vanilla calibration/R/eval/70_extrapolation_diagnostics.R \\
+  --model=${MODEL} --variant=${VARIANT}
+EOF
+    echo ">> sbatch eval_response+extrap_${MODEL}_${VARIANT}"
+    sbatch /tmp/eval_resp_extrap_${MODEL}_${VARIANT}.sh
+  done
+}
+
+submit_holdout_species() {
+  # Step 1: select species and write submit script
+  module load gcc/12.3.0 R/4.4.0
+  echo ">> Selecting holdout species (10 by default)"
+  Rscript --vanilla calibration/R/eval/80_holdout_species_fit.R --n_holdout=10 \
+    --submit_only
+  echo ""
+  echo "Review the holdout_species.csv before launching. To submit:"
+  echo "  sbatch <outdir>/submit_holdout_fit.sh"
+  echo "After fit lands, score predictions with:"
+  echo "  Rscript calibration/R/eval/80b_holdout_species_predict.R --outdir=<outdir>"
+}
+
 case "${1:-all}" in
   local)
     run_local_scripts
@@ -105,15 +144,21 @@ case "${1:-all}" in
     submit_cluster_residuals
     submit_cluster_loo
     submit_cluster_ppc
+    submit_cluster_response_extrap
+    ;;
+  holdout)
+    submit_holdout_species
     ;;
   all)
     run_local_scripts
     submit_cluster_residuals
     submit_cluster_loo
     submit_cluster_ppc
+    submit_cluster_response_extrap
+    submit_holdout_species
     ;;
   *)
-    echo "Usage: $0 {local|cluster|all}"
+    echo "Usage: $0 {local|cluster|holdout|all}"
     exit 1
     ;;
 esac

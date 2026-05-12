@@ -49,6 +49,7 @@ OUT_DIR   <- get_arg("outdir",    "calibration/output/conus/dg/speciesfree_pilot
 OUT_NAME  <- get_arg("outname",   "dg_kuehne_cspi_traits1_b1")
 SUBSAMPLE <- as.integer(get_arg("subsample", NA_character_))
 SMOKE     <- has_flag("smoke")
+HOLDOUT_FILE <- get_arg("holdout_spcd_file", NA_character_)
 
 cat("== 32_fit_dg_kuehne_speciesfree.R ==\n")
 cat("Stan file: ", STAN_FILE, "\n")
@@ -112,6 +113,15 @@ dat <- dat[
   dg_obs_a > -0.5 & dg_obs_a < 5.0  ## annual growth in cm/yr, reasonable range
 ]
 cat("  after column filters:", nrow(dat), "rows\n")
+
+## Optional held-out species filter (for the generalization validation fit)
+if (!is.na(HOLDOUT_FILE) && file.exists(HOLDOUT_FILE)) {
+  holdout_spcd <- as.integer(readLines(HOLDOUT_FILE))
+  before_n <- nrow(dat)
+  dat <- dat[!SPCD %in% holdout_spcd]
+  cat("  held-out species removed:", length(holdout_spcd),
+      "(dropped", before_n - nrow(dat), "rows)\n")
+}
 
 ## Species filter: minimum observation threshold
 sp_counts <- dat[, .N, by = SPCD][N >= MIN_OBS_SPECIES]

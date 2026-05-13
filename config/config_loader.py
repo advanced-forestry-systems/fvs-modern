@@ -397,7 +397,7 @@ class FvsConfigLoader:
             if abs(mult - 1.0) > 0.01:
                 # BAIMULT via READCORD or GROWTH multiplier approach
                 # Using species level growth multiplier
-                lines.append(f"GROWMULT        {i + 1:10d}{mult:10.4f}")
+                lines.append(f"BAIMULT         {i + 1:10d}{mult:10.4f}")
         return "\n".join(lines)
 
     def _format_htgmult_keywords(self, multipliers: np.ndarray, comments: bool) -> str:

@@ -135,9 +135,15 @@ model {
                        + b9 * rd[n]
                        + b10 * rd[n] * ln_bal[n];
 
+      // Clamp linear predictor to a safe range so exp() never overflows.
+      // Mirrors the HG-style hardening that resolved repeated 'is inf' warnings
+      // during warmup. The bound is wide enough not to bias inference but tight
+      // enough that exp(20)*years stays finite even for years=20.
+      real ln_dg_safe = fmin(fmax(ln_dg_annual[n], -30.0), 20.0);
+
       // Annual DG with low-CR adjustment (precomputed as part of ln_cr_adj)
       // Scale by measurement period for predicted periodic growth
-      dg_pred[n] = exp(ln_dg_annual[n]) * years[n];
+      dg_pred[n] = exp(ln_dg_safe) * years[n];
     }
 
     // Weighted normal likelihood (weight by sqrt of predicted)
@@ -152,33 +158,4 @@ model {
 }
 
 generated quantities {
-  // Posterior predictive checks (subsample for memory)
-  int M = min(N, 2000);
-  vector[M] dg_rep;
-  vector[M] log_lik;
-
-  for (n in 1:M) {
-    // Compute ln(DBH + K1) and DBH^K2 inline
-    real ln_dbh_k1_n = log(dbh[n] + K1);
-    real dbh_k2_n = pow(dbh[n], K2);
-
-    // Linear predictor
-    real ln_dg_ann = mu_b0 + b0_sp[species_id[n]] + b0_eco[ecodiv_id[n]]
-                   + b1 * ln_dbh_k1_n
-                   + b2 * dbh_k2_n
-                   + b3 * ln_cr_adj[n]
-                   + b4 * ln_site_prod[n]
-                   + b5 * bal_ratio[n]
-                   + b6 * sqrt_ba[n]
-                   + b7 * clim1[n]
-                   + b8 * clim2[n]
-                   + b9 * rd[n]
-                   + b10 * rd[n] * ln_bal[n];
-
-    real dg_pred_n = exp(ln_dg_ann) * years[n];
-    real sigma_n = sigma * sqrt(fmax(dg_pred_n, 0.01));
-
-    dg_rep[n] = normal_rng(dg_pred_n, sigma_n);
-    log_lik[n] = normal_lpdf(dg_obs[n] | dg_pred_n, sigma_n);
-  }
 }

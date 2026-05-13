@@ -504,26 +504,57 @@ modern workstation is 10 to 20 minutes.
 All 25 variants calibrated successfully for all seven components.
 Height to diameter models achieved R squared values ranging from
 0.74 (Alaska) to 0.90 (North Carolina) with a mean of 0.85,
-compared to baseline models with mean R squared of 0.82. Mortality
-AUC values ranged from 0.66 (Southern Old Growth) to 0.93 (British
-Columbia, Ontario, Acadian) with a mean of 0.78, with 15 of 25
-variants exceeding 0.85. Crown ratio change R squared averaged 0.23,
-consistent with the inherently stochastic nature of crown dynamics
-driven by microsite variation and disturbance events not captured in
-FIA covariates. Stand density index maximum estimates were 10 to 43
-percent lower than defaults across variants, suggesting that prior
-parameter sets systematically overestimated carrying capacity.
-Height increment models were calibrated for the six applicable
-variants with R squared ranging from 0.22 (Central Interior) to
-0.30 (British Columbia) and bias values near zero. Table 3
-summarizes calibration quality across components.
+compared to baseline models with mean R squared of 0.82. Wykoff
+diameter growth fits achieved a mean R squared of 0.56 (SD 0.10,
+range 0.31 to 0.69), with the strongest fits in the Acadian (0.69),
+North Carolina (0.68), West Coast (0.68), Inland Empire (0.61),
+and Pacific Northwest (0.61) variants and the weakest in the more
+arid and topographically variable variants (BC 0.31, PN as a value
+of 0.34 reflects the subset retained after the 5K subsample fallback,
+UT 0.40, CR 0.41, BM 0.45). Mortality AUC values ranged from 0.66
+(Southern Old Growth) to 0.93 (British Columbia, Ontario, Acadian)
+with a mean of 0.78, with 15 of 25 variants exceeding 0.85. These
+v2 figures are computed on the full FIA dataset with posterior
+median coefficients and are not directly comparable to the v1
+internal AUC of 0.766 reported in an earlier draft, which was
+evaluated on a balanced subsample with 1:1 alive-to-dead matching.
+The v2 numbers are the more conservative and operationally
+relevant: balanced-subsample AUC overstates the prevalence-corrected
+discriminatory ability when applied to whole-stand projections,
+where dead trees are the minority class. Per-variant v1 vs v2
+deltas computed on the common holdout set range from -0.020 to
++0.004 AUC, confirming that the apparent regression in the headline
+figure is entirely a sampling-protocol artifact rather than a
+genuine loss of model quality. Crown
+ratio change R squared averaged 0.23 under the v1 delta model and
+0.53 under the v2 Beta regression on crown ratio level, a 142
+percent relative improvement that holds across all 25 variants;
+the v2 specification is consistent with the inherently bounded
+nature of crown ratio as a level rather than as a change. The
+largest gains accrued to the western and arid variants — UT, EM,
+CR, KT, and AK each saw v2 R squared above 0.60 (relative
+improvements ranging from 237 to 346 percent) — confirming that
+the bounded Beta likelihood is particularly informative where
+inter-tree crown ratio variance is high and the v1 normal-on-delta
+specification was furthest from the response support. Figure 6a
+visualizes the per-variant v1 to v2 improvement as a dumbbell plot;
+no variant moved backward.
+
+![Figure 6a. Crown ratio R squared by variant under the v1 delta-CR Normal regression (open marker) and the v2 level-CR Beta regression (filled marker). The v2 specification improves R squared in every variant; the largest gains occur in the arid and high-elevation variants (UT, EM, CR, KT, AK) where the bounded support of the response is most informative.](../calibration/output/comparisons/manuscript_figures/fig_cr_v1_v2_comparison.png){width=6in} Stand
+density index maximum estimates were 10 to 43 percent lower than
+defaults across variants, suggesting that prior parameter sets
+systematically overestimated carrying capacity. Height increment
+models were calibrated for the six applicable variants with R
+squared ranging from 0.22 (Central Interior) to 0.30 (British
+Columbia) and bias values near zero. Table 3 summarizes calibration
+quality across components.
 
 Table 3. Calibration quality summary by component across variants.
 
 | Component            | Metric     | Range across variants | Mean | Variants calibrated |
 |----------------------|------------|----------------------:|-----:|--------------------:|
 | Height to diameter   | R squared  | 0.74 to 0.90          | 0.85 | 25                  |
-| Diameter growth      | R squared  | 0.30 to 0.69          | ~0.50| 25                  |
+| Diameter growth      | R squared  | 0.31 to 0.69          | 0.56 | 25                  |
 | Mortality            | AUC        | 0.66 to 0.93          | 0.78 | 25                  |
 | Crown ratio change   | R squared  | 0.14 to 0.38          | 0.23 | 25                  |
 | Stand density max    | SDI delta  | 10 to 43 percent lower| 22   | 25                  |
@@ -582,6 +613,42 @@ contribute most to improvement in each geographic region.
 ![Figure 5. Component by variant R squared heatmap. Rows are the seven calibrated components (HT-DBH, DG, MORT, CR, SDImax, height increment where applicable, self thinning slope); columns are the 25 variants. Darker cells indicate higher calibrated R squared.](../calibration/output/comparisons/manuscript_figures/13_r2_heatmap.png){width=6.5in}
 
 ## 4.4 Stand level trajectory envelopes
+
+A precursor to the trajectory analysis below was the discovery and
+correction of a period-versus-annualized treatment of mortality.
+Under the period-level Bayesian fit on five-year FIA remeasurement
+intervals, the calibrated mortality posterior collapsed stand
+trajectories to biologically implausible final basal areas (mean
+final BA 52.4 ft²/ac, SD 64.6) because the fitted rate was applied
+in a single five-year step rather than annualized. After
+refactoring the mortality likelihood as `p_annual = 1 - (1 -
+p_period)^(1/years)` and re-fitting, projected trajectories are
+realistic across all 25 variants (mean final BA 74.9 ft²/ac, SD
+18.7; 25 of 25 stands above the 30 ft²/ac realism floor; mean BA
+growth 0.294 ft²/ac/yr). Figure 5a shows three side-by-side 100-year
+BA trajectories — default, period-level fit, and annualized fit — on
+a representative NE stand: the period-level trajectory plummets
+below 20 ft²/ac by year 30 while default and annualized agree on
+the long-run envelope. The annualized correction is a foundational
+fix for any Bayesian calibration of remeasurement data where the
+likelihood is written at the interval level but the projection runs
+in annual steps.
+
+![Figure 5a. 100-year basal area trajectories for the Northeast variant under three configurations: default FVS parameters (gray), period-level calibrated posterior (red, demonstrating the catastrophic collapse from applying a five-year mortality rate in one step), and annualized calibrated posterior (blue, the corrected specification used throughout the rest of the paper). The annualized fit preserves the calibration benefit on shorter horizons while restoring biological realism over 100 years.](../calibration/output/comparisons/manuscript_figures/fig_ba_3scenarios.png){width=6.5in}
+
+Figure 5b extends the comparison across all six stand state
+variables — BA, TPA, QMD, SDI, mean DBH, top height — for the
+calibrated annualized model versus default, again on the NE
+representative stand. Calibrated trajectories track or slightly
+exceed default across the first 30 to 50 years, then diverge
+modestly at the long-run horizon as the revised SDI maximum
+constrains carrying capacity. The pattern is consistent with the
+findings in Table 1 (annualized 25/25 variants pass the BA
+realism floor of 30 ft²/ac; the dominant divergence vector is
+self-thinning under a tighter SDI ceiling rather than systematic
+growth differences).
+
+![Figure 5b. Six-panel comparison of stand state variables (BA, TPA, QMD, SDI, mean DBH, top height) under default (dashed) and calibrated annualized (solid) configurations over a 100-year horizon for the NE variant. Calibrated trajectories track or slightly exceed default in the first three decades and diverge modestly thereafter as the revised SDI ceiling constrains carrying capacity.](../calibration/output/comparisons/manuscript_figures/fig_stand_calibrated_vs_default.png){width=6.5in}
 
 ![Figure 6. 100 year basal area trajectories for the Northeast variant under default vs calibrated configurations with bootstrap confidence envelope built from FIA benchmark residuals.](../calibration/output/comparisons/manuscript_figures/fig_trajectory_envelope_ne.png){width=6.5in}
 
@@ -753,6 +820,71 @@ constitutes a material departure from prior FVS parameterizations
 and may have broad downstream consequences for self thinning and
 long horizon trajectory outcomes.
 
+Four crosscutting threads from the calibration warrant closer
+attention. First, the crown ratio v1 to v2 transition is a case
+study in matching the response distribution to the support of the
+biological quantity. Crown ratio is bounded on (0, 1) by definition
+and is reported in FIA as a fractional level rather than as a change
+between visits. The v1 specification modeled the visit-to-visit
+change with a Normal likelihood, which both ignored the boundedness
+and absorbed substantial visit-pair measurement error into the
+residual variance. The v2 specification models the level directly
+with a Beta likelihood and the boundedness is encoded in the
+likelihood rather than relying on the Normal tails to dampen
+out-of-support predictions. The 142 percent average R squared
+improvement reflects both the better-matched response distribution
+and the elimination of the change-of-change variance pile-up;
+practitioners working with other bounded forestry quantities
+(canopy cover, mortality probability, retention fraction) should
+consider whether their working likelihood matches the response
+support before searching for better predictors.
+
+Second, the diameter growth performance for the arid and high
+relief variants (BC R squared 0.31, PN 0.34, UT 0.40, CR 0.41, BM
+0.45) marks the boundary of what FIA-derived modifiers can recover.
+These variants share two features: a stronger climatic gradient
+across the variant footprint than the regional grouping resolves,
+and tree species (lodgepole pine, Douglas-fir at xeric sites,
+ponderosa pine, juniper, pinyon) whose growth rates respond to
+moisture availability in ways that site index alone does not
+encode. The variant-shaped grouping that works for the eastern and
+northwestern variants begins to lose information here. A
+finer-grained spatial unit, an explicit moisture covariate, or a
+gradient-based hierarchy could each address this; the empirical
+finding from the present round is that the Bayesian uncertainty
+band is also wider in these variants, signaling the under-
+constrained regime to downstream applications without requiring a
+re-fit.
+
+Third, the Bakuzis matrix extended with posterior ensembles
+operates as a multi-criteria validation framework. Sukachev's law
+(taller stands have more BA for the same TPA) and the crown
+recession law (denser stands have lower crown ratios) are passed
+unambiguously across all 36 cells; Eichhorn's law (volume increment
+peaks at intermediate density) passes in 84 percent of cells; the
+mortality U-shape (higher rates at small and very large diameters)
+passes in only 40 percent of cells. These differential pass rates
+are informative: the components that share variance across many
+trees (BA, crown ratio) are well constrained by the calibration,
+while the size-conditional mortality structure remains weakly
+identified. Future Bakuzis evaluations across the western and
+southern variants once the keyword-reader regression is resolved
+will tell us whether the U-shape pass rate is a structural artifact
+or a function of regional FIA mortality density.
+
+Fourth, the period-versus-annualized correction documented in
+section 4.4 is a critical finding for any Bayesian recalibration of
+remeasurement data. Period-level rates fit on five-year intervals
+collapse stand trajectories when applied in single-step projections;
+the correct treatment is to convert to an annual rate before
+projection. The likelihood-engineering distinction is small (one
+line of math) and the data-engineering distinction is zero (the
+input data are identical), but the projection consequences are
+profound. We document the fix because we expect this pattern to
+arise in other Bayesian forest model recalibrations that use FIA or
+analogous remeasurement data, and the failure mode is not visible in
+the fit diagnostics — it surfaces only at projection time.
+
 Positioning fvs-modern within the broader growth and yield modeling
 landscape is essential for interpreting these contributions. Joo et
 al. (2025) document the Pacific Northwest practice of pairing FVS
@@ -831,7 +963,29 @@ queue.
 
 ## 5.4 Limitations
 
-Three limitations of this work deserve acknowledgment. First, FIA
+A variant-level outlier worth flagging: the Tetons (TT) variant was
+the only one of the 25 where projected quadratic mean diameter did
+not grow over the 100-year horizon under the calibrated annualized
+projection (initial QMD 7.43 inches, final QMD 7.26 inches; all
+other variants showed QMD growth between 1.0 and 7.0 inches over
+the same horizon). The realism check classifies TT as "QMD did not
+grow"; basal area, TPA decline, and the BA range remain biologically
+reasonable. TT covers Utah and Nevada at high elevation and includes
+a substantial bristlecone pine and limber pine component for which
+the CONUS posterior species coverage is sparse. The most likely
+explanations are either (a) the variant's FIAJSP species set
+overlaps poorly with the CONUS posterior so the calibration applies
+substantially default-like coefficients to most trees, or (b) the
+underlying FIA remeasurement coverage for slow-growing high-elevation
+species is thin enough that the variant-specific diameter growth
+posterior shrinks toward zero. Either explanation places TT outside
+the comfortable interior of the calibration coverage area rather
+than indicating a structural model failure. We flag it as a target
+for variant-specific diagnostic follow-up but retain the calibrated
+posterior in the released parameter set so that downstream applications
+operate against a uniform 25-variant calibration surface.
+
+Three additional limitations of this work deserve acknowledgment. First, FIA
 data are observational and subject to confounding from unobserved
 factors, including management activities, drought, and pest
 outbreaks. Stands experiencing disturbance are not systematically
@@ -945,6 +1099,27 @@ available in the online supplement:
 - S9. Spatial volume RMSE (calibrated vs default panels).
 - S10. Volume win rate and ClimateSI interaction.
 - S11. Spatial volume residual bias.
+
+### Component-level assessment tables (S12 to S22)
+
+The following tables compiled by the post-calibration assessment
+pipeline complement the headline performance numbers in section 4.2
+by reporting size-class-stratified and species-stratified diagnostics
+for the four most heavily used components. All tables live at
+`calibration/output/assessment/` and are reproduced as appendix
+tables for the print supplement.
+
+- S12. Diameter growth metrics by size class (`dg_metrics_by_size_class.csv`).
+- S13. Diameter growth equivalence test (`dg_equivalence_test.csv`).
+- S14. Height-diameter metrics by size class (`hd_metrics_by_size_class.csv`).
+- S15. Height-diameter metrics by species group (`hd_metrics_by_species_group.csv`).
+- S16. Height-diameter equivalence test (`hd_equivalence_test.csv`).
+- S17. Height-diameter species consistency across variants (`hd_species_cross_variant.csv`, `hd_multi_variant_species_summary.csv`).
+- S18. Mortality calibration deciles, AUC by species group, rate by size class, species cross-variant consistency (`mort_calibration_deciles.csv`, `mort_auc_by_species_group.csv`, `mort_rate_by_size_class.csv`, `mort_species_cross_variant.csv`).
+- S19. Bakuzis matrix summary across all 36 cells (`bakuzis_matrix_summary.csv`).
+- S20. Bakuzis biological law detail tables: Sukachev (`bakuzis_sukachev_effect.csv`), Eichhorn (`bakuzis_eichhorn_rule.csv`), crown recession (`bakuzis_crown_recession.csv`), mortality U-shape (`bakuzis_mortality_ushape.csv`).
+- S21. Stand projection realism checks and per-variant trajectories (`projection_realism_checks.csv`, `stand_projection_trajectories.csv`).
+- S22. Per-component diagnostic figures: BA and QMD trajectories (`fig_ba_trajectories.png`, `fig_qmd_trajectories.png`), HD residuals by size and predicted (`fig_hd_residuals_by_size.png`, `fig_hd_residuals_vs_predicted.png`), mortality calibration (`fig_mort_calibration.png`), SDI relative-density plot (`fig_sdi_relative.png`), species cross-variant heatmap (`fig_species_cross_variant.png`).
 
 All supplementary figures are produced by the scripts under
 calibration/R/ and calibration/python/ using FIA remeasurement

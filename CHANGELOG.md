@@ -6,6 +6,58 @@ project adheres to calendar-based versioning (YYYY.MM).
 
 ## [Unreleased]
 
+### Added
+- `calibration/R/63_build_variant_ecodiv_coverage.R`: one-time generator
+  for `calibration/data/variant_ecodiv_coverage.csv`. Reads the area
+  weighted variant x ecodivision overlay
+  (`fvs_variant_ecodivision_map.csv`), filters water bodies, normalizes
+  weights to sum to 1.0 per variant, and adds state-based proxies for
+  the six variants without polygon geometry (ACD->NE, BC->PN, KT->EM,
+  OC->CA, ON->LS, OP->PN). Verified equivalent to a pandas reference
+  implementation; 96 rows covering all 25 variants.
+- `calibration/data/variant_ecodiv_coverage.csv`: the produced table.
+  Consumed by `62_conus_to_variant_json.R` to write coverage-weighted
+  ecodivision random effect blocks. Removes the warned-against
+  "all ecodivisions equally weighted" fallback path.
+- `categories_conus` block in all 25 `config/calibrated/{variant}.json`
+  files. Each block carries: fixed-effects summary (mean, sd, q025,
+  median, q975, rhat) per model parameter; species random intercepts
+  filtered to the variant's `FIAJSP` set with `species_missing` recording
+  SPCDs not present in the CONUS posterior; ecodivision intercept block
+  (empty for cspi_traits1 fits by model design); modifier block at the
+  selected lambda; relative `draws_csv` path to the full posterior CSV.
+  Pipeline version `fvs-conus phase 4`, integration date 2026-05-11,
+  selected lambda 10.
+
+### Changed
+- `calibration/R/61_extract_conus_summaries.R`: broadened the
+  fixed-effect name pattern to cover the unified `cspi_traits1`
+  parameterization. Adds `h0..h5` (HCB), `m0..m6` (mortality),
+  `r0..r6` (crown recession), `a_<name>$` for HT-DBH coefficients
+  (`a_bal`, `a_ba`, `a_cspi`, `a_bard`, `a_blrd`), bare `gamma`, and
+  `trait_effect` to the allow list. Removed `trait_effect` from the
+  auxiliary block list (it is a real fixed effect in cspi_traits1
+  models). Extended `load_meta_lookups()` to read `meta$prep_meta$sp`
+  in addition to the older `meta$prep$sp_levels` and top-level
+  `meta$species` conventions, so species intercept CSVs now write a
+  real `SPCD` column rather than just `idx`.
+- `calibration/R/62_conus_to_variant_json.R`: missing
+  `_ecodiv_intercepts.csv` is now treated as "model has no ecodivision
+  RE" rather than fatal. Matches the cspi_traits1 model design where
+  hierarchical structure uses `L1`/`L2`/`L3` plot grouping instead of
+  Bailey ecodivision.
+
+### Build system
+- `deployment/scripts/build_fvs_libraries.sh` and
+  `deployment/scripts/build_fvs_executables.sh`: formally retired
+  ifort support. Both scripts now force `FC=gfortran` and emit a
+  warning if an environment exports anything else. The rationale,
+  documented in the script header, is the `!DEC$ ATTRIBUTES ALIAS`
+  decorator in `src-converted/base/fvs.f90` and similar locations:
+  ifort honors the uppercase ALIAS name as the exported symbol, which
+  does not match the lowercase + underscore mangling that downstream
+  Fortran callers and Python ctypes wrappers expect.
+
 ## [2026.05.2] — 2026-04-26
 
 ### Fixed

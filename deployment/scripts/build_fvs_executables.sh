@@ -31,8 +31,13 @@ if [ ${#VARIANTS[@]} -eq 0 ]; then
     VARIANTS=(ne acd)
 fi
 
-# Compiler settings (match build_fvs_libraries.sh)
-FC="${FC:-gfortran}"
+# Compiler settings (match build_fvs_libraries.sh).
+# gfortran is the only supported Fortran compiler. See the header comment in
+# build_fvs_libraries.sh for the !DEC$ ATTRIBUTES ALIAS rationale.
+if [ "${FC:-gfortran}" != "gfortran" ]; then
+    echo "WARNING: FC=$FC is not supported. Reverting to gfortran." >&2
+fi
+FC="gfortran"
 CC="${CC:-gcc}"
 CXX="${CXX:-g++}"
 # Note: no -fPIC needed for executables, but it doesn't hurt

@@ -55,6 +55,12 @@ fvs-modern/
 
 For a detailed walkthrough from clone to first projection, see **[docs/getting_started.md](docs/getting_started.md)**.
 
+### Compiler requirement
+
+gfortran is the supported Fortran compiler. Intel ifort is not supported because the `!DEC$ ATTRIBUTES ALIAS` decorators in `src-converted/base/fvs.f90` (and similar locations) emit uppercase symbol exports under ifort that do not match the lowercase + underscore name mangling expected by downstream Fortran callers and Python ctypes wrappers. The build scripts force `FC=gfortran` and will warn if an environment exports anything else.
+
+Install via your platform package manager: `dnf install gcc-gfortran` (Fedora/RHEL), `apt install gfortran` (Debian/Ubuntu), `brew install gcc` (macOS). On HPC systems with environment modules, `module load gcc/12.3.0` works on OSC Cardinal; analogous modules exist on most clusters.
+
 ### Option A: Docker (recommended for servers)
 
 ```bash

@@ -5,6 +5,20 @@
 # Build FVS Fortran shared libraries (.so) for use with rFVS/fvsOL on Linux.
 # Targets the ORIGINAL fixed-form source (ForestVegetationSimulator-main).
 #
+# Compiler support
+# ----------------
+# gfortran is the supported and tested Fortran compiler. Intel ifort produces
+# uppercase symbol exports for routines decorated with !DEC$ ATTRIBUTES ALIAS
+# (e.g., src-converted/base/fvs.f90 line 50: ALIAS : "FVS" :: FVS), which do
+# not match the lowercase + underscore name mangling expected by downstream
+# Fortran callers and ctypes consumers. Until those directives are audited
+# and made portable, only gfortran is documented as working.
+#
+# A typical Cardinal session loads gcc/12.3.0 before this script (R/4.4.0
+# inherits the same toolchain). On Fedora/RHEL workstations install via
+# `dnf install gcc-gfortran`; on macOS `brew install gcc`; on Ubuntu/Debian
+# `apt install gfortran`.
+#
 # Usage:
 #   ./build_fvs_libraries.sh [--verbose] SOURCE_DIR OUTPUT_DIR [VARIANTS...]
 #
@@ -39,8 +53,16 @@ if [ ${#VARIANTS[@]} -eq 0 ]; then
     VARIANTS=(ak acd bm ca ci cr cs ec em ie kt ls nc ne oc op pn sn so tt ut wc ws bc on)
 fi
 
-# Compiler settings
-FC="${FC:-gfortran}"
+# Compiler settings. gfortran is the supported compiler; ifort emits
+# uppercase symbols for !DEC$ ATTRIBUTES ALIAS decorations that downstream
+# ctypes and Fortran callers cannot resolve. The check below warns when an
+# environment forces ifort and reverts to gfortran so the build still works.
+if [ "${FC:-gfortran}" != "gfortran" ]; then
+    echo "WARNING: FC=$FC is not supported. Reverting to gfortran." >&2
+    echo "         Reason: ifort and other compilers do not honor the" >&2
+    echo "         lowercase ALIAS names that downstream callers expect." >&2
+fi
+FC="gfortran"
 CC="${CC:-gcc}"
 CXX="${CXX:-g++}"
 FFLAGS="-fPIC -g -cpp -DCMPgcc -std=legacy -w -fallow-argument-mismatch"

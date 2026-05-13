@@ -97,34 +97,44 @@ extract_fixed_effects <- function(fit, model_id, out_dir) {
   ## still excludes a few well-known non-parameter scalars (lp__, log_lik,
   ## any "raw" parameterizations from non-centered draws).
   ##
-  ## Names that should match (across the 6 components):
-  ## - DG Kuehne / Organon: mu_b0, b1..b10, K1, K2, sigma_sp, sigma_eco, sigma
+  ## Names that should match (across the 6 components, verified from real fits
+  ## via SLURM inspection job 9347190 on 2026-05-11):
+  ## - DG Kuehne / Organon: b1..b10, K1, K2, mu_b0 etc., sigma*, gamma
   ## - HG Organon fixedK:   a0..a8, mu_a, sigma_sp, sigma_L1..L3, sigma
-  ## - HT-DBH Wykoff lognormal: mu_b1, b2, b3, sigma_sp, sigma_eco, sigma
-  ## - HCB Organon:         mu_b0, b1..b4, sigma_sp, sigma_eco, sigma
-  ## - Mortality logit:     mu_alpha, beta_dbh, beta_ba, beta_csi, sigma_sp, sigma_eco
-  ## - Crown recession:     mu_b0, b1..b2, sigma_sp, sigma_eco, sigma
+  ## - HT-DBH Wykoff:       b0, b1, a_bal, a_ba, a_cspi, a_bard, a_blrd, gamma,
+  ##                        trait_effect, sigma_sp, sigma_L1, sigma
+  ## - HCB Organon:         h0..h5, gamma, sigma_sp, sigma_L1..L3, phi
+  ## - Mortality:           m0..m6, gamma, sigma_sp, sigma_L1
+  ## - Crown recession:     r0..r6, gamma, sigma_sp, sigma_L1..L3, phi
+  ##
+  ## The per-component prefixes h/m/r reflect the unified parameterization
+  ## introduced in the cspi_traits1 fitting round.
   pattern_ok <- grepl(
     paste0(
       "^(",
-      "mu_[a-z_][a-z0-9_]*$|",        # mu_b0, mu_a, mu_alpha
-      "[ab][0-9]+$|",                   # a0..a8, b0..b10
+      "mu_[a-z_][a-z0-9_]*$|",          # mu_b0, mu_a, mu_alpha, mu_sp
+      "[abhmr][0-9]+$|",                # a0..a8, b0..b10, h0..h5, m0..m6, r0..r6
       "K[0-9]+[a-z]?$|",                # K1, K2, K1h, K4h
-      "sigma$|sigma_[a-zA-Z0-9_]+$|",  # sigma, sigma_sp, sigma_eco, sigma_L1
+      "sigma$|sigma_[a-zA-Z0-9_]+$|",   # sigma, sigma_sp, sigma_eco, sigma_L1
       "alpha$|alpha_[a-z]+$|",
-      "beta_[a-zA-Z0-9_]+$|",          # beta_dbh, beta_ba, beta_csi
-      "gamma_[a-zA-Z0-9_]+$|",
+      "beta_[a-zA-Z0-9_]+$|",           # beta_dbh, beta_ba, beta_csi
+      "gamma$|gamma_[a-zA-Z0-9_]+$|",   # bare gamma (cspi_traits1 fits) or suffixed
       "delta_[a-zA-Z0-9_]+$|",
       "tau$|tau_[a-z]+$|",
-      "phi$|nu$|kappa$",
+      "phi$|nu$|kappa$|",
+      "a_[a-z][a-z0-9_]*$|",            # a_bal, a_ba, a_cspi, a_bard, a_blrd (HT-DBH)
+      "trait_effect$",                  # cspi_traits1 main effect coefficient
       ")"
     ),
     param_names
   )
 
-  ## Explicit blocklist of non-parameter scalars and raw/auxiliary terms
+  ## Explicit blocklist of non-parameter scalars and raw/auxiliary terms.
+  ## Note: trait_effect is a real fixed effect in cspi_traits1 fits and is
+  ## explicitly allowed by pattern_ok above; only the "_raw" non-centered
+  ## reparam variables and likelihood arrays are blocked here.
   is_aux <- param_names %in% c("lp__", "lp_approx__") |
-            grepl("_raw$|^log_lik|^trait_effect", param_names)
+            grepl("_raw$|^log_lik|^mu_pred|^p_die", param_names)
 
   is_fixed <- no_index & pattern_ok & !is_aux
   fixed_names <- param_names[is_fixed]
@@ -325,16 +335,22 @@ load_meta_lookups <- function(component_dir, model_id) {
   }
   meta <- readRDS(meta_path)
 
-  ## Try a few possible field names that the fitting scripts use
+  ## Walk all known nesting conventions used by the fitting scripts. The
+  ## cspi_traits1 round stores lookups under meta$prep_meta$sp / $L1 / $L2 / $L3
+  ## (verified via SLURM job 9357983 on 2026-05-11). Earlier scripts may use
+  ## meta$prep$sp_levels or top-level meta$species. Try each in order.
   pull_field <- function(obj, names) {
-    for (n in names) {
-      if (!is.null(obj[[n]])) return(obj[[n]])
-      if (!is.null(obj$prep) && !is.null(obj$prep[[n]])) return(obj$prep[[n]])
+    nests <- list(obj, obj$prep_meta, obj$prep, obj$data)
+    for (nest in nests) {
+      if (is.null(nest)) next
+      for (n in names) if (!is.null(nest[[n]])) return(nest[[n]])
     }
     NULL
   }
 
-  spcd_vec <- pull_field(meta, c("sp_levels", "species", "spcd_levels", "SPCD"))
+  spcd_vec <- pull_field(meta, c("sp", "sp_levels", "species", "spcd_levels", "SPCD"))
+  ## Ecodivision RE is absent in cspi_traits1 fits (they use L1/L2/L3 nested
+  ## plot/landscape grouping instead). Keep ecodiv lookup wired for older fits.
   eco_vec  <- pull_field(meta, c("ecodiv_levels", "ecodivs", "ecodivision_levels", "ecodiv"))
 
   spcd_lookup <- if (!is.null(spcd_vec)) {

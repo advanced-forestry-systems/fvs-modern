@@ -144,10 +144,18 @@ load_species_intercepts <- function(model_id) {
 }
 
 load_ecodiv_intercepts <- function(model_id) {
+  ## Ecodivision random intercepts are model-design optional. Several CONUS
+  ## Phase 4 fits (e.g., dg_kuehne_cspi_traits1, hg_organon_fixedK_cspi_traits1)
+  ## omit the ecodivision RE entirely because species + climate covariates
+  ## absorbed the regional variance. Missing CSV is therefore not fatal; we
+  ## return an empty tibble that the block builder converts to an empty
+  ## ecodiv_intercepts block.
   path <- file.path(conus_dir, paste0(model_id, "_ecodiv_intercepts.csv"))
   if (!file.exists(path)) {
-    log_error("Missing ecodiv intercepts: {path}")
-    return(NULL)
+    log_info("No ecodiv intercepts at {path}; model has no ecodivision RE")
+    return(tibble::tibble(variable = character(), mean = numeric(),
+                          sd = numeric(), rhat = numeric(),
+                          idx = integer(), ecodiv = character()))
   }
   read_csv(path, col_types = cols())
 }
@@ -287,6 +295,8 @@ integrate_variant <- function(variant, components, model_overrides,
     fs <- load_fixed_summary(model_id)
     si <- load_species_intercepts(model_id)
     ei <- load_ecodiv_intercepts(model_id)
+    ## ei may be an empty tibble for models with no ecodivision RE — that's
+    ## allowed. Only fs and si are mandatory.
     if (is.null(fs) || is.null(si) || is.null(ei)) {
       log_error("Skipping {component} for {variant} due to missing summaries")
       next

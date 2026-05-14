@@ -82,16 +82,24 @@ traits <- as.data.table(readRDS(TRAITS_FILE))
 cat(" done\n\n")
 
 # --- Apply filters ---------------------------------------------------------
-SHIFT_CSPI <- 1.0
-SHIFT_BGI  <- 1.0  # bgi is non-negative
-SHIFT_CSI  <- 0    # climate_si is positive
+# Transformation choice depends on the site variable's natural scale:
+#   cspi:       roughly z-scored, range ~ [-5, +15]. Use log(pmax(x + 1, 0.01)).
+#   climate_si: always positive (12 to 27). Use log(x) directly.
+#   bgi:        ~76% NEGATIVE (median -0.73, range -19 to +45). Cannot be
+#               log-transformed safely. Use the value DIRECTLY.
 
-# Pick the site variable and apply the right shift before log
 site_col <- SITE_VAR
-shift    <- switch(SITE_VAR, cspi = SHIFT_CSPI, bgi = SHIFT_BGI, climate_si = SHIFT_CSI)
-
 dat[, site_value := .SD[[1]], .SDcols = site_col]
-dat[, ln_site := log(pmax(site_value + shift, 0.01))]
+
+if (SITE_VAR == "cspi") {
+  dat[, ln_site := log(pmax(site_value + 1.0, 0.01))]
+} else if (SITE_VAR == "climate_si") {
+  dat[, ln_site := log(pmax(site_value, 0.01))]
+} else if (SITE_VAR == "bgi") {
+  # Use bgi directly (no log). The "ln_site" name is kept for downstream
+  # compatibility but it carries the untransformed bgi value.
+  dat[, ln_site := site_value]
+}
 
 dat <- dat[
   is.finite(DBH1) & DBH1 >= 2.54 & is.finite(DBH2) &

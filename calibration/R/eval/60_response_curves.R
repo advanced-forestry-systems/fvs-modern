@@ -79,13 +79,16 @@ model_spec <- list(
     response = "ln_dg_annual",
     link = "lognormal",
     cov_specs = list(
+      # Typical values now set to open-grown, low-competition conditions
+      # so the juvenile DBH peak is visible. Previously typical CR ~ 0.4 and
+      # BAL ~ 15 placed the marginal curve past the juvenile peak.
       dbh           = list(label = "DBH (cm)",            range = c(2.5, 80),  typical = 25),
-      ln_cr_adj     = list(label = "CR (adjusted, log)",  range = c(-1.5, 0),  typical = -0.4),
-      ln_bal_sw_adj = list(label = "BAL softwood (log)",  range = c(-4, 4),    typical = 0),
-      bal_hw        = list(label = "BAL hardwood (m2/ha)", range = c(0, 60),   typical = 15),
+      ln_cr_adj     = list(label = "CR (adjusted, log)",  range = c(-1.5, 0),  typical = -0.10),
+      ln_bal_sw_adj = list(label = "BAL softwood (log)",  range = c(-4, 4),    typical = -2),
+      bal_hw        = list(label = "BAL hardwood (m2/ha)", range = c(0, 60),   typical = 2),
       ln_csi        = list(label = "CSPI (log)",          range = c(-1, 3),    typical = 1),
-      ba_x_rd       = list(label = "BA x RD interaction", range = c(0, 60),    typical = 15),
-      bal_x_rd      = list(label = "BAL x RD interaction", range = c(0, 60),   typical = 15)
+      ba_x_rd       = list(label = "BA x RD interaction", range = c(0, 60),    typical = 5),
+      bal_x_rd      = list(label = "BAL x RD interaction", range = c(0, 60),   typical = 2)
     ),
     biological_expectation = list(
       dbh           = "Hump-shaped (juvenile peak then decline at large DBH)",

@@ -1,0 +1,80 @@
+=============================================================================
+ ACD stand-level calibration factors -- application guidance
+ Source: benchmark job 9610424 (30,146 NE-relabeled conditions), 2026-05-15
+=============================================================================
+
+Population multipliers (overall):
+  BAPH   pred/obs = 0.9835   multiplier = 1.0168
+  QMD    pred/obs = 0.9930   multiplier = 1.0071
+  TOPHT  pred/obs = 0.9885   multiplier = 1.0117
+  TPA    pred/obs = 0.9855   multiplier = 1.0147
+
+Translation to FVS keywords (constant-form approximation):
+  BAPH ~ DBH^2 x TPA, so log(BAPH_mult) ~ 2*log(DIA_mult) + log(TPA_mult)
+  Given QMD_mult and TPA_mult above, the BAPH discrepancy decomposes as:
+    QMD^2  contribution   1.0071^2 = 1.0143
+    TPA contribution      1.0147
+    product (predicted)   1.0292   vs. observed BAPH mult 1.0168
+
+  Suggested FVS keyword settings (per simulation, post-STDINFO):
+    FIXDG    species: ALL   scalar: 1.0071   ! adjust DG output
+    FIXHTG   species: ALL   scalar: 1.0117   ! adjust HTG output
+    FIXMORT  species: ALL   scalar: 1.0147   ! TPA multiplier > 1 means LESS mortality
+
+  (Exact FIXDG/FIXHTG/FIXMORT syntax varies; consult variant overview.)
+
+Per-stratum factors (informational; pick the column that matches your stand):
+
+By initial BA class (BA_t1):
+     level multiplier.BAPH multiplier.QMD multiplier.TOPHT multiplier.TPA
+  BA1_high          0.9859         1.0149           1.0041         0.9434
+   BA1_low          1.2520         0.9931           1.0354         1.3893
+   BA1_med          1.0540         1.0035           1.0085         1.0556
+ BA1_vhigh          0.9753         1.0161           1.0078         0.9006
+
+  Reading: stands with BA_t1 < 50 sq ft/ac need TPA scaled by 1.39x
+  (i.e. ACD over-thins sparse stands). High-BA stands need a slight
+  reduction (~3%). Apply only the column that matches your initial state.
+
+By forest-type group:
+               level multiplier.BAPH multiplier.QMD multiplier.TOPHT
+         aspen-birch          1.0316         1.0126           1.0224
+   maple-beech-birch          1.0038         1.0014           1.0030
+         oak-hickory          1.0254         1.0198           1.0298
+            oak-pine          1.0345         1.0292           1.0255
+          spruce-fir          1.0257         0.9989           1.0139
+ white-red-jack-pine          1.0254         1.0398           1.0543
+ multiplier.TPA
+         0.9939
+         1.0106
+         0.9942
+         0.9845
+         1.0232
+         0.9726
+
+By site-index tercile:
+   level multiplier.BAPH multiplier.QMD multiplier.TOPHT multiplier.TPA
+ SI_high          1.0252         1.0121           1.0188         0.9953
+  SI_low          1.0062         0.9934           1.0020         1.0216
+  SI_med          1.0130         1.0086           1.0109         1.0058
+
+By remeasurement interval (years):
+ level multiplier.BAPH multiplier.QMD multiplier.TOPHT multiplier.TPA
+     4          1.0463         1.0066           1.0187         1.0476
+     5          1.0141         0.9986           1.0049         1.0220
+     6          1.0232         1.0217           1.0136         0.9902
+     7          1.0166         1.0201           1.0336         0.9825
+
+=============================================================================
+ Caveats
+=============================================================================
+ 1. These are population-level ratio corrections, not per-tree corrections.
+    They will pull the MEAN of predictions toward the observed mean but do
+    not reduce per-stand RMSE.
+ 2. The biggest gain is from the BA_t1 class stratifier (BA_t1 < 50 needs
+    a +39%% TPA correction). Apply by class, not by single overall scalar.
+ 3. Validation interval was 4-7 years. Multipliers will not extrapolate
+    cleanly to longer projections without re-derivation.
+ 4. INGROWTH was DISABLED in the post-pass that produced these factors.
+    Re-derive after re-running the engine with FVS_ACD_RELABEL=TRUE and
+    ingrowth_lookup cached, if you want ingrowth-inclusive scalars.

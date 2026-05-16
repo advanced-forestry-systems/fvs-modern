@@ -796,7 +796,11 @@ ISPC1= 0
 IF (SPCOUT.EQ.'XX ') THEN
   IF(VAR.EQ.'CS') ISPC1=85
   IF(VAR.EQ.'LS') ISPC1=49
-  IF(VAR.EQ.'NE') ISPC1=98
+  ! 2026-05-16 holoros fork: AC (Acadian) is a NE subvariant; use NE's
+  ! 'XX' fallback index. Without this, ACD runs that encounter unknown
+  ! species codes (XX) leave ISPC1=0 and the JSPIN(0) assignment below
+  ! triggers an array-bounds segfault at runtime.
+  IF(VAR.EQ.'NE'.OR.VAR.EQ.'AC') ISPC1=98
   IF(VAR.EQ.'SN') ISPC1=90
   GO to 300
 ENDIF
@@ -808,7 +812,12 @@ ENDIF
 200 CONTINUE
 300 CONTINUE
 IF(JSPINDEF.LE.0)JSPINDEF=IJSPIN
-JSPIN(ISPC1)=IJSPIN
+! 2026-05-16 holoros fork: defensive guard. The lookup loop above can
+! leave ISPC1=0 when the input species code is not in NSP(:,1) and the
+! SPCOUT.EQ.'XX' branch did not match a known variant. Writing to
+! JSPIN(0) is out of bounds; skip the assignment so an unknown species
+! is silently dropped from JSPIN rather than aborting the run.
+IF (ISPC1 .GT. 0) JSPIN(ISPC1)=IJSPIN
 RETURN
 END
 !

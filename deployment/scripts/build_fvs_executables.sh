@@ -106,6 +106,41 @@ for var in "${VARIANTS[@]}"; do
     VARDIR="$BUILD_DIR/$var"
     mkdir -p "$VARDIR"
 
+    # 2026-05-16 holoros fork: shield variant-specific PRGPRM.f90 / ESPARM.f90
+    # from being shadowed by base/ copies during compilation.
+    #
+    # gfortran resolves `INCLUDE 'PRGPRM.f90'` first against the current source
+    # file's directory, THEN through -I dirs. Files in base/ (e.g. intree.f90,
+    # keywds.f90) thus pick up base/PRGPRM.f90 (MAXSP=23) instead of the
+    # variant's correct $var/common/PRGPRM.f90 (MAXSP=108 for ACD). The
+    # resulting MAXSP discrepancy across compilation units corrupts the
+    # /CONCHR/ common block layout: IUSED(MAXSP) sized at 4*23 bytes by base
+    # files and 4*108 bytes by variant files puts TREFMT at different offsets
+    # and the tree-format keyword handler writes through one offset while
+    # intree.f90 reads through the other, garbling READ(RECORD,TREFMT) with
+    # NAMGRP/PTGNAME data and aborting at intree.f90:188 with
+    # "Missing initial left parenthesis in format".
+    #
+    # Move the base shadows aside for the duration of this variant build,
+    # so all INCLUDE 'PRGPRM.f90' resolve via -I$var/common consistently.
+    # Restore on exit so other variant builds and rFVS/fvsOL paths see the
+    # original tree.
+    SHADOWED_FILES=()
+    for shadow_name in PRGPRM.f90 ESPARM.f90; do
+        shadow_path="$SRC_ROOT/base/$shadow_name"
+        variant_path="$SRC_ROOT/$var/common/$shadow_name"
+        if [ -f "$shadow_path" ] && [ -f "$variant_path" ]; then
+            mv "$shadow_path" "${shadow_path}.SHADOW_BUILD_${var}"
+            SHADOWED_FILES+=("${shadow_path}")
+        fi
+    done
+    restore_shadows() {
+        for sp in "${SHADOWED_FILES[@]}"; do
+            [ -f "${sp}.SHADOW_BUILD_${var}" ] && mv "${sp}.SHADOW_BUILD_${var}" "$sp"
+        done
+    }
+    trap restore_shadows EXIT
+
     OBJECTS=()
     COMPILE_ERRORS=0
 
@@ -358,6 +393,10 @@ for var in "${VARIANTS[@]}"; do
         echo "NO OBJECTS"
         FAILED=$((FAILED + 1))
     fi
+
+    # Restore base/ shadow files at end of this variant's iteration
+    restore_shadows
+    trap - EXIT
 done
 
 echo ""

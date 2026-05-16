@@ -85,12 +85,22 @@ cat("  Slicing stats     : lines", stats_start, "to", stats_end,
 # that loop fast (don't touch every variant's posterior directory).
 ALL_VARIANTS            <- c("acd", "ne")
 MORT_STRATEGY           <- "no_si"
-# INGROWTH disabled in post-pass: the lookup table is built in STEP 2b of the
-# engine and isn't cached to disk, so we don't have it here. Calibrated stats
-# from this post-pass therefore exclude ingrowth contribution. To re-include
-# ingrowth, re-run the full engine with FVS_ACD_RELABEL=TRUE instead.
-INGROWTH_ENABLED        <- FALSE
-ingrowth_lookup         <- NULL
+# INGROWTH: prefer a cached lookup written by the engine's STEP 2b (added in
+# the 2026-05-15 patch). When it's present we get full-fidelity ingrowth; when
+# absent (older engine runs) we silently disable and document below.
+ingrowth_cache_path     <- file.path(project_root,
+                                     "calibration/output/comparisons",
+                                     "intermediate/ingrowth_lookup.rds")
+if (file.exists(ingrowth_cache_path)) {
+  ingrowth_lookup    <- readRDS(ingrowth_cache_path)
+  INGROWTH_ENABLED   <- TRUE
+  cat("  Ingrowth lookup loaded from cache (", length(ingrowth_lookup), "entries)\n")
+} else {
+  ingrowth_lookup    <- NULL
+  INGROWTH_ENABLED   <- FALSE
+  cat("  Ingrowth lookup NOT cached; running without ingrowth contribution.\n")
+  cat("  (To enable, re-run 19_fia_benchmark_engine.R so STEP 2b writes the cache.)\n")
+}
 CLIMATE_SI_ENABLED      <- TRUE
 SDIMAX_RASTER_ENABLED   <- TRUE
 DG_BACKTRANSFORM        <- "median"

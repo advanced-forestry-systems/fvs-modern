@@ -1306,6 +1306,12 @@ if (INGROWTH_ENABLED && "PREV_TRE_CN" %in% names(fia_trees)) {
   }
   ingrowth_lookup[["OVERALL"]] <- as.list(overall_ingrowth)
 
+  # Cache to disk so post-pass scripts (e.g. 27_acd_post_pass.R) can reuse
+  # this lookup without re-running STEP 2b.
+  ingrowth_cache <- file.path(output_root, "intermediate/ingrowth_lookup.rds")
+  saveRDS(ingrowth_lookup, ingrowth_cache)
+  cat("  Cached ingrowth_lookup to", ingrowth_cache, "\n\n")
+
   # Clean up
   rm(ingrowth_trees, ingrowth_by_cond, cond_variant)
 } else {

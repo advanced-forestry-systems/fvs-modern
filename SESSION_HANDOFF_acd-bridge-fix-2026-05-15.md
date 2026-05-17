@@ -590,3 +590,82 @@ single F77 to F90 line-ending fix unlocked CS, LS, SN, KT, WC, CA,
 BM. The intree.f90 bug we suspected was an illusion — the actual
 bug was in the test harness shell script, not the converted Fortran.
 
+## Round 9 close — 2026-05-17 (afternoon)
+
+### Test result: 38/38 PASS
+
+Job 9818553 ran the v2 harness with both fixes (line-ending +
+deck picker). Every check passed:
+
+```
+- Total: 38
+- PASS: 38
+- WARN: 0
+- FAIL: 0
+- SKIP: 0
+**Overall: PASS** (38 PASS / 0 WARN / 0 SKIP)
+```
+
+All 12 variants build, run on their canonical `<variant>t01.key`
+deck, produce 8,615 to 9,791 byte .sum files with correct variant
+markers and 12 unique .sum md5s. The R smoke test passes too.
+
+The fork is now demonstrably solid across the 12 variants spanning
+the Eastern + Western FVS parameter space. The build + run pipeline
+has zero failures on the canonical test inputs.
+
+### HMC re-fit landed
+
+Job 9812192 completed at 3:25:16 wall (well under the 12h budget).
+Updated `diameter_growth_posterior.csv`:
+
+```
+variable      p50      p05      p95
+   mu_b0  0.398    0.255    0.539
+sigma_b0  0.184    0.151    0.224
+   sigma  0.796    0.759    0.835
+```
+
+sigma_b0 dropped from 0.656 to 0.184 — a 3.5x reduction in between
+species spread. The chains are mixing far better than the rounds 4-7
+posterior. Rhat reporting shows NaN in the CSV (a script bookkeeping
+issue, separate from the actual chain mixing).
+
+### A/B chain regression (open)
+
+Job 9812377 hit the figure-step error described in round-6 follow-up
+plus a separate concerning result: step 5 reports **Validation pairs:
+0** after relabel logged "Relabeled 15429 NE plots as ACD (13693
+ME/NH/VT, 1736 NY Adirondack); 14717 NE plots retained".
+
+So the relabel itself works but the projection-to-validation merge
+produces zero rows for the refit_only pass. Suspected causes:
+
+1. New posterior format from the 02c HMC refit (2107 rows vs 2130
+   pre-refit) may have broken `load_variant_params` parsing.
+2. Adding COUNTYCD to `plots`-load may have shifted column types in
+   a way that breaks the matched merge.
+3. The 50+ R warnings emitted during the run point to silent NA
+   propagation somewhere upstream of the validation merge.
+
+Tracked as task #94. Resubmitted as job 9853967 (currently RUNNING)
+with the figure-tolerant `run_ab_after_hmc.sh` patch and the same
+inputs. Outcome will guide the next debugging step.
+
+### Pipeline status at round-9 close
+
+- Integration test v2 retry (9818553): COMPLETED — 38/38 PASS
+- HMC re-fit (9812192): COMPLETED, sigma_b0 down 3.5x
+- A/B chain v1 (9812377): FAILED with empty validation pairs
+- A/B chain v2 (9853967): RUNNING, same input pattern
+
+### Next round priorities
+
+1. Diagnose the validation_pairs=0 regression. First step: revert
+   the COUNTYCD addition to plots-load and rerun to isolate whether
+   the issue is the column addition or the new posterior format.
+2. Either re-add COUNTYCD via a separate read+merge, or wait until
+   the regression is understood before opening a PR.
+3. Re-do the calibrated NE vs ACD A/B with valid validation pairs.
+4. After 1-3, open PR from acd-bridge-fix-2026-05-15 into main.
+

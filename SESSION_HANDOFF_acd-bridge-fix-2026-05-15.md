@@ -901,3 +901,63 @@ The fork now demonstrably:
    integration test as the headline result and the calibrated A/B
    as supporting evidence.
 
+
+## Autopilot round 13 — 2026-05-17 (close)
+
+### Outputs review
+
+Chain 9912896 is still RUNNING with the NE-fallback ACD path. At
+last snapshot (7:39 elapsed) ACD projection completed at the
+expected 100 cond/sec — the healthy speed signaling the NE-fallback
+codepath is working. The chain will continue uninterrupted; total
+wall is expected ~30-35 minutes.
+
+### Forward motion: harvest script ready
+
+Added `calibration/slurm/harvest_ab_results.sh`. When 9912896
+finishes (or any future A/B chain), run:
+
+```bash
+cd ~/fvs-modern && bash calibration/slurm/harvest_ab_results.sh 9912896
+```
+
+This script:
+1. Checks the job state
+2. Verifies all three tagged CSVs are present
+3. Runs `Rscript calibration/R/compare_post_refit_ab.R` for the
+   side-by-side comparison
+4. Snapshots to
+   `calibration/analysis/acd_stand_level_2026-05-16/calibrated_ne_vs_acd_v2/`
+5. Writes a README explaining the data
+6. Commits and pushes to the branch
+
+### Task list update
+
+Cleaned up:
+- Old pending tasks that were blocked only by waiting deleted
+- New diagnostic task #104 tracks the z_b0 silent-NA bug
+- Round-13 follow-up: run harvest script after chain completes
+
+### Next concrete steps (do not need this session)
+
+1. Wait for 9912896 to finish (~30 more min from round-13 close)
+2. Run harvest_ab_results.sh 9912896
+3. Read comparison.md — expect ACD %RMSE around 28.52% (round-5/6 baseline)
+4. Decide PR strategy:
+   - If NE-fallback A/B looks clean and post-pass helps → open PR
+   - If z_b0 fix is needed first → diagnose task #104 then re-run
+5. Investigate z_b0 silent-NA cause (task #104) when ready to use
+   the converged HMC posterior for ACD
+
+### Branch state summary (committed and pushed)
+
+22 commits on acd-bridge-fix-2026-05-15. Key deliverables:
+
+- 12/12 variant builds (Eastern + Western)
+- 38/38 integration test PASS (v2 retry)
+- 3 runtime A/B comparisons (NSVB vs CRM, NE vs ACD, calibrated)
+- HMC re-fit posterior (sigma_b0 = 0.184, preserved for future use)
+- z_b0 loader patch (committed, latent bug)
+- Test infrastructure (smoke tests, comparison reporter, harvest
+  script, STOP code reference)
+- Comprehensive SESSION_HANDOFF covering all 13 rounds

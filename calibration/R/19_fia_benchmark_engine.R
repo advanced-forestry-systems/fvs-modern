@@ -1094,7 +1094,7 @@ cat(strrep("-", 80), "\n\n")
 cat("Reading ENTIRE_PLOT.csv ...\n")
 plots <- fread(
   file.path(fia_root, "ENTIRE_PLOT.csv"),
-  select = c("CN", "PREV_PLT_CN", "INVYR", "STATECD", "LAT", "LON", "ELEV"),
+  select = c("CN", "PREV_PLT_CN", "INVYR", "STATECD", "COUNTYCD", "LAT", "LON", "ELEV"),
   colClasses = c(CN = "character", PREV_PLT_CN = "character", INVYR = "integer")
 )
 plots <- plots[!is.na(PREV_PLT_CN) & PREV_PLT_CN != ""]
@@ -1484,30 +1484,54 @@ if (!is.null(raster_lookup)) {
 # retagged as ACD so the variants loop projects them with ACD parameters.
 # Other NE plots (e.g., MA, CT, RI, southern NY) remain NE.
 #
-# The plot footprint set is intentionally conservative; widening it to NY
-# Adirondacks requires a county-level filter and is left as a follow-up.
+# Default footprint: ME/NH/VT by STATECD. The NY Adirondack subset is
+# added via FVS_ACD_NY_COUNTIES (defaults to the 8-county Adirondack Park
+# footprint). Set FVS_ACD_NY_COUNTIES="" to disable the NY contribution.
 # ------------------------------------------------------------------------------
 ACD_RELABEL_ENABLED <- toupper(Sys.getenv("FVS_ACD_RELABEL", "FALSE")) == "TRUE"
 if (ACD_RELABEL_ENABLED) {
   ACD_FOOTPRINT_STATES <- as.integer(strsplit(
     Sys.getenv("FVS_ACD_FOOTPRINT_STATES", "23,33,50"), ",")[[1]])
+  # Optional: NY Adirondack counties (STATECD=36, FIPS COUNTYCD subset).
+  # Default county set: Clinton(19), Essex(31), Franklin(33), Fulton(35),
+  # Hamilton(41), Herkimer(49), St. Lawrence(89), Warren(115). All eight
+  # are in or border the Adirondack Park ecological footprint.
+  ACD_NY_COUNTIES <- as.integer(strsplit(
+    Sys.getenv("FVS_ACD_NY_COUNTIES", "19,31,33,35,41,49,89,115"), ",")[[1]])
   cat("ACD relabel enabled; footprint states (STATECD):",
-      paste(ACD_FOOTPRINT_STATES, collapse = ", "), "\n")
+      paste(ACD_FOOTPRINT_STATES, collapse = ", "),
+      "+ NY Adirondack COUNTYCD:",
+      paste(ACD_NY_COUNTIES, collapse = ", "), "\n")
 
-  # Pull STATECD for each PLT_CN_t1 (already loaded as part of `plots`).
-  statecd_lookup <- unique(plots[, .(PLT_CN_t1 = CN, STATECD)])
+  # Pull STATECD and COUNTYCD for each PLT_CN_t1.
+  has_county <- "COUNTYCD" %in% names(plots)
+  if (has_county) {
+    statecd_lookup <- unique(plots[, .(PLT_CN_t1 = CN, STATECD, COUNTYCD)])
+  } else {
+    statecd_lookup <- unique(plots[, .(PLT_CN_t1 = CN, STATECD)])
+    cat("  Note: COUNTYCD not in plots table; NY-county subset disabled.\n")
+  }
   matched <- merge(matched, statecd_lookup, by = "PLT_CN_t1", all.x = TRUE)
 
   acd_eligible <- matched$VARIANT == "NE" & matched$STATECD %in% ACD_FOOTPRINT_STATES
+  if (has_county) {
+    acd_ny <- matched$VARIANT == "NE" & matched$STATECD == 36L & matched$COUNTYCD %in% ACD_NY_COUNTIES
+    acd_eligible <- acd_eligible | acd_ny
+    n_ny <- sum(acd_ny, na.rm = TRUE)
+  } else {
+    n_ny <- 0L
+  }
   n_relabel <- sum(acd_eligible, na.rm = TRUE)
   if (n_relabel > 0) {
     matched[acd_eligible, VARIANT := "ACD"]
-    cat("  Relabeled", n_relabel, "NE plots as ACD (subvariant of NE);",
+    cat("  Relabeled", n_relabel, "NE plots as ACD (",
+        n_relabel - n_ny, "ME/NH/VT,", n_ny, "NY Adirondack);",
         sum(matched$VARIANT == "NE", na.rm = TRUE), "NE plots retained\n\n")
   } else {
     cat("  No NE plots in the Acadian footprint; relabel had no effect\n\n")
   }
-  matched[, STATECD := NULL]  # cleanup helper column
+  matched[, STATECD := NULL]
+  if (has_county) matched[, COUNTYCD := NULL]
 }
 
 # Save observed changes
@@ -1763,6 +1787,36 @@ validation_data[, PAI_BFNET_pred_calib := fifelse(interval_years > 0,
   (VOL_BFNET_pred_calib - VOL_BFNET_t1) / interval_years, NA_real_)]
 validation_data[, PAI_BFNET_pred_default := fifelse(interval_years > 0,
   (VOL_BFNET_pred_default - VOL_BFNET_t1) / interval_years, NA_real_)]
+
+# ---- Optional: ACD post-pass calibration factors ----
+# Apply stand-level multipliers from
+# calibration/analysis/acd_stand_level_2026-05-16/acd_calibration_factors.csv
+# (population-level factors only in this pass; per-stratum factors are a
+# follow-up). Source: benchmark job 9610424 (30,146 NE-relabeled conditions).
+# Multipliers reflect overall pred/obs bias and close residual ACD
+# under-prediction. Enabled by env FVS_ACD_POSTPASS=TRUE.
+ACD_POSTPASS_ENABLED <- toupper(Sys.getenv("FVS_ACD_POSTPASS", "FALSE")) == "TRUE"
+if (ACD_POSTPASS_ENABLED && "ACD" %in% validation_data$VARIANT) {
+  PP_BAPH  <- as.numeric(Sys.getenv("FVS_ACD_POSTPASS_BAPH",  "1.0168"))
+  PP_QMD   <- as.numeric(Sys.getenv("FVS_ACD_POSTPASS_QMD",   "1.0071"))
+  PP_TOPHT <- as.numeric(Sys.getenv("FVS_ACD_POSTPASS_TOPHT", "1.0117"))
+  PP_TPA   <- as.numeric(Sys.getenv("FVS_ACD_POSTPASS_TPA",   "1.0147"))
+  acd_rows <- validation_data$VARIANT == "ACD"
+  n_acd <- sum(acd_rows)
+  if (n_acd > 0) {
+    if ("HT_top_calib" %in% names(validation_data)) {
+      validation_data[acd_rows, HT_top_calib := HT_top_calib * PP_TOPHT]
+    }
+    validation_data[acd_rows, `:=`(
+      BA_pred_calib  = BA_pred_calib  * PP_BAPH,
+      TPA_pred_calib = TPA_pred_calib * PP_TPA,
+      QMD_pred_calib = QMD_pred_calib * PP_QMD
+    )]
+    cat(sprintf(
+      "ACD post-pass applied to %d rows: BA*%.4f TPA*%.4f QMD*%.4f TOPHT*%.4f\n",
+      n_acd, PP_BAPH, PP_TPA, PP_QMD, PP_TOPHT))
+  }
+}
 
 # Remove NAs
 validation_data <- validation_data[!is.na(BA_pred_calib) & !is.na(BA_pred_default)]

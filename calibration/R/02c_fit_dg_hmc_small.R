@@ -48,8 +48,13 @@ if (length(args) > 0) {
 # Configuration
 # ============================================================================
 
-project_root <- Sys.getenv("FVS_PROJECT_ROOT",
-                             normalizePath(file.path(dirname(sys.frame(1)$ofile), "../.."), mustWork = FALSE))
+project_root <- Sys.getenv("FVS_PROJECT_ROOT", unset = "")
+if (project_root == "") {
+  project_root <- tryCatch(
+    normalizePath(file.path(dirname(sys.frame(1)$ofile), "../.."), mustWork = FALSE),
+    error = function(e) getwd()
+  )
+}
 calibration_dir <- file.path(project_root, "calibration")
 processed_data_dir <- file.path(calibration_dir, "data", "processed")
 output_dir <- file.path(calibration_dir, "output", "variants", variant)
@@ -58,6 +63,14 @@ stan_dir <- file.path(calibration_dir, "stan")
 dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
 
 MAX_OBS <- as.integer(Sys.getenv("FVS_MAX_OBS", "5000"))
+
+# HMC sampler config (env-tunable for convergence improvement)
+HMC_WARMUP       <- as.integer(Sys.getenv("FVS_HMC_WARMUP",       "500"))
+HMC_SAMPLING     <- as.integer(Sys.getenv("FVS_HMC_SAMPLING",     "500"))
+HMC_ADAPT_DELTA  <- as.numeric(Sys.getenv("FVS_HMC_ADAPT_DELTA",  "0.90"))
+HMC_MAX_TREEDEPTH<- as.integer(Sys.getenv("FVS_HMC_TREEDEPTH",    "10"))
+HMC_CHAINS       <- as.integer(Sys.getenv("FVS_HMC_CHAINS",       "4"))
+logger::log_info("HMC config: chains={HMC_CHAINS} warmup={HMC_WARMUP} sampling={HMC_SAMPLING} adapt_delta={HMC_ADAPT_DELTA} max_treedepth={HMC_MAX_TREEDEPTH}")
 
 log_file <- file.path(calibration_dir, "logs", paste0("02c_fit_dg_", variant, ".log"))
 dir.create(dirname(log_file), showWarnings = FALSE, recursive = TRUE)
@@ -287,12 +300,12 @@ sampling_method <- "none"
 fit <- tryCatch({
   result <- mod$sample(
     data = stan_data,
-    chains = 4,
-    parallel_chains = min(4, parallel::detectCores()),
-    iter_warmup = 500,
-    iter_sampling = 500,
-    adapt_delta = 0.90,
-    max_treedepth = 10,
+    chains = HMC_CHAINS,
+    parallel_chains = min(HMC_CHAINS, parallel::detectCores()),
+    iter_warmup = HMC_WARMUP,
+    iter_sampling = HMC_SAMPLING,
+    adapt_delta = HMC_ADAPT_DELTA,
+    max_treedepth = HMC_MAX_TREEDEPTH,
     refresh = 50,
     show_messages = FALSE,
     init = init_from_map

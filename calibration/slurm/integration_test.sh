@@ -72,7 +72,7 @@ for V in "${EASTERN_VARIANTS[@]}"; do
   fi
   W=$TEST_ROOT/run_${V}
   mkdir -p $W
-  tr "\r" "\n" < $NET01_KEY > $W/net01.key
+  perl -pe "s/\r\n|\r/\n/g" < $NET01_KEY > $W/net01.key
   cp $NET01_TRE $W/
 
   (cd $W && $TEST_ROOT/lib/FVS${V} --keywordfile=net01.key) \

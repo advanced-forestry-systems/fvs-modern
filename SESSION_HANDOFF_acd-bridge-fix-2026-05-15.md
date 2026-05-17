@@ -521,3 +521,72 @@ have decks the parser tolerates, so the bug is data-shape-specific.
 4. If steps 1 and 3 both succeed, open a PR from
    `acd-bridge-fix-2026-05-15` into main.
 
+## Autopilot round 9 — 2026-05-17 (early afternoon)
+
+Round 8 ended with 7 of 12 variants crashing at `intree.f90:188`
+"Unexpected end of format string". Round 9 root-caused the bug — and
+the answer was not in `intree.f90` at all.
+
+### Root cause: line-ending corruption in the test harness
+
+The 7 affected variants (CS, LS, SN, KT, WC, CA, BM) use **CRLF**
+(Windows-style) line endings in their upstream test decks. NE,
+ACD, EM, OP use **CR-only** (classic Mac). The harness used
+`tr "\r" "\n"` which works for CR-only but turns CRLF into
+**double newlines** (the CR becomes LF, then the original LF is
+still there).
+
+The doubled blank lines split the multi-line TREEFMT continuation
+record into two unjoinable halves. `keyrdr.f90` stored only the
+first half in `TREFMT`, the closing `)` ended up in a separate
+record, and `intree.f90:188` then ran `READ(RECORD, TREFMT)` against
+an unbalanced format string, tripping the Fortran runtime
+"Unexpected end of format string" error.
+
+```bash
+file tests/FVSne/net01.key    # ASCII text, with CR line terminators
+file tests/FVScs/cst01.key    # ASCII text, with CRLF line terminators
+```
+
+### Fix
+
+Replace `tr "\r" "\n"` with
+`perl -pe "s/\r\n|\r/\n/g"` in
+`calibration/slurm/integration_test_v2.sh` and
+`calibration/slurm/integration_test.sh`. This handles all three
+line-ending conventions (CR, CRLF, LF) correctly.
+
+### v2 test rerun (SLURM 9816610)
+
+After the patch:
+
+- **Builds: 12/12 PASS** (Eastern 7 + Western 5)
+- **Runs: 11/12 PASS with rc=10**
+  ACD, NE, CS, LS, SN, KT, EM, WC, OP, CA, BM all produce
+  8,615 to 9,791 byte .sum files with full 11-cycle projection
+  tables. Marker check passes for all 11.
+- **CR: 1 FAIL** because the harness `find_keyfile` picked the
+  wrong deck (CalibStats.key, 397 bytes — a minimal calibration
+  check deck) instead of `crt01.key`.
+
+### Second fix: deck picker preference
+
+`find_keyfile` now prefers `<variant>t01.key` when it exists, falls
+back to `net01.key` (for ACD reusing NE's deck), and only takes the
+smallest .key as a last resort. Re-test submitted as job 9818553.
+
+### Pipeline status at handoff (round 9 close)
+
+- HMC re-fit (9812192): still RUNNING, ~80+ min elapsed of 12h
+- A/B chain (9812377): PENDING (Dependency afterok:9812192)
+- Integration test v2 (9816610): COMPLETED 11/12
+- Integration test v2 retry (9818553): RUNNING (with deck-picker fix)
+- Expected outcome of 9818553: 12/12 runs PASS
+
+### Net of round 9
+
+Moved from 4 clean runs (round 8) to 11 clean runs (round 9). A
+single F77 to F90 line-ending fix unlocked CS, LS, SN, KT, WC, CA,
+BM. The intree.f90 bug we suspected was an illusion — the actual
+bug was in the test harness shell script, not the converted Fortran.
+

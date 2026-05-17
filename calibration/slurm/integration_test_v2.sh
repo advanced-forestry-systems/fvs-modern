@@ -52,8 +52,16 @@ find_keyfile () {
   local td=${TESTDIR[$v]}
   local d=$US/tests/$td
   if [ ! -d $d ]; then echo ""; return; fi
-  # pick the smallest *.key file (typically the simplest)
-  ls -1S $d/*.key 2>/dev/null | tail -1
+  # Prefer canonical <variant>t01.key (the standard projection deck).
+  # Fall back to net01.key (for ACD reusing NE deck).
+  # Last resort: smallest .key file.
+  if [ -f $d/${v}t01.key ]; then
+    echo $d/${v}t01.key
+  elif [ -f $d/net01.key ]; then
+    echo $d/net01.key
+  else
+    ls -1S $d/*.key 2>/dev/null | tail -1
+  fi
 }
 
 ##############################################################################
@@ -92,7 +100,7 @@ for V in "${VARIANTS[@]}"; do
 
   W=$TEST_ROOT/run_${V}
   mkdir -p $W
-  tr "\r" "\n" < $KEY > $W/test.key
+  perl -pe "s/\r\n|\r/\n/g" < $KEY > $W/test.key
   # Copy companion .tre file with matching basename
   BASE=$(basename $KEY .key)
   KEYDIR=$(dirname $KEY)

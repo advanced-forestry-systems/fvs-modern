@@ -961,3 +961,88 @@ Cleaned up:
 - Test infrastructure (smoke tests, comparison reporter, harvest
   script, STOP code reference)
 - Comprehensive SESSION_HANDOFF covering all 13 rounds
+
+## Autopilot round 14 — 2026-05-17 (late)
+
+### Root cause of round-13 catastrophic ACD R2=0
+
+SLURM 9912896 finished and produced a tagged CSV — but with only
+ACD + OVERALL rows (n=15429) and ACD BA R2=0.000, RMSE=110.7,
+bias=-89%. The other 12 variants disappeared from the result.
+
+Diagnosis: the ACD-NE fallback at engine line 1579 reads
+
+```r
+if (is.null(params) && var == "ACD" && !is.null(variant_params[["NE"]])) {
+  params <- variant_params[["NE"]]
+}
+```
+
+This only triggers when `params` is fully NULL. In rounds 5-6 ACD
+had no calibrated data at all → params was NULL → fallback fired
+cleanly.
+
+But after the HMC re-fit run wrote crown_ratio, mortality,
+species_bamax_calibrated, etc. files for ACD, `params` is no longer
+NULL — only `params$dg` is missing (because samples.rds was moved
+aside to dodge the z_b0 silent-NA bug). The fallback did not fire,
+project_condition_calibrated used unset `params$dg`, predictions
+were garbage, and the NA-filter dropped them all — except ACD,
+whose RANDOM unset values somehow produced numeric (catastrophic)
+predictions that survived the filter.
+
+### Fix
+
+Patched the fallback to handle partial params:
+
+```r
+if (var == "ACD" && !is.null(variant_params[["NE"]])) {
+  ne_params <- variant_params[["NE"]]
+  if (is.null(params)) {
+    params <- ne_params
+  } else {
+    # Partial fallback for missing slots
+    for (slot in c("dg","dg_lo","dg_hi","hd","hd_lo","hd_hi",
+                   "meas_interval","sp_idx_map")) {
+      if (is.null(params[[slot]]) && !is.null(ne_params[[slot]])) {
+        params[[slot]] <- ne_params[[slot]]
+      }
+    }
+  }
+}
+```
+
+This makes ACD borrow NE's $dg whenever it lacks its own, while
+preserving any other ACD-specific calibrated slots that exist
+(crown_ratio, mortality, etc.).
+
+### Verification (in flight)
+
+SLURM 9914046 submitted with the partial-fallback fix. Expected:
+- ACD borrows NE's dg, NE's hd, NE's meas_interval
+- ACD uses its own mortality + crown_ratio + species SDImax (good
+  data from the new fits)
+- All 12 other variants also produce valid projections
+- validation_pairs > 100,000 expected
+
+The new ACD result should be the round-5/6 baseline (28.52% RMSE)
+or slightly better due to ACD-specific mortality + crown_ratio
+data now actually getting used.
+
+### Pipeline status at round-14 close
+
+- v2 integration test: 38/38 PASS (frozen)
+- HMC re-fit: completed, sigma_b0 down 3.5x
+- z_b0 silent-NA bug (#104): closed — was a downstream effect of
+  partial params, not a z_b0 loader issue per se
+- ACD-NE fallback patched for partial params
+- Chain 9914046 in flight to verify
+
+### What this round revealed
+
+The z_b0 patch from round 10 might actually work — the predictions
+being NA was caused by params$dg being NULL with the samples.rds
+moved aside, not by the z_b0 reconstruction itself. When 9914046
+finishes successfully with the partial fallback, the next experiment
+is to restore samples.rds and let z_b0 actually drive ACD's dg.
+

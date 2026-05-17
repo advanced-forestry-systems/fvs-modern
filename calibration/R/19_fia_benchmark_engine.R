@@ -1576,9 +1576,29 @@ for (var in variants_in_data) {
   # missing for subvariants. ACD shares the NE binary, so when ACD params are
   # absent we fall back to NE rather than skipping all 30k+ Acadian plots.
   params <- variant_params[[var]]
-  if (is.null(params) && var == "ACD" && !is.null(variant_params[["NE"]])) {
-    params <- variant_params[["NE"]]
-    cat("[ACD <- NE params fallback] ")
+  if (var == "ACD" && !is.null(variant_params[["NE"]])) {
+    ne_params <- variant_params[["NE"]]
+    if (is.null(params)) {
+      params <- ne_params
+      cat("[ACD <- NE params fallback (full)] ")
+    } else {
+      # Partial fallback: ACD has crown_ratio, mortality, etc. from refit,
+      # but may be missing $dg (because diameter_growth_samples.rds was
+      # moved aside) or $hd. Copy missing slots from NE so projection has
+      # a complete param set.
+      slots_filled <- c()
+      for (slot in c("dg","dg_lo","dg_hi","hd","hd_lo","hd_hi",
+                     "meas_interval","sp_idx_map")) {
+        if (is.null(params[[slot]]) && !is.null(ne_params[[slot]])) {
+          params[[slot]] <- ne_params[[slot]]
+          slots_filled <- c(slots_filled, slot)
+        }
+      }
+      if (length(slots_filled) > 0) {
+        cat(sprintf("[ACD <- NE partial fallback for: %s] ",
+                    paste(slots_filled, collapse=",")))
+      }
+    }
   }
   if (is.null(params)) {
     cat("SKIP (no params)\n")

@@ -5,7 +5,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=32G
-#SBATCH --time=06:00:00
+#SBATCH --time=12:00:00
 #SBATCH --output=/users/PUOM0008/crsfaaron/fvs-modern-acdbridge/calibration/logs/acd_dg_refit_%j.out
 #SBATCH --error=/users/PUOM0008/crsfaaron/fvs-modern-acdbridge/calibration/logs/acd_dg_refit_%j.err
 
@@ -19,11 +19,12 @@ cd $FVS_PROJECT_ROOT
 # Longer-warmup HMC config aimed at rhat < 1.05 for ACD diameter growth.
 # Prior run with warmup=500 sampling=500 adapt_delta=0.90 produced rhat=1.95.
 # Quadruple warmup, triple sampling, tighten step size, deepen tree.
-export FVS_HMC_WARMUP=2000
-export FVS_HMC_SAMPLING=1500
-export FVS_HMC_ADAPT_DELTA=0.99
-export FVS_HMC_TREEDEPTH=12
+export FVS_HMC_WARMUP=1500
+export FVS_HMC_SAMPLING=1000
+export FVS_HMC_ADAPT_DELTA=0.98
+export FVS_HMC_TREEDEPTH=11
 export FVS_HMC_CHAINS=4
+export FVS_HMC_PARALLEL=2
 export FVS_MAX_OBS=10000
 
 # Backup existing posterior before overwrite

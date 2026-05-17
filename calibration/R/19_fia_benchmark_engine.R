@@ -1796,25 +1796,124 @@ validation_data[, PAI_BFNET_pred_default := fifelse(interval_years > 0,
 # Multipliers reflect overall pred/obs bias and close residual ACD
 # under-prediction. Enabled by env FVS_ACD_POSTPASS=TRUE.
 ACD_POSTPASS_ENABLED <- toupper(Sys.getenv("FVS_ACD_POSTPASS", "FALSE")) == "TRUE"
+ACD_POSTPASS_MODE    <- tolower(Sys.getenv("FVS_ACD_POSTPASS_MODE", "population"))
 if (ACD_POSTPASS_ENABLED && "ACD" %in% validation_data$VARIANT) {
-  PP_BAPH  <- as.numeric(Sys.getenv("FVS_ACD_POSTPASS_BAPH",  "1.0168"))
-  PP_QMD   <- as.numeric(Sys.getenv("FVS_ACD_POSTPASS_QMD",   "1.0071"))
-  PP_TOPHT <- as.numeric(Sys.getenv("FVS_ACD_POSTPASS_TOPHT", "1.0117"))
-  PP_TPA   <- as.numeric(Sys.getenv("FVS_ACD_POSTPASS_TPA",   "1.0147"))
   acd_rows <- validation_data$VARIANT == "ACD"
   n_acd <- sum(acd_rows)
-  if (n_acd > 0) {
-    if ("HT_top_calib" %in% names(validation_data)) {
-      validation_data[acd_rows, HT_top_calib := HT_top_calib * PP_TOPHT]
+
+  if (ACD_POSTPASS_MODE == "stratified") {
+    # --- Per-stratum lookup against acd_calibration_factors.csv ---
+    # Each row gets four candidate multipliers per attribute (one per stratum:
+    # FT_GROUP, BA_t1_class, SI_tercile, interval_years). Apply the geometric
+    # mean across the four so each stratum contributes equally.
+    factors_path <- file.path(project_root,
+      "calibration/analysis/acd_stand_level_2026-05-16/acd_calibration_factors.csv")
+    if (!file.exists(factors_path)) {
+      cat("ACD post-pass stratified: factors CSV not found at", factors_path,
+          "; falling back to population multipliers\n")
+      ACD_POSTPASS_MODE <- "population"
+    } else {
+      facs <- fread(factors_path)
+      # Pivot to wide so we can join 4 strata x 4 attributes neatly
+      facs_wide <- dcast(facs, stratum + level ~ attribute, value.var = "multiplier")
+
+      # Classify each validation row
+      # BA_t1_class: low < 50, med 50-100, high 100-150, vhigh >= 150
+      ba_class <- fcase(
+        validation_data$BA_t1 < 50,                          "BA1_low",
+        validation_data$BA_t1 >= 50  & validation_data$BA_t1 < 100, "BA1_med",
+        validation_data$BA_t1 >= 100 & validation_data$BA_t1 < 150, "BA1_high",
+        validation_data$BA_t1 >= 150,                         "BA1_vhigh",
+        default = NA_character_)
+      # SI_tercile: split on SICOND quantiles within ACD rows
+      acd_si <- validation_data$SICOND[acd_rows]
+      si_qs  <- quantile(acd_si, c(1/3, 2/3), na.rm = TRUE)
+      si_class <- fcase(
+        validation_data$SICOND <  si_qs[1], "SI_low",
+        validation_data$SICOND >= si_qs[1] & validation_data$SICOND < si_qs[2], "SI_med",
+        validation_data$SICOND >= si_qs[2], "SI_high",
+        default = NA_character_)
+      # FT_GROUP from FORTYPCD
+      ft_group <- fcase(
+        validation_data$FORTYPCD %in% c(101:109),  "white-red-jack-pine",
+        validation_data$FORTYPCD %in% c(121:129),  "spruce-fir",
+        validation_data$FORTYPCD %in% c(401:409),  "oak-hickory",
+        validation_data$FORTYPCD %in% c(501:509),  "oak-pine",
+        validation_data$FORTYPCD %in% c(801:809),  "maple-beech-birch",
+        validation_data$FORTYPCD %in% c(901:909),  "aspen-birch",
+        default = "nonstocked-other")
+      # interval_class: nearest of 4/5/6/7
+      int_class <- as.character(pmin(pmax(round(validation_data$interval_years), 4L), 7L))
+
+      # Lookup tables
+      ft_tab    <- facs_wide[stratum == "FT_GROUP"]
+      ba_tab    <- facs_wide[stratum == "BA_t1_class"]
+      si_tab    <- facs_wide[stratum == "SI_tercile"]
+      int_tab   <- facs_wide[stratum == "interval_years"]
+
+      get_mult <- function(tab, levels, attr) {
+        idx <- match(levels, tab$level)
+        out <- tab[[attr]][idx]
+        out[is.na(out)] <- 1.0
+        out
+      }
+
+      # Per-row multipliers as geometric mean across the 4 strata
+      gm4 <- function(a, b, c, d) (a * b * c * d) ^ 0.25
+      mult_BAPH  <- gm4(get_mult(ft_tab,  ft_group, "BAPH"),
+                        get_mult(ba_tab,  ba_class, "BAPH"),
+                        get_mult(si_tab,  si_class, "BAPH"),
+                        get_mult(int_tab, int_class,"BAPH"))
+      mult_TPA   <- gm4(get_mult(ft_tab,  ft_group, "TPA"),
+                        get_mult(ba_tab,  ba_class, "TPA"),
+                        get_mult(si_tab,  si_class, "TPA"),
+                        get_mult(int_tab, int_class,"TPA"))
+      mult_QMD   <- gm4(get_mult(ft_tab,  ft_group, "QMD"),
+                        get_mult(ba_tab,  ba_class, "QMD"),
+                        get_mult(si_tab,  si_class, "QMD"),
+                        get_mult(int_tab, int_class,"QMD"))
+      mult_TOPHT <- gm4(get_mult(ft_tab,  ft_group, "TOPHT"),
+                        get_mult(ba_tab,  ba_class, "TOPHT"),
+                        get_mult(si_tab,  si_class, "TOPHT"),
+                        get_mult(int_tab, int_class,"TOPHT"))
+
+      validation_data[acd_rows, `:=`(
+        BA_pred_calib  = BA_pred_calib  * mult_BAPH[acd_rows],
+        TPA_pred_calib = TPA_pred_calib * mult_TPA[acd_rows],
+        QMD_pred_calib = QMD_pred_calib * mult_QMD[acd_rows]
+      )]
+      if ("HT_top_calib" %in% names(validation_data)) {
+        validation_data[acd_rows, HT_top_calib := HT_top_calib * mult_TOPHT[acd_rows]]
+      }
+      cat(sprintf(
+        "ACD post-pass STRATIFIED applied to %d rows; mean multipliers (ACD subset): BA*%.4f TPA*%.4f QMD*%.4f TOPHT*%.4f\n",
+        n_acd,
+        mean(mult_BAPH[acd_rows],  na.rm=TRUE),
+        mean(mult_TPA[acd_rows],   na.rm=TRUE),
+        mean(mult_QMD[acd_rows],   na.rm=TRUE),
+        mean(mult_TOPHT[acd_rows], na.rm=TRUE)))
     }
-    validation_data[acd_rows, `:=`(
-      BA_pred_calib  = BA_pred_calib  * PP_BAPH,
-      TPA_pred_calib = TPA_pred_calib * PP_TPA,
-      QMD_pred_calib = QMD_pred_calib * PP_QMD
-    )]
-    cat(sprintf(
-      "ACD post-pass applied to %d rows: BA*%.4f TPA*%.4f QMD*%.4f TOPHT*%.4f\n",
-      n_acd, PP_BAPH, PP_TPA, PP_QMD, PP_TOPHT))
+  }
+
+  # Population-level fallback (also used when MODE=="population")
+  if (ACD_POSTPASS_MODE == "population") {
+    PP_BAPH  <- as.numeric(Sys.getenv("FVS_ACD_POSTPASS_BAPH",  "1.0168"))
+    PP_QMD   <- as.numeric(Sys.getenv("FVS_ACD_POSTPASS_QMD",   "1.0071"))
+    PP_TOPHT <- as.numeric(Sys.getenv("FVS_ACD_POSTPASS_TOPHT", "1.0117"))
+    PP_TPA   <- as.numeric(Sys.getenv("FVS_ACD_POSTPASS_TPA",   "1.0147"))
+    if (n_acd > 0) {
+      if ("HT_top_calib" %in% names(validation_data)) {
+        validation_data[acd_rows, HT_top_calib := HT_top_calib * PP_TOPHT]
+      }
+      validation_data[acd_rows, `:=`(
+        BA_pred_calib  = BA_pred_calib  * PP_BAPH,
+        TPA_pred_calib = TPA_pred_calib * PP_TPA,
+        QMD_pred_calib = QMD_pred_calib * PP_QMD
+      )]
+      cat(sprintf(
+        "ACD post-pass POPULATION applied to %d rows: BA*%.4f TPA*%.4f QMD*%.4f TOPHT*%.4f\n",
+        n_acd, PP_BAPH, PP_TPA, PP_QMD, PP_TOPHT))
+    }
   }
 }
 

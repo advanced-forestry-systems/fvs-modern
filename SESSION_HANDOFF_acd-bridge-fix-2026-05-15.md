@@ -220,3 +220,70 @@ commit 8510b6f:
    correct row in acd_calibration_factors.csv by FT_GROUP / SI_class
    / BA_t1_class / interval_class. Estimated +10 lines of dplyr.
 
+## Autopilot round 5 — 2026-05-16/17
+
+Round 4 closed several items but left an unconverged HMC and only
+the population-level post-pass. Round 5 closes the loop.
+
+1. **HMC re-fit budget right-sized.** Job 9733825 (warmup=2000,
+   sampling=1500, adapt_delta=0.99, max_treedepth=12) hit the 6-hour
+   walltime mid-sampling and timed out. The original ACD posterior
+   was preserved (snapshot at
+   `diameter_growth_posterior.csv.refit_pre_20260516_201255`).
+   `refit_acd_dg.sh` updated to warmup=1500, sampling=1000,
+   adapt_delta=0.98, max_treedepth=11, walltime=12h. Resubmitted as
+   job **9812192** (RUNNING).
+
+2. **Per-stratum post-pass implemented.** `19_fia_benchmark_engine.R`
+   gained a stratified mode via `FVS_ACD_POSTPASS_MODE=stratified`.
+   Each ACD-tagged row gets four candidate multipliers (one per
+   stratum: FT_GROUP, BA_t1_class, SI_tercile, interval_years) and
+   the geometric mean across the four is applied. The lookup reads
+   `acd_calibration_factors.csv`. Population mode remains the
+   default; stratified is opt-in.
+
+3. **SLURM dependency chain for three back-to-back A/Bs.**
+   `run_ab_after_hmc.sh` runs three benchmark passes once HMC
+   completes successfully, each writing a tagged
+   `fia_benchmark_pctrmse_*.csv`:
+
+   - `refit_only`: converged ACD posterior, no post-pass
+   - `refit_postpass_pop`: + population multipliers
+   - `refit_postpass_strat_ny`: + stratified post-pass + NY Adirondack
+     county filter (the full stack)
+
+   Submitted as job **9812377** with `--dependency=afterok:9812192`.
+
+## What lands automatically once HMC 9812192 returns
+
+Job 9812377 fires three A/Bs back-to-back (~2 hours total) and
+saves six tagged CSVs under
+`calibration/output/comparisons/manuscript_tables/`:
+
+```
+fia_benchmark_pctrmse_refit_only.csv
+fia_benchmark_pctrmse_refit_postpass_pop.csv
+fia_benchmark_pctrmse_refit_postpass_strat_ny.csv
+fia_benchmark_results_refit_only.csv
+fia_benchmark_results_refit_postpass_pop.csv
+fia_benchmark_results_refit_postpass_strat_ny.csv
+```
+
+The headline comparison is the ACD row %RMSE across these three
+files vs the pre-refit ACD baseline (28.52%).
+
+## Next round priorities
+
+1. When 9812192 finishes, read the rhat status from
+   `calibration/logs/acd_posterior_check_9812377.log` (written by
+   the A/B chain's preflight check).
+2. If rhat is still > 1.05, retry with adapt_delta=0.99 and
+   warmup=2500 (24h walltime).
+3. Compare the three A/B CSVs side-by-side and pick the configuration
+   that yields the lowest ACD %RMSE.
+4. Draft a manuscript-section update if the calibrated A/B story
+   meaningfully improved (target: ACD %RMSE matches or beats NE's
+   23.19).
+5. Open a PR from `acd-bridge-fix-2026-05-15` to main if the
+   converged-posterior + post-pass results are sufficient.
+

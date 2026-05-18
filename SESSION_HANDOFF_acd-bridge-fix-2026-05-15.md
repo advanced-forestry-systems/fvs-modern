@@ -1046,3 +1046,70 @@ moved aside, not by the z_b0 reconstruction itself. When 9914046
 finishes successfully with the partial fallback, the next experiment
 is to restore samples.rds and let z_b0 actually drive ACD's dg.
 
+## Autopilot round 15 — 2026-05-17 (closing)
+
+### THE bug: missing samples.rds across all variants
+
+After repeated chains producing only an ACD row with R2=0,
+final diagnosis: the acd-bridge worktree had **no _samples.rds
+files at all** under calibration/output/variants/. Only the .csv
+summaries existed. The original round-5/6 working chain used the
+fvs-conus workspace which has all _samples.rds files in place.
+
+When variants lack samples.rds:
+- load_variant_params dg block is skipped
+- params$dg stays NULL for every variant
+- project_condition_calibrated either errors or returns NA
+- the validation_data NA-filter drops every row except some
+  edge cases (like ACD where the partial-fallback patch made it
+  partially survive)
+
+This was masquerading as bugs in the z_b0 path, partial-params
+fallback, etc. The real issue was simply missing files.
+
+### Fix: symlink each variant directory to fvs-conus
+
+```
+calibration/output/variants/<v> -> /users/PUOM0008/crsfaaron/fvs-conus/output/variants/<v>
+```
+
+22 non-ACD variants symlinked. ACD keeps its own directory with
+its own crown_ratio, mortality, species_bamax_calibrated data, but
+adds symlinks to NE's diameter_growth_samples.rds and
+height_diameter_samples.rds (until we resolve the ACD-specific
+refit posterior with the z_b0 path).
+
+### Verification (in flight)
+
+SLURM 9914785 submitted with the symlinked variants. Expected:
+
+- All 13 variants load with full params (DG, Mort, HD, HTG)
+- Validation pairs > 100,000
+- ACD row appears with ~28.52% RMSE (the canonical round-5/6 baseline)
+- Other variants (LS, NE, SN, etc.) reappear with their calibrated stats
+
+### Worktree convenience, not committable
+
+The variants/ symlinks are infrastructure for THIS worktree, not
+something to commit. The git index treats symlinks as committable
+files but pointing to /users/PUOM0008/crsfaaron/fvs-conus/ would
+only resolve on Cardinal. For other devs/branches the right move
+is to make calibration/ itself a symlink (like the manuscript-figure1
+branch did) — but that is a bigger refactor.
+
+### Why this matters
+
+The fork is in great shape on the build + runtime side (12/12
+variants, 38/38 integration test PASS). The calibration validation
+pipeline regressed because of file-state, not code. With this fix
+the next chain run should reproduce the round-5/6 numbers, and the
+calibrated A/B story can be packaged for PR.
+
+### Status at round-15 close
+
+- Build/runtime side: SHIPPED (24 commits)
+- HMC refit posterior: AVAILABLE (snapshot preserved)
+- Validation pipeline: BLOCKED on chain 9914785 completing
+- z_b0 path: WORKS in principle, needs ACD-specific samples.rds
+  with matching standardization (later session)
+

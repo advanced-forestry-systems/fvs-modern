@@ -230,8 +230,12 @@ load_variant_params <- function(v) {
         betas = sapply(paste0("b", 1:13), get_hi), sigma = dg_sigma_med,
         sigma_shift = +1.28 * dg_sigma_med  # 80% CI upper tail on residuals
       )
-      # Reconstructed species intercepts: b0[i] already in posterior
+      # Reconstructed species intercepts: prefer b0[i] (centered), fall back
+      # to z_b0[i] (non-centered, as produced by some HMC re-fits like the
+      # 2026-05-17 ACD refit). For z_b0, the centered intercept is
+      # b0[i] = mu_b0 + sigma_b0 * z_b0[i] (per-draw reconstruction).
       b0_cols <- names(d)[grepl("^b0\\[\\d+\\]$", names(d))]
+      zb0_cols <- names(d)[grepl("^z_b0\\[\\d+\\]$", names(d))]
       if (length(b0_cols) > 0) {
         b0_medians <- sapply(b0_cols, function(x) median(d[[x]], na.rm = TRUE))
         b0_lo <- sapply(b0_cols, function(x) quantile(d[[x]], CI_LO, na.rm = TRUE))
@@ -239,6 +243,16 @@ load_variant_params <- function(v) {
         params$dg$sp_b0_vals <- b0_medians
         params$dg_lo$sp_b0_vals <- b0_lo
         params$dg_hi$sp_b0_vals <- b0_hi
+      } else if (length(zb0_cols) > 0 && "mu_b0" %in% names(d) && "sigma_b0" %in% names(d)) {
+        # Non-centered parameterization: reconstruct per-draw then summarize.
+        b0_draws <- sapply(zb0_cols, function(z) {
+          d$mu_b0 + d$sigma_b0 * d[[z]]
+        })
+        params$dg$sp_b0_vals    <- apply(b0_draws, 2, median, na.rm = TRUE)
+        params$dg_lo$sp_b0_vals <- apply(b0_draws, 2, quantile, probs = CI_LO, na.rm = TRUE)
+        params$dg_hi$sp_b0_vals <- apply(b0_draws, 2, quantile, probs = CI_HI, na.rm = TRUE)
+        cat(sprintf("  [%s] reconstructed %d species intercepts from z_b0 (non-centered)\n",
+                    v, length(zb0_cols)))
       }
 
       # Build SPCD -> species_index mapping from training data
@@ -1094,7 +1108,7 @@ cat(strrep("-", 80), "\n\n")
 cat("Reading ENTIRE_PLOT.csv ...\n")
 plots <- fread(
   file.path(fia_root, "ENTIRE_PLOT.csv"),
-  select = c("CN", "PREV_PLT_CN", "INVYR", "STATECD", "LAT", "LON", "ELEV"),
+  select = c("CN", "PREV_PLT_CN", "INVYR", "STATECD", "COUNTYCD", "LAT", "LON", "ELEV"),
   colClasses = c(CN = "character", PREV_PLT_CN = "character", INVYR = "integer")
 )
 plots <- plots[!is.na(PREV_PLT_CN) & PREV_PLT_CN != ""]
@@ -1484,30 +1498,54 @@ if (!is.null(raster_lookup)) {
 # retagged as ACD so the variants loop projects them with ACD parameters.
 # Other NE plots (e.g., MA, CT, RI, southern NY) remain NE.
 #
-# The plot footprint set is intentionally conservative; widening it to NY
-# Adirondacks requires a county-level filter and is left as a follow-up.
+# Default footprint: ME/NH/VT by STATECD. The NY Adirondack subset is
+# added via FVS_ACD_NY_COUNTIES (defaults to the 8-county Adirondack Park
+# footprint). Set FVS_ACD_NY_COUNTIES="" to disable the NY contribution.
 # ------------------------------------------------------------------------------
 ACD_RELABEL_ENABLED <- toupper(Sys.getenv("FVS_ACD_RELABEL", "FALSE")) == "TRUE"
 if (ACD_RELABEL_ENABLED) {
   ACD_FOOTPRINT_STATES <- as.integer(strsplit(
     Sys.getenv("FVS_ACD_FOOTPRINT_STATES", "23,33,50"), ",")[[1]])
+  # Optional: NY Adirondack counties (STATECD=36, FIPS COUNTYCD subset).
+  # Default county set: Clinton(19), Essex(31), Franklin(33), Fulton(35),
+  # Hamilton(41), Herkimer(49), St. Lawrence(89), Warren(115). All eight
+  # are in or border the Adirondack Park ecological footprint.
+  ACD_NY_COUNTIES <- as.integer(strsplit(
+    Sys.getenv("FVS_ACD_NY_COUNTIES", "19,31,33,35,41,49,89,115"), ",")[[1]])
   cat("ACD relabel enabled; footprint states (STATECD):",
-      paste(ACD_FOOTPRINT_STATES, collapse = ", "), "\n")
+      paste(ACD_FOOTPRINT_STATES, collapse = ", "),
+      "+ NY Adirondack COUNTYCD:",
+      paste(ACD_NY_COUNTIES, collapse = ", "), "\n")
 
-  # Pull STATECD for each PLT_CN_t1 (already loaded as part of `plots`).
-  statecd_lookup <- unique(plots[, .(PLT_CN_t1 = CN, STATECD)])
+  # Pull STATECD and COUNTYCD for each PLT_CN_t1.
+  has_county <- "COUNTYCD" %in% names(plots)
+  if (has_county) {
+    statecd_lookup <- unique(plots[, .(PLT_CN_t1 = CN, STATECD, COUNTYCD)])
+  } else {
+    statecd_lookup <- unique(plots[, .(PLT_CN_t1 = CN, STATECD)])
+    cat("  Note: COUNTYCD not in plots table; NY-county subset disabled.\n")
+  }
   matched <- merge(matched, statecd_lookup, by = "PLT_CN_t1", all.x = TRUE)
 
   acd_eligible <- matched$VARIANT == "NE" & matched$STATECD %in% ACD_FOOTPRINT_STATES
+  if (has_county) {
+    acd_ny <- matched$VARIANT == "NE" & matched$STATECD == 36L & matched$COUNTYCD %in% ACD_NY_COUNTIES
+    acd_eligible <- acd_eligible | acd_ny
+    n_ny <- sum(acd_ny, na.rm = TRUE)
+  } else {
+    n_ny <- 0L
+  }
   n_relabel <- sum(acd_eligible, na.rm = TRUE)
   if (n_relabel > 0) {
     matched[acd_eligible, VARIANT := "ACD"]
-    cat("  Relabeled", n_relabel, "NE plots as ACD (subvariant of NE);",
+    cat("  Relabeled", n_relabel, "NE plots as ACD (",
+        n_relabel - n_ny, "ME/NH/VT,", n_ny, "NY Adirondack);",
         sum(matched$VARIANT == "NE", na.rm = TRUE), "NE plots retained\n\n")
   } else {
     cat("  No NE plots in the Acadian footprint; relabel had no effect\n\n")
   }
-  matched[, STATECD := NULL]  # cleanup helper column
+  matched[, STATECD := NULL]
+  if (has_county) matched[, COUNTYCD := NULL]
 }
 
 # Save observed changes
@@ -1538,9 +1576,29 @@ for (var in variants_in_data) {
   # missing for subvariants. ACD shares the NE binary, so when ACD params are
   # absent we fall back to NE rather than skipping all 30k+ Acadian plots.
   params <- variant_params[[var]]
-  if (is.null(params) && var == "ACD" && !is.null(variant_params[["NE"]])) {
-    params <- variant_params[["NE"]]
-    cat("[ACD <- NE params fallback] ")
+  if (var == "ACD" && !is.null(variant_params[["NE"]])) {
+    ne_params <- variant_params[["NE"]]
+    if (is.null(params)) {
+      params <- ne_params
+      cat("[ACD <- NE params fallback (full)] ")
+    } else {
+      # Partial fallback: ACD has crown_ratio, mortality, etc. from refit,
+      # but may be missing $dg (because diameter_growth_samples.rds was
+      # moved aside) or $hd. Copy missing slots from NE so projection has
+      # a complete param set.
+      slots_filled <- c()
+      for (slot in c("dg","dg_lo","dg_hi","hd","hd_lo","hd_hi",
+                     "meas_interval","sp_idx_map")) {
+        if (is.null(params[[slot]]) && !is.null(ne_params[[slot]])) {
+          params[[slot]] <- ne_params[[slot]]
+          slots_filled <- c(slots_filled, slot)
+        }
+      }
+      if (length(slots_filled) > 0) {
+        cat(sprintf("[ACD <- NE partial fallback for: %s] ",
+                    paste(slots_filled, collapse=",")))
+      }
+    }
   }
   if (is.null(params)) {
     cat("SKIP (no params)\n")
@@ -1616,8 +1674,12 @@ for (var in variants_in_data) {
                        error = function(e) null_err)
 
     # Default projection
+    # ACD is a subvariant of NE; the FVS default-path lookup does not know
+    # "ACD" as a native variant code, so route to NE for ACD-tagged rows.
+    default_variant_code <- if (var == "ACD") "NE" else var
     default <- tryCatch(
-      project_condition_default(t1_trees, row$interval_years, variant_code = var),
+      project_condition_default(t1_trees, row$interval_years,
+                                variant_code = default_variant_code),
       error = function(e) null_err)
 
     # CI bracket projections (Q10/Q90 parameter swap)
@@ -1763,6 +1825,135 @@ validation_data[, PAI_BFNET_pred_calib := fifelse(interval_years > 0,
   (VOL_BFNET_pred_calib - VOL_BFNET_t1) / interval_years, NA_real_)]
 validation_data[, PAI_BFNET_pred_default := fifelse(interval_years > 0,
   (VOL_BFNET_pred_default - VOL_BFNET_t1) / interval_years, NA_real_)]
+
+# ---- Optional: ACD post-pass calibration factors ----
+# Apply stand-level multipliers from
+# calibration/analysis/acd_stand_level_2026-05-16/acd_calibration_factors.csv
+# (population-level factors only in this pass; per-stratum factors are a
+# follow-up). Source: benchmark job 9610424 (30,146 NE-relabeled conditions).
+# Multipliers reflect overall pred/obs bias and close residual ACD
+# under-prediction. Enabled by env FVS_ACD_POSTPASS=TRUE.
+ACD_POSTPASS_ENABLED <- toupper(Sys.getenv("FVS_ACD_POSTPASS", "FALSE")) == "TRUE"
+ACD_POSTPASS_MODE    <- tolower(Sys.getenv("FVS_ACD_POSTPASS_MODE", "population"))
+if (ACD_POSTPASS_ENABLED && "ACD" %in% validation_data$VARIANT) {
+  acd_rows <- validation_data$VARIANT == "ACD"
+  n_acd <- sum(acd_rows)
+
+  if (ACD_POSTPASS_MODE == "stratified") {
+    # --- Per-stratum lookup against acd_calibration_factors.csv ---
+    # Each row gets four candidate multipliers per attribute (one per stratum:
+    # FT_GROUP, BA_t1_class, SI_tercile, interval_years). Apply the geometric
+    # mean across the four so each stratum contributes equally.
+    factors_path <- file.path(project_root,
+      "calibration/analysis/acd_stand_level_2026-05-16/acd_calibration_factors.csv")
+    if (!file.exists(factors_path)) {
+      cat("ACD post-pass stratified: factors CSV not found at", factors_path,
+          "; falling back to population multipliers\n")
+      ACD_POSTPASS_MODE <- "population"
+    } else {
+      facs <- fread(factors_path)
+      # Pivot to wide so we can join 4 strata x 4 attributes neatly
+      facs_wide <- dcast(facs, stratum + level ~ attribute, value.var = "multiplier")
+
+      # Classify each validation row
+      # BA_t1_class: low < 50, med 50-100, high 100-150, vhigh >= 150
+      ba_class <- fcase(
+        validation_data$BA_t1 < 50,                          "BA1_low",
+        validation_data$BA_t1 >= 50  & validation_data$BA_t1 < 100, "BA1_med",
+        validation_data$BA_t1 >= 100 & validation_data$BA_t1 < 150, "BA1_high",
+        validation_data$BA_t1 >= 150,                         "BA1_vhigh",
+        default = NA_character_)
+      # SI_tercile: split on SICOND quantiles within ACD rows
+      acd_si <- validation_data$SICOND[acd_rows]
+      si_qs  <- quantile(acd_si, c(1/3, 2/3), na.rm = TRUE)
+      si_class <- fcase(
+        validation_data$SICOND <  si_qs[1], "SI_low",
+        validation_data$SICOND >= si_qs[1] & validation_data$SICOND < si_qs[2], "SI_med",
+        validation_data$SICOND >= si_qs[2], "SI_high",
+        default = NA_character_)
+      # FT_GROUP from FORTYPCD
+      ft_group <- fcase(
+        validation_data$FORTYPCD %in% c(101:109),  "white-red-jack-pine",
+        validation_data$FORTYPCD %in% c(121:129),  "spruce-fir",
+        validation_data$FORTYPCD %in% c(401:409),  "oak-hickory",
+        validation_data$FORTYPCD %in% c(501:509),  "oak-pine",
+        validation_data$FORTYPCD %in% c(801:809),  "maple-beech-birch",
+        validation_data$FORTYPCD %in% c(901:909),  "aspen-birch",
+        default = "nonstocked-other")
+      # interval_class: nearest of 4/5/6/7
+      int_class <- as.character(pmin(pmax(round(validation_data$interval_years), 4L), 7L))
+
+      # Lookup tables
+      ft_tab    <- facs_wide[stratum == "FT_GROUP"]
+      ba_tab    <- facs_wide[stratum == "BA_t1_class"]
+      si_tab    <- facs_wide[stratum == "SI_tercile"]
+      int_tab   <- facs_wide[stratum == "interval_years"]
+
+      get_mult <- function(tab, levels, attr) {
+        idx <- match(levels, tab$level)
+        out <- tab[[attr]][idx]
+        out[is.na(out)] <- 1.0
+        out
+      }
+
+      # Per-row multipliers as geometric mean across the 4 strata
+      gm4 <- function(a, b, c, d) (a * b * c * d) ^ 0.25
+      mult_BAPH  <- gm4(get_mult(ft_tab,  ft_group, "BAPH"),
+                        get_mult(ba_tab,  ba_class, "BAPH"),
+                        get_mult(si_tab,  si_class, "BAPH"),
+                        get_mult(int_tab, int_class,"BAPH"))
+      mult_TPA   <- gm4(get_mult(ft_tab,  ft_group, "TPA"),
+                        get_mult(ba_tab,  ba_class, "TPA"),
+                        get_mult(si_tab,  si_class, "TPA"),
+                        get_mult(int_tab, int_class,"TPA"))
+      mult_QMD   <- gm4(get_mult(ft_tab,  ft_group, "QMD"),
+                        get_mult(ba_tab,  ba_class, "QMD"),
+                        get_mult(si_tab,  si_class, "QMD"),
+                        get_mult(int_tab, int_class,"QMD"))
+      mult_TOPHT <- gm4(get_mult(ft_tab,  ft_group, "TOPHT"),
+                        get_mult(ba_tab,  ba_class, "TOPHT"),
+                        get_mult(si_tab,  si_class, "TOPHT"),
+                        get_mult(int_tab, int_class,"TOPHT"))
+
+      validation_data[acd_rows, `:=`(
+        BA_pred_calib  = BA_pred_calib  * mult_BAPH[acd_rows],
+        TPA_pred_calib = TPA_pred_calib * mult_TPA[acd_rows],
+        QMD_pred_calib = QMD_pred_calib * mult_QMD[acd_rows]
+      )]
+      if ("HT_top_calib" %in% names(validation_data)) {
+        validation_data[acd_rows, HT_top_calib := HT_top_calib * mult_TOPHT[acd_rows]]
+      }
+      cat(sprintf(
+        "ACD post-pass STRATIFIED applied to %d rows; mean multipliers (ACD subset): BA*%.4f TPA*%.4f QMD*%.4f TOPHT*%.4f\n",
+        n_acd,
+        mean(mult_BAPH[acd_rows],  na.rm=TRUE),
+        mean(mult_TPA[acd_rows],   na.rm=TRUE),
+        mean(mult_QMD[acd_rows],   na.rm=TRUE),
+        mean(mult_TOPHT[acd_rows], na.rm=TRUE)))
+    }
+  }
+
+  # Population-level fallback (also used when MODE=="population")
+  if (ACD_POSTPASS_MODE == "population") {
+    PP_BAPH  <- as.numeric(Sys.getenv("FVS_ACD_POSTPASS_BAPH",  "1.0168"))
+    PP_QMD   <- as.numeric(Sys.getenv("FVS_ACD_POSTPASS_QMD",   "1.0071"))
+    PP_TOPHT <- as.numeric(Sys.getenv("FVS_ACD_POSTPASS_TOPHT", "1.0117"))
+    PP_TPA   <- as.numeric(Sys.getenv("FVS_ACD_POSTPASS_TPA",   "1.0147"))
+    if (n_acd > 0) {
+      if ("HT_top_calib" %in% names(validation_data)) {
+        validation_data[acd_rows, HT_top_calib := HT_top_calib * PP_TOPHT]
+      }
+      validation_data[acd_rows, `:=`(
+        BA_pred_calib  = BA_pred_calib  * PP_BAPH,
+        TPA_pred_calib = TPA_pred_calib * PP_TPA,
+        QMD_pred_calib = QMD_pred_calib * PP_QMD
+      )]
+      cat(sprintf(
+        "ACD post-pass POPULATION applied to %d rows: BA*%.4f TPA*%.4f QMD*%.4f TOPHT*%.4f\n",
+        n_acd, PP_BAPH, PP_TPA, PP_QMD, PP_TOPHT))
+    }
+  }
+}
 
 # Remove NAs
 validation_data <- validation_data[!is.na(BA_pred_calib) & !is.na(BA_pred_default)]

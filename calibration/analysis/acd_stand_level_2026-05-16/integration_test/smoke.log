@@ -1,0 +1,57 @@
+Smoke test: per-stratum ACD post-pass
+------------------------------------------------------------
+Stratum classification (ACD rows):
+    BA_t1 SICOND FORTYPCD interval  ba_class si_class            ft_group
+    <num>  <num>    <int>    <int>    <char>   <char>              <char>
+ 1:    30     50      121        5   BA1_low   SI_low          spruce-fir
+ 2:    60     60      801        5   BA1_med   SI_med   maple-beech-birch
+ 3:   120     75      901        6  BA1_high  SI_high         aspen-birch
+ 4:   180     90      401        7 BA1_vhigh  SI_high         oak-hickory
+ 5:    80     NA       NA        4   BA1_med     <NA>    nonstocked-other
+ 6:   110     65      501        6  BA1_high   SI_med            oak-pine
+ 7:    40     55      105        5   BA1_low   SI_low white-red-jack-pine
+ 8:   160     85      121        7 BA1_vhigh  SI_high          spruce-fir
+ 9:    95     70      803        5   BA1_med   SI_med   maple-beech-birch
+10:    70     60      905        5   BA1_med   SI_med         aspen-birch
+    int_class m_BAPH  m_TPA  m_QMD m_TOPHT
+       <char>  <num>  <num>  <num>   <num>
+ 1:         5 1.0699 1.1038 0.9960  1.0140
+ 2:         5 1.0210 1.0233 1.0030  1.0068
+ 3:         6 1.0163 0.9805 1.0153  1.0147
+ 4:         7 1.0104 0.9673 1.0170  1.0225
+ 5:         4 1.0313 1.0321 1.0060  1.0110
+ 6:         6 1.0140 0.9807 1.0186  1.0135
+ 7:         5 1.0698 1.0898 1.0060  1.0239
+ 8:         7 1.0105 0.9743 1.0118  1.0185
+ 9:         5 1.0210 1.0233 1.0030  1.0068
+10:         5 1.0280 1.0191 1.0058  1.0117
+
+AFTER post-pass:
+    VARIANT BA_pred_calib TPA_pred_calib QMD_pred_calib HT_top_calib
+     <char>         <num>          <num>          <num>        <num>
+ 1:     ACD      106.9910       331.1260       6.971973     60.83797
+ 2:     ACD      102.1044       306.9952       7.021128     60.40922
+ 3:     ACD      101.6315       294.1373       7.107225     60.88209
+ 4:     ACD      101.0410       290.1979       7.119139     61.34701
+ 5:     ACD      103.1261       309.6295       7.042082     60.66135
+ 6:     ACD      101.3989       294.2102       7.129998     60.80973
+ 7:     ACD      106.9832       326.9541       7.042270     61.43516
+ 8:     ACD      101.0484       292.2914       7.082380     61.10883
+ 9:     ACD      102.1044       306.9952       7.021128     60.40922
+10:     ACD      102.8041       305.7190       7.040678     60.69923
+11:      NE      100.0000       300.0000       7.000000     60.00000
+12:      NE      100.0000       300.0000       7.000000     60.00000
+13:      NE      100.0000       300.0000       7.000000     60.00000
+14:      NE      100.0000       300.0000       7.000000     60.00000
+15:      NE      100.0000       300.0000       7.000000     60.00000
+
+Checks:
+- NE rows untouched:     TRUE 
+- ACD BA all modified:   TRUE 
+- No NAs introduced:     TRUE 
+- All multipliers finite: TRUE 
+
+Summary multipliers (mean across ACD rows):
+  BAPH=1.0292  TPA=1.0194  QMD=1.0083  TOPHT=1.0143
+
+SMOKE TEST: PASS

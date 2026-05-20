@@ -1,0 +1,24 @@
+phase	variant	status	detail
+build	acd	PASS	8156064B
+build	ne	PASS	8169728B
+build	cs	PASS	8129504B
+build	ls	PASS	8116920B
+build	sn	PASS	8157192B
+build	kt	PASS	9143240B
+build	em	PASS	9270872B
+run	acd	PASS	rc=10 sum=8762B out=217771B
+run	ne	PASS	rc=10 sum=8762B out=216971B
+run	cs	FAIL	rc=20 sum=8762B out=218283B
+run	ls	FAIL	rc=20 sum=8762B out=209991B
+run	sn	FAIL	rc=20 sum=8762B out=215204B
+run	kt	FAIL	rc=20 sum=8762B out=192404B
+run	em	FAIL	rc=20 sum=8762B out=194421B
+marker	acd	PASS	found 'AC' in header
+marker	ne	PASS	found 'NE' in header
+marker	cs	PASS	found 'CS' in header
+marker	ls	PASS	found 'LS' in header
+marker	sn	PASS	found 'SN' in header
+marker	kt	PASS	found 'KT' in header
+marker	em	PASS	found 'EM' in header
+distinct	all	PASS	7 variants, 7 unique .sum md5s
+smoke	postpass	PASS	stratified post-pass logic OK

@@ -7,6 +7,67 @@ project adheres to calendar-based versioning (YYYY.MM).
 ## [Unreleased]
 
 ### Added
+
+- `calibration/R/27_acd_post_pass.R`: standalone post-pass that re-projects
+  NE-tagged FIA conditions through ACD calibrated and default parameters
+  without re-running the full benchmark engine. Reads cached
+  `observed_changes.csv`, sources the engine's function-definition prefix
+  via marker-based slicing with forward-range assertions, and emits
+  `validation_data_acd_post.csv` plus a one-row stats table for the
+  manuscript fia_benchmark_results CSV.
+- `calibration/analysis/acd_stand_level_2026-05-16/`: bias diagnostic suite
+  derived from the 30,146-condition NE-relabeled benchmark (job 9610424).
+  Contains `stand_level_calibration.R` (the derivation), 81-row
+  `acd_calibration_factors.csv` of TPA / QMD / BAPH / TOPHT multipliers
+  stratified by FT_GROUP / SI_tercile / BA_t1 class / interval_years, an
+  application guidance text file with FIXDG / FIXHTG / FIXMORT translation
+  notes, `ACD_bias_findings.md` with the pred/obs decomposition that
+  reframes the original +19.7% headline as a metric artifact (true
+  population biases <5% on every attribute, calibration arm beats default
+  by ~9 pp on BA and VOL), and supporting `vol_decomp.R` /
+  `diagnose_acd_bias_base.R` / `all_metrics.R` analyses.
+- `FVS_ACD_RELABEL` environment-variable gate in
+  `calibration/R/19_fia_benchmark_engine.R`. When set, NE-tagged conditions
+  with `STATECD` in the configurable Acadian footprint (default ME/NH/VT
+  via `FVS_ACD_FOOTPRINT_STATES`) are retagged ACD so the variants loop
+  projects them under the ACD parameter set rather than NE. NE plots
+  outside the footprint stay NE.
+- ACD <- NE parameter fallback in the variants loop of
+  `19_fia_benchmark_engine.R`: when var == "ACD" and `variant_params[["ACD"]]`
+  is missing, fall back to `variant_params[["NE"]]` rather than skipping
+  all Acadian conditions. Matched companion fallback in the post-pass
+  script, with explicit `calibration_source` tagging
+  (`ACD_native` / `ACD_partial` / `NE_full`).
+- Engine STEP 2b now writes `ingrowth_lookup` to
+  `intermediate/ingrowth_lookup.rds` so post-pass scripts can load it for
+  full-fidelity ingrowth contribution rather than running ingrowth-less.
+
+### Changed
+
+- `LFIANVB` default flipped from `.FALSE.` to `.TRUE.` in
+  `src-converted/{acd,ne,cs,ls,sn,kt,em}/grinit.f90`. This makes the
+  FIA NSVB volume / biomass / carbon estimator (Westfall et al. 2024,
+  USDA Forest Service Gen Tech Rep WO-104) the default V/B/C method for
+  the seven Eastern Region variants we ship. Users who need legacy CRM
+  can append `FIAVBC OFF` to their keyword deck. Deliberate divergence
+  from `USDAForestService/ForestVegetationSimulator` @ main, which
+  retains `LFIANVB = .FALSE.` for backward compatibility. Western
+  variants (PN, WC, NC, CA, OC, OP, EC, BM, SO, IE, CI, CR, TT, UT, WS,
+  AK) are intentionally NOT flipped — NSVB validation for the Western
+  Region is still in development at FIA.
+
+### Fixed
+
+- `deployment/scripts/build_fvs_executables.sh`: `econ/econ_stubs.f90`
+  is now only linked when the real econ implementation (ecin.o,
+  ecstatus.o, eccalc.o, etc.) is absent from `OBJECTS`. Previously the
+  stubs were always added, producing duplicate-symbol link errors for
+  `eckey_` (ecin.f90:656 vs econ_stubs.f90:43) and
+  `getispretendactive_` (ecstatus.f90:80 vs econ_stubs.f90:48) on
+  variants like ACD that pull in the full econ tree. Applies the same
+  conditional pattern that already covered `fmcfmd_stub.f90`.
+
+#### CONUS Phase 4 integration
 - `calibration/R/63_build_variant_ecodiv_coverage.R`: one-time generator
   for `calibration/data/variant_ecodiv_coverage.csv`. Reads the area
   weighted variant x ecodivision overlay

@@ -29,9 +29,29 @@ LOGICAL LRETRN
 INTEGER IERRN,IPTKNT,I
 CHARACTER*12 PREF
 CHARACTER*256 CMSG
+LOGICAL LERRGRO_OPENED
+CHARACTER*16 LERRGRO_FORM
 !
 DATA PREF/'********   '/
 CMSG = ' '
+
+! 2026-05-16 holoros fork: defensive JOSTND guard.
+!
+! Upstream FVS relies on filopn opening JOSTND as FORMATTED before any
+! error code path runs. In the interactive (prompt-driven) filopn path,
+! MYOPEN is called with JOSTND in its uninitialized COMMON-block state
+! (value = 0), which may either fail outright (then filopn falls back to
+! JOSTND=6) or leave JOSTND associated with a partly-initialized unit
+! whose FORM is mismatched. When errgro then issues WRITE(JOSTND, fmt)
+! the runtime aborts with "Format present for UNFORMATTED data transfer".
+!
+! Reset to stdout (unit 6) if JOSTND is not OPEN, or is OPEN but not
+! FORMATTED. Cheap and safe: errgro is only on the error path, and unit 6
+! is universally a valid FORMATTED output destination.
+INQUIRE(UNIT=JOSTND, OPENED=LERRGRO_OPENED, FORM=LERRGRO_FORM)
+IF (.NOT. LERRGRO_OPENED .OR. LERRGRO_FORM .NE. 'FORMATTED') THEN
+  JOSTND = 6
+ENDIF
 
 GO TO( 1100,1200,1300,1400,1500,1600,1700,1800,1900,2000, &
        2100,2200,2300,2400,2500,2600,2700,2800,2900,3000, &

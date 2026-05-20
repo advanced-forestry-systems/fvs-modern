@@ -28,6 +28,25 @@ LOGICAL LOPEN
 LOGICAL LPT
 DATA LPT/.TRUE./
 !----------
+!  2026-05-16 holoros fork: ensure FVS unit numbers have their canonical
+!  values before the OPEN calls below. The BLOCK DATA in <variant>/blkdat.f90
+!  sets `DATA IREAD,ISTDAT,JOLIST,JOSTND,JOSUM,JOTREE/15,2,3,16,4,8/` but
+!  those initializers are not applied at executable load time in this fork
+!  (verified by `objdump -j .data`: the /CONTRL/ region is zero-filled).
+!  Without the canonical values the OPEN(UNIT=IREAD,...) below opens unit 0
+!  rather than unit 15, and subsequent READ(15,...) calls in keyrdr.f90
+!  hit immediate EOF -- the long-standing "FVS02 ERROR: NO STOP RECORD"
+!  cited in calibration/python/PN_SN_LIBRARY_DIAGNOSIS.md. Same guard is
+!  duplicated at the top of SUBROUTINE FVS for any callers that bypass
+!  filopn.
+!----------
+IF (IREAD  .EQ. 0) IREAD  = 15
+IF (ISTDAT .EQ. 0) ISTDAT = 2
+IF (JOLIST .EQ. 0) JOLIST = 3
+IF (JOSTND .EQ. 0) JOSTND = 16
+IF (JOSUM  .EQ. 0) JOSUM  = 4
+IF (JOTREE .EQ. 0) JOTREE = 8
+!----------
 !  KEYWORD and OUTPUT FILES.
 !----------
 KWDFIL=' '
@@ -63,6 +82,24 @@ if (KWDFIL.ne.' ') then
   ! These outputs will NOT be identical to output files created
   ! with nonstop runs: they are blocked into multi-stand sets
   ! based on the stop point(s).
+
+  ! 2026-05-16 holoros fork: open ISTDAT with <keyfile_basename>.tre when
+  ! the non-interactive path is taken. Without this, the tree-input reader
+  ! intree.f90 attempts READ(ISTDAT,...) on an unopened unit and aborts.
+  ! Matches the upstream FVS convention demonstrated by the FVSne test
+  ! makefile (net01.key paired with net01.tre). When no companion .tre
+  ! file exists, leave ISTDAT closed -- decks with inline TREEDATA blocks
+  ! that read from IREAD will still work; decks that reference an external
+  ! tree file will emit a clear "file does not exist" error.
+  if (i.eq.0) then
+    cname = KWDFIL(:lenkey)//".tre"
+    inquire(file=trim(cname),exist=LOPEN)
+    if (LOPEN) then
+      inquire(unit=ISTDAT,opened=LOPEN)
+      if (LOPEN) close(unit=ISTDAT)
+      open(unit=ISTDAT,file=trim(cname),status="old",err=103)
+    endif
+  endif
 
   if (i.eq.0) then
     cname = KWDFIL(:lenkey)//".trl"
@@ -102,6 +139,10 @@ if (KWDFIL.ne.' ') then
   return
 102   continue
   print *,"File open error on: ",trim(cname)
+  call fvsSetRtnCode(1)
+  return
+103   continue
+  print *,"Tree data file open error on: ",trim(cname)
   call fvsSetRtnCode(1)
   return
 endif

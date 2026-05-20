@@ -106,6 +106,41 @@ for var in "${VARIANTS[@]}"; do
     VARDIR="$BUILD_DIR/$var"
     mkdir -p "$VARDIR"
 
+    # 2026-05-16 holoros fork: shield variant-specific PRGPRM.f90 / ESPARM.f90
+    # from being shadowed by base/ copies during compilation.
+    #
+    # gfortran resolves `INCLUDE 'PRGPRM.f90'` first against the current source
+    # file's directory, THEN through -I dirs. Files in base/ (e.g. intree.f90,
+    # keywds.f90) thus pick up base/PRGPRM.f90 (MAXSP=23) instead of the
+    # variant's correct $var/common/PRGPRM.f90 (MAXSP=108 for ACD). The
+    # resulting MAXSP discrepancy across compilation units corrupts the
+    # /CONCHR/ common block layout: IUSED(MAXSP) sized at 4*23 bytes by base
+    # files and 4*108 bytes by variant files puts TREFMT at different offsets
+    # and the tree-format keyword handler writes through one offset while
+    # intree.f90 reads through the other, garbling READ(RECORD,TREFMT) with
+    # NAMGRP/PTGNAME data and aborting at intree.f90:188 with
+    # "Missing initial left parenthesis in format".
+    #
+    # Move the base shadows aside for the duration of this variant build,
+    # so all INCLUDE 'PRGPRM.f90' resolve via -I$var/common consistently.
+    # Restore on exit so other variant builds and rFVS/fvsOL paths see the
+    # original tree.
+    SHADOWED_FILES=()
+    for shadow_name in PRGPRM.f90 ESPARM.f90; do
+        shadow_path="$SRC_ROOT/base/$shadow_name"
+        variant_path="$SRC_ROOT/$var/common/$shadow_name"
+        if [ -f "$shadow_path" ] && [ -f "$variant_path" ]; then
+            mv "$shadow_path" "${shadow_path}.SHADOW_BUILD_${var}"
+            SHADOWED_FILES+=("${shadow_path}")
+        fi
+    done
+    restore_shadows() {
+        for sp in "${SHADOWED_FILES[@]}"; do
+            [ -f "${sp}.SHADOW_BUILD_${var}" ] && mv "${sp}.SHADOW_BUILD_${var}" "$sp"
+        done
+    }
+    trap restore_shadows EXIT
+
     OBJECTS=()
     COMPILE_ERRORS=0
 
@@ -260,7 +295,8 @@ for var in "${VARIANTS[@]}"; do
 
     # Compile stubs for subroutines that cannot compile on GCC
     # (Windows DLL imports, missing region-specific volume routines, etc.)
-    for stub_src in "$SRC_ROOT/base/fvs_stubs.f90" "$SRC_ROOT/econ/econ_stubs.f90"; do
+    # base/fvs_stubs.f90 is unconditional (stubs Windows DLL imports).
+    for stub_src in "$SRC_ROOT/base/fvs_stubs.f90"; do
         [ -f "$stub_src" ] || continue
         stub_obj="$VARDIR/$(basename ${stub_src%.*}).o"
         if compile_file "$stub_src" "$stub_obj" "$INCDIRS" 2>/dev/null && [ -f "$stub_obj" ]; then
@@ -281,6 +317,41 @@ for var in "${VARIANTS[@]}"; do
         stub_obj="$VARDIR/fmcfmd_stub.o"
         if compile_file "$SRC_ROOT/fire/vbase/fmcfmd_stub.f90" "$stub_obj" "$INCDIRS" 2>/dev/null && [ -f "$stub_obj" ]; then
             OBJECTS+=("$stub_obj")
+        fi
+    fi
+
+    # Conditional econ stubs (2026-05-16): same pattern as fmcfmd. The real
+    # econ implementation (econ/ecin.f90, ecstatus.f90, eccalc.f90, etc.)
+    # compiles cleanly under GCC for the ACD/NE/CS/LS/SN variants, so
+    # econ_stubs.f90 would produce duplicate-symbol link errors when both
+    # are present (eckey_ from ecin.f90:656 vs econ_stubs.f90:43;
+    # getispretendactive_ from ecstatus.f90:80 vs econ_stubs.f90:48).
+    # Only add the stubs file when the real econ objects are missing
+    # (e.g., minimal-variant builds that exclude the econ tree).
+    HAS_ECIN=0
+    HAS_ECSTATUS=0
+    for obj in "${OBJECTS[@]}"; do
+        bobj=$(basename "$obj" .o)
+        case "$bobj" in
+            ecin|econ_ecin)         HAS_ECIN=1 ;;
+            ecstatus|econ_ecstatus) HAS_ECSTATUS=1 ;;
+        esac
+    done
+    if [ "$HAS_ECIN" -eq 0 ] && [ "$HAS_ECSTATUS" -eq 0 ] && [ -f "$SRC_ROOT/econ/econ_stubs.f90" ]; then
+        stub_obj="$VARDIR/econ_stubs.o"
+        if compile_file "$SRC_ROOT/econ/econ_stubs.f90" "$stub_obj" "$INCDIRS" 2>/dev/null && [ -f "$stub_obj" ]; then
+            OBJECTS+=("$stub_obj")
+        fi
+    else
+        # When econ_stubs.f90 is skipped (because real econ provides ecin /
+        # ecstatus), we still need VARVER. It is called from variant code
+        # (e.g. acd/dgdriv.f90:295, acd/morts.f90:139) but no upstream
+        # variant actually defines it. Provide a tiny stub.
+        if [ -f "$SRC_ROOT/base/varver_stub.f90" ]; then
+            stub_obj="$VARDIR/varver_stub.o"
+            if compile_file "$SRC_ROOT/base/varver_stub.f90" "$stub_obj" "$INCDIRS" 2>/dev/null && [ -f "$stub_obj" ]; then
+                OBJECTS+=("$stub_obj")
+            fi
         fi
     fi
 
@@ -322,6 +393,10 @@ for var in "${VARIANTS[@]}"; do
         echo "NO OBJECTS"
         FAILED=$((FAILED + 1))
     fi
+
+    # Restore base/ shadow files at end of this variant's iteration
+    restore_shadows
+    trap - EXIT
 done
 
 echo ""

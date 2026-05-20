@@ -53,8 +53,8 @@ subroutine fvsSetCmdLineC(theCmdLine,lenCL,IRTNCD) &
 use iso_c_binding
 implicit none
 
-integer(c_int), bind(c) :: lenCL,IRTNCD
-character(c_char), dimension(255), bind(c) :: theCmdLine
+integer(c_int):: lenCL,IRTNCD
+character(c_char), dimension(255):: theCmdLine
 
 integer i
 character passCmdLine*255

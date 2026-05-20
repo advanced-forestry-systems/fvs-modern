@@ -1,5 +1,37 @@
 # Known Issues
 
+## Recently Resolved
+
+### PN/SN/IE keyrdr.f90 EOF blocker (resolved 2026-05-09)
+
+The Pacific Northwest, Southern, and Inland Empire shared libraries previously
+loaded via Python ctypes but hit a Fortran runtime EOF error in
+`base/keyrdr.f90` line 47 when reading any keyword file. Documented in the
+v2026.05.2 release notes as the remaining blocker for these variants.
+
+Root cause was identified as five files in `src-converted/rd/` (RDADD, RDARRY,
+RDCOM, RDCRY, RDPARM) that are pure Fortran INCLUDE files (variable
+declarations and COMMON-block definitions, no SUBROUTINE wrapper) referenced
+via `INCLUDE 'RDPARM.f90'` etc. in dozens of other rd/ sources. They have
+`.f90` extensions so the build script also compiled them as standalone units,
+polluting the link namespace with COMMON-block declarations and corrupting
+keyword reader state at runtime.
+
+Fix lives on branch `build-fixes-2026-05-06` (commits fb60191, 685d2c2,
+ba10be9):
+1. Source-list parser skips the 5 INCLUDE-only rd/ files
+2. New `build_stubs()` function generates `libfvs_stubs.so` and
+   `libfvs_stubs_final.so` from sources at `src-converted/stubs/`
+3. F77-to-F90 conversion bug fixed in `cmdline.f90` and `apisubs.f90`
+   (incorrect `, bind(c)` on local declarations of subroutine arguments)
+4. VARVER stub added for the Acadian variant
+
+Verification: `env FC=gfortran CC=gcc bash deployment/scripts/build_fvs_libraries.sh src-converted ./lib`
+produces 25 .so files plus 2 stubs; 23 of 25 load via ctypes; PN/SN/IE all
+print the FVS variant banner under a keyword-file invocation. The 2 still-
+failing variants (bc, on) are Canadian and have separate-scope compilation
+gaps that were not in the April-May production set either.
+
 ## Regression Test Failures
 
 ### iet03 segfault (Inland Empire variant, test 03)

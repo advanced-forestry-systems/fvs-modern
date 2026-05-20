@@ -60,7 +60,15 @@ class FvsConfigLoader:
     # Auto detect project root from this file's location
     _CONFIG_DIR = Path(__file__).parent
 
-    VALID_VERSIONS = ("default", "calibrated", "custom")
+    # "default":     Original FVS parameters extracted from Fortran source code
+    # "calibrated":  Per-variant Bayesian posterior estimates (categories.*)
+    # "conus":       CONUS Phase 4 fits (categories_conus.*), strict — raises if a
+    #                requested component is not present in categories_conus
+    # "hybrid":      categories_conus.* where available, falls back to
+    #                categories.* per component. Recommended when CONUS
+    #                integration is partial.
+    # "custom":      User supplied JSON
+    VALID_VERSIONS = ("default", "calibrated", "conus", "hybrid", "custom")
 
     def __init__(
         self,
@@ -112,7 +120,9 @@ class FvsConfigLoader:
         """Path to the active config file."""
         if self.version == "custom" and self._custom_config_path is not None:
             return self._custom_config_path
-        if self.version == "calibrated":
+        if self.version in ("calibrated", "conus", "hybrid"):
+            # All three live in the same variant JSON; the version selects
+            # which top-level block to read (categories vs categories_conus).
             return self._config_dir / "calibrated" / f"{self.variant}.json"
         return self._config_dir / f"{self.variant}.json"
 
@@ -205,6 +215,129 @@ class FvsConfigLoader:
         accept either for backward compatibility.
         """
         return self.config.get("calibration") or self.config.get("calibration_metadata")
+
+    # =========================================================================
+    # CONUS Phase 4 access (categories_conus block)
+    # =========================================================================
+
+    @property
+    def has_conus_block(self) -> bool:
+        """Whether the variant config carries a categories_conus block."""
+        return "categories_conus" in self.config
+
+    def conus_components_present(self) -> list[str]:
+        """Component names available under categories_conus."""
+        block = self.config.get("categories_conus", {})
+        return [k for k in block.keys() if k != "metadata"]
+
+    def get_conus_block(self, component: str) -> dict:
+        """Return the categories_conus block for `component`.
+
+        Behavior depends on self.version:
+          - "conus":  reads categories_conus.{component}; raises KeyError
+                       if the component is not present (no fallback)
+          - "hybrid": reads categories_conus.{component} if present,
+                       otherwise falls back to categories.{component}
+          - other:    raises (this access path is CONUS-specific)
+        """
+        if self.version not in ("conus", "hybrid"):
+            raise ValueError(
+                f"get_conus_block requires version in ('conus','hybrid'); "
+                f"got '{self.version}'"
+            )
+        cu = self.config.get("categories_conus", {})
+        if component in cu:
+            return cu[component]
+        if self.version == "hybrid":
+            cats = self.config.get("categories", {})
+            if component not in cats:
+                raise KeyError(
+                    f"Component '{component}' not in categories_conus or categories"
+                )
+            # Legacy block shape; signal source so callers know it's not CONUS
+            return {"_source": "legacy_categories", "data": cats[component]}
+        raise KeyError(
+            f"CONUS block for '{component}' not present in {self.variant}; "
+            f"available: {self.conus_components_present()}"
+        )
+
+    def get_conus_runtime_block(self, component: str) -> dict:
+        """Decompose a categories_conus block into the runtime form.
+
+        Returns a dict with:
+          fixed:      {param_name: posterior_mean}
+          species_re: {SPCD: posterior_mean}
+          eco_re:     scalar (variant-specific weighted ecodivision RE)
+          modifier:   {coef_name: posterior_mean}
+          _draws_csv: path to the full posterior draws CSV (for uncertainty)
+
+        For legacy fallback blocks (when version='hybrid' and component
+        wasn't integrated yet), returns the legacy categories.{component}
+        dict directly with _source='legacy_categories' so downstream code
+        can branch on the source.
+        """
+        block = self.get_conus_block(component)
+        if block.get("_source") == "legacy_categories":
+            return block
+
+        fe = block.get("fixed_effects", {})
+        params = fe.get("param", [])
+        means = fe.get("mean", [])
+        fixed = dict(zip(params, means))
+
+        si = block.get("species_intercepts", {})
+        spcds = si.get("SPCD") or si.get("idx") or []
+        sp_means = si.get("mean", [])
+        species_re = {int(s): float(m) for s, m in zip(spcds, sp_means)}
+
+        ei = block.get("ecodiv_intercepts", {})
+        eco_codes = ei.get("ecodiv") or ei.get("idx") or []
+        eco_means = ei.get("mean", [])
+        eco_lookup = dict(zip([str(c) for c in eco_codes], eco_means))
+
+        weights = block.get("ecodiv_weights", {})
+        if weights:
+            eco_re = sum(
+                float(w) * float(eco_lookup.get(str(eco), 0.0))
+                for eco, w in weights.items()
+            )
+        else:
+            # Unweighted fallback: simple mean across all ecodivisions
+            eco_re = float(np.mean(eco_means)) if eco_means else 0.0
+
+        mod = block.get("modifier", {})
+        mod_coefs = mod.get("coef", [])
+        mod_means = mod.get("mean", [])
+        modifier = dict(zip(mod_coefs, mod_means))
+
+        return {
+            "_source": "categories_conus",
+            "model": block.get("model"),
+            "modifier_lambda": block.get("modifier_lambda"),
+            "fixed": fixed,
+            "species_re": species_re,
+            "eco_re": eco_re,
+            "modifier": modifier,
+            "_draws_csv": block.get("draws_csv"),
+            "_species_missing": block.get("species_missing", []),
+        }
+
+    def conus_summary(self) -> dict:
+        """One-line summary of CONUS integration state for this variant.
+
+        Useful for logging and for the comparison report. Returns:
+          {
+            "has_block": bool,
+            "components": [str, ...],
+            "metadata": {... categories_conus.metadata ...} or None
+          }
+        """
+        block = self.config.get("categories_conus", {})
+        return {
+            "has_block": bool(block),
+            "components": self.conus_components_present(),
+            "metadata": block.get("metadata"),
+        }
 
     # =========================================================================
     # fvs2py Integration
@@ -397,7 +530,7 @@ class FvsConfigLoader:
             if abs(mult - 1.0) > 0.01:
                 # BAIMULT via READCORD or GROWTH multiplier approach
                 # Using species level growth multiplier
-                lines.append(f"GROWMULT        {i + 1:10d}{mult:10.4f}")
+                lines.append(f"BAIMULT         {i + 1:10d}{mult:10.4f}")
         return "\n".join(lines)
 
     def _format_htgmult_keywords(self, multipliers: np.ndarray, comments: bool) -> str:

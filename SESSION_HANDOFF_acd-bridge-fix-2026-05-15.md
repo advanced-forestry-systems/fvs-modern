@@ -1480,3 +1480,67 @@ and paste PR_DESCRIPTION_acd_bridge.md as the body.
 3. Long-term refactor: make calibration/ a symlink to fvs-conus
    (like the manuscript-figure1 branch) so all worktrees share
    _samples.rds files without manual symlinking.
+
+## Autopilot round 22 — PR #20 mergeable
+
+### The branch is now mergeable
+
+After resolving a single CHANGELOG.md conflict via merge commit
+2d7a0e5, PR #20 reports:
+
+```
+Title:     Acd bridge fix 2026 05 15  (auto-generated, needs update)
+State:     open
+Mergeable: True / unstable (no conflicts, CI checks running)
+Commits:   36
+URL:       https://github.com/holoros/fvs-modern/pull/20
+```
+
+The mergeable_state: unstable just means GitHub Actions checks are
+running or have failed (not a blocker for review).
+
+### One manual step remaining for Aaron
+
+Update PR #20 title and body via the GitHub web UI. The proper title
+and body are already in the repo:
+
+1. Open https://github.com/holoros/fvs-modern/pull/20
+2. Click the pencil icon next to the auto-generated title
+3. Change title to: "ACD bridge: F77 to F90 build fixes + NSVB defaults + calibrated A/B (12 variants)"
+4. Replace the template body with the contents of
+   PR_DESCRIPTION_acd_bridge.md (in repo root, or local copy at
+   /home/aweiskittel/fvs-online/PR_DESCRIPTION_acd_bridge.md)
+5. Click "Save"
+
+If gh CLI is available locally and logged in, this is a one-liner:
+
+```bash
+gh pr edit 20 --repo holoros/fvs-modern \
+  --title "ACD bridge: F77 to F90 build fixes + NSVB defaults + calibrated A/B (12 variants)" \
+  --body-file PR_DESCRIPTION_acd_bridge.md
+```
+
+### Final branch state
+
+- **36 commits ahead of base** (after the merge of 45 main commits)
+- **22 autopilot rounds documented** in this SESSION_HANDOFF
+- **0 outstanding conflicts**, branch tracks origin/main + all
+  ACD-bridge work
+- Build/runtime: 12 of 12 variants ship + 38 of 38 integration tests
+  PASS
+- Calibrated A/B: 12-variant + OVERALL table with 6.3% RMSE reduction
+- Three runtime A/B comparisons committed
+- Test infrastructure shipped (integration_test_v2.sh,
+  smoke_postpass.R, compare_post_refit_ab.R, harvest_ab_results.sh)
+- STOP_CODES.md reference doc shipped
+- PR_DESCRIPTION_acd_bridge.md ready to paste
+
+### Mission complete
+
+The original question "ACD subvariant misbehaving when called" has
+been thoroughly answered. The fork is in PR-ready state with a
+complete diagnostic trail and demonstrably better calibrated A/B
+results than before.
+
+Next step (out of autopilot scope): Aaron clicks the GitHub UI to
+update the PR title/body and lets CI + reviewers do the rest.

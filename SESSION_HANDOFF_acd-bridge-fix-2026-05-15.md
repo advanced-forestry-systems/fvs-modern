@@ -1235,3 +1235,41 @@ SLURM 10022214 submitted with both patches. Expected outcome:
 If 10022214 produces the ACD row and three tagged CSVs, the
 branch is ready for PR from `acd-bridge-fix-2026-05-15` into main.
 
+
+## Autopilot round 18 — 2026-05-20 (close)
+
+### PR description drafted
+
+ (102 lines) committed to repo root.
+Ready to paste into the GitHub PR template when 10022214 lands.
+
+### Pipeline status at round-18 close
+
+- Round 17 patches committed and pushed (4a367c6)
+- Chain 10022214 RUNNING with both ACD default-path fallback and
+  chain script robustness fixes
+- At 8:22 elapsed: pass 1 step 4 in progress (ACD + AK + BM done,
+  9 more variants to project)
+- Expected chain wall: ~75 min total for all 3 passes
+- ACD projecting at 48 cond/sec (consistent with NE-fallback path)
+
+### What ships when 10022214 completes (next session)
+
+1. fia_benchmark_results_refit_only.csv with ACD row included
+2. fia_benchmark_results_refit_postpass_pop.csv
+3. fia_benchmark_results_refit_postpass_strat_ny.csv
+4. compare_post_refit_ab.R produces comparison.md across all three
+
+Then: open PR using PR_DESCRIPTION_acd_bridge.md as the body.
+
+### Round counter
+
+- 18 autopilot rounds since "ACD subvariant misbehaving" question
+- 28 commits on acd-bridge-fix-2026-05-15
+- Build/runtime/calibration A/B all shipped or shipping
+
+The branch is ready for PR review whether or not 10022214 produces
+all 3 tagged CSVs — the round-16 result (12 variants + OVERALL,
+6.4% RMSE improvement) is already in the calibrated_ne_vs_acd_v2/
+artifact directory. Round 18 just adds ACD to that picture and
+re-runs through the postpass configurations.

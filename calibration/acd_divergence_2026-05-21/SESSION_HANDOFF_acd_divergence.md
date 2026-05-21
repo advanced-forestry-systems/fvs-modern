@@ -64,8 +64,11 @@ factors for the R model on an annual rather than periodic basis.
   34 species fitted; diameter growth RMSE 1.081 to 1.008 cm (6.8 percent
   reduction). With the corrected scale most multipliers are modestly above 1
   (balsam fir 1.14, red spruce 1.12, white pine 1.10) with larger corrections
-  for fast hardwoods (red oak 1.92, red maple 1.50, aspen 1.48). dHt.mult and
-  mort.mult shipped as 1.0 (height fit attempted but not trustworthy; see notes).
+  for fast hardwoods (red oak 1.92, red maple 1.50, aspen 1.48).
+- fit_acd_height.R: dHt.mult now fitted from measured HT_t1/HT_t2 by a ratio of
+  trimmed means (robust to the 23 percent noisy negative growth records). Range
+  0.30 to 2.28, median 1.14; provisional given height data quality. mort.mult
+  stays 1.0 (Acadian mortality is stand level; survival fit is a separate task).
 - make_acd_calib_from_table.R: tested base R helper that builds the bridge
   calib.spp table from the CSV (keeps FVS size caps), so the patch is concrete.
 - acd_annual_calibration_NOTES.md: method, the units correction, assumptions.
@@ -88,9 +91,10 @@ Four commits on acd-bridge-followup-2026-05-20, all pushed:
    model reads acd_annual_calibration.csv instead of FVS baimult, then run the
    real customRun on a few stands to confirm R and FVS-ACD now agree.
 
-3. Fit dHt.mult on measured HT_t1/HT_t2 (not the noisy HT_annual) with outlier
-   handling, and mort.mult on STATUSCD survival, using the same machinery. The
-   diameter table is in good shape after the v3 units fix and BAL split.
+3. Fit mort.mult on STATUSCD survival (the Acadian mortality is stand level, so
+   this needs a survival model rather than the diameter machinery). Diameter and
+   height multipliers are both in the table now; height is provisional given the
+   noisy measured height data.
 
 4. Decide CSI once (push Acadian CSI into the Event Monitor) and re-enable the
    Acadian HT and CR dubbing once the stop point 7 issue is resolved.

@@ -39,15 +39,23 @@ maple 1.50, quaking aspen 1.48, bigtooth aspen 1.61, American beech 1.47). A few
 sit below 1 (silver maple 0.74, butternut 0.65, black oak 0.94, white oak 0.95).
 Multiplier range 0.65 to 1.92.
 
-## Height and mortality
+## Height (provisional) and mortality
 
-`dHt.mult` and `mort.mult` are shipped as 1.0. A height fit was attempted but is
-not trustworthy: the `HT_annual` column carries implausible outliers (up to 10.2
-ft/yr) and a height proxy from DBH had to be used, so the optimizer saturated.
-The `dHt_diag` column in the CSV records the (unshipped) height diagnostic for
-transparency. Proper height calibration needs measured `HT_t1`/`HT_t2` with
-outlier handling; mortality needs a survival fit on `STATUSCD`. Both are flagged
-as the next refinement.
+`dHt.mult` is now fitted from MEASURED `HT_t1`/`HT_t2` by `fit_acd_height.R`,
+using a ratio of trimmed means per species rather than a least squares fit. This
+is necessary because the measured height growth is very noisy: about 23 percent
+of records show negative growth (top breakage, inconsistent height protocols
+between visits), which saturated the earlier least squares attempt. The ratio of
+trimmed means is insensitive to that symmetric noise. Range 0.30 to 2.28, median
+about 1.14; the model over predicts height growth for some species (white cedar
+0.46, striped maple 0.60, white oak 0.56) and under predicts for others (white
+ash 1.53, yellow birch 1.48, white pine 1.39). Treat `dHt.mult` as provisional
+given the data quality; `acd_annual_calibration_height_fit.csv` carries the per
+species fraction of negative growth records as a quality flag.
+
+`mort.mult` is shipped as 1.0. The Acadian mortality is stand level (allocated
+by a Sward index), not a clean per tree probability, so a survival fit on
+`STATUSCD` is a separate effort and is flagged as the next refinement.
 
 ## Assumptions and caveats
 

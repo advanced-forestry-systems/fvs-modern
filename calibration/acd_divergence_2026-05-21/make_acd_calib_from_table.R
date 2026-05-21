@@ -64,9 +64,10 @@ if (RUN_SELFTEST) {
     stopifnot(abs(tab$dDBH.mult[tab$SP == "BF"] - bf) < 1e-9)
     stopifnot(abs(tab$dDBH.mult[tab$SP == "RO"] - ro) < 1e-9)
     stopifnot(tab$dDBH.mult[tab$SP == "ZZ"] == 1)        # unknown species neutral
-    stopifnot(all(tab$dHt.mult == 1))                    # height held at 1 in table
+    stopifnot(tab$dHt.mult[tab$SP == "ZZ"] == 1)         # unknown species neutral
+    stopifnot(all(is.finite(tab$dHt.mult) & tab$dHt.mult > 0))
     stopifnot(tab$max.dbh[tab$SP == "RO"] == 221)        # FVS cap preserved
-    cat("\nPASS: helper maps fitted dDBH.mult, defaults unknown species to 1,",
-        "and preserves FVS size caps.\n")
+    cat("\nPASS: helper maps fitted dDBH.mult and dHt.mult, defaults unknown",
+        "species to 1, and preserves FVS size caps.\n")
   }
 }

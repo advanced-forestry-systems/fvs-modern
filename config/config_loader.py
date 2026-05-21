@@ -280,22 +280,28 @@ class FvsConfigLoader:
         if block.get("_source") == "legacy_categories":
             return block
 
-        fe = block.get("fixed_effects", {})
+        # Guard: R/jsonlite writes empty named lists as JSON [] which
+        # deserialize to Python lists; coerce those back to {} so the
+        # .get() accessors below are safe for components with empty
+        # modifier / ecodiv_intercepts blocks (all cspi_traits1 fits).
+        def _asdict(x):
+            return x if isinstance(x, dict) else {}
+        fe = _asdict(block.get("fixed_effects", {}))
         params = fe.get("param", [])
         means = fe.get("mean", [])
         fixed = dict(zip(params, means))
 
-        si = block.get("species_intercepts", {})
+        si = _asdict(block.get("species_intercepts", {}))
         spcds = si.get("SPCD") or si.get("idx") or []
         sp_means = si.get("mean", [])
         species_re = {int(s): float(m) for s, m in zip(spcds, sp_means)}
 
-        ei = block.get("ecodiv_intercepts", {})
+        ei = _asdict(block.get("ecodiv_intercepts", {}))
         eco_codes = ei.get("ecodiv") or ei.get("idx") or []
         eco_means = ei.get("mean", [])
         eco_lookup = dict(zip([str(c) for c in eco_codes], eco_means))
 
-        weights = block.get("ecodiv_weights", {})
+        weights = _asdict(block.get("ecodiv_weights", {}))
         if weights:
             eco_re = sum(
                 float(w) * float(eco_lookup.get(str(eco), 0.0))
@@ -305,7 +311,7 @@ class FvsConfigLoader:
             # Unweighted fallback: simple mean across all ecodivisions
             eco_re = float(np.mean(eco_means)) if eco_means else 0.0
 
-        mod = block.get("modifier", {})
+        mod = _asdict(block.get("modifier", {}))
         mod_coefs = mod.get("coef", [])
         mod_means = mod.get("mean", [])
         modifier = dict(zip(mod_coefs, mod_means))

@@ -6,6 +6,19 @@ the full pipeline (fvsOL plus the variant DLL) must be exercised before the
 change ships. Verify with `bridge_patch_verify.R` (the scale math) and
 `acd_layer2_attribution.R` (the model behaviour).
 
+A ready to apply form of Change 1 is provided as `make_fvs_calib_acd.patch`,
+verified to apply cleanly (`patch -p1 --dry-run`), preserve the file's CRLF line
+endings, and parse. From the Interface checkout root:
+
+    patch -p1 < calibration/acd_divergence_2026-05-21/make_fvs_calib_acd.patch
+
+It inserts an override block at the end of `make_fvs_calib()` that reads the
+calibration csv (path from `FVS_ACD_CALIB` or the packaged `fvsOL/extdata` copy)
+and replaces `dDBH.mult`, `dHt.mult`, `mort.mult`, falling back to the FVS values
+if the csv is absent. Note: the fitted `dDBH.mult` is already a diameter scale
+multiplier, so the line 2232 application stays as is; the basal area conversion
+in Change 2 is only needed if you instead honor a raw FVS `baimult`.
+
 ## Change 1 (main): source the Acadian calibration table, not FVS baimult
 
 The Acadian model should carry its own annual per species calibration, fit by

@@ -1,0 +1,25 @@
+--- a/AcadianGY.R	2026-05-21 17:27:01.994148857 -0400
++++ b/AcadianGY.R	2026-05-21 17:27:02.031113200 -0400
+@@ -1393,6 +1393,22 @@
+         dplyr::select(SP, dDBH.mult, dHt.mult, mort.mult, max.dbh, max.height)
+       
+       
++      # ACD bridge: override FVS-NE multipliers with the Acadian annual
++      # calibration table when present (decouples Acadian calibration from the
++      # FVS-NE baimult/htgmult/mortmult). Set FVS_ACD_CALIB or ship the csv in
++      # fvsOL/extdata. Falls back silently to the FVS values if absent.
++      acd_cal_path = Sys.getenv("FVS_ACD_CALIB",
++        unset = system.file("extdata", "acd_annual_calibration.csv", package = "fvsOL"))
++      if (nzchar(acd_cal_path) && file.exists(acd_cal_path)) {
++        acd_cal = utils::read.csv(acd_cal_path, stringsAsFactors = FALSE)
++        acd_cal = acd_cal[, c("SP", "dDBH.mult", "dHt.mult", "mort.mult")]
++        calib.fvs = calib.fvs %>%
++          dplyr::select(-dDBH.mult, -dHt.mult, -mort.mult) %>%
++          dplyr::left_join(acd_cal, by = "SP") %>%
++          dplyr::mutate(dDBH.mult = dplyr::coalesce(dDBH.mult, 1),
++                        dHt.mult  = dplyr::coalesce(dHt.mult, 1),
++                        mort.mult = dplyr::coalesce(mort.mult, 1))
++      }
+       calib.fvs
+     }
+ # Arguments

@@ -49,6 +49,9 @@ VJSON     <- ga("variant_json","config/calibrated/ne.json")
 SPLIT     <- toupper(ga("variety_split","FALSE")) %in% c("TRUE","T","1")
 TEST_N    <- as.integer(ga("test_n","200000"))
 OUTDIR    <- ga("outdir","calibration/output/conus/sf_integration/benchmark")
+VTAG      <- ga("variant_tag","ne")     # output tag + which variant's Leg-A set
+REGION    <- ga("region","east")        # ecoregion subset: east|west|<comma L1 codes>
+region_codes <- if(REGION=="east") c("5","8") else if(REGION=="west") c("6","7","11") else strsplit(REGION,",")[[1]]
 dir.create(OUTDIR, showWarnings=FALSE, recursive=TRUE)
 CKEY <- c(hg="height_growth",dg="diameter_growth",hcb="height_crown_base",
           cr="crown_recession",htdbh="height_diameter",mort="mortality")[[COMPONENT]]
@@ -180,7 +183,13 @@ legA <- integer(0)
 if(file.exists(VJSON)){ vj<-fromJSON(VJSON,simplifyVector=TRUE)
   si<-tryCatch(vj$categories_conus[[CKEY]]$species_intercepts$SPCD, error=function(e)NULL)
   if(!is.null(si)) legA<-as.integer(si) }
-cat("Leg-A reliable species (",length(legA),"):", paste(head(legA,12),collapse=","),"\n")
+# Leg A stores Douglas-fir as 202 and lodgepole as 108 (unsplit); the v2split
+# data splits them into varieties. Expand so per-species routing reaches them.
+if(SPLIT){
+  if(202L %in% legA) legA <- unique(c(legA, 2020L, 2021L))
+  if(108L %in% legA) legA <- unique(c(legA, 1080L, 1081L))
+}
+cat("Variant:",VTAG," Leg-A reliable species (",length(legA),"):", paste(head(legA,12),collapse=","),"\n")
 trv <- train[pr$valid(resp)]; trv[, spr:=pr$gfun(resp)-non_sp_eta]
 dl <- trv[, .(delta=mean(spr)), by=SPCD]; dmap<-setNames(dl$delta, as.integer(dl$SPCD))
 dget <- function(s) ifelse(as.integer(s)%in%names(dmap), dmap[as.character(s)], 0)
@@ -202,21 +211,21 @@ met <- function(pred, lo, hi, idx){
              picp=mean(o>=l & o<=u), mwidth=mean(u-l),
              wr2=1 - mean(e^2/w)/var(o))
 }
-east <- ev$EPA_L1_CODE %in% c("5","8")
-subs <- list(all=rep(TRUE,nrow(ev)),east=east,legA_species=isA,legA_species_east=isA&east)
+region <- ev$EPA_L1_CODE %in% region_codes
+subs <- list(all=rep(TRUE,nrow(ev)),region=region,legA_species=isA,legA_species_region=isA&region)
 rows<-list()
 for(s in names(subs)) for(a in names(arms)){ idx<-subs[[s]]; if(sum(idx)<5)next
   m<-met(arms[[a]], ints[[a]]$l, ints[[a]]$u, idx); m$subset<-s; m$arm<-a; rows[[paste(s,a)]]<-m }
-res <- rbindlist(rows)[, .(component=COMPONENT,subset,arm,n,rmse,bias,r2,picp,mwidth,wr2)]
-fwrite(res, file.path(OUTDIR, paste0(PREFIX,"_benchmark.csv")))
-lev <- data.table(scope=c("all","east"), n=c(nrow(ev),sum(east)),
-  legA_species_share=c(mean(isA), if(sum(east))mean(isA[east]) else NA))
-fwrite(lev, file.path(OUTDIR, paste0(PREFIX,"_leverage.csv")))
+res <- rbindlist(rows)[, .(component=COMPONENT,variant=VTAG,subset,arm,n,rmse,bias,r2,picp,mwidth,wr2)]
+fwrite(res, file.path(OUTDIR, paste0(PREFIX,"_",VTAG,"_benchmark.csv")))
+lev <- data.table(variant=VTAG,scope=c("all","region"), n=c(nrow(ev),sum(region)),
+  legA_species=length(legA), legA_species_share=c(mean(isA), if(sum(region))mean(isA[region]) else NA))
+fwrite(lev, file.path(OUTDIR, paste0(PREFIX,"_",VTAG,"_leverage.csv")))
 
 cat("\n=== LEVERAGE (share of test trees in the",length(legA),"Leg-A species) ===\n"); print(lev)
 cat("\n=== METRICS (rmse lower better; picp target 0.95; mwidth = sharpness) ===\n")
 print(res[order(subset,arm)])
 ps<-res[subset=="all"&arm=="pure_sf"]
-if(nrow(ps)) cat(sprintf("\n[%s] pure_sf (all): RMSE %.4f  R2 %.3f  PICP %.3f  mean width %.3f\n",
-  COMPONENT, ps$rmse, ps$r2, ps$picp, ps$mwidth))
+if(nrow(ps)) cat(sprintf("\n[%s/%s] pure_sf (all): RMSE %.4f  R2 %.3f  PICP %.3f  mean width %.3f\n",
+  COMPONENT, VTAG, ps$rmse, ps$r2, ps$picp, ps$mwidth))
 cat("\nDone. Output:", OUTDIR, "\n"); quit(save="no", status=0)

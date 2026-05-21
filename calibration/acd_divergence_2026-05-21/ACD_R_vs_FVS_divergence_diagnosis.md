@@ -55,30 +55,39 @@ dDBH = dDBH * dDBH.thin.mod * dDBH.SBW.mod * dDBH.form.risk.mod * dDBH.mult   # 
 dHT  = dHT  * dHT.SBW.mod  * dHT.thin.mod  * dHt.mult                          # line 2268
 ```
 
-Two problems here, both of which produce systematic divergence the moment the
-loaded variant carries non unity calibration:
+There are three issues here, in order of size:
 
-1. Whenever the FVS-ACD variant has been calibrated (and after our bridge work
+1. The multiplier is non unity in the bridge and unity standalone (largest).
+   Whenever the FVS-ACD variant has been calibrated (and after our bridge work
    the NE based ACD does carry calibration), `baimult`, `htgmult` and `mortmult`
-   are not 1. The standalone run uses 1. So the two runs are scaling the same
-   Acadian increments by different factors. This alone shifts the level.
+   are not 1, while the standalone run uses 1, so the two runs scale the same
+   Acadian increments by different factors. The real model attribution on
+   Cardinal (RESULTS_attribution.md) shows multipliers in the 0.88 to 1.18 range
+   moving total basal area about 3 percent at 25 years but individual species up
+   to 9 percent (red spruce) and down 5 percent (yellow birch). So the level
+   effect on the stand is modest but the species composition effect is large.
 
-2. `baimult` is a basal area increment multiplier. In FVS the large tree
-   diameter model predicts DDS, the change in squared inside bark diameter, and
-   `baimult` scales that squared diameter (basal area) increment. Here it is
-   being applied directly to a linear diameter increment `dDBH`. Those are not
-   the same operation. Because basal area is proportional to diameter squared,
-   scaling DBH growth by a factor m does not scale basal area growth by m. The
-   correct linear factor c that reproduces a target basal area increment factor
-   m solves
+2. The multipliers come from the wrong model (conceptual). `baimult`, `htgmult`
+   and `mortmult` were fit for the FVS-NE Fortran growth model, not the Acadian
+   R equations. Injecting them into the Acadian increments mixes two calibration
+   systems. The Acadian model should carry its own calibration, fit on its own
+   annual per species growth, which is what `annualized_calibration.R` produces.
 
-       (DBH + c*dDBH)^2 - DBH^2 = m * [(DBH + dDBH)^2 - DBH^2]
+3. The scale of `baimult` is wrong, but this is second order (smallest).
+   `baimult` is a basal area increment multiplier (it scales DDS, the change in
+   squared inside bark diameter), yet it is applied directly to a linear
+   diameter increment `dDBH`. The correct conversion makes the realized basal
+   area increment equal to m times the unscaled increment:
 
-   summed over the tree records and iterated annually. To first order, for small
-   increments, c is close to m, but the curvature term grows with dDBH/DBH, so
-   fast growing small trees are mis-scaled the most. This is exactly the
-   reconciliation your second question is about and is handled by the annualized
-   calibration framework in `annualized_calibration.R`.
+       dDBH_new = sqrt(DBH^2 + m * [(DBH + dDBH)^2 - DBH^2]) - DBH
+
+   `bridge_patch_verify.R` quantifies the legacy error: applying m to the linear
+   increment instead drifts the realized basal area factor from m by at most
+   about 1.5 percent, even for fast growing small trees, because in a single
+   year dDBH/DBH is small. So this is a correctness refinement worth roughly 1.5
+   percent, not the main driver. It still matters because the error always has
+   the same sign (it overshoots for m above 1 and undershoots below 1) and
+   accumulates across years.
 
 The same scale concern applies to `mortmult`, which in FVS modifies a survival
 or mortality rate, but is here applied multiplicatively to a per year Acadian
@@ -203,12 +212,16 @@ you are in case 2.
 
 ## Recommended fixes, in order
 
-1. Reconcile the calibration scale. Stop applying `baimult` directly to `dDBH`.
-   Either convert it to a proper annual diameter factor (the analytic step in
-   `annualized_calibration.R`), or fit annual diameter and height multipliers
-   directly against FIA remeasurement (the optimizer in the same file). This is
-   the single change most likely to remove a level bias and is the direct answer
-   to your annualized calibration request.
+1. Calibrate the Acadian model on its own annual per species basis and set
+   `dDBH.mult`, `dHt.mult` and `mort.mult` from that table, decoupled from the
+   FVS-NE `baimult`, `htgmult` and `mortmult`. The optimizer in
+   `annualized_calibration.R` fits those annual factors against FIA
+   remeasurement. This is the direct answer to your annualized calibration
+   request and removes the conceptual mixing of two calibration systems. If you
+   must still honor a user supplied `baimult`, convert it through basal area
+   (`bridge_patch_verify.R` shows the formula and that the legacy linear
+   application is off by about 1.5 percent), but treat that as a secondary
+   correctness fix, not the main lever.
 
 2. Decide CSI once. Make the standalone CSI and the FVS derived CSI identical for
    any validation comparison, then keep them identical in production. If you trust

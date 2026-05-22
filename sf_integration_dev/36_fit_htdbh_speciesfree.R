@@ -43,6 +43,21 @@ TRAITS_FILE <- get_arg("traits", "calibration/traits/species_traits.rds")
 
 cat("Loading data ..."); flush.console()
 dat    <- as.data.table(readRDS(DATA_FILE))
+
+# --- optional external CSPI productivity swap (overwrites climate_si) ---
+.CSPI_FILE <- get_arg("cspi_file", NA_character_)
+if (!is.na(.CSPI_FILE) && file.exists(.CSPI_FILE)) {
+  suppressMessages(library(bit64))
+  .lk <- data.table::fread(.CSPI_FILE)
+  dat[, .pid := as.character(PLT_CN_cond1)]
+  .lk[, .pid := as.character(PLT_CN_cond1)]
+  dat[.lk, cspi_ext := i.cspi_v4, on = ".pid"]
+  .med <- median(dat$cspi_ext, na.rm = TRUE)
+  dat[, climate_si := data.table::fifelse(is.finite(cspi_ext), cspi_ext, .med)]
+  cat(sprintf("CSPI swap: external cspi_v4 for %d of %d rows (median fill rest)\n",
+              sum(is.finite(dat$cspi_ext)), nrow(dat)))
+}
+
 traits <- as.data.table(readRDS(TRAITS_FILE))
 cat(" done. Rows:", nrow(dat), "\n\n")
 

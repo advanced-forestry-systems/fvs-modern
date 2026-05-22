@@ -45,9 +45,29 @@ A. Equivalence: 12.3.6 with MORTCAL off is identical to canonical 12.3.5 (BA and
   ingrowth composition effect, not mortality. The next fix is in the
   recruitment/ingrowth submodel.
 
+## Cross-validation: FIA vs Canadian CFI (the #128 caveat, empirical)
+
+The in-source 12.3.6 was run on both datasets, off and on, completing the 2x2
+matrix (FIA in-source = Aaron's v16; MAGPlot in-source = `cardinal_magplot_insource_v16.R`):
+
+| dataset | MORTCAL off | MORTCAL on (in-source) |
+|---|---|---|
+| Maine FIA (200 plots) | BA +15.4%, R2 0.417 | BA +8.6%, R2 0.483 |
+| Canadian NB MAGPlot (262 pairs) | BA -0.04%, R2 0.878 | BA -6.51%, R2 0.869 |
+
+Reading: on Maine FIA the correction halves a real over-projection (+15.4 to
++8.6). On Canadian CFI, where AcadianGY is already unbiased (-0.04), the same
+correction drives basal area to -6.51 (over-correction). This empirically
+confirms #128: the correction is FIA-specific, not a universal model bias. The
+MAGPlot off case (-0.04, R2 0.878) also confirms 12.3.6 with MORTCAL off
+reproduces canonical 12.3.5 on real NB data. The in-source on (-6.51) is a hair
+closer to zero than the wrapper's -6.56, consistent with ingrowth being
+preserved.
+
 ## Recommendation
 
 Adopt 12.3.6 as `fvsOL/inst/extdata/AcadianGY.R` in the Interface checkout
-(replacing 12.3.5) after bumping the version tag; it is a safe drop-in (off by
-default). Enable `ops$MORTCAL=TRUE` only for FIA-like Maine conditions, never for
-Canadian CFI / MAGPlot.
+(replacing 12.3.5). The version tag has been corrected to `AcadianV12.3.6` in
+`AcadianGY_12.3.6_tagfixed.r`. It is a safe drop-in (off by default). Enable
+`ops$MORTCAL=TRUE` only for FIA-like Maine conditions, never for Canadian CFI /
+MAGPlot (it over-corrects there, as the matrix shows).

@@ -397,7 +397,14 @@ class FvsConfigLoader:
         """
         b = self.get_conus_sf_block(component)
 
-        fe = b.get("fixed_effects", {})
+        # Guard: R/jsonlite writes empty named lists as JSON [] which
+        # deserialize to Python lists; coerce to {} so the .get()
+        # accessors below are safe for SF blocks with empty
+        # species / hybrid_source_map / trait_gamma (e.g. pure
+        # species-free components with no Leg A overrides).
+        def _asdict_sf(x):
+            return x if isinstance(x, dict) else {}
+        fe = _asdict_sf(b.get("fixed_effects", {}))
         fixed = dict(zip(fe.get("param", []), fe.get("mean", [])))
         # intercept = a0 / b0 / h0 if present, else first non-sigma param
         intercept_name = next(
@@ -410,7 +417,7 @@ class FvsConfigLoader:
             if p != intercept_name and not p.startswith(("sigma", "phi", "lp__"))
         }
 
-        tg = b.get("trait_gamma", {})
+        tg = _asdict_sf(b.get("trait_gamma", {}))
         cols = tg.get("trait_col", [])
         gamma = dict(zip(cols, tg.get("gamma_mean", [])))
         scale = {c: (float(m), float(s)) for c, m, s in
@@ -422,7 +429,7 @@ class FvsConfigLoader:
             except (TypeError, ValueError):
                 return float("nan")  # bundle stores missing raw traits as "NA"
 
-        sp = b.get("species", {})
+        sp = _asdict_sf(b.get("species", {}))
         spcds = [int(x) for x in sp.get("SPCD", [])]
         te_vals = sp.get("trait_effect_mean", [])
         trait_effect = {s: _f(v) for s, v in zip(spcds, te_vals)}
@@ -445,7 +452,7 @@ class FvsConfigLoader:
             return {str(l): float(m) for l, m in zip(t.get("level", []),
                                                      t.get("mean", []))}
 
-        hm = b.get("hybrid_source_map", {})
+        hm = _asdict_sf(b.get("hybrid_source_map", {}))
         source_map = {int(s): str(src) for s, src in
                       zip(hm.get("SPCD", []), hm.get("source", []))}
 

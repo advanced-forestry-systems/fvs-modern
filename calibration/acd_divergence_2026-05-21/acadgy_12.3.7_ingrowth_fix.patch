@@ -1,0 +1,32 @@
+--- AcadianGY_12.3.6.r	2026-05-21 22:32:16.299538000 -0400
++++ AcadianGY_12.3.7.r	2026-05-22 13:57:51.093729000 -0400
+@@ -63,7 +63,7 @@
+   ifelse(dbh_in < 20, 0.899, 0.846))))
+ }
+ 
+-AcadianVersionTag = "AcadianV12.3.6"
++AcadianVersionTag = "AcadianV12.3.7"
+ 
+ ##############################
+ #### major update summary ####
+@@ -2583,6 +2583,20 @@
+                     EXPF = ifelse(EXPF < 0.00001, 0.00001, EXPF))
+   }
+ 
++  # ---- #127 ingrowth carry-through fix --------------------------------------
++  # ING.TreeList recruits lack the calibration-multiplier and size-cap columns,
++  # so without this they never grow (dDBH * NA -> coalesced to 0). Give recruits
++  # neutral multipliers and species size caps inherited from the survivors.
++  if (!is.null(ingrow) && nrow(ingrow) > 0) {
++    .cap <- unique(tree[, c("SP","max.dbh","max.height")])
++    .cap <- .cap[!duplicated(.cap$SP), ]
++    .mi  <- match(ingrow$SP, .cap$SP)
++    ingrow$dDBH.mult  <- 1
++    ingrow$dHt.mult   <- 1
++    ingrow$mort.mult  <- 1
++    ingrow$max.dbh    <- ifelse(is.na(.cap$max.dbh[.mi]),    200, .cap$max.dbh[.mi])
++    ingrow$max.height <- ifelse(is.na(.cap$max.height[.mi]),  60, .cap$max.height[.mi])
++  }
+   tree = dplyr::bind_rows(tree, ingrow)
+  
+  

@@ -6,6 +6,25 @@ project adheres to calendar-based versioning (YYYY.MM).
 
 ## [Unreleased]
 
+### Fixed
+
+- AcadianGY 12.3.8 (issue #127, parts 1 + 2): the standalone AcadianGY
+  model now correctly carries recruited trees across cycles. Part 1
+  (12.3.7, PR #32) gave recruits neutral calibration multipliers
+  (`dDBH.mult`, `dHt.mult`, `mort.mult`) and species size caps so they
+  grow rather than stay frozen at the 3 cm recruitment diameter. Part 2
+  (12.3.8, PR #34) forces recruits to inherit the parent stand's STAND
+  and PLOT instead of the `ING.TreeList` default (STAND=1/PLOT=1),
+  which was causing any multi-stand harness to silently drop them on
+  cycle 2 with a `missing value where TRUE/FALSE needed` error. Full
+  100-plot 10-year FIA validation
+  (`calibration/acd_divergence_2026-05-21/INGROWTH_FIX_12.3.8_v24_validation.md`):
+  QMD bias improves from +3.7% to -1.0%, TPA bias from -1.0% to +1.3%,
+  BA bias edges +0.15 pp (the known compensating-errors structure;
+  recruits now add the BA that diameter overgrowth was previously
+  masking, so the residual is properly addressed by per-species
+  diameter calibration, not by recruitment).
+
 ### Added
 
 - `calibration/R/27_acd_post_pass.R`: standalone post-pass that re-projects

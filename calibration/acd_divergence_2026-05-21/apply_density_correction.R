@@ -1,7 +1,8 @@
-# apply_density_correction.R  (v33 stand-level + v34 tree-level)
+# apply_density_correction.R  (v37 production: pooled n=484 refit)
 # AcadianGY 12.3.9 bridge-level post-projection correction for the
-# density-dependent residual identified in v30, validated on v32 fresh
-# sample, and pooled-refit + asymmetric-capped in v33.
+# density-dependent residual identified in v30, refined through v32 fresh
+# sample test, v33 pooled refit, v34 tree-level reconciliation, and now
+# v37 refit on the pooled v30 + v32 + v36 sample (n=484).
 #
 # This file exposes:
 #   apply_density_correction(BA_pred, BA_t1, ...)
@@ -38,28 +39,34 @@
 # (raw +17.92 percent -> +6.98 percent) and keeps TPA close to observed,
 # with the highest test R^2.
 #
-# 5-fold CV on the pooled n=184 sample, 50 random shuffles:
-#   uncorrected:                BA bias = +14.46 percent, R^2 = 0.380
-#   asymmetric (0, +25):        BA bias = +0.21 +/- 0.11, R^2 = 0.484 +/- 0.003
+# 5-fold CV on the pooled n=484 sample, 50 random shuffles:
+#   uncorrected:                BA bias = +11.76 percent, R^2 = 0.452
+#   asymmetric (0, +20)         BA bias = +0.15 +/- 0.04, R^2 = 0.514 +/- 0.001
+#   asymmetric (0, +25)         BA bias = -0.64 +/- 0.04, R^2 = 0.520 +/- 0.001
+#
+# Production picks asym (0, +20) for the cleaner mean bias closure with
+# minimal R^2 cost. CV variance is 3x tighter than v33 (sd 0.04 vs 0.11)
+# from the larger n.
 
-# Production coefficients, fit on pooled n=184 (v30 seed=42 + v32 seed=2027,
-# both ME FIA, 10-yr remeasurement, AcadianGY 12.3.9 with MORTCAL=TRUE,
-# CutPoint=0, CSI_SCALE=0.7).
+# Production coefficients, fit on pooled n=484 (v30 seed=42 n=93 + v32
+# seed=2027 n=91 + v36 seed=2028 n=300, all ME FIA, 10-yr remeasurement,
+# AcadianGY 12.3.9 with MORTCAL=TRUE, CutPoint=0, CSI_SCALE=0.7).
 ACD_DENSITY_CORRECTION <- list(
-  a         = 36.9549,
-  b         = -0.235987,
-  upper_cap = 25,
+  a         = 28.9607,
+  b         = -0.186023,
+  upper_cap = 20,
   lower_cap = 0,
-  crossover_BA = 156.6,
-  n         = 184,
-  r2_fit    = 0.0956,
-  cv_bias_mean = 0.21,
-  cv_bias_sd   = 0.11,
-  cv_r2_mean   = 0.484,
-  cv_r2_sd     = 0.003,
-  fitted_on  = "2026-05-28 v32+v30 pooled, n=184 ME FIA",
+  crossover_BA = 155.7,
+  n         = 484,
+  r2_fit    = 0.0638,
+  cv_bias_mean = 0.15,
+  cv_bias_sd   = 0.04,
+  cv_r2_mean   = 0.514,
+  cv_r2_sd     = 0.001,
+  fitted_on  = "2026-05-29 v36+v32+v30 pooled, n=484 ME FIA",
   applies_to = "ME FIA conditions, 10-yr remeasurement, 12.3.9 production posture",
-  supersedes = "v31 coefficients (a=40.6, b=-0.334, symmetric +/-25 cap)"
+  supersedes = c("v31 (a=40.6, b=-0.334, sym +/-25)",
+                  "v33 (a=37.0, b=-0.236, asym 0/+25, n=184)")
 )
 
 # -------------------------------------------------------------------------

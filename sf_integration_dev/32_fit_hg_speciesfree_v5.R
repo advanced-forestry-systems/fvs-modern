@@ -115,9 +115,18 @@ dat[, L2_idx := match(as.character(EPA_L2_CODE), L2_levels)]
 dat[, L3_idx := match(as.character(EPA_L3_CODE), L3_levels)]
 dat[, FT_idx := match(as.integer(FORTYPCD_cond1), FT_levels)]
 
-trait_cols <- c("wood_specific_gravity", "shade_tolerance_num", "softwood",
-                "leaf_longevity_months", "max_ht_m", "max_dbh_cm",
-                "vulnerability_score", "sensitivity")
+# Auto-detect traits_v3 (decomposed Potter VCC: CE + S + LAC) vs v2 (composite vuln_score + S)
+use_v3_traits <- all(c("climate_exposure", "low_adaptive_cap") %in% names(traits))
+if (use_v3_traits) {
+  cat("[traits] detected v3 layout: using decomposed Potter components (CE+S+LAC)\n")
+  trait_cols <- c("wood_specific_gravity", "shade_tolerance_num", "softwood",
+                  "leaf_longevity_months", "max_ht_m", "max_dbh_cm",
+                  "climate_exposure", "sensitivity", "low_adaptive_cap")
+} else {
+  trait_cols <- c("wood_specific_gravity", "shade_tolerance_num", "softwood",
+                  "leaf_longevity_months", "max_ht_m", "max_dbh_cm",
+                  "vulnerability_score", "sensitivity")
+}
 traits_sub <- traits[match(sp_levels, SPCD), c("SPCD", trait_cols), with = FALSE]
 W <- as.matrix(traits_sub[, trait_cols, with = FALSE])
 for (j in seq_len(ncol(W))) {
@@ -166,6 +175,17 @@ stan_data <- list(
   bgi_knot1 = unname(knots[1]),
   bgi_knot2 = unname(knots[2])
 )
+## v6_relht-only data: raw HT and species max height
+if (grepl("v6_relht|relht", STAN_FILE)) {
+  stan_data$ht_obs_m   <- as.numeric(dat$HT1)
+  stan_data$max_ht_sp_m <- as.numeric(traits[match(sp_levels, SPCD), max_ht_m])
+  if (any(!is.finite(stan_data$max_ht_sp_m))) {
+    med <- median(stan_data$max_ht_sp_m, na.rm=TRUE)
+    stan_data$max_ht_sp_m[!is.finite(stan_data$max_ht_sp_m)] <- med
+    cat("v6_relht: median-filled missing max_ht_m\n")
+  }
+  cat("v6_relht: added ht_obs_m + max_ht_sp_m\n")
+}
 
 cat("=== Stan data ready ===\n")
 cat("N_obs   =", stan_data$N_obs, "\n\n")

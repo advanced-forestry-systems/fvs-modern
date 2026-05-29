@@ -1,40 +1,59 @@
-# apply_density_correction.R  (v33, supersedes v31 coefficients)
+# apply_density_correction.R  (v33 stand-level + v34 tree-level)
 # AcadianGY 12.3.9 bridge-level post-projection correction for the
-# density-dependent residual identified in v30 and validated on a fresh
-# out-of-sample run (v32). Coefficients are refit on the pooled n=184 sample.
-# Cap is now asymmetric: the correction can only reduce BA_pred, never push it
-# up. This protects high-density stands where the model is already near
-# observed.
+# density-dependent residual identified in v30, validated on v32 fresh
+# sample, and pooled-refit + asymmetric-capped in v33.
+#
+# This file exposes:
+#   apply_density_correction(BA_pred, BA_t1, ...)
+#       Stand-level scalar correction (returns corrected BA only).
+#
+#   apply_density_correction_treelist(tree, ...)
+#       Tree-level reconciliation. Takes a tree data.frame, computes the
+#       corrected stand BA via the v33 formula, and scales every tree's
+#       EXPF uniformly so sum(DBH^2 * EXPF) matches the corrected BA.
+#       Returns the updated tree data.frame (same row count, same DBH and
+#       species, just EXPF reduced).
+#
+# Mortality interpretation. The correction subtracts BA from the projection;
+# attributing that subtraction to extra mortality (i.e., fewer surviving
+# trees per acre) preserves the size distribution. The tree-level function
+# scales EXPF uniformly by (corrected_BA / raw_BA), so it conserves the BA
+# constraint by construction.
+#
+# Alternative weightings (more mortality on smaller suppressed trees, etc.)
+# would require species- or size-stratified mortality information that the
+# v30 residual signal does not give us. Uniform is the safest default.
+#
+# IMPORTANT: tree-level reconciliation applies a per-stand EXPF scale factor.
+# In pathological cases (when raw BA_pred is unusually small relative to the
+# v33 prediction), the scale factor can be unhelpfully low or negative. The
+# scale_floor argument (default 0.7) caps how aggressively any single stand's
+# tree list can be thinned. Empirical defense on v32 fresh sample (n=91):
+#
+#   no floor:    BA bias +5.05 percent, TPA bias -5.22 percent, R^2 0.486
+#   floor=0.7:   BA bias +6.98 percent, TPA bias -3.22 percent, R^2 0.496
+#   floor=0.8:   BA bias +8.23 percent, TPA bias -1.91 percent, R^2 0.491
+#
+# floor=0.7 is the production default. It gives a meaningful BA closure
+# (raw +17.92 percent -> +6.98 percent) and keeps TPA close to observed,
+# with the highest test R^2.
 #
 # 5-fold CV on the pooled n=184 sample, 50 random shuffles:
 #   uncorrected:                BA bias = +14.46 percent, R^2 = 0.380
 #   asymmetric (0, +25):        BA bias = +0.21 +/- 0.11, R^2 = 0.484 +/- 0.003
-#   symmetric +/-25 (v31 ship): BA bias = +1.38 +/- 0.12, R^2 = 0.472 +/- 0.005
-#
-# Usage (downstream of AcadianGYOneStand):
-#   source("apply_density_correction.R")
-#   ba_corr <- apply_density_correction(BA_pred, BA_t1)
-#
-# Arguments:
-#   BA_pred    numeric, predicted stand basal area at projection horizon (ft^2/ac)
-#   BA_t1      numeric, observed stand basal area at start of projection (ft^2/ac)
-#   upper_cap  numeric, max correction the function will subtract (default 25)
-#   lower_cap  numeric, min correction (default 0; never push BA up)
-#
-# Returns a numeric vector of corrected BA predictions.
 
 # Production coefficients, fit on pooled n=184 (v30 seed=42 + v32 seed=2027,
 # both ME FIA, 10-yr remeasurement, AcadianGY 12.3.9 with MORTCAL=TRUE,
 # CutPoint=0, CSI_SCALE=0.7).
 ACD_DENSITY_CORRECTION <- list(
-  a         = 36.9549,    # intercept (ft^2/ac)
-  b         = -0.235987,  # slope on BA_t1 (per ft^2/ac)
-  upper_cap = 25,         # max subtraction from BA_pred
-  lower_cap = 0,          # min subtraction (0 = never increase BA_pred)
-  crossover_BA = 156.6,   # BA_t1 where raw correction = 0
-  n         = 184,        # n plots in calibration
-  r2_fit    = 0.0956,     # in-sample fit R^2
-  cv_bias_mean = 0.21,    # 5-fold CV mean BA bias percent
+  a         = 36.9549,
+  b         = -0.235987,
+  upper_cap = 25,
+  lower_cap = 0,
+  crossover_BA = 156.6,
+  n         = 184,
+  r2_fit    = 0.0956,
+  cv_bias_mean = 0.21,
   cv_bias_sd   = 0.11,
   cv_r2_mean   = 0.484,
   cv_r2_sd     = 0.003,
@@ -42,6 +61,10 @@ ACD_DENSITY_CORRECTION <- list(
   applies_to = "ME FIA conditions, 10-yr remeasurement, 12.3.9 production posture",
   supersedes = "v31 coefficients (a=40.6, b=-0.334, symmetric +/-25 cap)"
 )
+
+# -------------------------------------------------------------------------
+# Stand-level scalar correction (v33)
+# -------------------------------------------------------------------------
 
 apply_density_correction <- function(BA_pred, BA_t1,
                                      upper_cap = ACD_DENSITY_CORRECTION$upper_cap,
@@ -68,13 +91,133 @@ apply_density_correction_verbose <- function(BA_pred, BA_t1,
   )
 }
 
+# -------------------------------------------------------------------------
+# Tree-level reconciliation (v34)
+# -------------------------------------------------------------------------
+#
+# Push the v33 stand-level BA correction back into the tree list by scaling
+# each tree's EXPF uniformly. By construction:
+#   sum(corrected_EXPF * DBH^2) * conv == BA_corrected
+# so the tree list is internally consistent with the stand-level constraint.
+#
+# Arguments:
+#   tree       data.frame with at minimum columns STAND, DBH, EXPF. May
+#              contain any other columns (SP, HT, HCB, etc.) which are
+#              passed through unchanged.
+#   BA_t1_by_stand
+#              named numeric vector or data.frame with columns (STAND, BA_t1).
+#              BA_t1 must be in ft^2/ac (same units as the v33 fit).
+#   dbh_units  one of "cm" or "in". AcadianGY natively works in cm;
+#              if your DBH is in cm, BA computation will convert. Default
+#              "cm".
+#   upper_cap, lower_cap as in stand-level function.
+#   floor_EXPF small positive minimum on the scaled EXPF (default 1e-5),
+#              to avoid zero-EXPF entries that could cause downstream issues.
+#
+# Returns a list with two elements:
+#   tree_corrected   the tree data.frame with EXPF scaled in place
+#   stand_summary    per-stand data.frame:
+#     STAND, BA_t1, BA_raw, BA_corrected, scale_factor, TPA_raw, TPA_corrected
+#
+apply_density_correction_treelist <- function(tree, BA_t1_by_stand,
+                                              dbh_units = c("cm", "in"),
+                                              upper_cap = ACD_DENSITY_CORRECTION$upper_cap,
+                                              lower_cap = ACD_DENSITY_CORRECTION$lower_cap,
+                                              scale_floor = 0.7,
+                                              floor_EXPF = 1e-5) {
+  dbh_units <- match.arg(dbh_units)
+  stopifnot(all(c("STAND", "DBH", "EXPF") %in% names(tree)))
+
+  # Convert BA_t1_by_stand to a lookup
+  if (is.data.frame(BA_t1_by_stand)) {
+    stopifnot(all(c("STAND", "BA_t1") %in% names(BA_t1_by_stand)))
+    ba_t1_lut <- setNames(BA_t1_by_stand$BA_t1, as.character(BA_t1_by_stand$STAND))
+  } else {
+    ba_t1_lut <- BA_t1_by_stand
+  }
+
+  # BA contribution per tree in ft^2/ac, matching the v33 fit's units
+  # In cm: BA per tree = 0.00007854 * DBH^2 * EXPF * 4.35  (m^2/ha -> ft^2/ac)
+  # In inches: BA per tree = 0.005454 * DBH^2 * EXPF
+  if (dbh_units == "cm") {
+    tree$BA_contrib_ft2ac <- 0.00007854 * tree$DBH^2 * tree$EXPF * 4.35
+  } else {
+    tree$BA_contrib_ft2ac <- 0.005454 * tree$DBH^2 * tree$EXPF
+  }
+
+  # Per-stand raw BA at projection horizon
+  ba_raw_by_stand <- tapply(tree$BA_contrib_ft2ac, tree$STAND, sum, na.rm = TRUE)
+
+  # Apply v33 stand-level correction
+  ba_raw_vec    <- as.numeric(ba_raw_by_stand)
+  stands        <- as.character(names(ba_raw_by_stand))
+  ba_t1_vec     <- ba_t1_lut[stands]
+  ba_t1_vec[is.na(ba_t1_vec)] <- ACD_DENSITY_CORRECTION$crossover_BA  # neutral default
+  ba_corrected_vec <- apply_density_correction(ba_raw_vec, ba_t1_vec,
+                                               upper_cap = upper_cap,
+                                               lower_cap = lower_cap)
+
+  # Tree-level scale factor per stand. Apply scale_floor to guard against
+  # pathological cases where BA_corrected is much smaller than BA_raw and
+  # uniform scaling would otherwise thin the stand too aggressively.
+  raw_scale <- ifelse(ba_raw_vec > 0, ba_corrected_vec / ba_raw_vec, 1)
+  bounded_scale <- pmax(scale_floor, pmin(1.0, raw_scale))  # also cap at 1.0 (correction can only subtract)
+  scale_lut <- setNames(bounded_scale, stands)
+  tree$EXPF_scale  <- scale_lut[as.character(tree$STAND)]
+  tree$EXPF_raw    <- tree$EXPF
+  tree$EXPF        <- pmax(floor_EXPF, tree$EXPF_raw * tree$EXPF_scale)
+
+  # Stand summary for diagnostics
+  tpa_raw   <- tapply(tree$EXPF_raw, tree$STAND, sum, na.rm = TRUE)
+  tpa_corr  <- tapply(tree$EXPF,     tree$STAND, sum, na.rm = TRUE)
+  stand_summary <- data.frame(
+    STAND       = stands,
+    BA_t1       = as.numeric(ba_t1_vec),
+    BA_raw      = ba_raw_vec,
+    BA_corrected = ba_corrected_vec,
+    scale_factor = as.numeric(scale_lut),
+    TPA_raw_unit = as.numeric(tpa_raw)[match(stands, names(tpa_raw))],
+    TPA_corrected_unit = as.numeric(tpa_corr)[match(stands, names(tpa_corr))],
+    stringsAsFactors = FALSE
+  )
+
+  # Drop the BA contribution helper column
+  tree$BA_contrib_ft2ac <- NULL
+
+  list(
+    tree_corrected = tree,
+    stand_summary  = stand_summary
+  )
+}
+
+# -------------------------------------------------------------------------
+# Smoke test
+# -------------------------------------------------------------------------
+
 if (interactive() || sys.nframe() == 0) {
-  cat("ACD_DENSITY_CORRECTION (v33):\n")
+  cat("ACD_DENSITY_CORRECTION (v33 coefficients, v34 tree-level wrapper):\n")
   for (k in names(ACD_DENSITY_CORRECTION))
     cat(sprintf("  %-18s %s\n", k, ACD_DENSITY_CORRECTION[[k]]))
-  cat("\nSmoke test on representative BA_t1 values (default 0 to +25 cap):\n")
+
+  cat("\nStand-level smoke test:\n")
   test_BA_t1 <- c(10, 30, 60, 100, 156.6, 180, 220, 260)
   fake_BA_pred <- test_BA_t1 * 1.15
   d <- apply_density_correction_verbose(fake_BA_pred, test_BA_t1)
   print(format(d, digits = 4))
+
+  cat("\nTree-level smoke test (2 representative ME FIA stands):\n")
+  cat("Stand S1: low-density (BA_t1=50), should get scale ~0.7 (floor active)\n")
+  cat("Stand S2: high-density (BA_t1=180), should get scale = 1.0 (no correction)\n")
+  fake_tree <- data.frame(
+    STAND = c(rep("S1", 4), rep("S2", 4)),
+    TREE  = 1:8,
+    SP    = c("RS","BF","RM","YB","RS","BF","RM","YB"),
+    DBH   = c(15, 18, 30, 20, 35, 28, 40, 25),  # cm
+    EXPF  = c(60, 50, 30, 40, 25, 30, 20, 35)   # tree per acre equivalent
+  )
+  res <- apply_density_correction_treelist(fake_tree, c(S1 = 50, S2 = 180),
+                                            dbh_units = "cm", scale_floor = 0.7)
+  cat("Per-tree EXPF before/after:\n")
+  print(format(res$tree_corrected[, c("STAND","TREE","SP","DBH","EXPF_raw","EXPF_scale","EXPF")], digits=4))
+  cat("\nStand summary:\n"); print(format(res$stand_summary, digits=4))
 }

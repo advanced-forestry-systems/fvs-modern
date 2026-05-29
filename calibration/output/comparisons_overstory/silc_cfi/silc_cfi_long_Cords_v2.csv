@@ -1,0 +1,6 @@
+"predictor","n","bias_pct","RMSE","R2"
+"zero growth",6,0,0,1
+"AGM default",6,19.29,4.01,0.578
+"AGM MORTCAL",6,8.42,2.64,0.817
+"FVS-NE calibrated",6,4.63,2.66,0.815
+"FVS-ACD default",6,8.14,2.92,0.776

@@ -1,0 +1,8 @@
+"predictor","n","bias_pct","RMSE","R2"
+"zero growth",8,-12.44,23.46,-1.635
+"FIA prior PAI",8,-0.25,20.17,-0.947
+"AGM / AcadianGY",8,3.02,22.05,-1.327
+"FVS-NE default",8,-0.03,23.54,-1.653
+"FVS-NE calibrated",8,-7.81,21.22,-1.156
+"FVS-ACD default",8,0.2,23.85,-1.723
+"OSM-ACD",8,-18.31,20.81,-1.073

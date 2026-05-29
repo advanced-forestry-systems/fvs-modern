@@ -1,0 +1,9 @@
+"PLOT","YEAR_PREV","YEAR_CURR","PERIOD_YR","BA_PREV_FT2AC","BA_CURR_FT2AC","TPA_PREV","TPA_CURR","QMD_PREV","QMD_CURR","SDI_obs_curr","CurtisRD_obs_curr","tree_list_file","tree_count_prev"
+1100,1990,2000,10,56.11,58.91,215,215,6.92,7.09,123.8,22.12,"pair_input_long/pair_1100_1990_tree.csv",43
+1101,1990,2000,10,91.26,84.94,245,180,8.26,9.3,160.3,27.85,"pair_input_long/pair_1101_1990_tree.csv",49
+1102,1990,2000,10,63.52,73.87,145,140,8.96,9.84,136.3,23.55,"pair_input_long/pair_1102_1990_tree.csv",29
+1104,1990,2000,10,53.86,50.97,155,145,7.98,8.03,101.9,17.99,"pair_input_long/pair_1104_1990_tree.csv",31
+1105,1986,2000,14,19.9,51.92,110,220,5.76,6.58,112.3,20.24,"pair_input_long/pair_1105_1986_tree.csv",22
+1106,1990,2000,10,120.36,94.47,385,255,7.57,8.24,187,32.91,"pair_input_long/pair_1106_1990_tree.csv",77
+1107,1986,2000,14,13.96,63.74,60,230,6.53,7.13,133.6,23.87,"pair_input_long/pair_1107_1986_tree.csv",12
+1109,1990,2000,10,59.44,67.57,120,135,9.53,9.58,126,21.83,"pair_input_long/pair_1109_1990_tree.csv",24

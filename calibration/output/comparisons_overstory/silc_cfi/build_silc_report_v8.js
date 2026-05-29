@@ -1,0 +1,278 @@
+// build_silc_report_v8.js
+// Companion Word report to SILC_4Model_Benchmark_v8 deck.
+const fs = require("fs");
+const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
+        ImageRun, AlignmentType, LevelFormat, HeadingLevel, BorderStyle,
+        WidthType, ShadingType, PageBreak } = require("docx");
+
+const CFI_DIR = "/sessions/friendly-compassionate-rubin/mnt/repos--fvs-modern/calibration/output/comparisons_overstory/silc_cfi";
+const OD = "/sessions/friendly-compassionate-rubin/mnt/repos--fvs-modern/calibration/output/comparisons_overstory";
+
+// Helpers
+const border = { style: BorderStyle.SINGLE, size: 4, color: "BBBBBB" };
+const borders = { top: border, bottom: border, left: border, right: border };
+
+const p = (text, opts = {}) => new Paragraph({
+  spacing: { after: 120 },
+  ...opts,
+  children: [new TextRun({ text, ...(opts.run || {}) })],
+});
+
+const h1 = (text) => new Paragraph({
+  heading: HeadingLevel.HEADING_1,
+  spacing: { before: 300, after: 200 },
+  children: [new TextRun({ text, bold: true })],
+});
+const h2 = (text) => new Paragraph({
+  heading: HeadingLevel.HEADING_2,
+  spacing: { before: 240, after: 160 },
+  children: [new TextRun({ text, bold: true })],
+});
+
+const bullet = (text) => new Paragraph({
+  numbering: { reference: "bullets", level: 0 },
+  spacing: { after: 80 },
+  children: [new TextRun(text)],
+});
+
+const tcell = (text, opts = {}) => new TableCell({
+  borders,
+  width: { size: opts.w || 1500, type: WidthType.DXA },
+  margins: { top: 80, bottom: 80, left: 120, right: 120 },
+  shading: opts.fill ? { fill: opts.fill, type: ShadingType.CLEAR } : undefined,
+  children: [new Paragraph({
+    alignment: opts.align || AlignmentType.LEFT,
+    children: [new TextRun({ text, bold: opts.bold || false, color: opts.color || undefined })],
+  })],
+});
+
+const img = (path, w, h) => new Paragraph({
+  alignment: AlignmentType.CENTER,
+  spacing: { before: 120, after: 120 },
+  children: [new ImageRun({
+    type: "png",
+    data: fs.readFileSync(path),
+    transformation: { width: w, height: h },
+    altText: { title: path.split("/").pop(), description: "figure", name: path.split("/").pop() },
+  })],
+});
+
+const children = [];
+
+// === Title block ===
+children.push(new Paragraph({
+  alignment: AlignmentType.CENTER, spacing: { before: 0, after: 80 },
+  children: [new TextRun({ text: "SILC Four-Model Forest Growth Benchmark", bold: true, size: 40 })],
+}));
+children.push(new Paragraph({
+  alignment: AlignmentType.CENTER, spacing: { after: 80 },
+  children: [new TextRun({ text: "Companion Report v8 — AGM MORTCAL year 100 update", italics: true, size: 26 })],
+}));
+children.push(new Paragraph({
+  alignment: AlignmentType.CENTER, spacing: { after: 320 },
+  children: [new TextRun({ text: "Aaron R. Weiskittel, CRSF, University of Maine — May 2026", size: 22 })],
+}));
+
+// === Executive summary ===
+children.push(h1("Executive summary"));
+children.push(p("Three findings drive this update."));
+children.push(bullet("(1) The +18.5% AGM bias on the 10 year SILC CFI long horizon scorecard is real model behavior, not a pipeline bug. Triple checking the AGM treelist to BA / Cords / BdFt computation reproduces to 1e-13 ft^2/ac, and observed STAND_METRICS BA matches direct tree list recompute to 0.005 ft^2/ac. The bias decomposes into two mechanisms: AGM under projects mortality on disturbed CFI plots (1101 and 1106 lost 27 to 34% of their stems, AGM lost 0 to 19%), plus AGM grows DBH at a uniform +0.8 in per decade regardless of site (plots 1100 and 1104 grew +0.05 to 0.17 in observed)."));
+children.push(bullet("(2) Switching on the #126b in-source MORTCAL correction in AcadianGY 12.3.9 (default OFF) cuts the 10 year BA bias from +18.5% to +7.8%, RMSE -34%, R^2 from -0.20 to +0.47. Sawlog BdFt bias drops to +4.0% with R^2 = 0.84, the best of any model on this metric."));
+children.push(bullet("(3) Pushed to 100 years, MORTCAL pulls projected BA from a ceiling around 200 ft^2/ac down to a credible carrying capacity of 98 to 108 ft^2/ac. Year 100 NetCords lands at 35 to 39 cords/ac across all six byStrata cells, plus CFI plot backfill at Cedar A+B (35.8 cords/ac) and Mixedwood A+B (21.9 cords/ac)."));
+children.push(p("Recommended operational stack: AGM with MORTCAL on for long horizon Cords / BA / BdFt; FVS-NE calibrated as the short horizon (5 yr) cross check; OSM-ACD as the conservative under projection."));
+
+// === Triple check ===
+children.push(h1("Triple check of AGM long horizon calculations"));
+children.push(p("The +18.5% AGM bias at the 10 year CFI scorecard prompted a forensic audit. Every step of the pipeline checked out."));
+children.push(p("Source code: ~/AcadianGY_12.3.9.r on Cardinal (identical to local v12.3.5 plus the opt-in MORTCAL correction). AcadianGYOneStand is annual (cyclen=1 hardcoded since 2022-09-01). The driver loops PERIOD_YR times, giving the correct horizon."));
+
+children.push(h2("Pipeline verification checks"));
+const verifyHdr = ["Check", "Result"];
+children.push(new Table({
+  width: { size: 9360, type: WidthType.DXA },
+  columnWidths: [5500, 3860],
+  rows: [
+    new TableRow({ children: [
+      tcell("Check", { w: 5500, bold: true, fill: "1A3D28", color: "FFFFFF" }),
+      tcell("Result", { w: 3860, bold: true, fill: "1A3D28", color: "FFFFFF", align: AlignmentType.CENTER }),
+    ]}),
+    new TableRow({ children: [
+      tcell("AGM treelist to BA/Cords/BdFt reproduces results CSV", { w: 5500 }),
+      tcell("exact to 1e-13", { w: 3860, align: AlignmentType.CENTER }),
+    ]}),
+    new TableRow({ children: [
+      tcell("STAND_METRICS BA_CURR vs direct TREE.csv recompute", { w: 5500 }),
+      tcell("match to 0.005 ft^2/ac", { w: 3860, align: AlignmentType.CENTER }),
+    ]}),
+    new TableRow({ children: [
+      tcell("AcadianGYOneStand cycle length", { w: 5500 }),
+      tcell("annual (cyclen=1 hardcoded)", { w: 3860, align: AlignmentType.CENTER }),
+    ]}),
+    new TableRow({ children: [
+      tcell("Driver loop count", { w: 5500 }),
+      tcell("PERIOD_YR iterations", { w: 3860, align: AlignmentType.CENTER }),
+    ]}),
+    new TableRow({ children: [
+      tcell("BA formula 0.005454 * DBH^2 * EXPF", { w: 5500 }),
+      tcell("correct", { w: 3860, align: AlignmentType.CENTER }),
+    ]}),
+    new TableRow({ children: [
+      tcell("Cords formula 0.0025 * DBH^2 * HT * 0.90 * EXPF / 79", { w: 5500 }),
+      tcell("correct", { w: 3860, align: AlignmentType.CENTER }),
+    ]}),
+    new TableRow({ children: [
+      tcell("BdFt formula 0.01 * DBH^2 * HT * EXPF for DBH >= 9 in (Intl 1/4)", { w: 5500 }),
+      tcell("correct", { w: 3860, align: AlignmentType.CENTER }),
+    ]}),
+    new TableRow({ children: [
+      tcell("DBH threshold symmetry (pred vs obs)", { w: 5500 }),
+      tcell("both at 4.5 in", { w: 3860, align: AlignmentType.CENTER }),
+    ]}),
+  ],
+}));
+
+children.push(h2("Per-plot bias decomposition"));
+children.push(p("Six routine CFI pairs after excluding two establishment plots (1105, 1107 had 3x BA ingrowth). The decomposition shows that AGM grows DBH a uniform +0.8 in per decade regardless of site, while observed DBH growth was wildly variable (+0.05 to +1.04 in). AGM also missed two significant mortality events (1101 and 1106 lost 27 to 34% of stems)."));
+
+const decompHdr = ["PLOT", "obs BA chg", "obs TPA chg", "obs QMD chg", "AGM TPA chg", "AGM QMD chg", "AGM BA bias"];
+const decompRows = [
+  ["1100", "+5%", "0%", "+0.17", "0%", "+0.80", "+18.6%"],
+  ["1101", "-7%", "-27%", "+1.04", "0%", "+0.82", "+29.7%"],
+  ["1102", "+16%", "-3%", "+0.88", "0%", "+0.83", "+2.6%"],
+  ["1104", "-5%", "-6%", "+0.05", "0%", "+0.83", "+28.6%"],
+  ["1106", "-22%", "-34%", "+0.67", "-19%", "+0.81", "+25.7%"],
+  ["1109", "+14%", "+13%", "+0.05", "0%", "+0.84", "+4.1%"],
+];
+children.push(new Table({
+  width: { size: 9360, type: WidthType.DXA },
+  columnWidths: [1080, 1280, 1280, 1280, 1280, 1280, 1880],
+  rows: [
+    new TableRow({ children: decompHdr.map((t, i) => tcell(t, { w: [1080,1280,1280,1280,1280,1280,1880][i], bold: true, fill: "1A3D28", color: "FFFFFF", align: AlignmentType.CENTER })) }),
+    ...decompRows.map(r => new TableRow({ children: r.map((t, i) => tcell(t, { w: [1080,1280,1280,1280,1280,1280,1880][i], align: AlignmentType.CENTER, bold: i === 6 })) })),
+  ],
+}));
+
+children.push(p("Mechanism figure:", { spacing: { before: 200 } }));
+children.push(img(`${CFI_DIR}/silc_cfi_long_mechanism.png`, 600, 270));
+
+// === MORTCAL improvement ===
+children.push(new Paragraph({ children: [new PageBreak()] }));
+children.push(h1("MORTCAL correction cuts 10 year bias by more than half"));
+children.push(p("The #126b in-source size dependent mortality correction was originally calibrated to Maine FIA. It is OFF by default in AcadianGY 12.3.9. The SILC CFI test enables it via ops$MORTCAL=TRUE, MORTCAL_INTERVAL=5."));
+children.push(p("Side by side scorecard on the n=6 routine pairs (mean horizon 10 yr):"));
+
+const mcHdr = ["Metric", "AGM default", "AGM MORTCAL", "Improvement"];
+const mcRows = [
+  ["BA bias", "+18.5%", "+7.8%", "cut by 58%"],
+  ["BA RMSE", "16.2 ft^2/ac", "10.7 ft^2/ac", "-34%"],
+  ["BA R^2", "-0.20", "+0.47", "flips negative to positive"],
+  ["Cords bias", "+19.3%", "+8.4%", "cut by 56%"],
+  ["Cords R^2", "0.58", "0.82", "+0.24"],
+  ["BdFt bias", "+16.7%", "+4.0%", "single digit"],
+  ["BdFt R^2", "0.75", "0.84", "+0.09"],
+];
+children.push(new Table({
+  width: { size: 9360, type: WidthType.DXA },
+  columnWidths: [2200, 2200, 2200, 2760],
+  rows: [
+    new TableRow({ children: mcHdr.map((t, i) => tcell(t, { w: [2200,2200,2200,2760][i], bold: true, fill: "1A3D28", color: "FFFFFF", align: AlignmentType.CENTER })) }),
+    ...mcRows.map(r => new TableRow({ children: r.map((t, i) => tcell(t, { w: [2200,2200,2200,2760][i], align: AlignmentType.CENTER, bold: i === 3 && t !== "+0.09" && t !== "+0.24" })) })),
+  ],
+}));
+
+children.push(p("Scatter overlay (green = default, gold = MORTCAL):", { spacing: { before: 200 } }));
+children.push(img(`${CFI_DIR}/silc_cfi_long_mortcal_compare.png`, 600, 230));
+
+// === 100 yr trajectories ===
+children.push(new Paragraph({ children: [new PageBreak()] }));
+children.push(h1("100 year trajectories: default vs MORTCAL"));
+children.push(p("Cardinal job 11076533 ran AcadianGY 12.3.9 with ops$MORTCAL=TRUE for 100 years on the 11 SILC byStrata stands, starting from the GrownDB year 2023 snapshot. The default AGM trajectory has every stratum approaching ~200 ft^2/ac at year 100, an artifact of the under mortality issue. MORTCAL pulls year 100 BA into the 98 to 108 ft^2/ac carrying capacity range, with sustainable yield 35 to 39 cords/ac across the populated cells."));
+children.push(img(`${OD}/silc_strata_5x2_AGM_MORTCAL_BA.png`, 620, 360));
+
+children.push(h2("Year 100 outcomes (year 2123)"));
+children.push(p("Default vs MORTCAL on the 11 byStrata stands, plus CFI plot backfill on 2 of 4 empty cells."));
+const y100Hdr = ["Stratum", "n", "BA def", "BA mc", "dBA", "Cords def", "Cords mc", "dCords"];
+const y100Rows = [
+  ["Cedar / A+B (CFI backfill)", "1", "n/a", "81", "n/a", "n/a", "35.8", "n/a"],
+  ["Cedar / C+D", "1", "206", "99", "-52%", "59.3", "36.9", "-38%"],
+  ["Hardwood / A+B", "1", "209", "107", "-49%", "65.3", "39.3", "-40%"],
+  ["Hardwood / C+D", "3", "198", "108", "-46%", "61.0", "38.9", "-36%"],
+  ["Mixedwood / A+B (CFI backfill)", "3", "n/a", "52", "n/a", "n/a", "21.9", "n/a"],
+  ["Mixedwood / C+D", "1", "212", "102", "-52%", "66.4", "37.6", "-43%"],
+  ["Commercial Softwood / A+B", "2", "203", "98", "-52%", "61.0", "35.9", "-41%"],
+  ["Commercial Softwood / C+D", "3", "211", "99", "-53%", "62.9", "36.2", "-42%"],
+  ["Other Softwood (no CFI coverage)", "0", "—", "—", "—", "—", "—", "—"],
+];
+const y100W = [2400, 600, 900, 900, 900, 900, 900, 1860];
+children.push(new Table({
+  width: { size: 9360, type: WidthType.DXA },
+  columnWidths: y100W,
+  rows: [
+    new TableRow({ children: y100Hdr.map((t, i) => tcell(t, { w: y100W[i], bold: true, fill: "1A3D28", color: "FFFFFF", align: AlignmentType.CENTER })) }),
+    ...y100Rows.map((r, ri) => {
+      const fill = r[0].includes("backfill") ? "FFF8E1" : (r[0].includes("no CFI") ? "F4F4F4" : undefined);
+      const color = r[0].includes("no CFI") ? "888888" : undefined;
+      return new TableRow({ children: r.map((t, i) => tcell(t, { w: y100W[i], align: AlignmentType.CENTER, fill, color })) });
+    }),
+  ],
+}));
+
+// === Recommendations ===
+children.push(new Paragraph({ children: [new PageBreak()] }));
+children.push(h1("Operational recommendations"));
+children.push(bullet("AGM with MORTCAL on is the new long horizon champion. Use it for SILC operational sawlog projections (BdFt R^2 = 0.84) and Cords (R^2 = 0.82). Set ops$MORTCAL = TRUE, MORTCAL_INTERVAL = 5 in any AcadianGY call."));
+children.push(bullet("FVS-NE calibrated stays best on the short horizon BA bias (-0.3% at 5 yr). Pair with AGM MORTCAL as a cross check on the operational 5 yr plans."));
+children.push(bullet("OSM-ACD is the conservative under projection (-9.7% BA bias at 10 yr). Report AGM MORTCAL plus OSM as the operational range; per plot RMSE 10.7 ft^2/ac BA at 10 yr horizon is the empirical uncertainty band."));
+children.push(bullet("Year 100 cords/ac estimates: 35 to 39 across six byStrata cells and CFI backfill Cedar A+B; Mixedwood A+B noticeably lower (22) reflecting heavier mortality in the high density mixed pine / hardwood stands."));
+
+children.push(h1("Open questions for SILC sign off"));
+children.push(p("1. Confirm the 5 by 2 stratification rules (slide 3 of the deck) match SILC operational categories. The species composition cutoffs and density threshold are open for revision."));
+children.push(p("2. Validate the year 100 BA target of 98 to 108 ft^2/ac against SILC's expected carrying capacity for managed Acadian stands."));
+children.push(p("3. Decide whether 35 to 39 cords/ac at year 100 anchors the operational AAC, or whether an additional discount applies."));
+
+children.push(h1("File index"));
+children.push(p("All artifacts in /home/aweiskittel/Documents/Claude/fvs-modern/silc_cfi_v8_deliverables/. Key files:"));
+children.push(bullet("SILC_4Model_Benchmark_v8_Weiskittel.pdf — 17 slide operational deck"));
+children.push(bullet("silc_strata_5x2_AGM_MORTCAL_trajectories.csv — strata level 100 yr trajectories"));
+children.push(bullet("silc_strata_5x2_year100_mortcal_vs_default.csv — year 2123 outcomes table"));
+children.push(bullet("silc_cfi_backfill_100yr_mortcal_trajectories.csv — Cedar A+B and Mixedwood A+B from CFI plots"));
+children.push(bullet("silc_cfi_long_mechanism.png and silc_cfi_long_mortcal_compare.png — supporting figures"));
+children.push(bullet("draft_email_to_ian_ryan.md — handoff email"));
+
+// === Compose document ===
+const doc = new Document({
+  styles: {
+    default: { document: { run: { font: "Arial", size: 22 } } },
+    paragraphStyles: [
+      { id: "Heading1", name: "Heading 1", basedOn: "Normal", next: "Normal", quickFormat: true,
+        run: { size: 32, bold: true, font: "Arial", color: "1A3D28" },
+        paragraph: { spacing: { before: 240, after: 180 }, outlineLevel: 0 } },
+      { id: "Heading2", name: "Heading 2", basedOn: "Normal", next: "Normal", quickFormat: true,
+        run: { size: 26, bold: true, font: "Arial", color: "1A3D28" },
+        paragraph: { spacing: { before: 200, after: 140 }, outlineLevel: 1 } },
+    ],
+  },
+  numbering: {
+    config: [{
+      reference: "bullets",
+      levels: [{ level: 0, format: LevelFormat.BULLET, text: "•",
+        alignment: AlignmentType.LEFT,
+        style: { paragraph: { indent: { left: 720, hanging: 360 } } } }],
+    }],
+  },
+  sections: [{
+    properties: {
+      page: {
+        size: { width: 12240, height: 15840 },
+        margin: { top: 1080, right: 1080, bottom: 1080, left: 1080 },
+      },
+    },
+    children,
+  }],
+});
+
+const out = `${CFI_DIR}/SILC_4Model_Benchmark_Report_v8_Weiskittel.docx`;
+Packer.toBuffer(doc).then(buf => {
+  fs.writeFileSync(out, buf);
+  console.log("wrote", out);
+}).catch(err => { console.error(err); process.exit(1); });

@@ -198,6 +198,122 @@ apply_density_correction_treelist <- function(tree, BA_t1_by_stand,
 }
 
 # -------------------------------------------------------------------------
+# Tree-level reconciliation v40: TPA-preserving size-weighted scaling
+# -------------------------------------------------------------------------
+#
+# Alternative to apply_density_correction_treelist (which scales EXPF uniformly
+# and crashes TPA in proportion to BA). v40 scales EXPF as a function of DBH
+# so the corrected BA matches the target AND the TPA stays at the observed
+# level. Biological interpretation: the model is keeping too many big trees
+# alive; reduce big-tree EXPF and shift weight toward smaller trees.
+#
+# Parameterization: s_i = 1 + beta * (DBH_mean - DBH_i) / DBH_mean
+#   where DBH_mean is the EXPF-weighted mean DBH per stand. By construction
+#   this preserves TPA exactly. beta is solved per stand from the BA target.
+#
+# Trade-off vs v34:
+#   v34 (uniform):       preserves QMD, crashes TPA (-10 percent typical)
+#   v40 (size-weighted): preserves TPA, decreases QMD (~5 percent typical)
+#   Both close BA equally well.
+#
+# Choice depends on which downstream metric matters most. Volume tables
+# are usually QMD-sensitive (v34 better). TPA-driven downstream (counts,
+# carbon, harvest decisions on density) usually prefers v40.
+
+apply_density_correction_treelist_tpa <- function(tree, BA_t1_by_stand,
+                                                  dbh_units = c("cm", "in"),
+                                                  upper_cap = ACD_DENSITY_CORRECTION$upper_cap,
+                                                  lower_cap = ACD_DENSITY_CORRECTION$lower_cap,
+                                                  s_min = 0.1,
+                                                  s_max = 2.0,
+                                                  floor_EXPF = 1e-5) {
+  dbh_units <- match.arg(dbh_units)
+  stopifnot(all(c("STAND", "DBH", "EXPF") %in% names(tree)))
+
+  if (is.data.frame(BA_t1_by_stand)) {
+    stopifnot(all(c("STAND", "BA_t1") %in% names(BA_t1_by_stand)))
+    ba_t1_lut <- setNames(BA_t1_by_stand$BA_t1, as.character(BA_t1_by_stand$STAND))
+  } else {
+    ba_t1_lut <- BA_t1_by_stand
+  }
+
+  # Compute per-tree BA contribution and per-stand totals
+  if (dbh_units == "cm") {
+    ba_factor <- 0.00007854 * 4.35   # m^2/ha -> ft^2/ac
+  } else {
+    ba_factor <- 0.005454            # in-units, ft^2/ac
+  }
+
+  tree$EXPF_raw <- tree$EXPF
+  stand_summary_rows <- list()
+
+  for (sid in unique(tree$STAND)) {
+    idx <- tree$STAND == sid
+    DBH_i <- tree$DBH[idx]
+    EXPF_i <- tree$EXPF_raw[idx]
+
+    BA_raw <- ba_factor * sum(EXPF_i * DBH_i^2)
+    BA_t1  <- ba_t1_lut[as.character(sid)]
+    if (is.na(BA_t1)) BA_t1 <- ACD_DENSITY_CORRECTION$crossover_BA
+
+    raw_corr <- ACD_DENSITY_CORRECTION$a + ACD_DENSITY_CORRECTION$b * BA_t1
+    bnd_corr <- max(lower_cap, min(upper_cap, raw_corr))
+    BA_target <- BA_raw - bnd_corr
+
+    if (BA_target >= BA_raw || BA_raw <= 0) {
+      # No correction needed (high-density stand)
+      tree$EXPF[idx] <- EXPF_i
+      tree$EXPF_scale[idx] <- 1.0
+      stand_summary_rows[[sid]] <- data.frame(
+        STAND = sid, BA_t1 = BA_t1,
+        BA_raw = BA_raw, BA_corrected = BA_raw,
+        beta = 0, scale_min = 1, scale_max = 1,
+        TPA_raw = sum(EXPF_i), TPA_corrected = sum(EXPF_i),
+        stringsAsFactors = FALSE)
+      next
+    }
+
+    # EXPF-weighted mean DBH
+    sum_E <- sum(EXPF_i)
+    DBH_mean <- sum(EXPF_i * DBH_i) / sum_E
+
+    # Solve for beta: BA_target = M2 + beta * (DBH_mean * M2 - M3) / DBH_mean
+    # where M2 = sum(EXPF * DBH^2), M3 = sum(EXPF * DBH^3)
+    M2 <- sum(EXPF_i * DBH_i^2)
+    M3 <- sum(EXPF_i * DBH_i^3)
+    target_M2 <- BA_target / ba_factor
+    denom <- (DBH_mean * M2 - M3)
+    if (abs(denom) < 1e-9) {
+      # All trees same size; uniform scaling is the only option
+      s_i <- rep(target_M2 / M2, length(EXPF_i))
+      beta <- NA_real_
+    } else {
+      beta <- (target_M2 - M2) * DBH_mean / denom
+      s_i <- 1 + beta * (DBH_mean - DBH_i) / DBH_mean
+      s_i <- pmax(s_min, pmin(s_max, s_i))
+    }
+
+    new_EXPF <- pmax(floor_EXPF, EXPF_i * s_i)
+    tree$EXPF[idx] <- new_EXPF
+    tree$EXPF_scale[idx] <- s_i
+
+    stand_summary_rows[[sid]] <- data.frame(
+      STAND = sid, BA_t1 = BA_t1,
+      BA_raw = BA_raw,
+      BA_corrected = ba_factor * sum(new_EXPF * DBH_i^2),
+      beta = beta,
+      scale_min = min(s_i), scale_max = max(s_i),
+      TPA_raw = sum(EXPF_i), TPA_corrected = sum(new_EXPF),
+      stringsAsFactors = FALSE)
+  }
+
+  list(
+    tree_corrected = tree,
+    stand_summary  = do.call(rbind, stand_summary_rows)
+  )
+}
+
+# -------------------------------------------------------------------------
 # Smoke test
 # -------------------------------------------------------------------------
 
@@ -212,7 +328,27 @@ if (interactive() || sys.nframe() == 0) {
   d <- apply_density_correction_verbose(fake_BA_pred, test_BA_t1)
   print(format(d, digits = 4))
 
-  cat("\nTree-level smoke test (2 representative ME FIA stands):\n")
+  cat("\nTree-level v40 (TPA-preserving) smoke test:\n")
+  cat("Stand S1: low-density (BA_t1=50)\n")
+  set.seed(42)
+  ntrees <- 20
+  fake_tree2 <- data.frame(
+    STAND = rep("S1", ntrees), TREE = seq_len(ntrees), SP = "RS",
+    DBH   = sort(rgamma(ntrees, 4, 0.18)),  # cm
+    EXPF  = runif(ntrees, 5, 15)
+  )
+  fake_tree2$EXPF_scale <- NA_real_
+  res2 <- apply_density_correction_treelist_tpa(fake_tree2, c(S1 = 50), dbh_units = "cm")
+  cat(sprintf("  BA_raw = %.2f, BA_corrected = %.2f (target reduction = %.2f)\n",
+              res2$stand_summary$BA_raw, res2$stand_summary$BA_corrected,
+              res2$stand_summary$BA_raw - res2$stand_summary$BA_corrected))
+  cat(sprintf("  TPA_raw = %.0f, TPA_corrected = %.0f (preserved)\n",
+              res2$stand_summary$TPA_raw, res2$stand_summary$TPA_corrected))
+  cat(sprintf("  beta = %.3f, scale range = [%.2f, %.2f]\n",
+              res2$stand_summary$beta, res2$stand_summary$scale_min, res2$stand_summary$scale_max))
+  cat("  (small trees: s > 1; big trees: s < 1)\n")
+
+  cat("\nTree-level v34 (uniform, original) smoke test:\n")
   cat("Stand S1: low-density (BA_t1=50), should get scale ~0.7 (floor active)\n")
   cat("Stand S2: high-density (BA_t1=180), should get scale = 1.0 (no correction)\n")
   fake_tree <- data.frame(

@@ -1,0 +1,5 @@
+forest_type,density_class,PLOT,tree_list_file,n_trees
+Cedar,A+B (high),1106,cfi_backfill_input/backfill_1106_2000_tree.csv,51
+Mixedwood,A+B (high),1101,cfi_backfill_input/backfill_1101_2000_tree.csv,36
+Mixedwood,A+B (high),1102,cfi_backfill_input/backfill_1102_2000_tree.csv,28
+Mixedwood,A+B (high),1109,cfi_backfill_input/backfill_1109_2000_tree.csv,27

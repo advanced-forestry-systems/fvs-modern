@@ -45,9 +45,7 @@ def build_inputs(stand_ids, gr2023, si_lookup, out_dir):
         td = gr2023[gr2023["StandID"] == sid]
         for _, r in td.iterrows():
             dbh = float(r["DBH"]) if pd.notna(r["DBH"]) else 0
-            # OSM rejects trees below the ingrowth threshold; drop seedlings (<0.5 in)
-            # and unrealistic upper outliers (>40 in is likely data entry error)
-            if dbh < 0.5 or dbh > 40: continue
+            if dbh <= 0: continue
             dbh_cm = dbh * 2.54
             ht = float(r["Ht"]) if pd.notna(r["Ht"]) and r["Ht"] > 0 else 0
             if ht <= 0:

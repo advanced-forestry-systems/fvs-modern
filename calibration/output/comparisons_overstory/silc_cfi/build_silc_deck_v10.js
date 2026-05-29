@@ -326,14 +326,14 @@ function citationLine(slide, text) {
      { text: "OSM Cords",        options: HDRY }],
     [{ text: "Cedar / A+B (CFI)", options: { fill: { color: "FFF8E1" }, italic: true } },
                                    "1", "n/a", "81",  "n/a",  "n/a",  "n/a",  "35.8", "n/a"],
-    ["Cedar / C+D",                "1", "206", "99",  "291",  "218",  "n/a",  "36.9", "n/a"],
+    ["Cedar / C+D",                "1", "206", "99",  "291",  "218",  "249",  "36.9", "41.5"],
     ["Hardwood / A+B",             "1", "209", "107", "209",  "144",  "n/a",  "39.3", "n/a"],
-    ["Hardwood / C+D",             "3", "198", "108", "214",  "125",  "172",  "38.9", "31.7"],
+    ["Hardwood / C+D",             "3", "198", "108", "214",  "125",  "174",  "38.9", "32.4"],
     [{ text: "Mixedwood / A+B (CFI)", options: { fill: { color: "FFF8E1" }, italic: true } },
                                    "3", "n/a", "52",  "n/a",  "n/a",  "n/a",  "21.9", "n/a"],
-    ["Mixedwood / C+D",            "1", "212", "102", "239",  "153",  "184",  "37.6", "34.4"],
-    ["Commercial SW / A+B",        "2", "203", "98",  "274",  "225",  "221",  "35.9", "39.9"],
-    ["Commercial SW / C+D",        "3", "211", "99",  "264",  "186",  "200",  "36.2", "36.5"],
+    ["Mixedwood / C+D",            "1", "212", "102", "239",  "153",  "183",  "37.6", "34.6"],
+    ["Commercial SW / A+B",        "2", "203", "98",  "274",  "225",  "222",  "35.9", "40.0"],
+    ["Commercial SW / C+D",        "3", "211", "99",  "264",  "186",  "199",  "36.2", "36.2"],
     [{ text: "Other Softwood (no CFI)", options: { fill: { color: "F4F4F4" }, italic: true, color: "888888" } },
                                    "0", "—",   "—",   "—",    "—",    "—",    "—",   "—"]
   ];
@@ -346,8 +346,8 @@ function citationLine(slide, text) {
     rowH: 0.38
   });
 
-  citationLine(s, "Year-100 (2123) BA in ft^2/ac, Cords/ac. AGM=AcadianGY 12.3.9; FVS-NE job 11078908; OSM-ACD job 11080104 (4 of 6 cells; 5 stands failed OSM init)");
-  takeawayBand(s, "AGM MORTCAL anchors low; OSM-ACD + FVS-NE cal cluster around 170-220 BA");
+  citationLine(s, "Year-100 (2123) BA in ft^2/ac, Cords/ac. AGM=AcadianGY 12.3.9; FVS-NE job 11078908; OSM-ACD job 11091396 (5 of 6 cells; H3B-N + H3C-N still failing — Hardwood A+B uncovered)");
+  takeawayBand(s, "AGM MORTCAL anchors low; OSM-ACD + FVS-NE cal cluster around 170-250 BA");
 }
 
 // ===================================================================

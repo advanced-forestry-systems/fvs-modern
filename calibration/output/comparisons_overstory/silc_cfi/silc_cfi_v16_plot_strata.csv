@@ -1,0 +1,74 @@
+PLOT,YEAR_CURR,CTYPE,CDENS,forest_type,density_class
+1100,2000,M,A,Mixedwood,A+B (high)
+1101,2000,S,B,Commercial Softwood,A+B (high)
+1102,2000,M,A,Mixedwood,A+B (high)
+1104,2000,M,A,Mixedwood,A+B (high)
+1105,2000,S,C,Commercial Softwood,C+D (low)
+1106,2000,S,A,Commercial Softwood,A+B (high)
+1107,2000,M,A,Mixedwood,A+B (high)
+1109,2000,M,B,Mixedwood,A+B (high)
+1114,1995,H,A,Hardwood,A+B (high)
+1115,2000,H9x,,Hardwood,
+1117,1995,H9B,,Hardwood,A+B (high)
+1119,1995,H3C,,Hardwood,C+D (low)
+1130,1999,H,B,Hardwood,A+B (high)
+1133,1999,A,,Unclassifiable,A+B (high)
+1134,1999,H,,Hardwood,
+1146,1995,S8A,,Commercial Softwood,A+B (high)
+1150,1999,S3C,,Commercial Softwood,C+D (low)
+1163,2000,S3A,,Commercial Softwood,A+B (high)
+1165,2000,M5A,,Mixedwood,A+B (high)
+1166,1995,M9A,,Mixedwood,A+B (high)
+1169,1995,H8C,,Hardwood,C+D (low)
+1170,2000,S7B,,Commercial Softwood,A+B (high)
+1171,1999,M3BU,,Mixedwood,A+B (high)
+1178,1999,Pe,,Unclassifiable,
+1193,2000,H8A,,Hardwood,A+B (high)
+1194,2000,H8A,,Hardwood,A+B (high)
+1195,2000,S8B,,Commercial Softwood,A+B (high)
+1196,2000,S4B,,Commercial Softwood,A+B (high)
+1197,2002,H9A,,Hardwood,A+B (high)
+1199,2002,H8B,,Hardwood,A+B (high)
+1200,2002,H8A,,Hardwood,A+B (high)
+1202,2000,M3A,,Mixedwood,A+B (high)
+1203,1999,M8B,,Mixedwood,A+B (high)
+1205,1999,H8B,,Hardwood,A+B (high)
+1206,1999,H9B,,Hardwood,A+B (high)
+1208,2002,M9A,,Mixedwood,A+B (high)
+1209,2002,M9A,,Mixedwood,A+B (high)
+1217,2001,S3BU,,Commercial Softwood,A+B (high)
+1218,1996,M9A,,Mixedwood,A+B (high)
+1219,2001,H2A,,Hardwood,A+B (high)
+1220,2001,STAM,,Commercial Softwood,A+B (high)
+1221,2001,S9Be,,Commercial Softwood,
+1222,2001,M9Bc,,Mixedwood,
+1223,2001,Mom,,Mixedwood,
+1224,2001,S8C,,Commercial Softwood,C+D (low)
+1225,1995,S9A C~,,Commercial Softwood,
+1227,2001,HOB-,,Hardwood,
+1228,2001,S9A-,,Commercial Softwood,
+1230,2001,G6,,Unclassifiable,
+1231,1996,S3A,,Commercial Softwood,A+B (high)
+1232,2001,S2B/S7C,,Commercial Softwood,C+D (low)
+1234,2001,S2E/S78,,Commercial Softwood,
+1235,2001,N66/MOB,,Unclassifiable,A+B (high)
+1236,2001,H3A,,Hardwood,A+B (high)
+1239,2001,H9A,,Hardwood,A+B (high)
+1240,2001,SFC,,Commercial Softwood,C+D (low)
+1243,2001,S2A-7,,Commercial Softwood,
+1244,2001,M4BL,,Mixedwood,A+B (high)
+1245,2001,S7AC,,Commercial Softwood,A+B (high)
+1247,1992,S8B,,Commercial Softwood,A+B (high)
+1251,2001,STA,,Commercial Softwood,A+B (high)
+1252,2001,S34,,Commercial Softwood,
+1253,2001,S9B,,Commercial Softwood,A+B (high)
+1262,1992,M4B,,Mixedwood,A+B (high)
+1263,1992,H9B,,Hardwood,A+B (high)
+1272,2002,BEE,,Unclassifiable,
+1273,2002,E8A,,Unclassifiable,A+B (high)
+1275,2002,7B,,Unclassifiable,A+B (high)
+1278,2002,M5C,,Mixedwood,C+D (low)
+1284,2001,M4A,,Mixedwood,A+B (high)
+1285,1996,M9A,,Mixedwood,A+B (high)
+1286,2001,MOA,,Mixedwood,A+B (high)
+1287,2001,H6A,,Hardwood,A+B (high)

@@ -203,6 +203,17 @@ N_species <- max(dg_model$species_idx)
 
 logger::log_info("N = {N}, N_species = {N_species}")
 
+# Persist the dense species_idx -> SPCD crosswalk so downstream tooling (e.g.
+# calibration/R/multipliers.R) can map b0[i] to the correct FVS species without
+# replaying the stochastic, subsample-dependent data prep. Without this file the
+# dense index is not recoverable after the processed data is regenerated.
+dg_species_index <- dg_model %>%
+  dplyr::distinct(species_idx, SPCD) %>%
+  dplyr::arrange(species_idx)
+utils::write.csv(dg_species_index,
+                 file.path(output_dir, "diameter_growth_species_index.csv"),
+                 row.names = FALSE)
+
 prior_b0_species <- rep(prior_means["b1_ref"] * 0.5, N_species)
 
 stan_data <- list(

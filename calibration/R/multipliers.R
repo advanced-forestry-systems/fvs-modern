@@ -81,6 +81,34 @@
   out
 }
 
+# Convert a dense-index intercept vector b0[i] (DG / HI) to a length-maxsp factor
+# array. If a {component}_species_index.csv crosswalk (written by the fit script)
+# is present, b0[i] is mapped exactly to the FVS species slot via SPCD; otherwise
+# it falls back to placing b0[i] in slot i (approximate, flagged).
+.mult_dense_factor <- function(b0, lo, hi, fia, maxsp, xwalk) {
+  if (length(b0) == 0 || !any(!is.na(b0)))
+    return(list(arr = rep(1.0, maxsp), mapping = "none", n = 0))
+  mu <- mean(b0, na.rm = TRUE)
+  m <- exp(b0 - mu); m[is.na(m)] <- 1.0
+  arr <- rep(1.0, maxsp)
+  ix <- if (file.exists(xwalk)) .mult_read_csv(xwalk) else NULL
+  if (!is.null(ix) && all(c("species_idx", "SPCD") %in% names(ix))) {
+    for (k in seq_len(nrow(ix))) {
+      di <- suppressWarnings(as.integer(ix$species_idx[k]))
+      sp <- suppressWarnings(as.integer(ix$SPCD[k]))
+      if (!is.na(di) && di >= 1 && di <= length(m)) {
+        slot <- which(fia == sp)
+        if (length(slot)) arr[slot[1]] <- m[di]
+      }
+    }
+    mapping <- "exact (species_index crosswalk)"
+  } else {
+    n <- min(length(m), maxsp); arr[seq_len(n)] <- m[seq_len(n)]
+    mapping <- "approximate (no crosswalk; refit to save species index)"
+  }
+  list(arr = .mult_clip(arr, lo, hi), mapping = mapping, n = sum(!is.na(b0)))
+}
+
 # b0[i] dense-index intercept vector (DG / HI), NA where absent.
 .mult_b0_vec <- function(df) {
   if (is.null(df) || nrow(df) == 0) return(numeric(0))
@@ -203,30 +231,18 @@ compute_calibration_multipliers <- function(output_dir, config,
   dds <- rep(1.0, maxsp)
   if (isTRUE(avail["DG"])) {
     dg <- .mult_read_csv(file.path(output_dir, "diameter_growth_summary.csv"))
-    b0 <- .mult_b0_vec(dg)
-    if (length(b0) > 0 && any(!is.na(b0))) {
-      mu <- mean(b0, na.rm = TRUE)
-      m <- exp(b0 - mu); m[is.na(m)] <- 1.0
-      n <- min(length(m), maxsp)
-      dds[seq_len(n)] <- .mult_clip(m[seq_len(n)], lo, hi)
-      prov$dds_n_species <- sum(!is.na(b0))
-      prov$dds_note <- "dense-index approximate; verify species mapping before relying on DG"
-    }
+    res <- .mult_dense_factor(.mult_b0_vec(dg), lo, hi, fia, maxsp,
+                              file.path(output_dir, "diameter_growth_species_index.csv"))
+    dds <- res$arr; prov$dds_n_species <- res$n; prov$dds_mapping <- res$mapping
   }
 
   ## ---- height_increment (HI): dense index, adopted variants only ----
   htg <- rep(1.0, maxsp)
   if (isTRUE(avail["HI"])) {
     hg <- .mult_read_csv(file.path(output_dir, "height_increment_summary.csv"))
-    b0 <- .mult_b0_vec(hg)
-    if (length(b0) > 0 && any(!is.na(b0))) {
-      mu <- mean(b0, na.rm = TRUE)
-      m <- exp(b0 - mu); m[is.na(m)] <- 1.0
-      n <- min(length(m), maxsp)
-      htg[seq_len(n)] <- .mult_clip(m[seq_len(n)], lo, hi)
-      prov$htg_n_species <- sum(!is.na(b0))
-      prov$htg_note <- "dense-index approximate; verify species mapping before relying on HI"
-    }
+    res <- .mult_dense_factor(.mult_b0_vec(hg), lo, hi, fia, maxsp,
+                              file.path(output_dir, "height_increment_species_index.csv"))
+    htg <- res$arr; prov$htg_n_species <- res$n; prov$htg_mapping <- res$mapping
   }
 
   list(

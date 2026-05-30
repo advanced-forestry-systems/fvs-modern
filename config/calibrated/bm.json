@@ -3077,5 +3077,84 @@
       "draws_csv": "calibration/output/conus/cr_recession_cspi_traits1_fixed_draws.csv",
       "notes": "Posterior summary; full draws referenced via draws_csv."
     }
+  },
+  "calibration_multipliers": {
+    "dds_multiplier": [
+      1.22579752,
+      1.38499519,
+      0.89423799,
+      0.69324741,
+      0.91913402,
+      1.18154945,
+      0.94076836,
+      0.93648822,
+      1.07145407,
+      0.93399113,
+      1.01264596,
+      0.78084131,
+      1.16028036,
+      0.99633839,
+      1.01669957,
+      1.00859842,
+      1.01685209,
+      1.04111959
+    ],
+    "htg_multiplier": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "mort_multiplier": [
+      1.15508364,
+      0.6935033,
+      0.82257966,
+      1.02410992,
+      0.7080389,
+      0.65216963,
+      1.78061131,
+      0.54654149,
+      2.17169738,
+      0.86716304,
+      1.95831474,
+      1,
+      0.78075609,
+      1,
+      0.67707363,
+      1.3519328,
+      1,
+      1
+    ],
+    "provenance": {
+      "baseline": "calibrated population/pooled mean of each component fit",
+      "scale": {
+        "dds_multiplier": "DDS scale exp(delta b0); emitter applies sqrt for diameter-growth scale",
+        "htg_multiplier": "height-increment ratio exp(delta b0)",
+        "mort_multiplier": "mortality rate ratio from survival logit incl species random effect"
+      },
+      "clip": [
+        0.1,
+        10
+      ],
+      "maxsp": 18,
+      "dds_n_species": 18,
+      "htg_n_species": 0,
+      "mort_n_re": 20,
+      "mort_intercept": 2.62070155
+    }
   }
 }

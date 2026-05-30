@@ -470,22 +470,59 @@ class FvsConfigLoader:
         if bamax_values is not None:
             lines.append(self._format_bamax_keywords(bamax_values, include_comments))
 
+        # Per-species multipliers. Prefer the precomputed calibration_multipliers
+        # block written by the R serializer (calibration/R/06_posterior_to_json.R
+        # via multipliers.R); fall back to the legacy on-the-fly computation from
+        # raw coefficients for older configs that predate that block. This is the
+        # fix for the "at most one keyword block per variant" gap (issue #54): the
+        # legacy path returned None for mortality/growth/height because the writer
+        # and emitter used mismatched coefficient schemas.
+        precomputed = self.config.get("calibration_multipliers") or {}
+
         # MORTMULT keyword: mortality rate multipliers per species
-        mort_mult = self._compute_mortality_multipliers(cats)
+        mort_mult = self._array_or_none(precomputed.get("mort_multiplier"))
+        if mort_mult is None:
+            mort_mult = self._compute_mortality_multipliers(cats)
         if mort_mult is not None:
             lines.append(self._format_mortmult_keywords(mort_mult, include_comments))
 
-        # BAIMULT keyword: diameter growth multipliers per species
-        growth_mult = self._compute_growth_multipliers(cats)
+        # BAIMULT keyword: diameter growth multipliers per species. The precomputed
+        # value is on the DDS scale (exp(delta b0)); convert to the diameter-growth
+        # scale via sqrt, matching the legacy _compute_growth_multipliers convention.
+        dds = self._array_or_none(precomputed.get("dds_multiplier"))
+        if dds is not None:
+            growth_mult = np.sqrt(np.clip(dds, 0.01, 100.0))
+        else:
+            growth_mult = self._compute_growth_multipliers(cats)
         if growth_mult is not None:
             lines.append(self._format_baimult_keywords(growth_mult, include_comments))
 
         # HTGMULT keyword: height growth multipliers per species
-        hg_mult = self._compute_height_multipliers(cats)
+        hg_mult = self._array_or_none(precomputed.get("htg_multiplier"))
+        if hg_mult is None:
+            hg_mult = self._compute_height_multipliers(cats)
         if hg_mult is not None:
             lines.append(self._format_htgmult_keywords(hg_mult, include_comments))
 
         return "\n".join(lines)
+
+    @staticmethod
+    def _array_or_none(seq) -> "np.ndarray | None":
+        """Coerce a JSON list of per-species multipliers to a float ndarray.
+
+        Returns None when the input is missing, non-numeric, empty, or all-NaN so
+        the caller can fall back to the legacy computation path. NaNs map to 1.0
+        (no-op multiplier).
+        """
+        if seq is None:
+            return None
+        try:
+            arr = np.asarray(seq, dtype=np.float64)
+        except (TypeError, ValueError):
+            return None
+        if arr.size == 0 or bool(np.all(np.isnan(arr))):
+            return None
+        return np.where(np.isnan(arr), 1.0, arr)
 
     def _format_sdimax_keywords(self, values: list, comments: bool) -> str:
         """Format SDIMAX keyword block."""

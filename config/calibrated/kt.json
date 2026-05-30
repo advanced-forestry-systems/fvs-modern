@@ -1886,5 +1886,63 @@
       "draws_csv": "calibration/output/conus/cr_recession_cspi_traits1_fixed_draws.csv",
       "notes": "Posterior summary; full draws referenced via draws_csv."
     }
+  },
+  "calibration_multipliers": {
+    "dds_multiplier": [
+      1.03454031,
+      1.01768881,
+      0.98715292,
+      0.96454305,
+      0.99053773,
+      1.02567064,
+      1.01244144,
+      0.9739422,
+      1.00895807,
+      0.98468221,
+      1.00225973
+    ],
+    "htg_multiplier": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "mort_multiplier": [
+      1.82561301,
+      0.53458872,
+      0.86562556,
+      1.4514108,
+      0.49795902,
+      0.52053155,
+      2.15293065,
+      1.18026508,
+      1.98359262,
+      1.02313414,
+      1
+    ],
+    "provenance": {
+      "baseline": "calibrated population/pooled mean of each component fit",
+      "scale": {
+        "dds_multiplier": "DDS scale exp(delta b0); emitter applies sqrt for diameter-growth scale",
+        "htg_multiplier": "height-increment ratio exp(delta b0)",
+        "mort_multiplier": "mortality rate ratio from survival logit incl species random effect"
+      },
+      "clip": [
+        0.1,
+        10
+      ],
+      "maxsp": 11,
+      "dds_n_species": 11,
+      "htg_n_species": 0,
+      "mort_n_re": 27,
+      "mort_intercept": 2.25412211
+    }
   }
 }

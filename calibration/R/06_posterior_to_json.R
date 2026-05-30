@@ -609,6 +609,32 @@ original_config$calibration <- list(
 )
 
 # =============================================================================
+# Precompute Schema-Free Per-Species Keyword Multipliers
+# =============================================================================
+#
+# Attach a `calibration_multipliers` block that the Python keyword emitter
+# (config/config_loader.py :: generate_keywords) consumes directly. This
+# decouples the emitter from the per-variant growth/mortality model schema and
+# fixes the "at most one keyword block per variant" propagation gap (issue #54).
+
+logger::log_info("Computing per-species keyword multipliers...")
+
+tryCatch({
+  source(file.path(calibration_dir, "R", "multipliers.R"), local = TRUE)
+  original_config$calibration_multipliers <-
+    compute_calibration_multipliers(output_dir, original_config)
+  prov <- original_config$calibration_multipliers$provenance
+  logger::log_info(
+    "Attached calibration_multipliers (DG n={dg}, HG n={hg}, mort RE n={mr})",
+    dg = prov$dds_n_species %||% 0,
+    hg = prov$htg_n_species %||% 0,
+    mr = prov$mort_n_re %||% 0
+  )
+}, error = function(e) {
+  logger::log_warn("calibration_multipliers block skipped: {conditionMessage(e)}")
+})
+
+# =============================================================================
 # Save Calibrated Config
 # =============================================================================
 

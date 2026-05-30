@@ -3208,5 +3208,118 @@
       "draws_csv": "calibration/output/conus/cr_recession_cspi_traits1_fixed_draws.csv",
       "notes": "Posterior summary; full draws referenced via draws_csv."
     }
+  },
+  "calibration_multipliers": {
+    "htdbh_multiplier": [
+      2.07397166,
+      1.74292996,
+      3.14944225,
+      1.99058182,
+      2.47843166,
+      1.93241593,
+      1.24957748,
+      1.88542453,
+      1.61950536,
+      2.50918734,
+      1.6843896,
+      1.49243874,
+      1.77356693,
+      3.14944225,
+      1
+    ],
+    "mort_multiplier": [
+      2.30376431,
+      0.67637543,
+      0.79594716,
+      1.37266122,
+      0.66175812,
+      0.34527457,
+      1.94373096,
+      1.49241978,
+      2.3888572,
+      0.69574144,
+      1.28008117,
+      1.31711746,
+      0.98244921,
+      0.79594716,
+      1
+    ],
+    "cr_multiplier": [
+      1.04952192,
+      0.88225645,
+      0.86113585,
+      1.02114735,
+      1.06662435,
+      1.18062859,
+      0.88616599,
+      1.168402,
+      1.089653,
+      0.97101205,
+      0.96675933,
+      0.78146337,
+      0.81967202,
+      0.86113585,
+      0.81639783
+    ],
+    "dds_multiplier": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "htg_multiplier": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "provenance": {
+      "variant": "bc",
+      "maxsp": 15,
+      "clip": [
+        0.1,
+        10
+      ],
+      "available": {
+        "HD": true,
+        "MORT": true,
+        "CR": true,
+        "DG": false,
+        "SDI": true,
+        "HI": true
+      },
+      "definitions": {
+        "htdbh_multiplier": "HD asymptote ratio (a_pooled + r_SPCD__a)/a_pooled",
+        "mort_multiplier": "mortality-rate ratio from survival logit incl species RE",
+        "cr_multiplier": "exp(r_SPCD_grouped) relative crown-ratio factor",
+        "dds_multiplier": "DG intercept-shift exp(delta b0); dense index, approximate, adopted variants only",
+        "htg_multiplier": "HI intercept-shift exp(delta b0); dense index, approximate, adopted variants only"
+      },
+      "htdbh_n_species": 58,
+      "mort_n_species": 54,
+      "cr_n_species": 82
+    }
   }
 }

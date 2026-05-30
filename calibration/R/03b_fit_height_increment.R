@@ -209,6 +209,16 @@ if (nrow(hg_data) > max_n) {
 
 logger::log_info("Species: {N_species}, Species groups: {n_spgrp}")
 
+# Persist the dense species_idx -> SPCD crosswalk so downstream tooling
+# (calibration/R/multipliers.R) can map b0[i] to the correct FVS species without
+# replaying the stochastic, subsample-dependent data prep.
+hi_species_index <- hg_data %>%
+  dplyr::distinct(species_idx, SPCD) %>%
+  dplyr::arrange(species_idx)
+utils::write.csv(hi_species_index,
+                 file.path(output_dir, "height_increment_species_index.csv"),
+                 row.names = FALSE)
+
 # =============================================================================
 # Extract Priors from FVS Config
 # =============================================================================

@@ -1,0 +1,58 @@
+SPCD_RAW,SCI_NAME,COMMON_NAME,FIA_SPCD,CODE_ERA
+1,Abies balsamea,Balsam fir,12,NUMERIC_OLD
+10,Betula papyrifera,Paper birch,375,NUMERIC_OLD
+11,Betula alleghaniensis,Yellow birch,371,NUMERIC_OLD
+12,Populus tremuloides,Quaking aspen,746,NUMERIC_OLD
+13,Populus grandidentata,Bigtooth aspen,544,NUMERIC_OLD
+14,Acer saccharum,Sugar maple,318,NUMERIC_OLD
+15,Fraxinus americana,White ash,541,NUMERIC_OLD
+16,Fagus grandifolia,Am. beech,531,NUMERIC_OLD
+17,Quercus rubra,N. red oak,833,NUMERIC_OLD
+18,Betula populifolia,Gray birch,379,NUMERIC_OLD
+19,Prunus serotina,Black cherry,762,NUMERIC_OLD
+2,Picea rubens,Red spruce,97,NUMERIC_OLD
+20,Ulmus americana,Am. elm,972,NUMERIC_OLD
+21,Acer spicatum,Mountain maple,315,NUMERIC_OLD
+22,Acer pensylvanicum,Striped maple,313,NUMERIC_OLD
+23,Picea mariana,Black spruce,95,NUMERIC_OLD
+24,Sorbus americana,Mtn. ash,328,NUMERIC_OLD
+3,Picea glauca,White spruce,91,NUMERIC_OLD
+4,Picea mariana,Black spruce,95,NUMERIC_OLD
+5,Pinus strobus,White pine,129,NUMERIC_OLD
+6,Thuja occidentalis,N. white cedar,241,NUMERIC_OLD
+7,Larix laricina,Tamarack,71,NUMERIC_OLD
+8,Tsuga canadensis,Hemlock,261,NUMERIC_OLD
+9,Acer rubrum,Red maple,316,NUMERIC_OLD
+AL,Alnus spp.,Alder spp.,9998,ALPHA_NEW
+BA,Populus grandidentata,Bigtooth aspen,544,ALPHA_NEW
+BC,Prunus serotina,Black cherry,762,ALPHA_NEW
+BE,Fagus grandifolia,Am. beech,531,ALPHA_NEW
+BF,Abies balsamea,Balsam fir,12,ALPHA_NEW
+BS,Picea mariana,Black spruce,95,ALPHA_NEW
+CE,Thuja occidentalis,N. white cedar,241,ALPHA_NEW
+DEAD,,Dead record,999,ALPHA_NEW
+EL,Ulmus americana,Am. elm,972,ALPHA_NEW
+GB,Betula populifolia,Gray birch,379,ALPHA_NEW
+HM,Tsuga canadensis,Hemlock,261,ALPHA_NEW
+JP,Pinus banksiana,Jack pine,105,ALPHA_NEW
+LA,Larix laricina,Tamarack,71,ALPHA_NEW
+MM,Acer spicatum,Mountain maple,315,ALPHA_NEW
+O,,Unknown/Other,999,ALPHA_NEW
+PC,Prunus pensylvanica,Pin cherry,761,ALPHA_NEW
+QA,Populus tremuloides,Quaking aspen,746,ALPHA_NEW
+RK,Quercus rubra,N. red oak,833,ALPHA_NEW
+RM,Acer rubrum,Red maple,316,ALPHA_NEW
+RN,Betula papyrifera,Paper birch,375,ALPHA_NEW
+RO,Quercus rubra,N. red oak,833,ALPHA_NEW
+RP,Pinus resinosa,Red pine,125,ALPHA_NEW
+RS,Picea rubens,Red spruce,97,ALPHA_NEW
+SM,Acer saccharum,Sugar maple,318,ALPHA_NEW
+ST,Acer pensylvanicum,Striped maple,313,ALPHA_NEW
+TA,Larix laricina,Tamarack,71,ALPHA_NEW
+TU,Tilia americana,Am. basswood,951,ALPHA_NEW
+WA,Fraxinus americana,White ash,541,ALPHA_NEW
+WB,Betula papyrifera,Paper birch,375,ALPHA_NEW
+WI,Salix spp.,Willow spp.,9999,ALPHA_NEW
+WP,Pinus strobus,White pine,129,ALPHA_NEW
+WS,Picea glauca,White spruce,91,ALPHA_NEW
+YB,Betula alleghaniensis,Yellow birch,371,ALPHA_NEW

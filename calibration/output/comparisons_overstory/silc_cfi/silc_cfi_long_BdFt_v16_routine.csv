@@ -1,0 +1,3 @@
+"predictor","n","bias_pct","RMSE","R2"
+"zero growth",64,0,0,1
+"AcadianGY MORTCAL",64,6.64,2106.5,0.356

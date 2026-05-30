@@ -3271,13 +3271,73 @@
     }
   },
   "calibration_multipliers": {
+    "htdbh_multiplier": [
+      1,
+      1,
+      1.60487568,
+      1.0481329,
+      1,
+      1.73760671,
+      1,
+      2.02921987,
+      1.40959277,
+      1,
+      0.34298901,
+      1.0469721,
+      0.82210042,
+      1,
+      1,
+      0.33575351,
+      1,
+      1
+    ],
+    "mort_multiplier": [
+      1,
+      1,
+      0.61213215,
+      1.05391701,
+      1,
+      1.16761077,
+      1,
+      1,
+      1,
+      1,
+      0.9589451,
+      0.88265246,
+      1,
+      1,
+      1,
+      1.15562895,
+      1,
+      1
+    ],
+    "cr_multiplier": [
+      1.11390961,
+      1.11390961,
+      0.70003216,
+      1.2262442,
+      1.11390961,
+      1.11390961,
+      1.11390961,
+      1.11390961,
+      1.11390961,
+      1.11390961,
+      1.44876794,
+      1.11390961,
+      1.11390961,
+      1.11390961,
+      1.11390961,
+      0.73887501,
+      1.11390961,
+      1.11390961
+    ],
     "dds_multiplier": [
-      1.02974119,
-      0.92661001,
-      1.29171075,
-      0.9231325,
-      0.81635375,
-      1.07663184,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
       1,
       1,
       1,
@@ -3311,42 +3371,31 @@
       1,
       1
     ],
-    "mort_multiplier": [
-      1,
-      1,
-      0.61213215,
-      1.05391701,
-      1,
-      1.16761077,
-      1,
-      1,
-      1,
-      1,
-      0.9589451,
-      0.88265246,
-      1,
-      1,
-      1,
-      1.15562895,
-      1,
-      1
-    ],
     "provenance": {
-      "baseline": "calibrated population/pooled mean of each component fit",
-      "scale": {
-        "dds_multiplier": "DDS scale exp(delta b0); emitter applies sqrt for diameter-growth scale",
-        "htg_multiplier": "height-increment ratio exp(delta b0)",
-        "mort_multiplier": "mortality rate ratio from survival logit incl species random effect"
-      },
+      "variant": "tt",
+      "maxsp": 18,
       "clip": [
         0.1,
         10
       ],
-      "maxsp": 18,
-      "dds_n_species": 6,
-      "htg_n_species": 0,
-      "mort_n_re": 6,
-      "mort_intercept": 3.42475009
+      "available": {
+        "HD": true,
+        "MORT": true,
+        "CR": true,
+        "DG": false,
+        "SDI": true,
+        "HI": false
+      },
+      "definitions": {
+        "htdbh_multiplier": "HD asymptote ratio (a_pooled + r_SPCD__a)/a_pooled",
+        "mort_multiplier": "mortality-rate ratio from survival logit incl species RE",
+        "cr_multiplier": "exp(r_SPCD_grouped) relative crown-ratio factor",
+        "dds_multiplier": "DG intercept-shift exp(delta b0); dense index, approximate, adopted variants only",
+        "htg_multiplier": "HI intercept-shift exp(delta b0); dense index, approximate, adopted variants only"
+      },
+      "htdbh_n_species": 9,
+      "mort_n_species": 6,
+      "cr_n_species": 4
     }
   }
 }

@@ -612,23 +612,26 @@ original_config$calibration <- list(
 # Precompute Schema-Free Per-Species Keyword Multipliers
 # =============================================================================
 #
-# Attach a `calibration_multipliers` block that the Python keyword emitter
-# (config/config_loader.py :: generate_keywords) consumes directly. This
-# decouples the emitter from the per-variant growth/mortality model schema and
-# fixes the "at most one keyword block per variant" propagation gap (issue #54).
+# Attach a `calibration_multipliers` block carrying per-species factors for all
+# five tree components (HD, mortality, CR, DG, HI), gated by the authoritative
+# equation_availability_full.csv. HD/MORT/CR are SPCD-keyed and populated for
+# every variant; DG and HI are emitted only where adopted. The Python keyword
+# emitter (config/config_loader.py :: generate_keywords) consumes this block.
+# This fixes the "at most one keyword block per variant" gap (issue #54).
 
-logger::log_info("Computing per-species keyword multipliers...")
+logger::log_info("Computing per-species calibration factors...")
 
 tryCatch({
   source(file.path(calibration_dir, "R", "multipliers.R"), local = TRUE)
   original_config$calibration_multipliers <-
-    compute_calibration_multipliers(output_dir, original_config)
+    compute_calibration_multipliers(output_dir, original_config,
+                                    calibration_dir = calibration_dir)
   prov <- original_config$calibration_multipliers$provenance
   logger::log_info(
-    "Attached calibration_multipliers (DG n={dg}, HG n={hg}, mort RE n={mr})",
-    dg = prov$dds_n_species %||% 0,
-    hg = prov$htg_n_species %||% 0,
-    mr = prov$mort_n_re %||% 0
+    "Attached calibration_multipliers (HD n={hd}, MORT n={mo}, CR n={cr}, DG n={dg}, HI n={hi})",
+    hd = prov$htdbh_n_species %||% 0, mo = prov$mort_n_species %||% 0,
+    cr = prov$cr_n_species %||% 0, dg = prov$dds_n_species %||% 0,
+    hi = prov$htg_n_species %||% 0
   )
 }, error = function(e) {
   logger::log_warn("calibration_multipliers block skipped: {conditionMessage(e)}")

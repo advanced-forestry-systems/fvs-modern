@@ -1,48 +1,51 @@
 # =============================================================================
 # calibration/R/multipliers.R
 #
-# Precompute schema-free, per-species calibration multipliers that FVS keyword
-# records (BAIMULT, MORTMULT, HTGMULT) consume directly.
+# Comprehensive per-species calibration factors for all five tree component
+# equations, written into the `calibration_multipliers` block that the FVS
+# keyword emitter (config/config_loader.py) and downstream tooling consume.
 #
-# Why this exists
+# Components and how each species-specific factor is derived
+# ----------------------------------------------------------
+#   height_diameter (HD)  asymptote ratio: (a_pooled + r_SPCD__a[s]) / a_pooled
+#                         from height_diameter_summary.csv (a is on the natural
+#                         ft scale; H = 4.5 + a*(1-exp(-b*DBH))^c).
+#   mortality (MORT)      mortality-rate ratio from the survival logit:
+#                         (1 - plogis(b0 + r_SPCD[s])) / (1 - plogis(b0)).
+#   crown_ratio (CR)      relative factor exp(r_SPCD_grouped[s]) from the CR
+#                         change fit; an "OTHER" group is used for species the
+#                         fit pooled into the catch-all.
+#   diameter_growth (DG)  intercept-shift factor exp(b0[s] - mean b0). DG uses a
+#                         dense Stan species index that is NOT SPCD-keyed and was
+#                         not saved with a crosswalk, so DG factors are emitted
+#                         ONLY where DG is adopted and are flagged approximate.
+#   height_increment (HI) same dense-index situation as DG; gated identically.
+#
+# Species mapping
 # ---------------
-# The Python keyword emitter (config/config_loader.py :: generate_keywords)
-# previously reverse-engineered raw coefficients (B0, MORT_B0, ...) out of the
-# calibrated JSON to derive growth/mortality/height multipliers. The writer
-# (06_posterior_to_json.R) and the emitter drifted apart: coefficients were
-# written into FVS-native slots the emitter never read, so only the SDIMAX block
-# survived and at most one keyword block per variant reached FVS at runtime.
+# HD, MORT, CR carry SPCD-keyed random effects (brms r_SPCD[...] terms), mapped
+# to the FVS species slot through config categories.species_definitions.FIAJSP
+# (FIA SPCD per FVS index). This is exact. DG/HI use a dense index and are
+# best-effort only.
 #
-# This module moves the multiplier computation to where the model knowledge
-# already lives (R), and serializes finished per-species arrays. The emitter
-# then just formats them, with no per-variant schema coupling.
+# Availability gating
+# -------------------
+# Every component is gated by the authoritative
+# calibration/data/equation_availability_full.csv (columns variant, HD, MORT,
+# CR, DG, SDI, HI). Where a component is FALSE for a variant, its factor array
+# is all 1.0 (no-op) and the provenance records available = FALSE. This keeps
+# the runtime config faithful to the published, adopted calibration: HD/MORT/CR
+# are adopted for all 25 variants; DG for 7; HI for 6.
 #
-# Definition (per species, relative to the calibrated population/pooled baseline
-# of each component fit):
-#   diameter growth   dds_multiplier[s]  = exp(b0_dg[s] - mu_b0_dg)   (DDS scale)
-#   height growth      htg_multiplier[s] = exp(b0_hg[s] - mu_b0_hg)
-#   mortality          mort_multiplier[s] = (1 - p_s) / (1 - p_base),
-#                        p = plogis(intercept [+ r_SPCD[s]])  (survival logit)
-#
-# All arrays have length maxsp, padded with 1.0 (no-op) for species a given
-# component did not fit, and clipped to [lo, hi] for runtime safety.
-#
-# NOTE ON BASELINE: these express each species RELATIVE TO THE CALIBRATED
-# POPULATION MEAN of its own fit, i.e. the species-differentiation layer. A
-# separate global calibrated-vs-FVS-default shift can be layered on later once a
-# default-model baseline is wired in. That modeling choice is isolated to this
-# one function on purpose (see issue #54, decision points 2 and 3).
+# All arrays are length maxsp, clipped to [lo, hi] for runtime safety.
 # =============================================================================
 
 .mult_read_csv <- function(path) {
   if (!file.exists(path)) return(NULL)
-  tryCatch(
-    utils::read.csv(path, stringsAsFactors = FALSE, check.names = FALSE),
-    error = function(e) NULL
-  )
+  tryCatch(utils::read.csv(path, stringsAsFactors = FALSE, check.names = FALSE),
+           error = function(e) NULL)
 }
 
-# Pull the posterior median column, robust to summary-file naming conventions.
 .mult_median_col <- function(df) {
   for (nm in c("p50", "median", "Estimate", "estimate", "mean")) {
     if (nm %in% names(df)) return(df[[nm]])
@@ -50,121 +53,188 @@
   df[[2]]
 }
 
-# Extract b0[i] (1-indexed) medians into a length-n vector (NA where absent).
-.mult_b0_vec <- function(df, n) {
-  out <- rep(NA_real_, n)
+.mult_clip <- function(x, lo, hi) pmin(pmax(x, lo), hi)
+
+# Parse SPCD-keyed brms random effects of the form  <prefix>[<SPCD>,<term>]
+# Returns a named list: values = c(SPCD -> median), other = median for the
+# "OTHER" catch-all group if present (else NA).
+.mult_parse_re <- function(df, prefix) {
+  out <- list(values = numeric(0), other = NA_real_)
   if (is.null(df) || nrow(df) == 0) return(out)
-  var <- as.character(df[[1]])
+  v <- as.character(df[[1]])
   med <- .mult_median_col(df)
-  hit <- grepl("^b0\\[[0-9]+\\]$", var)
+  # prefixes are plain identifiers (r_SPCD, r_SPCD__a, r_SPCD_grouped): no regex
+  # specials, so match the literal prefix followed by a bracketed key.
+  pat <- paste0("^\"?", prefix, "\\[")
+  hit <- grepl(pat, v)
   if (!any(hit)) return(out)
-  idx <- as.integer(sub("^b0\\[([0-9]+)\\]$", "\\1", var[hit]))
+  inside <- sub(paste0(".*", prefix, "\\[([^,\\]]+).*"), "\\1", v[hit], perl = TRUE)
   vals <- med[hit]
-  for (k in seq_along(idx)) {
-    i <- idx[k]
-    if (!is.na(i) && i >= 1 && i <= n) out[i] <- vals[k]
+  oth <- which(toupper(trimws(inside)) == "OTHER")
+  if (length(oth)) out$other <- vals[oth[1]]
+  num <- suppressWarnings(as.integer(inside))
+  keep <- !is.na(num)
+  if (any(keep)) {
+    nv <- vals[keep]; names(nv) <- as.character(num[keep])
+    out$values <- nv
   }
   out
 }
 
-.mult_clip <- function(x, lo, hi) pmin(pmax(x, lo), hi)
+# b0[i] dense-index intercept vector (DG / HI), NA where absent.
+.mult_b0_vec <- function(df) {
+  if (is.null(df) || nrow(df) == 0) return(numeric(0))
+  v <- as.character(df[[1]]); med <- .mult_median_col(df)
+  hit <- grepl("^b0\\[[0-9]+\\]$", v)
+  if (!any(hit)) return(numeric(0))
+  idx <- as.integer(sub("^b0\\[([0-9]+)\\]$", "\\1", v[hit]))
+  out <- rep(NA_real_, max(idx)); out[idx] <- med[hit]; out
+}
 
-#' Compute per-species calibration multipliers for the keyword emitter.
+# Load the availability table once; return named logical vector for a variant.
+.mult_availability <- function(calibration_dir, variant) {
+  f <- file.path(calibration_dir, "data", "equation_availability_full.csv")
+  default <- c(HD = TRUE, MORT = TRUE, CR = TRUE, DG = TRUE, SDI = TRUE, HI = TRUE)
+  tab <- .mult_read_csv(f)
+  if (is.null(tab)) return(default)            # fail-open if table missing
+  row <- tab[toupper(tab$variant) == toupper(variant), , drop = FALSE]
+  if (nrow(row) == 0) return(default)
+  as_lgl <- function(x) isTRUE(x) || (is.character(x) && toupper(x) == "TRUE")
+  c(HD = as_lgl(row$HD), MORT = as_lgl(row$MORT), CR = as_lgl(row$CR),
+    DG = as_lgl(row$DG), SDI = as_lgl(row$SDI), HI = as_lgl(row$HI))
+}
+
+#' Compute comprehensive per-species calibration factors for a variant.
 #'
-#' @param output_dir calibration/output/variants/<variant> directory holding the
-#'   *_summary.csv and *_map.csv posterior files.
-#' @param config the variant config list (as parsed from config/<variant>.json or
-#'   the calibrated JSON); must carry maxsp and categories$species_definitions.
-#' @param lo,hi multiplier clip bounds.
-#' @return list(dds_multiplier, htg_multiplier, mort_multiplier, provenance).
-compute_calibration_multipliers <- function(output_dir, config, lo = 0.1, hi = 10) {
+#' @param output_dir calibration/output/variants/<variant>
+#' @param config parsed variant config (needs maxsp + species_definitions$FIAJSP)
+#' @param calibration_dir calibration/ root (for the availability table)
+#' @param lo,hi clip bounds
+compute_calibration_multipliers <- function(output_dir, config,
+                                             calibration_dir = NULL,
+                                             lo = 0.1, hi = 10) {
   cats <- config$categories
   sd <- if (!is.null(cats)) cats$species_definitions else NULL
   fia <- if (!is.null(sd$FIAJSP)) suppressWarnings(as.integer(sd$FIAJSP)) else integer(0)
   maxsp <- if (!is.null(config$maxsp)) as.integer(config$maxsp) else length(fia)
-  if (is.na(maxsp) || maxsp < 1) maxsp <- length(fia)
-  if (maxsp < 1) maxsp <- 1
+  if (is.na(maxsp) || maxsp < 1) maxsp <- max(length(fia), 1L)
+  variant <- if (!is.null(config$variant)) config$variant else ""
+  if (is.null(calibration_dir)) calibration_dir <- dirname(dirname(output_dir))
+  avail <- .mult_availability(calibration_dir, variant)
+
+  # SPCD-keyed factor -> length-maxsp array on the FVS species slots.
+  spcd_to_array <- function(re, default_other = NA_real_) {
+    arr <- rep(1.0, maxsp)
+    if (length(re$values) == 0 && is.na(re$other)) return(arr)
+    for (i in seq_len(maxsp)) {
+      if (i > length(fia)) next
+      key <- as.character(fia[i])
+      if (!is.na(re$values[key])) arr[i] <- re$values[[key]]
+      else if (!is.na(re$other)) arr[i] <- re$other
+    }
+    arr
+  }
 
   prov <- list(
-    baseline = "calibrated population/pooled mean of each component fit",
-    scale = list(
-      dds_multiplier  = "DDS scale exp(delta b0); emitter applies sqrt for diameter-growth scale",
-      htg_multiplier  = "height-increment ratio exp(delta b0)",
-      mort_multiplier = "mortality rate ratio from survival logit incl species random effect"
-    ),
-    clip = c(lo, hi),
-    maxsp = maxsp
+    variant = variant, maxsp = maxsp, clip = c(lo, hi),
+    available = as.list(avail),
+    definitions = list(
+      htdbh_multiplier = "HD asymptote ratio (a_pooled + r_SPCD__a)/a_pooled",
+      mort_multiplier  = "mortality-rate ratio from survival logit incl species RE",
+      cr_multiplier    = "exp(r_SPCD_grouped) relative crown-ratio factor",
+      dds_multiplier   = "DG intercept-shift exp(delta b0); dense index, approximate, adopted variants only",
+      htg_multiplier   = "HI intercept-shift exp(delta b0); dense index, approximate, adopted variants only"
+    )
   )
 
-  ## ---- diameter growth ----
-  # Baseline is the EMPIRICAL mean of the fitted species intercepts, not the
-  # hierarchical hyperparameter mu_b0 from the *_map.csv. The map mu_b0 can sit
-  # on a non-centered / transformed scale (b0[i] = mu + sigma * z), which does
-  # not line up with the reconstructed b0[i] in the summary for some components
-  # (notably height increment). The empirical species mean guarantees the
-  # multipliers center on 1.0 by construction.
-  dds <- rep(1.0, maxsp)
-  dg <- .mult_read_csv(file.path(output_dir, "diameter_growth_summary.csv"))
-  if (!is.null(dg)) {
-    b0 <- .mult_b0_vec(dg, maxsp)
-    if (any(!is.na(b0))) {
-      mu <- mean(b0, na.rm = TRUE)
-      m <- exp(b0 - mu); m[is.na(m)] <- 1.0
-      dds <- .mult_clip(m, lo, hi)
+  ## ---- height_diameter (HD): asymptote ratio, SPCD-keyed ----
+  htdbh <- rep(1.0, maxsp)
+  if (isTRUE(avail["HD"])) {
+    hd <- .mult_read_csv(file.path(output_dir, "height_diameter_summary.csv"))
+    if (!is.null(hd)) {
+      a_pooled <- suppressWarnings(as.numeric(
+        .mult_median_col(hd)[match("b_a_Intercept", hd[[1]])]))
+      re <- .mult_parse_re(hd, "r_SPCD__a")
+      if (!is.na(a_pooled) && a_pooled != 0) {
+        # convert additive species deviation on a to a height-asymptote ratio
+        re$values <- (a_pooled + re$values) / a_pooled
+        if (!is.na(re$other)) re$other <- (a_pooled + re$other) / a_pooled
+        htdbh <- .mult_clip(spcd_to_array(re), lo, hi)
+        prov$htdbh_n_species <- length(re$values)
+      }
     }
-    prov$dds_n_species <- sum(!is.na(b0))
   }
 
-  ## ---- height growth (height increment) ----
-  htg <- rep(1.0, maxsp)
-  hg <- .mult_read_csv(file.path(output_dir, "height_increment_summary.csv"))
-  if (!is.null(hg)) {
-    b0 <- .mult_b0_vec(hg, maxsp)
-    if (any(!is.na(b0))) {
-      mu <- mean(b0, na.rm = TRUE)
-      m <- exp(b0 - mu); m[is.na(m)] <- 1.0
-      htg <- .mult_clip(m, lo, hi)
-    }
-    prov$htg_n_species <- sum(!is.na(b0))
-  }
-
-  ## ---- mortality (survival logit + species random effect), SPCD -> FVS index ----
+  ## ---- mortality (MORT): survival-logit rate ratio, SPCD-keyed ----
   mort <- rep(1.0, maxsp)
-  msum <- .mult_read_csv(file.path(output_dir, "mortality_summary.csv"))
-  mpost <- .mult_read_csv(file.path(output_dir, "mortality_posterior.csv"))
-  if (!is.null(msum) && length(fia) > 0) {
-    icpt <- suppressWarnings(as.numeric(.mult_median_col(msum)[match("Intercept", msum[[1]])]))
-    if (!is.na(icpt)) {
-      p_base <- stats::plogis(icpt)
-      re_spcd <- integer(0); re_val <- numeric(0)
-      if (!is.null(mpost)) {
-        rv <- as.character(mpost[[1]])
-        rm <- .mult_median_col(mpost)
-        hit <- grepl("r_SPCD\\[[0-9]+", rv)
-        if (any(hit)) {
-          re_spcd <- as.integer(sub('^[^0-9]*r_SPCD\\[([0-9]+).*$', "\\1", rv[hit]))
-          re_val <- rm[hit]
-        }
+  if (isTRUE(avail["MORT"])) {
+    msum <- .mult_read_csv(file.path(output_dir, "mortality_summary.csv"))
+    mpost <- .mult_read_csv(file.path(output_dir, "mortality_posterior.csv"))
+    if (!is.null(msum)) {
+      icpt <- suppressWarnings(as.numeric(
+        .mult_median_col(msum)[match("Intercept", msum[[1]])]))
+      if (!is.na(icpt)) {
+        p_base <- stats::plogis(icpt)
+        re <- .mult_parse_re(mpost, "r_SPCD")
+        re$values <- (1 - stats::plogis(icpt + re$values)) / (1 - p_base)
+        if (!is.na(re$other)) re$other <- (1 - stats::plogis(icpt + re$other)) / (1 - p_base)
+        mort <- .mult_clip(spcd_to_array(re), lo, hi)
+        prov$mort_n_species <- length(re$values)
       }
-      for (i in seq_len(maxsp)) {
-        r <- 0.0
-        if (i <= length(fia) && length(re_spcd) > 0) {
-          j <- match(fia[i], re_spcd)
-          if (!is.na(j)) r <- re_val[j]
-        }
-        p_s <- stats::plogis(icpt + r)
-        mort[i] <- (1 - p_s) / (1 - p_base)
-      }
-      mort <- .mult_clip(mort, lo, hi)
-      prov$mort_n_re <- length(re_spcd)
-      prov$mort_intercept <- icpt
+    }
+  }
+
+  ## ---- crown_ratio (CR): relative factor, SPCD-keyed ----
+  cr <- rep(1.0, maxsp)
+  if (isTRUE(avail["CR"])) {
+    crp <- .mult_read_csv(file.path(output_dir, "crown_ratio_v2_posterior.csv"))
+    if (is.null(crp)) crp <- .mult_read_csv(file.path(output_dir, "crown_ratio_posterior.csv"))
+    if (!is.null(crp)) {
+      re <- .mult_parse_re(crp, "r_SPCD_grouped")
+      if (length(re$values) == 0) re <- .mult_parse_re(crp, "r_SPCD")
+      re$values <- exp(re$values)
+      if (!is.na(re$other)) re$other <- exp(re$other)
+      cr <- .mult_clip(spcd_to_array(re), lo, hi)
+      prov$cr_n_species <- length(re$values)
+    }
+  }
+
+  ## ---- diameter_growth (DG): dense index, adopted variants only ----
+  dds <- rep(1.0, maxsp)
+  if (isTRUE(avail["DG"])) {
+    dg <- .mult_read_csv(file.path(output_dir, "diameter_growth_summary.csv"))
+    b0 <- .mult_b0_vec(dg)
+    if (length(b0) > 0 && any(!is.na(b0))) {
+      mu <- mean(b0, na.rm = TRUE)
+      m <- exp(b0 - mu); m[is.na(m)] <- 1.0
+      n <- min(length(m), maxsp)
+      dds[seq_len(n)] <- .mult_clip(m[seq_len(n)], lo, hi)
+      prov$dds_n_species <- sum(!is.na(b0))
+      prov$dds_note <- "dense-index approximate; verify species mapping before relying on DG"
+    }
+  }
+
+  ## ---- height_increment (HI): dense index, adopted variants only ----
+  htg <- rep(1.0, maxsp)
+  if (isTRUE(avail["HI"])) {
+    hg <- .mult_read_csv(file.path(output_dir, "height_increment_summary.csv"))
+    b0 <- .mult_b0_vec(hg)
+    if (length(b0) > 0 && any(!is.na(b0))) {
+      mu <- mean(b0, na.rm = TRUE)
+      m <- exp(b0 - mu); m[is.na(m)] <- 1.0
+      n <- min(length(m), maxsp)
+      htg[seq_len(n)] <- .mult_clip(m[seq_len(n)], lo, hi)
+      prov$htg_n_species <- sum(!is.na(b0))
+      prov$htg_note <- "dense-index approximate; verify species mapping before relying on HI"
     }
   }
 
   list(
-    dds_multiplier  = as.numeric(dds),
-    htg_multiplier  = as.numeric(htg),
-    mort_multiplier = as.numeric(mort),
-    provenance      = prov
+    htdbh_multiplier = as.numeric(htdbh),
+    mort_multiplier  = as.numeric(mort),
+    cr_multiplier    = as.numeric(cr),
+    dds_multiplier   = as.numeric(dds),
+    htg_multiplier   = as.numeric(htg),
+    provenance       = prov
   )
 }

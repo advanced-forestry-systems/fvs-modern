@@ -68,7 +68,17 @@ class FvsConfigLoader:
     #                categories.* per component. Recommended when CONUS
     #                integration is partial.
     # "custom":      User supplied JSON
-    VALID_VERSIONS = ("default", "calibrated", "conus", "hybrid", "custom")
+    # "conus_sf":    Species-free (Leg B) coefficients from categories_conus_sf.
+    #                Every species effect is computed from traits at runtime
+    #                (standardized traits times gamma) plus ecoregion / forest
+    #                type random effects. Generalizes to species with no
+    #                per-species fit.
+    # "conus_hybrid": Per species, prefer the Leg A per-species block where the
+    #                species has a reliable per-species fit (hybrid source map
+    #                marks it leg_a), else fall back to the species-free (Leg B)
+    #                trait effect. Recommended default once both legs are landed.
+    VALID_VERSIONS = ("default", "calibrated", "conus", "hybrid", "custom",
+                      "conus_sf", "conus_hybrid")
 
     def __init__(
         self,
@@ -120,9 +130,11 @@ class FvsConfigLoader:
         """Path to the active config file."""
         if self.version == "custom" and self._custom_config_path is not None:
             return self._custom_config_path
-        if self.version in ("calibrated", "conus", "hybrid"):
-            # All three live in the same variant JSON; the version selects
-            # which top-level block to read (categories vs categories_conus).
+        if self.version in ("calibrated", "conus", "hybrid",
+                            "conus_sf", "conus_hybrid"):
+            # All live in the same variant JSON; the version selects which
+            # top-level block to read (categories / categories_conus /
+            # categories_conus_sf).
             return self._config_dir / "calibrated" / f"{self.variant}.json"
         return self._config_dir / f"{self.variant}.json"
 
@@ -344,6 +356,194 @@ class FvsConfigLoader:
             "components": self.conus_components_present(),
             "metadata": block.get("metadata"),
         }
+
+    # =========================================================================
+    # Species-free (Leg B) access (categories_conus_sf block)
+    # =========================================================================
+
+    @property
+    def has_conus_sf_block(self) -> bool:
+        """Whether the variant config carries a categories_conus_sf block."""
+        return "categories_conus_sf" in self.config
+
+    def conus_sf_components_present(self) -> list[str]:
+        """Component names available under categories_conus_sf."""
+        block = self.config.get("categories_conus_sf", {})
+        return [k for k in block.keys() if k != "metadata"]
+
+    def get_conus_sf_block(self, component: str) -> dict:
+        """Raw categories_conus_sf.{component} block, or raise KeyError."""
+        sf = self.config.get("categories_conus_sf", {})
+        if component not in sf:
+            raise KeyError(
+                f"Species-free block for '{component}' not present in "
+                f"{self.variant}; available: {self.conus_sf_components_present()}"
+            )
+        return sf[component]
+
+    def get_conus_sf_runtime_block(self, component: str) -> dict:
+        """Decompose a categories_conus_sf block into runtime lookups.
+
+        Returns a dict with:
+          intercept     scalar global intercept (a0 / b0 / h0)
+          fixed         {param: mean} for all global fixed effects (incl sigmas)
+          covariate     {param: mean} fixed effects excluding intercept + scale
+          gamma         {trait_col: gamma_mean}
+          scale         {trait_col: (mean, sd)}  standardization constants
+          trait_effect  {SPCD: precomputed trait effect}
+          raw_traits    {SPCD: {trait_col: raw value}}
+          re_L1/re_L2/re_L3/re_FT  {str(level): RE mean}
+          source_map    {SPCD: "leg_a" | "leg_b"}
+        """
+        b = self.get_conus_sf_block(component)
+
+        # Guard: R/jsonlite writes empty named lists as JSON [] which
+        # deserialize to Python lists; coerce to {} so the .get()
+        # accessors below are safe for SF blocks with empty
+        # species / hybrid_source_map / trait_gamma (e.g. pure
+        # species-free components with no Leg A overrides).
+        def _asdict_sf(x):
+            return x if isinstance(x, dict) else {}
+        fe = _asdict_sf(b.get("fixed_effects", {}))
+        fixed = dict(zip(fe.get("param", []), fe.get("mean", [])))
+        # intercept = a0 / b0 / h0 if present, else first non-sigma param
+        intercept_name = next(
+            (p for p in ("a0", "b0", "h0") if p in fixed),
+            next((p for p in fixed if not p.startswith(("sigma", "phi"))), None),
+        )
+        intercept = float(fixed.get(intercept_name, 0.0)) if intercept_name else 0.0
+        covariate = {
+            p: float(m) for p, m in fixed.items()
+            if p != intercept_name and not p.startswith(("sigma", "phi", "lp__"))
+        }
+
+        tg = _asdict_sf(b.get("trait_gamma", {}))
+        cols = tg.get("trait_col", [])
+        gamma = dict(zip(cols, tg.get("gamma_mean", [])))
+        scale = {c: (float(m), float(s)) for c, m, s in
+                 zip(cols, tg.get("scale_mean", []), tg.get("scale_sd", []))}
+
+        def _f(v):
+            try:
+                return float(v)
+            except (TypeError, ValueError):
+                return float("nan")  # bundle stores missing raw traits as "NA"
+
+        sp = _asdict_sf(b.get("species", {}))
+        spcds = [int(x) for x in sp.get("SPCD", [])]
+        te_vals = sp.get("trait_effect_mean", [])
+        trait_effect = {s: _f(v) for s, v in zip(spcds, te_vals)}
+        raw_traits: dict[int, dict[str, float]] = {s: {} for s in spcds}
+        std_traits: dict[int, dict[str, float]] = {s: {} for s in spcds}
+        for c in cols:
+            rc = sp.get(f"raw_{c}")
+            sc = sp.get(f"std_{c}")
+            if rc is not None:
+                for s, v in zip(spcds, rc):
+                    raw_traits[s][c] = _f(v)
+            if sc is not None:
+                for s, v in zip(spcds, sc):
+                    std_traits[s][c] = _f(v)
+
+        def re_lookup(tag):
+            t = b.get(tag)
+            if not t:
+                return {}
+            return {str(l): float(m) for l, m in zip(t.get("level", []),
+                                                     t.get("mean", []))}
+
+        hm = _asdict_sf(b.get("hybrid_source_map", {}))
+        source_map = {int(s): str(src) for s, src in
+                      zip(hm.get("SPCD", []), hm.get("source", []))}
+
+        return {
+            "_source": "categories_conus_sf",
+            "model": b.get("model"),
+            "intercept_name": intercept_name,
+            "intercept": intercept,
+            "fixed": {k: float(v) for k, v in fixed.items()},
+            "covariate": covariate,
+            "gamma": gamma,
+            "scale": scale,
+            "trait_effect": trait_effect,
+            "raw_traits": raw_traits,
+            "std_traits": std_traits,
+            "re_L1": re_lookup("re_L1"),
+            "re_L2": re_lookup("re_L2"),
+            "re_L3": re_lookup("re_L3"),
+            "re_FT": re_lookup("re_FT"),
+            "source_map": source_map,
+        }
+
+    @staticmethod
+    def sf_trait_effect(rt: dict, spcd: int,
+                        raw_traits: Optional[dict] = None) -> float:
+        """Species effect from traits: standardized traits times gamma.
+
+        Uses the precomputed value when the species is in the bundle. For a
+        species outside the bundle, supply its raw trait values and they are
+        standardized with the stored constants. Returns 0.0 if neither is
+        available (engine should then fall back).
+        """
+        spcd = int(spcd)
+        if spcd in rt["trait_effect"]:
+            return rt["trait_effect"][spcd]
+        traits = (raw_traits or {}).get(spcd) or rt["raw_traits"].get(spcd)
+        if not traits:
+            return 0.0
+        eta = 0.0
+        for c, g in rt["gamma"].items():
+            if c in traits and c in rt["scale"]:
+                val = traits[c]
+                if val != val:        # NaN (missing trait) -> standardized 0
+                    continue
+                m, s = rt["scale"][c]
+                if s and s != 0:
+                    eta += ((val - m) / s) * g
+        return eta
+
+    def resolve_species_source(self, component: str, spcd: int) -> str:
+        """For conus_hybrid: 'leg_a' if the species has a reliable per-species
+        fit, else 'leg_b' (species-free trait fallback)."""
+        try:
+            rt = self.get_conus_sf_runtime_block(component)
+        except KeyError:
+            return "leg_b"
+        return rt["source_map"].get(int(spcd), "leg_b")
+
+    def sf_linear_predictor(self, component: str, spcd: int,
+                            eco_codes: dict, covariates: dict,
+                            runtime: Optional[dict] = None) -> float:
+        """Runtime species-free linear predictor (the Leg B evaluator).
+
+        eta = intercept + trait_effect(spcd)
+            + z_L1[L1] + z_L2[L2] + z_L3[L3] + z_FT[FT]
+            + sum_p covariate[p] * covariates[p]
+
+        Args:
+          component: category key (height_growth, diameter_growth,
+                     height_crown_base, crown_recession, height_diameter,
+                     mortality), matching the Leg A get_conus_block API.
+          spcd: FIA species code.
+          eco_codes: {"L1":code, "L2":code, "L3":code, "FT":code} (codes as in
+                     the bundle RE tables; ints or strings both accepted).
+          covariates: {param_name: value} for the covariate fixed effects
+                      (e.g., {"a1": ln_dbh, "a2": ln_ht, ...}). Missing params
+                      contribute zero.
+        Note: for components with extra structure beyond the standard B1
+        (HG v5 BGI site slopes), this evaluates the standard part; the BGI
+        site-slope refinement is a documented extension.
+        """
+        rt = runtime or self.get_conus_sf_runtime_block(component)
+        eta = rt["intercept"] + self.sf_trait_effect(rt, spcd)
+        for tag, key in (("re_L1", "L1"), ("re_L2", "L2"),
+                         ("re_L3", "L3"), ("re_FT", "FT")):
+            code = eco_codes.get(key)
+            if code is not None:
+                eta += rt[tag].get(str(code), 0.0)
+        for p, coef in rt["covariate"].items():
+            eta += coef * float(covariates.get(p, 0.0))
+        return eta
 
     # =========================================================================
     # fvs2py Integration

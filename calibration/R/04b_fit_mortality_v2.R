@@ -48,8 +48,13 @@ if (length(args) > 0) {
 # Configuration
 # ============================================================================
 
-project_root <- Sys.getenv("FVS_PROJECT_ROOT",
-                             normalizePath(file.path(dirname(sys.frame(1)$ofile), "../.."), mustWork = FALSE))
+project_root <- Sys.getenv("FVS_PROJECT_ROOT")
+if (!nzchar(project_root)) {
+  project_root <- tryCatch(
+    normalizePath(file.path(dirname(sys.frame(1)$ofile), "../.."), mustWork = FALSE),
+    error = function(e) normalizePath(getwd(), mustWork = FALSE)
+  )
+}
 calibration_dir <- file.path(project_root, "calibration")
 processed_data_dir <- file.path(calibration_dir, "data", "processed")
 output_dir <- file.path(calibration_dir, "output", "variants", variant)

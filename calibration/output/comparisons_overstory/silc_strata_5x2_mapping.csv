@@ -1,0 +1,80 @@
+"stand_id","prefix","density_letter","forest_type","density_class","num_plots"
+"C3B-N","C","B","Cedar","A+B (high)",10
+"C3C-N","C","C","Cedar","C+D (low)",35
+"C3D-N","C","D","Cedar","C+D (low)",50
+"C4B-N","C","B","Cedar","A+B (high)",18
+"C4C-N","C","C","Cedar","C+D (low)",68
+"C4D-N","C","D","Cedar","C+D (low)",15
+"H1A-N","H","A","Hardwood","A+B (high)",43
+"H1B-N","H","B","Hardwood","A+B (high)",14
+"H1C-N","H","C","Hardwood","C+D (low)",14
+"H1D-N","H","D","Hardwood","C+D (low)",10
+"H2A-N","H","A","Hardwood","A+B (high)",235
+"H2B-N","H","B","Hardwood","A+B (high)",49
+"H2C-N","H","C","Hardwood","C+D (low)",98
+"H2D-N","H","D","Hardwood","C+D (low)",36
+"H3A-N","H","A","Hardwood","A+B (high)",5
+"H3B-N","H","B","Hardwood","A+B (high)",148
+"H3C-N","H","C","Hardwood","C+D (low)",432
+"H3D-N","H","D","Hardwood","C+D (low)",254
+"H4B-N","H","B","Hardwood","A+B (high)",40
+"H4C-N","H","C","Hardwood","C+D (low)",174
+"H4D-N","H","D","Hardwood","C+D (low)",45
+"HS1A-N","HS","A","Mixedwood","A+B (high)",8
+"HS1C-N","HS","C","Mixedwood","C+D (low)",23
+"HS2A-N","HS","A","Mixedwood","A+B (high)",68
+"HS2B-N","HS","B","Mixedwood","A+B (high)",9
+"HS2C-N","HS","C","Mixedwood","C+D (low)",16
+"HS2D-N","HS","D","Mixedwood","C+D (low)",14
+"HS3B-N","HS","B","Mixedwood","A+B (high)",39
+"HS3C-N","HS","C","Mixedwood","C+D (low)",101
+"HS3D-N","HS","D","Mixedwood","C+D (low)",103
+"HS4C-N","HS","C","Mixedwood","C+D (low)",56
+"HS4D-N","HS","D","Mixedwood","C+D (low)",16
+"OS2A-N","OS","A","Other Softwood","A+B (high)",5
+"OS3B-N","OS","B","Other Softwood","A+B (high)",14
+"OS3C-N","OS","C","Other Softwood","C+D (low)",9
+"OS3D-N","OS","D","Other Softwood","C+D (low)",9
+"OS4A-N","OS","A","Other Softwood","A+B (high)",6
+"OS4B-N","OS","B","Other Softwood","A+B (high)",10
+"OS4C-N","OS","C","Other Softwood","C+D (low)",62
+"OS4D-N","OS","D","Other Softwood","C+D (low)",41
+"S1A-N","S","A","Commercial Softwood","A+B (high)",80
+"S1A-P","S","A","Commercial Softwood","A+B (high)",35
+"S1B-N","S","B","Commercial Softwood","A+B (high)",42
+"S1B-P","S","B","Commercial Softwood","A+B (high)",14
+"S1C-N","S","C","Commercial Softwood","C+D (low)",49
+"S1D-N","S","D","Commercial Softwood","C+D (low)",13
+"S2A-N","S","A","Commercial Softwood","A+B (high)",119
+"S2A-P","S","A","Commercial Softwood","A+B (high)",78
+"S2B-N","S","B","Commercial Softwood","A+B (high)",36
+"S2B-P","S","B","Commercial Softwood","A+B (high)",23
+"S2C-N","S","C","Commercial Softwood","C+D (low)",83
+"S2C-P","S","C","Commercial Softwood","C+D (low)",49
+"S2D-N","S","D","Commercial Softwood","C+D (low)",73
+"S2D-P","S","D","Commercial Softwood","C+D (low)",47
+"S3A-N","S","A","Commercial Softwood","A+B (high)",18
+"S3B-N","S","B","Commercial Softwood","A+B (high)",138
+"S3B-P","S","B","Commercial Softwood","A+B (high)",5
+"S3C-N","S","C","Commercial Softwood","C+D (low)",177
+"S3C-P","S","C","Commercial Softwood","C+D (low)",34
+"S3D-N","S","D","Commercial Softwood","C+D (low)",79
+"S3D-P","S","D","Commercial Softwood","C+D (low)",70
+"S4B-N","S","B","Commercial Softwood","A+B (high)",74
+"S4C-N","S","C","Commercial Softwood","C+D (low)",293
+"S4D-N","S","D","Commercial Softwood","C+D (low)",46
+"S4D-P","S","D","Commercial Softwood","C+D (low)",5
+"SH1A-N","SH","A","Mixedwood","A+B (high)",19
+"SH1B-N","SH","B","Mixedwood","A+B (high)",8
+"SH1C-N","SH","C","Mixedwood","C+D (low)",8
+"SH1D-N","SH","D","Mixedwood","C+D (low)",10
+"SH2A-N","SH","A","Mixedwood","A+B (high)",141
+"SH2B-N","SH","B","Mixedwood","A+B (high)",20
+"SH2C-N","SH","C","Mixedwood","C+D (low)",16
+"SH2D-N","SH","D","Mixedwood","C+D (low)",10
+"SH3A-N","SH","A","Mixedwood","A+B (high)",4
+"SH3B-N","SH","B","Mixedwood","A+B (high)",17
+"SH3C-N","SH","C","Mixedwood","C+D (low)",87
+"SH3D-N","SH","D","Mixedwood","C+D (low)",30
+"SH4B-N","SH","B","Mixedwood","A+B (high)",15
+"SH4C-N","SH","C","Mixedwood","C+D (low)",20

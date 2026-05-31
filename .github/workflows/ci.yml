@@ -208,6 +208,24 @@ jobs:
           python3 scripts/audit_nvel_upstream.py --verbose \
             --allow-differ r8clist.inc
 
+  validate-calibration:
+    name: Validate calibrated configs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate calibrated config integrity
+        # Guardrail for issue #54: every calibrated config must carry a
+        # consistent calibration_multipliers block (five component arrays of
+        # length maxsp, availability-consistent, finite). Fails the build if a
+        # config silently drops a component it claims to calibrate.
+        run: python3 config/validate_calibrated.py
+
   lint:
     name: Lint scripts
     runs-on: ubuntu-latest

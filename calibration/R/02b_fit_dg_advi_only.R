@@ -50,8 +50,17 @@ if (length(args) > 0) {
 # Configuration
 # ============================================================================
 
-project_root <- Sys.getenv("FVS_PROJECT_ROOT",
-                             normalizePath(file.path(dirname(sys.frame(1)$ofile), "../.."), mustWork = FALSE))
+# Resolve project root from the environment first. The previous form passed the
+# sys.frame() fallback as the Sys.getenv() default, which R evaluates eagerly and
+# which crashes under `Rscript` (no `ofile` frame) even when FVS_PROJECT_ROOT is
+# set. Evaluate the fallback only when the env var is absent.
+project_root <- Sys.getenv("FVS_PROJECT_ROOT")
+if (!nzchar(project_root)) {
+  project_root <- tryCatch(
+    normalizePath(file.path(dirname(sys.frame(1)$ofile), "../.."), mustWork = FALSE),
+    error = function(e) normalizePath(getwd(), mustWork = FALSE)
+  )
+}
 calibration_dir <- file.path(project_root, "calibration")
 processed_data_dir <- file.path(calibration_dir, "data", "processed")
 output_dir <- file.path(calibration_dir, "output", "variants", variant)
@@ -202,6 +211,17 @@ N <- nrow(dg_model)
 N_species <- max(dg_model$species_idx)
 
 logger::log_info("N = {N}, N_species = {N_species}")
+
+# Persist the dense species_idx -> SPCD crosswalk so downstream tooling (e.g.
+# calibration/R/multipliers.R) can map b0[i] to the correct FVS species without
+# replaying the stochastic, subsample-dependent data prep. Without this file the
+# dense index is not recoverable after the processed data is regenerated.
+dg_species_index <- dg_model %>%
+  dplyr::distinct(species_idx, SPCD) %>%
+  dplyr::arrange(species_idx)
+utils::write.csv(dg_species_index,
+                 file.path(output_dir, "diameter_growth_species_index.csv"),
+                 row.names = FALSE)
 
 prior_b0_species <- rep(prior_means["b1_ref"] * 0.5, N_species)
 

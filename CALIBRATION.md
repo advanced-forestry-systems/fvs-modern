@@ -452,3 +452,44 @@ Priors are informative and centered on the original FVS parameter values,
 so the calibrated estimates represent an empirical Bayes update of the
 existing FVS parameters rather than fitting from scratch. Where FIA data
 are sparse, estimates remain close to defaults.
+
+## Runtime propagation: the `calibration_multipliers` block
+
+Each calibrated config (`config/calibrated/<variant>.json`) carries a
+`calibration_multipliers` block that propagates the calibration to FVS at
+runtime. It holds five per species factor arrays, each of length `maxsp`:
+
+| Array | Component | Definition |
+|-------|-----------|------------|
+| `htdbh_multiplier` | Height-diameter | asymptote ratio `(a_pooled + r_SPCD__a) / a_pooled` |
+| `mort_multiplier`  | Mortality | survival-logit rate ratio `(1 - p_s) / (1 - p_base)` |
+| `cr_multiplier`    | Crown ratio | `exp(r_SPCD_grouped)` relative factor |
+| `dds_multiplier`   | Diameter growth | intercept-shift `exp(b0[s] - mean b0)` |
+| `htg_multiplier`   | Height increment | intercept-shift `exp(b0[s] - mean b0)` |
+
+Height-diameter, mortality, and crown ratio carry SPCD keyed brms random
+effects and are mapped to the FVS species slot exactly through
+`categories.species_definitions.FIAJSP`. Diameter growth and height increment
+use a dense Stan species index; the fit scripts now save a
+`<component>_species_index.csv` crosswalk so `multipliers.R` can map them
+exactly, and fall back to an approximate slot mapping (flagged in the block's
+`provenance`) where that crosswalk is absent.
+
+Every component is gated by `calibration/data/equation_availability_full.csv`,
+the authoritative record of which components were adopted per variant
+(height-diameter, mortality, crown ratio, and SDIMAX broadly; diameter growth
+for 7 variants; height increment sparsely). Where a component was not adopted,
+its array is left at 1.0 (no-op). The emitter
+(`config/config_loader.py :: generate_keywords`) reads the block directly and
+emits MORTMULT, BAIMULT, and HTGMULT; height-diameter additionally propagates
+through its populated `HD_A/B/C` coefficients.
+
+`config/validate_calibrated.py` (run in CI) enforces that every config carries a
+consistent block, preventing a recurrence of the silent propagation gap.
+
+### Variant caveat: FVS-ACD
+
+The Acadian variant (FVS-ACD) does not honor FVS keyword multipliers: a stress
+test applying a 5x MORTMULT changed 100 year biomass by only ~6%, versus the
+strong response standard variants show. ACD calibration must therefore be
+applied through the Acadian model's own parameter path, not FVS keywords.

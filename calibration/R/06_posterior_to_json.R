@@ -609,6 +609,35 @@ original_config$calibration <- list(
 )
 
 # =============================================================================
+# Precompute Schema-Free Per-Species Keyword Multipliers
+# =============================================================================
+#
+# Attach a `calibration_multipliers` block carrying per-species factors for all
+# five tree components (HD, mortality, CR, DG, HI), gated by the authoritative
+# equation_availability_full.csv. HD/MORT/CR are SPCD-keyed and populated for
+# every variant; DG and HI are emitted only where adopted. The Python keyword
+# emitter (config/config_loader.py :: generate_keywords) consumes this block.
+# This fixes the "at most one keyword block per variant" gap (issue #54).
+
+logger::log_info("Computing per-species calibration factors...")
+
+tryCatch({
+  source(file.path(calibration_dir, "R", "multipliers.R"), local = TRUE)
+  original_config$calibration_multipliers <-
+    compute_calibration_multipliers(output_dir, original_config,
+                                    calibration_dir = calibration_dir)
+  prov <- original_config$calibration_multipliers$provenance
+  logger::log_info(
+    "Attached calibration_multipliers (HD n={hd}, MORT n={mo}, CR n={cr}, DG n={dg}, HI n={hi})",
+    hd = prov$htdbh_n_species %||% 0, mo = prov$mort_n_species %||% 0,
+    cr = prov$cr_n_species %||% 0, dg = prov$dds_n_species %||% 0,
+    hi = prov$htg_n_species %||% 0
+  )
+}, error = function(e) {
+  logger::log_warn("calibration_multipliers block skipped: {conditionMessage(e)}")
+})
+
+# =============================================================================
 # Save Calibrated Config
 # =============================================================================
 

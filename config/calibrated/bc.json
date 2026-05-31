@@ -3208,5 +3208,109 @@
       "draws_csv": "calibration/output/conus/cr_recession_cspi_traits1_fixed_draws.csv",
       "notes": "Posterior summary; full draws referenced via draws_csv."
     }
+  },
+  "calibration_multipliers": {
+    "htdbh_multiplier": [
+      2.073971665,
+      1.742929964,
+      3.149442249,
+      1.990581818,
+      2.478431658,
+      1.932415926,
+      1.249577485,
+      1.885424532,
+      1.619505358,
+      2.509187343,
+      1.684389604,
+      1.492438743,
+      1.773566935,
+      3.149442249,
+      1
+    ],
+    "cr_multiplier": [
+      1.049521924,
+      0.8822564549,
+      0.8611358546,
+      1.021147352,
+      1.066624352,
+      1.18062859,
+      0.8861659885,
+      1.168401996,
+      1.089653003,
+      0.9710120509,
+      0.9667593277,
+      0.7814633713,
+      0.8196720154,
+      0.8611358546,
+      0.8163978349
+    ],
+    "dds_multiplier": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "htg_multiplier": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "mort_multiplier": [
+      2.30376431,
+      0.67637543,
+      0.79594716,
+      1.37266122,
+      0.66175812,
+      0.34527457,
+      1.94373096,
+      1.49241978,
+      2.3888572,
+      0.69574144,
+      1.28008117,
+      1.31711746,
+      0.98244921,
+      0.79594716,
+      1
+    ],
+    "provenance": {
+      "baseline": "calibrated population/pooled mean of each component fit",
+      "scale": {
+        "dds_multiplier": "DDS scale exp(delta b0); emitter applies sqrt for diameter-growth scale",
+        "htg_multiplier": "height-increment ratio exp(delta b0)",
+        "mort_multiplier": "mortality rate ratio from survival logit incl species random effect"
+      },
+      "clip": [
+        0.1,
+        10
+      ],
+      "maxsp": 15,
+      "dds_n_species": 15,
+      "htg_n_species": 0,
+      "mort_n_re": 54,
+      "mort_intercept": 2.15264457
+    }
   }
 }

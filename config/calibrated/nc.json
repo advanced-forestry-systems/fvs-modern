@@ -2271,18 +2271,18 @@
       1.0639783
     ],
     "dds_multiplier": [
-      0.90798232,
-      1.93130247,
-      1.08434339,
-      1.03046446,
-      1.36933419,
-      0.72270774,
-      1.00294395,
-      0.98589012,
-      1.09312944,
-      0.97403273,
-      1.26053928,
-      1.03675395
+      1,
+      1.09980255,
+      1.16808442,
+      1.02411422,
+      0.81701564,
+      1.05770061,
+      0.91901261,
+      0.78561786,
+      1,
+      1,
+      1,
+      1.01997622
     ],
     "htg_multiplier": [
       1,
@@ -2323,8 +2323,8 @@
       "htdbh_n_species": 32,
       "mort_n_species": 29,
       "cr_n_species": 38,
-      "dds_n_species": 27,
-      "dds_note": "dense-index approximate; verify species mapping before relying on DG"
+      "dds_n_species": 29,
+      "dds_mapping": "exact (species_index crosswalk)"
     }
   }
 }

@@ -359,3 +359,6 @@ lib_pre_rebuild_*/
 # point to fvs-conus absolute paths; never commit these)
 calibration/output/variants/*/*_samples.rds
 calibration/output/variants/*/standardization_params.rds
+
+# Stray build/run outputs (untracked 2026-05-30)
+calibration/analysis/**/*.out

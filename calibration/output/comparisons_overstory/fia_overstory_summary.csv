@@ -1,0 +1,9 @@
+model,variant,n_plots,min_DBH_in,BA_bias_pct,R2,obs_mean_BA_m2ha,notes
+FVS-ACD calibrated,ACD,13364,5.0,-0.06,0.822,17.17,SLURM 10591333; Maine/NH/VT footprint via FVS_ACD_RELABEL=TRUE; essentially unbiased on overstory
+FVS-ACD default,ACD,13364,5.0,-6.07,0.815,17.17,Acadian calibration adds ~6 pts accuracy on overstory FIA
+FVS-NE calibrated,NE,37167,5.0,-3.95,0.870,18.57,Non-ACD NE plots (i.e. plots not relabeled to ACD)
+FVS-NE default,NE,37167,5.0,-8.20,0.852,18.57,Acadian calibration adds ~4 pts accuracy
+OSM-ACD (FIA benchmark),OSM-ACD,12029,~5 effective,-2.18,0.958,21.544,prior fia_three_way_common_data; OSM size-class expansion (effectively overstory-weighted)
+Combined cross-region (OSM-ACD): FIA -2.2 / Canada -3.0,OSM-ACD,N/A,N/A,N/A,N/A,N/A,most cross-region-consistent
+Combined cross-region (FVS-ACD calibrated): FIA -0.06 / Canada -0.04,FVS-ACD,N/A,N/A,N/A,N/A,N/A,essentially unbiased BOTH regions (Canada via AcadianGY R on 262 NB pairs)
+Combined cross-region (FVS-NE default): FIA -8.2 / Canada +9.1,FVS-NE,N/A,N/A,N/A,N/A,N/A,flips sign across the border (still)

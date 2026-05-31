@@ -1,0 +1,3 @@
+"variant","n","BA_bias_calibrated_pct","BA_bias_default_pct","TPA_bias_calibrated_pct","TPA_bias_default_pct","QMD_bias_calibrated_pct","QMD_bias_default_pct","R2_BA_calibrated","R2_TPA_calibrated","R2_QMD_calibrated"
+"ACD",13364,-0.06,-6.07,1.58,-1.87,-2.69,-3.99,0.822,0.757,0.796
+"NE",37167,-3.95,-8.2,0.28,1.25,-4.45,-7.07,0.87,0.852,0.744

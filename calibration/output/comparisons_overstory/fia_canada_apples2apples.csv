@@ -1,0 +1,6 @@
+"model","FIA_bias_pct","n_FIA","Canada_bias_pct","n_Canada"
+"FVS-ACD calibrated",-0.06,13364,-0.04,262
+"OSM-ACD",-2.18,12029,-3,262
+"FVS-NE calibrated",-3.95,37167,NA,NA
+"FVS-NE default",-8.2,37167,9.1,262
+"FVS-ACD default",-6.07,13364,NA,NA

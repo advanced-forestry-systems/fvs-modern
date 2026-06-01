@@ -149,8 +149,18 @@ CS (65/96) via `calibration/python/land_mortality_coeffs.py`. Unmapped (rare,
 < 5000 obs) species fall back to existing per-variant mortality by design. These
 3 configs are modified locally (uncommitted).
 
-**Remaining (the one real gap):** the FVS engine must evaluate gompit(cr, cch) to
-run the projection-level old-vs-new comparison. Options: implement in the `cn`
-Fortran mortality routine, or apply the new survival in the Python projection
-path (perseus). The model-level comparison above is done; the stand-projection
-comparison waits on this.
+**Engine wiring (started):** `calibration/python/greg_mortality.py` — the
+`GregMortality` applicator that loads the re-fit coefficients and computes
+per-tree annual hazard / period survival, with `apply_to_treelist()` to scale
+TPA. Species without a fitted row return None so the caller keeps native
+mortality. Validated (exact formula match; survival falls monotonically with
+crown closure; unfit species preserved). **Remaining piece:** compute `cch`
+(crown closure at tree tip) per tree each cycle inside perseus — FVS does not
+expose cch in its treelist output, so it must be recomputed from the cycle
+treelist (crown-width profile). Once that lands, the projection-level (AGB/BA)
+old-vs-new comparison can run via `process_plot` with a mortality override.
+
+**Committed:** PR #64 (`feature/conus-mortality-gompit`) — the fitters,
+comparison, landing script, stress harness, applicator, and this handoff. The
+landed NE/LS/CS configs were kept out of the PR pending a surgical-write fix to
+`land_mortality_coeffs.py` (it currently reformats the whole JSON).

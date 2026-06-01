@@ -236,3 +236,26 @@ one even with a coarse 2-group crosswalk.
 2. Run NE/LS/CS with native vs Greg mortality; compare AGB/BA trajectories.
 A finer FIA-SPCD -> ORGANON-group crosswalk (beyond SW/HW) would tighten the
 affine fit but is not required for the pilot.
+
+### UPDATE 4 (2026-06-01) — projection comparison DONE
+
+`calibration/python/project_compare.py` runs a 100-yr no-growth demographic
+projection over 600 stands, isolating the mortality effect: same initial stands,
+each cycle recomputes cch (cch_organon + affine scale) per scenario and applies
+survival, metric = stand basal area. Result (committed to PR #64,
+`calibration/output/conus_mort_projection_trajectory.csv`):
+
+| year | BA base | BA Greg | Greg vs base |
+|---|---|---|---|
+| 0  | 85.2 | 85.2 |   0.0% |
+| 25 | 42.9 | 45.2 |  +5.4% |
+| 50 | 24.5 | 28.4 | +16.0% |
+| 100|  9.7 | 13.7 | +41.5% |
+
+Greg's cr/cch gompit retains markedly more basal area than the per-species base
+rate over long horizons (gap widens monotonically), because favorable cr/cch
+lowers mortality and self-thinning lowers cch further. Caveats (documented in the
+script): no-growth demography, base = per-species flat annual survival, coarse
+SW/HW crown crosswalk, BA metric. Next refinements: add growth (CONUS DG
+component) for full AGB trajectories; finer species crosswalk; stratify by
+variant/region.

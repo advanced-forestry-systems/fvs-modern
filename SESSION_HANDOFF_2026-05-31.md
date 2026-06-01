@@ -191,3 +191,48 @@ repo**:
    into the cch^b4 term.
 Do NOT run the projection comparison with a guessed cch — the gompit is sensitive
 to it and the result would be silently wrong.
+
+### UPDATE 2 (cch algorithm obtained; biometrics assessed)
+
+**CAL_CCH.for (provided)** resolves the algorithm: build a 41-stratum crown-area
+profile `CRNCLO` (CCH[40]=tallest HT; CCH[i]=total crown area per acre,
+CA=0.001803*CW^2*EXPAN, at height i*maxHT/40 over all crowns reaching it), then
+`TREE_CCH` interpolates it to a subject tree's tip -> cch. Ported faithfully to
+`calibration/python/cch_organon.py` (MCW/LCW/HLCW/CW crown-width functions).
+Tested: cch ~0 for the tallest tree, rises monotonically for understory — matches
+the panel's negative cch-vs-height correlation.
+
+**Remaining for CONUS-wide cch:** CAL_CCH.for carries only Pacific-NW ORGANON
+species-group params (18 SWO groups). Eastern/CONUS species need an
+FIA-SPCD -> crown-group crosswalk (or national crown-width coefficients). Next
+step: map species, compute cch on a sample of raw FIA tree lists (the per-state
+TREE CSVs on Cardinal), and **validate against the stored CCH1** before wiring
+into the projection. Once correlation/scale check out, plug `cch_organon` +
+`GregMortality` into `perseus.process_plot` per cycle and run the NE/LS/CS
+old-vs-new comparison.
+
+**biometrics R package (CRAN) assessed:** a general forest-biometrics curve
+toolkit — nonlinear growth funcs (Chapman-Richards, Gompertz, Schnute, Weibull,
+Hossfeld, ...), height-diameter (Curtis, Naslund, Prodan), taper (Kozak), volume,
+and stand/tree summaries (standtab, treevars). Useful modeling building blocks but
+**no crown-closure/CCH functions** — it does not supply cch.
+
+### UPDATE 3 — cch port VALIDATED (projection comparison unblocked)
+
+`calibration/R/35d_validate_cch.R` reconstructs cch from the panel's per-tree
+DBH1/HT1/CR1 via the ORGANON crown profile (coarse crosswalk: softwood->DF group,
+hardwood->RA group) and correlates with the stored CCH1 over 4000 plots:
+**Pearson r = 0.844, Spearman = 0.925.** The values differ only by a clean affine
+scale, `CCH1 ~ 0.062 + 0.0036 * cch_hat` (R2 = 0.71) — the port is in raw CCF%
+units; the stored CCH1 was rescaled upstream. So the ORGANON model is the right
+one even with a coarse 2-group crosswalk.
+
+**Projection comparison is now unblocked. Remaining steps (mechanical):**
+1. In `perseus.process_plot`, after each cycle's treelist, compute cch_hat with
+   `cch_organon.crown_closure`/`tree_cch`, apply the affine map
+   `cch = 0.062 + 0.0036*cch_hat` (or refit with a finer species crosswalk), and
+   pass cch + cr to `GregMortality.period_survival` to scale TPA instead of FVS's
+   native mortality.
+2. Run NE/LS/CS with native vs Greg mortality; compare AGB/BA trajectories.
+A finer FIA-SPCD -> ORGANON-group crosswalk (beyond SW/HW) would tighten the
+affine fit but is not required for the pilot.

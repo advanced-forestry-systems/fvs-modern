@@ -164,3 +164,30 @@ old-vs-new comparison can run via `process_plot` with a mortality override.
 comparison, landing script, stress harness, applicator, and this handoff. The
 landed NE/LS/CS configs were kept out of the PR pending a surgical-write fix to
 `land_mortality_coeffs.py` (it currently reformats the whole JSON).
+
+### cch provenance — the projection-comparison blocker (investigated 2026-05-31)
+
+The projection-level (AGB/BA) old-vs-new comparison needs `cch` recomputed each
+cycle. I traced its definition and it is **not reproducible from the fvs-conus
+repo**:
+- `30_build_conus_dataset.R` reads `CCH` directly from the change/tree zips
+  (`read_tree_from_zip`, kept-cols list incl. "CCH", line ~887) — i.e. cch is
+  precomputed by an UPSTREAM pipeline that generated those zips. No crown-profile
+  formula exists in the fvs-conus R scripts.
+- Helper scripts disagree: `41_compile_new_states.R` uses `CCH = pmin(CCFL,100)`
+  (a rough proxy for new states), while `30d_fix_units.R` treats CCH on the same
+  scale as HT. The v2 panel's CCH1 came from the 30_build (zip) path.
+- Empirical check on 300k panel rows: CCH1 in [0, 7.1], median 0.19; cor(CCH1,
+  CCFL1)=0.73, cor(CCH1, HT1)=-0.46, cor(CCH1, DBH1)=-0.42. So cch is a genuine
+  crown-closure-above-the-tip metric (understory trees high, dominants low) on an
+  unknown scale — NOT a simple CCFL/100 transform.
+
+**To unblock the projection comparison, pick one:**
+1. Get the cch formula from the upstream change-zip generator (whoever built
+   them) — fastest and exact.
+2. Fit a proxy: compute crown-competition-in-taller-trees from raw FIA tree lists
+   (FVS species MCW equations) and regress against the stored CCH1 to recover the
+   scaling. Self-contained but a modeling task, and the proxy will carry error
+   into the cch^b4 term.
+Do NOT run the projection comparison with a guessed cch — the gompit is sensitive
+to it and the result would be silently wrong.

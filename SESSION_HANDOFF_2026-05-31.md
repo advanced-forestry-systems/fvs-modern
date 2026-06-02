@@ -292,3 +292,29 @@ already in FVS-native schema (SPECIES/DIAMETER/HT/HISTORY) so it loads almost
 directly into the `fvs_treeinit` SQLite table — `build_fvs_treeinit` should be
 swapped for a thin FVS_TREEINIT passthrough. Demonstrable on MT today; CONUS-wide
 once the other 49 states' TreeInit are generated.
+
+### UPDATE 6 (2026-06-01) — checked the full scratch FIADB; the gap is data form
+
+Re-checked all FIA data on scratch. Two all-states sources exist:
+- `~/FIA/<ST>_TREE.csv` and `fia_by_state/<ST|FIPS>_TREE.csv` (e.g. `6_TREE.csv` =
+  CA, rebuilt May 30, all 49 states, PLOT INVYR spans **1994-2021** so it IS the
+  full modern FIADB by year).
+**But the TREE extract columns are biomass/volume only:** `PLT_CN, STATECD,
+STATUSCD, DIA, TPA_UNADJ, DRYBIO_AG, CARBON_AG, VOLCFNET, VOLTSGRS, DRYBIO_BOLE`
+-- **no SPCD, no HT, no CR.** It is also re-keyed to a short sequential PLT_CN
+(e.g. 11839) that does not match the standinit's 15-digit CN. This extract was
+built for the carbon/AGB work, not FVS.
+
+FVS treeinit requires species + height + crown ratio per tree, so neither scratch
+TREE source can drive an FVS projection or join the 2021 standinit. The only
+FVS-ready, standinit-joinable tree data remains `MT_FVS_TREEINIT_PLOT.csv`
+(verified 2000/2000 join).
+
+**Bottom line for CONUS-wide FVS projections:** the blocker is the *form* of the
+tree data, not its absence. Need one of:
+1. FVS TreeInit (`<ST>_FVS_TREEINIT_PLOT.csv`, FVS-native: SPCD/DIAMETER/HT/
+   HISTORY, STAND_CN-keyed) generated for all states via the same FVS-FIA export
+   that produced the MT file and the standinit. Then the harness (tree-source
+   swap) runs CONUS-wide as-is.
+2. Or full FIA TREE tables with real 15-digit PLT_CN + SPCD/HT/CR for all states.
+MT can be run end-to-end today as a proof; CONUS-wide waits on (1) or (2).

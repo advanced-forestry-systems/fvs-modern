@@ -2230,59 +2230,45 @@
   "calibration_multipliers": {
     "htdbh_multiplier": [
       1,
-      5.33052256,
-      4.69066059,
+      5.330522556,
+      4.690660594,
       6.17375605,
-      2.06366699,
-      4.3278824,
-      1.85814948,
-      2.24806972,
+      2.063666985,
+      4.327882398,
+      1.858149484,
+      2.248069723,
       1,
       1,
       1,
-      4.93631333
-    ],
-    "mort_multiplier": [
-      1,
-      1.73211291,
-      0.97452694,
-      2.96782629,
-      1.65023298,
-      0.64384792,
-      0.81874308,
-      1.28784571,
-      1,
-      1,
-      1,
-      0.31627115
+      4.936313327
     ],
     "cr_multiplier": [
-      0.93149892,
-      0.97045271,
-      0.87035901,
-      0.93149892,
-      0.80007084,
-      0.93149892,
-      0.98899545,
-      1.04570396,
-      0.93149892,
-      0.93149892,
-      0.93149892,
-      1.0639783
+      0.9314989185,
+      0.9704527149,
+      0.8703590076,
+      0.9314989185,
+      0.8000708442,
+      0.9314989185,
+      0.988995448,
+      1.045703955,
+      0.9314989185,
+      0.9314989185,
+      0.9314989185,
+      1.063978304
     ],
     "dds_multiplier": [
-      0.90798232,
-      1.93130247,
-      1.08434339,
-      1.03046446,
-      1.36933419,
-      0.72270774,
-      1.00294395,
-      0.98589012,
-      1.09312944,
-      0.97403273,
-      1.26053928,
-      1.03675395
+      0.83668545,
+      1.77965214,
+      0.99919824,
+      0.94955001,
+      1.26181091,
+      0.66595906,
+      0.92419048,
+      0.90847575,
+      1.00729439,
+      0.89754943,
+      1.16155882,
+      0.95534563
     ],
     "htg_multiplier": [
       1,
@@ -2298,33 +2284,36 @@
       1,
       1
     ],
+    "mort_multiplier": [
+      1,
+      1.73211291,
+      0.97452694,
+      2.96782629,
+      1.65023298,
+      0.64384792,
+      0.81874308,
+      1.28784571,
+      1,
+      1,
+      1,
+      0.31627115
+    ],
     "provenance": {
-      "variant": "nc",
-      "maxsp": 12,
+      "baseline": "calibrated population/pooled mean of each component fit",
+      "scale": {
+        "dds_multiplier": "DDS scale exp(delta b0); emitter applies sqrt for diameter-growth scale",
+        "htg_multiplier": "height-increment ratio exp(delta b0)",
+        "mort_multiplier": "mortality rate ratio from survival logit incl species random effect"
+      },
       "clip": [
         0.1,
         10
       ],
-      "available": {
-        "HD": true,
-        "MORT": true,
-        "CR": true,
-        "DG": true,
-        "SDI": true,
-        "HI": false
-      },
-      "definitions": {
-        "htdbh_multiplier": "HD asymptote ratio (a_pooled + r_SPCD__a)/a_pooled",
-        "mort_multiplier": "mortality-rate ratio from survival logit incl species RE",
-        "cr_multiplier": "exp(r_SPCD_grouped) relative crown-ratio factor",
-        "dds_multiplier": "DG intercept-shift exp(delta b0); dense index, approximate, adopted variants only",
-        "htg_multiplier": "HI intercept-shift exp(delta b0); dense index, approximate, adopted variants only"
-      },
-      "htdbh_n_species": 32,
-      "mort_n_species": 29,
-      "cr_n_species": 38,
-      "dds_n_species": 27,
-      "dds_note": "dense-index approximate; verify species mapping before relying on DG"
+      "maxsp": 12,
+      "dds_n_species": 12,
+      "htg_n_species": 1,
+      "mort_n_re": 29,
+      "mort_intercept": 2.65524644
     }
   }
 }

@@ -1,4 +1,13 @@
-from enum import StrEnum
+try:
+    from enum import StrEnum
+except ImportError:  # Python < 3.11
+    from enum import Enum
+
+    class StrEnum(str, Enum):
+        """Minimal StrEnum backport for Python 3.9/3.10."""
+
+        def __str__(self) -> str:
+            return str(self.value)
 
 
 class FvsVariant(StrEnum):

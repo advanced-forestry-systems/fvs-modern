@@ -360,5 +360,13 @@ lib_pre_rebuild_*/
 calibration/output/variants/*/*_samples.rds
 calibration/output/variants/*/standardization_params.rds
 
-# Stray build/run outputs (untracked 2026-05-30)
-calibration/analysis/**/*.out
+# SILC overstory benchmark scratch staging
+# (see calibration/output/comparisons_overstory/FINDINGS.md for the summary;
+# raw deck builds, intermediate stand lists, version-suffixed PPTX revisions,
+# plot validation tables, and rendered figures all stay out of repo history.)
+calibration/output/comparisons_overstory/silc_cfi/
+calibration/output/comparisons_overstory/validation_data_overstory*.csv
+calibration/output/comparisons_overstory/*.png
+calibration/output/comparisons_overstory/*.jpg
+calibration/output/comparisons_overstory/*.pdf
+calibration/output/comparisons_overstory/*.pptx

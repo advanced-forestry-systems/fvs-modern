@@ -50,6 +50,10 @@ if (length(args) > 0) {
 # Configuration
 # ============================================================================
 
+# Resolve project root from the environment first. The previous form passed the
+# sys.frame() fallback as the Sys.getenv() default, which R evaluates eagerly and
+# which crashes under `Rscript` (no `ofile` frame) even when FVS_PROJECT_ROOT is
+# set. Evaluate the fallback only when the env var is absent.
 project_root <- Sys.getenv("FVS_PROJECT_ROOT")
 if (!nzchar(project_root)) {
   project_root <- tryCatch(

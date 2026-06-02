@@ -1,0 +1,7 @@
+"forest_type","density_class","n_stands","BA_0_mean","byStrata_ids"
+"Commercial Softwood","A+B (high)",2,126.4,"S2A-N, S3B-N"
+"Hardwood","A+B (high)",1,97.2,"H3B-N"
+"Cedar","C+D (low)",1,161.6,"C4C-N"
+"Commercial Softwood","C+D (low)",3,109.5,"S3C-N, S3D-N, S4C-N"
+"Hardwood","C+D (low)",3,74.6,"H3C-N, H3D-N, H4C-N"
+"Mixedwood","C+D (low)",1,97.7,"HS3C-N"

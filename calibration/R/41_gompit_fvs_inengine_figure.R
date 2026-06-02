@@ -22,13 +22,14 @@ ga <- function(f, d = NULL) {
 INDIR <- ga("indir", ".")
 OUT   <- ga("out", "gompit_fvs_inengine.png")
 
-files <- list.files(INDIR, pattern = "^val_(ne|cs|ls)_(native|gompit)\\.csv$",
+files <- list.files(INDIR, pattern = "^val_(ne|cs|ls|sn)_(native|gompit)\\.csv$",
                      full.names = TRUE)
 dat <- map_dfr(files, read_csv, show_col_types = FALSE)
 
-vlab <- c(ne = "NE  (Northeast)", cs = "CS  (Central States)", ls = "LS  (Lake States)")
+vlab <- c(ne = "NE  (Northeast)", cs = "CS  (Central States)",
+          ls = "LS  (Lake States)", sn = "SN  (Southern, n=10*)")
 summ <- dat %>%
-  mutate(variant = factor(tolower(VARIANT), levels = c("ne","cs","ls")),
+  mutate(variant = factor(tolower(VARIANT), levels = c("ne","cs","ls","sn")),
          mode = factor(MODE, levels = c("native","gompit"),
                        labels = c("Native FVS","Gompit-in-FVS"))) %>%
   group_by(variant, mode, PROJ_YEAR) %>%
@@ -39,7 +40,7 @@ col_nat <- "#999999"; col_gom <- "#0072B2"
 p <- ggplot(summ, aes(PROJ_YEAR, AGB, colour = mode)) +
   geom_line(linewidth = 1.0) +
   geom_point(size = 1.6) +
-  facet_wrap(~variant, nrow = 1,
+  facet_wrap(~variant, nrow = 1, scales = "free_y",
              labeller = labeller(variant = vlab)) +
   scale_colour_manual(values = c("Native FVS" = col_nat,
                                  "Gompit-in-FVS" = col_gom), name = NULL) +

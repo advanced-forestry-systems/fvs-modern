@@ -55,29 +55,50 @@ Gompit coefficients; ORGANON SWO crown geometry as the cch proxy; coarse
 FIA->ORGANON group map (softwood->1 DF, hardwood->16 RA); affine map
 CCH=0.062+0.0036*cch_hat (Spearman 0.93). Refine the group map for a tighter fit.
 
-## Multi-variant: NE, CS, LS (all share vls/morts.f90)
+## Multi-variant, scaled (NE/CS/LS share vls/morts.f90; SN has its own)
 
-Adding `base/gompmort.f90` to the CS and LS source lists was sufficient (they
-already use `vls/morts.f90`); both built and validated with no further code
-changes. Mean AGB at projection year 100 (10 stands each, same binary,
-env-toggled):
+`base/gompmort.f90` is variant-agnostic. NE/CS/LS needed only a source-list
+addition (they share `vls/morts.f90`). **SN uses its own `sn/morts.f90`** and got
+the identical hook (include, GOMPCCH call, per-tree override, VARMRT bypass,
+GOMPLOAD in MORCON), proving the pattern generalises beyond the `vls` family.
+
+Mean AGB at projection year 100, same binary, env-toggled (NE/CS/LS n=~200
+stands each; SN n=10):
 
 | variant | native FVS | gompit-in-FVS | change |
 |---------|-----------:|--------------:|-------:|
-| NE      | 175.7 | 160.8 | -8%  |
-| CS      | 166.5 | 124.0 | -26% |
-| LS      | 155.6 |  93.6 | -40% |
+| NE      |  62.9 | 49.4 | -21% |
+| CS      | 106.7 | 84.1 | -21% |
+| LS      |  94.9 | 55.6 | -41% |
+| SN*     |  55.5 | 12.1 | -78% |
 
-All bounded, realistic, no runaway/crash. Gompit consistently trims
-late-rotation stocking, variant-specific in magnitude (LS most, NE least),
-coherent with the differing species mixes and crowding regimes. See
-`gompit_fvs_inengine.png` (`calibration/R/41_gompit_fvs_inengine_figure.R`).
+All bounded, realistic, no runaway/crash on any variant. Gompit consistently
+trims late-rotation stocking as crown closure rises; magnitude is
+variant-specific. See `gompit_fvs_inengine.png`
+(`calibration/R/41_gompit_fvs_inengine_figure.R`).
 
-![gompit in-engine, NE/CS/LS](gompit_fvs_inengine.png)
+![gompit in-engine, NE/CS/LS/SN](gompit_fvs_inengine.png)
 
-## Next steps
+\* **SN is flagged for review.** Its -78% is from only 10 stands AND likely
+reflects the coarse FIA->ORGANON group proxy (softwood->1 DF, hardwood->16 RA)
+fitting southern pines/oaks poorly, which inflates crown closure and hence
+mortality. This ties directly to the group-map refinement below.
 
-* Other variant families use their own `morts.f90` — same hook pattern, separate
-  work (the gompit module is variant-agnostic).
-* Replace the env switch with a `GOMPMORT` keyword for user/run reproducibility.
-* Scale the NE/CS/LS in-engine A/B across the full CONUS stress sample.
+## Two items requiring Aaron, NOT autopiloted
+
+1. **`GOMPMORT` keyword.** Activation is env-gated (`FVS_GOMPIT`,
+   `FVS_GOMPIT_COEF`), validated and working. A keyfile keyword would require
+   editing the shared `base/keywds.f90` TABLE + `keyrdr.f90` dispatch used by all
+   25 variants -- high build-break risk for a reproducibility nicety. Deferred
+   deliberately.
+2. **Group-map refinement.** The softwood/hardwood -> ORGANON proxy is the
+   loosest validated assumption, and SN suggests it is too coarse in the South.
+   It cannot be changed in isolation: the affine cch map (CCH_A=0.062,
+   CCH_B=0.0036, Spearman 0.93) was calibrated against the current proxy's
+   `cch_hat`, so a finer FIA->ORGANON crosswalk requires re-running
+   `35d_validate_cch.R` to re-fit the affine map. That is Aaron's science loop.
+
+## Next steps (safe to autopilot)
+
+* Scale SN (and add more eastern stands) once the group map is settled.
+* Extend the hook to a western `morts.f90` family for full-CONUS coverage.

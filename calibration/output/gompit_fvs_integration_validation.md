@@ -84,6 +84,36 @@ reflects the coarse FIA->ORGANON group proxy (softwood->1 DF, hardwood->16 RA)
 fitting southern pines/oaks poorly, which inflates crown closure and hence
 mortality. This ties directly to the group-map refinement below.
 
+## Western variants: CR, WS, EC, CA (own Dixon/VARMRT morts.f90)
+
+The four western variants share the same Dixon SDI + VARMRT mortality structure
+as the eastern ones (separate files, identical hook). A patcher applied the five
+edits to each; all built and validated. Mean AGB at yr100 (n ~= 12, CR n=40):
+
+| variant | native | gompit | change |
+|---------|-------:|-------:|-------:|
+| EC (East Cascades) | 106.7 | 101.3 |  -5% |
+| CA (Inland CA)     | 300.2 | 255.6 | -15% |
+| CR (Central Rockies)|  3.5 |   2.3 | -35% |
+| WS (West Sierra)   | 299.6 | 169.2 | -44% |
+
+**EC (-5%) is the tell.** East Cascades is PNW conifer, exactly what ORGANON was
+built for, so the crown-closure proxy fits best and gompit nearly matches native.
+SN (-78%, southern pines/oaks) is the worst proxy fit. The effect size tracks
+how well the coarse FIA->ORGANON group map suits each variant's species -- direct
+evidence for the group-map refinement flagged below.
+
+## All eight variants (four mortality-routine families)
+
+`gompit_fvs_allvariants.png` (`calibration/R/42_gompit_fvs_allvariants_figure.R`)
+collects all eight: NE/CS/LS (shared `vls`), SN (own), CR/WS/EC/CA (own western).
+Every one is bounded and realistic across the 100-yr projection; none runs away.
+yr100 change, sorted: EC -5, CA -15, NE -21, CS -21, CR -35, LS -41, WS -44,
+SN -78. The gompit Fortran integration is variant-agnostic and validated across
+the engine's mortality-routine families.
+
+![gompit in-engine, all 8 variants](gompit_fvs_allvariants.png)
+
 ## Two items requiring Aaron, NOT autopiloted
 
 1. **`GOMPMORT` keyword.** Activation is env-gated (`FVS_GOMPIT`,

@@ -1,7 +1,19 @@
 # Gompit mortality projection integration: wiring + validation findings
 
-Status: wiring complete, harness validated, **naive substitution rejected by
-validation**. A modeling decision is required before any CONUS-scale gompit run.
+Status: post-hoc projection wiring rejected by validation; **resolved by a
+Fortran in-engine integration (option 1), validated on NE.** See
+`calibration/output/gompit_fvs_integration_validation.md`. The post-hoc/iterative
+runner below remains as the negative-result record and a diagnostic harness.
+
+## RESOLUTION (Fortran in-engine, option 1)
+
+Gompit is now substituted for FVS native mortality inside the growth loop
+(`src-converted/base/gompmort.f90`, `base/common/GOMPMC.f90`, hooked into
+`vls/morts.f90`). NE validation: 147 t/ac at 100 yr vs native 173, bounded and
+realistic, no runaway, no crash; gompit kills less in open stands and more in
+crowded stands (the crown-closure signal, dynamically). Env-gated
+(`FVS_GOMPIT=1`, `FVS_GOMPIT_COEF=<csv>`) so one binary does native or gompit.
+This supersedes the post-hoc approach documented below.
 
 ## What was built
 

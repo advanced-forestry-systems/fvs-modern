@@ -55,10 +55,29 @@ Gompit coefficients; ORGANON SWO crown geometry as the cch proxy; coarse
 FIA->ORGANON group map (softwood->1 DF, hardwood->16 RA); affine map
 CCH=0.062+0.0036*cch_hat (Spearman 0.93). Refine the group map for a tighter fit.
 
+## Multi-variant: NE, CS, LS (all share vls/morts.f90)
+
+Adding `base/gompmort.f90` to the CS and LS source lists was sufficient (they
+already use `vls/morts.f90`); both built and validated with no further code
+changes. Mean AGB at projection year 100 (10 stands each, same binary,
+env-toggled):
+
+| variant | native FVS | gompit-in-FVS | change |
+|---------|-----------:|--------------:|-------:|
+| NE      | 175.7 | 160.8 | -8%  |
+| CS      | 166.5 | 124.0 | -26% |
+| LS      | 155.6 |  93.6 | -40% |
+
+All bounded, realistic, no runaway/crash. Gompit consistently trims
+late-rotation stocking, variant-specific in magnitude (LS most, NE least),
+coherent with the differing species mixes and crowding regimes. See
+`gompit_fvs_inengine.png` (`calibration/R/41_gompit_fvs_inengine_figure.R`).
+
+![gompit in-engine, NE/CS/LS](gompit_fvs_inengine.png)
+
 ## Next steps
 
-* Extends for free to **CS and LS** (they share `vls/morts.f90`); validate those.
 * Other variant families use their own `morts.f90` — same hook pattern, separate
-  PRs (the gompit module is variant-agnostic).
+  work (the gompit module is variant-agnostic).
 * Replace the env switch with a `GOMPMORT` keyword for user/run reproducibility.
-* Scale the NE/CS/LS in-engine A/B across the CONUS stress sample.
+* Scale the NE/CS/LS in-engine A/B across the full CONUS stress sample.

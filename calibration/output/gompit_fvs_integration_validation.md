@@ -103,14 +103,30 @@ SN (-78%, southern pines/oaks) is the worst proxy fit. The effect size tracks
 how well the coarse FIA->ORGANON group map suits each variant's species -- direct
 evidence for the group-map refinement flagged below.
 
-## All eight variants (four mortality-routine families)
+## WC, PN (5th family: ORGANON-logistic vwc/morts.f90, no VARMRT)
+
+WC and PN share `vwc/morts.f90`, an ORGANON-based logistic mortality that is
+structurally different from the Dixon/VARMRT routines (annual rate `RIP` from a
+per-species logistic, its own SDI-max feedback, no VARMRT call). The hook was
+adapted: for fitted species, replace the annual `RIP` with the gompit annual
+rate `1 - exp(-H)` (call `GOMPSURV` with T=1); the routine's existing period
+conversion `WKI = P*(1-(1-RIP)**FINT)` then reproduces gompit period survival
+exactly. Validated, bounded: PN 328->190 (-42%), WC 204->89 (-56%).
+
+These dense, wet Westside conifer stands (native 200-330 t/ac) have high crown
+closure, so the cch term drives substantial gompit mortality -- consistent with
+dry, open EC (-5%). So the effect size tracks **both** ORGANON-proxy fit and
+stand density/crown closure, exactly what cch is meant to capture.
+
+## All ten variants (five mortality-routine families)
 
 `gompit_fvs_allvariants.png` (`calibration/R/42_gompit_fvs_allvariants_figure.R`)
-collects all eight: NE/CS/LS (shared `vls`), SN (own), CR/WS/EC/CA (own western).
-Every one is bounded and realistic across the 100-yr projection; none runs away.
-yr100 change, sorted: EC -5, CA -15, NE -21, CS -21, CR -35, LS -41, WS -44,
-SN -78. The gompit Fortran integration is variant-agnostic and validated across
-the engine's mortality-routine families.
+collects all ten: NE/CS/LS (shared `vls`), SN (own eastern), CR/WS/EC/CA (own
+western Dixon), WC/PN (shared `vwc` ORGANON-logistic). Every one is bounded and
+realistic across the 100-yr projection; none runs away. yr100 change, sorted:
+EC -5, CA -15, NE -21, CS -21, CR -35, LS -41, PN -42, WS -44, WC -56, SN -78.
+The gompit Fortran integration is variant-agnostic and validated across every
+mortality-routine family the wired variants use.
 
 ![gompit in-engine, all 8 variants](gompit_fvs_allvariants.png)
 

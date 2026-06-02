@@ -318,3 +318,27 @@ tree data, not its absence. Need one of:
    swap) runs CONUS-wide as-is.
 2. Or full FIA TREE tables with real 15-digit PLT_CN + SPCD/HT/CR for all states.
 MT can be run end-to-end today as a proof; CONUS-wide waits on (1) or (2).
+
+### UPDATE 7 (2026-06-01) — re-downloading the FVS tables (the actual fix)
+
+Confirmed the missing data: the standinit's 15-digit `STAND_CN` is the **FVS**
+stand id, NOT the FIA `PLT_CN` (the DataMart `<ST>_TREE.csv` uses short PLT_CN
+like 11839 and does NOT contain standinit STAND_CNs). The FVS-ready tables are
+**bundled inside the FIA DataMart `<ST>_CSV.zip`** (verified: `TX_CSV.zip`
+contains `TX_FVS_TREEINIT_PLOT.csv`, 186 MB, FVS-native cols STAND_CN/SPECIES/
+DIAMETER/HT/HISTORY...). Both MT and TX join the standinit perfectly
+(3000/3000 sampled).
+
+**Action taken:** launched a resumable download loop on Cardinal,
+`/fs/scratch/PUOM0008/crsfaaron/FIA_fresh/dl_fvs.sh` (nohup/setsid, log
+`dl_fvs.log`): for each of the 49 states it wgets `<ST>_CSV.zip` from
+`https://apps.fs.usda.gov/fia/datamart/CSV/`, extracts `<ST>_FVS_TREEINIT_PLOT.csv`
+to `FIA_fresh/treeinit/`, and deletes the zip. Skips states already done
+(resumable). MT + TX pre-seeded. Re-run the script to resume if a login-node
+limit interrupts it.
+
+**Remaining once treeinit/ is populated:** swap the harness tree loader to read
+`FIA_fresh/treeinit/<ST>_FVS_TREEINIT_PLOT.csv` (FVS-native; load STAND_CN-matched
+rows straight into the `fvs_treeinit` table, replacing `build_fvs_treeinit`),
+then run the 381-task array. The standinit join is the part that was broken;
+this is the fix.

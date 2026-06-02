@@ -259,3 +259,36 @@ script): no-growth demography, base = per-species flat annual survival, coarse
 SW/HW crown crosswalk, BA metric. Next refinements: add growth (CONUS DG
 component) for full AGB trajectories; finer species crosswalk; stratify by
 variant/region.
+
+### UPDATE 5 (2026-06-01) — CONUS-wide FVS projections: diagnosed the data gap
+
+Question: are CONUS-wide FVS projections (per variant, from FIADB) running? **No.**
+The full-FIADB harness (`calibration/stress/`) was staged but never launched. On
+launching the prep + a 3-task validation slice (SN/CR/NE batch 0, 5000 stands
+each), the engine ran with 0 failures but matched trees for almost no stands
+(CR batch 0: **36 of 5000**). Root cause found:
+
+- The standinit `ENTIRE_FVS_STANDINIT_PLOT.csv` keys stands by the modern
+  15-digit FIA `PLT_CN` (e.g. 750085992290487), 2021 vintage.
+- The per-state tree files the harness reads, `~/FIA/<ST>_TREE.csv`, are an OLD
+  FIA vintage: their `PLT_CN` is a short integer (e.g. 11839), INVYR back to
+  1994. They cannot join to the 2021 standinit. The ~36 matches were spurious.
+
+**The correct tree source exists in FVS-native form:** `*_FVS_TREEINIT_PLOT.csv`
+(columns STAND_CN, STAND_ID, PLOT_CN, ... SPECIES, DIAMETER, HT, HISTORY, ...).
+`fvs-conus/data/raw_fia/MT_FVS_TREEINIT_PLOT.csv` has 414k tree rows / 12,517
+stands, and **all 2000 sampled STAND_CNs join exactly to the standinit.** So the
+join works perfectly with this source.
+
+**But only MT (1 of 50 states) has an FVS_TREEINIT file.** So CONUS-wide
+projection is blocked on generating the FVS TreeInit for the other 49 states
+(same FVS-FIA export that produced the standinit, run for TreeInit per state),
+NOT on the harness/engine.
+
+**Fix to the harness (`run_stress_task.py` / `conus_100yr_projection.py`):**
+replace the `load_fia_trees_for_plots(... ~/FIA/<ST>_TREE.csv)` call with reading
+`<ST>_FVS_TREEINIT_PLOT.csv` filtered on `STAND_CN in batch`. The FVS_TREEINIT is
+already in FVS-native schema (SPECIES/DIAMETER/HT/HISTORY) so it loads almost
+directly into the `fvs_treeinit` SQLite table — `build_fvs_treeinit` should be
+swapped for a thin FVS_TREEINIT passthrough. Demonstrable on MT today; CONUS-wide
+once the other 49 states' TreeInit are generated.

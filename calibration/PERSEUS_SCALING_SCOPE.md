@@ -154,6 +154,45 @@ Steps 1-3 I can run on autopilot now. 4-7 each have one design decision below.
   -- pair `p_disturbance` with `conus_svi`; use FIA DSTRBCD-implied severities, or
   a single generic severity to start. (Minor; can default and refine.)
 
+## 6c. Integration architecture (FVS is a drop-in growth engine for `ycx`)
+
+The PERSEUS dashboard is already fed by a complete projection engine: the
+**empirical yield-curve engine** (`perseus_wire/scripts/yield_curve_engine`,
+`ycx_*`), which projects the current FIA inventory forward and produces the
+per-state series. Crucially, the surrounding machinery the user is asking for is
+**already built around it**:
+
+* `ycx_02_perseus.R` -- FIA inventory -> per-state calendar-year series (AGC,
+  AGB, vol + harvest flux), with **owner-specific harvest scenarios already
+  coded**: Industrial clearcut 45 yr; NIPF partial 20 yr/30%; State 25 yr/25%;
+  Public-Other 30 yr/15%; plus reserve (no harvest). Climate +/-10% ribbon.
+* `ycx_merge_perseus.py` -- injects an engine (cls "YC") into `api/series`;
+  **FIA expansion = n_plots x A0** (A0 calibrated so AGC totals match
+  `fia.json`). This is the state-total method; FVS reuses it.
+* `ycx_fiadb_vs_treemap.R` -- the **FIADB-vs-TreeMap comparison already exists**:
+  same curves expanded two ways, `yc_fia_empirical_v1` (n_plots x A0) vs
+  `yc_treemap_spatial_v1` (actual TreeMap 30 m pixel-area per imputed plot).
+* `ycx_treemap_*.R` -- TreeMap spatial expansion already implemented.
+
+So **FVS (default/calibrated/gompit) is a drop-in alternative growth engine**:
+its per-plot AGB(year) trajectories replace the Chapman-Richards yield curves,
+then flow through the SAME expansion (FIADB and TreeMap), harvest scenarios, and
+merge. Confirmed join: TreeMap pixel -> `TM_ID` -> (VAT) `PLT_CN` =
+campaign `STAND_CN` -> FVS trajectory.
+
+Concrete integration steps (both tracks, reusing `ycx`):
+  1. FVS aggregator: campaign `conus_<v>_b<b>.csv` -> per-plot AGB(year) ->
+     per-state series in the `ycx` schema (state, scenario, metric, year, val),
+     engine cls `FVS`, models `fvs_default|fvs_calibrated|fvs_gompit`.
+  2. PERSEUS wiring: run the `ycx_merge_perseus.py` pattern on the FVS series ->
+     FVS engines appear on the dashboard beside YC and CEM.
+  3. ME TreeMap pilot: feed FVS ME-plot trajectories into the existing
+     `ycx_treemap_*` + `ycx_fiadb_vs_treemap.R` to paint ME and produce the
+     FIADB-vs-TreeMap multi-scale comparison with FVS as the engine.
+
+This is integration, not greenfield. The gating input is the running FVS
+campaign (per-plot trajectories); the expansion/scenario/TreeMap code exists.
+
 ## 7. Bottom line
 
 All four threads are feasible and most of the data + harness already exist. The

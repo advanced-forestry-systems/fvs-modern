@@ -16,13 +16,13 @@ ga <- function(f,d=NULL){i<-grep(paste0("^--",f,"="),args,value=TRUE);if(!length
 INDIR <- ga("indir","."); OUT <- ga("out","gompit_fvs_allvariants.png")
 
 vorder <- c("ne","cs","ls","sn","bm","em","ak",
-            "cr","ws","ec","ca","wc","pn","ci","ie","nc","so")
+            "cr","ws","ec","ca","wc","pn","ci","ie","nc","so","tt")
 region <- c(ne="East",cs="East",ls="East",sn="East",bm="West",em="West",ak="West",
             cr="West",ws="West",ec="West",ca="West",wc="West",pn="West",
-            ci="West",ie="West",nc="West",so="West")
+            ci="West",ie="West",nc="West",so="West",tt="West")
 vlab <- setNames(toupper(vorder), vorder)
 
-files <- list.files(INDIR, pattern="^val_(ne|cs|ls|sn|bm|em|ak|cr|ws|ec|ca|wc|pn|ci|ie|nc|so)_(native|gompit)\\.csv$", full.names=TRUE)
+files <- list.files(INDIR, pattern="^val_(ne|cs|ls|sn|bm|em|ak|cr|ws|ec|ca|wc|pn|ci|ie|nc|so|tt)_(native|gompit)\\.csv$", full.names=TRUE)
 dat <- map_dfr(files, read_csv, show_col_types=FALSE) %>%
   mutate(v=tolower(VARIANT),
          variant=factor(v, levels=vorder, labels=vlab[vorder]),
@@ -37,7 +37,7 @@ pA <- ggplot(summ, aes(PROJ_YEAR, AGB, colour=mode)) +
   facet_wrap(~variant, nrow=3, scales="free_y") +
   scale_colour_manual(values=c("Native FVS"=col_nat,"Gompit-in-FVS"=col_gom), name=NULL) +
   labs(x="Projection year", y="Mean AGB (tons/ac)",
-       title="A  In-engine gompit vs native, 17 validated variants",
+       title="A  In-engine gompit vs native, 18 validated variants",
        subtitle="100-yr no-harvest; bounded and realistic everywhere, no runaway") +
   theme_minimal(base_size=11) +
   theme(legend.position="top", panel.grid.minor=element_blank(),

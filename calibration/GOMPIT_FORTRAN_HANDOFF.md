@@ -71,7 +71,16 @@ A `GOMPMORT` keyfile keyword is intentionally NOT implemented (see Section 6).
 
 ---
 
-## 4. Coverage (24 of 25 variants hooked, 23 built, 18 validated)
+## 4. Coverage (gompit on all 23 buildable variants; 19 validated)
+
+Two variants -- **ON (Ontario)** and **BC (British Columbia)** -- do not produce
+an executable even unmodified, on pre-existing link errors unrelated to gompit
+(`fmcrow_` in ON's fire module; `dbsrd1_`/`dminit_` in BC's database/mistletoe
+modules). They are the only two of 25 without a gompit executable. ON is hooked
+(its morts compiles); BC is left pristine (its nonblock-DO control flow is
+hostile to the hook and the variant cannot be built regardless). **So gompit is
+wired into every variant that the repo can currently build (23/23).**
+
 
 Hook applies across **all five mortality-routine families** in the engine:
 
@@ -84,24 +93,28 @@ Hook applies across **all five mortality-routine families** in the engine:
 | ORGANON-logistic (shared) | `vwc/morts.f90` | WC, PN | built, validated |
 
 \* ON (Ontario) morts compiles and is hooked, but its executable fails to LINK
-on a pre-existing, unrelated fire-module error (`fmcrow_` undefined) that is
-independent of gompit.
+on a pre-existing, unrelated error (`fmcrow_` undefined) -- the variant does not
+build even unmodified.
 
-**Not done:** BC (British Columbia). Its `canada/bc/morts.f90` has different
-control flow; the automated insertion broke a DO/IF block, so it was reverted.
-It needs a hand-placed hook (same five edits, careful anchoring).
+**BC (British Columbia):** left pristine. Its executable also fails to build
+unmodified (`dbsrd1_`/`dminit_` undefined), and its nonblock-DO control flow
+breaks the hook insertion. Both issues must be fixed before BC can carry gompit.
 
-**Built but not yet validated** (no stress standinit on Cardinal): OC, OP, TT,
-KT, ACD. Their hook compiles and links; they just need stress stands to A/B.
+**Built but not validated** (their FIA plots are labelled under other variants,
+so no stress stands exist for them in the CONUS standinit): OC, OP, KT, ACD.
+Their hook compiles, links, and runs; they just lack stands to A/B here.
 
 ### Validation results (yr100 mean AGB, native -> gompit, ~8-200 stands/variant)
 
-All bounded, none runs away or crashes. Sorted by effect:
+All bounded, none runs away or crashes. 19 variants validated, sorted by effect:
 
 ```
-SN -78   CI -75   WC -56   WS -44   EM -43   PN -42   LS -41   AK -38
-CR -35   IE -24   NE -21   CS -21   CA -15   BM -9    EC -5    SO ~0   NC ~0
+SN -78   TT -76   CI -75   WC -56   WS -44   EM -43   PN -42   LS -41
+AK -38   CR -35   IE -24   NE -21   CS -21   CA -15   BM -9    EC -5
+SO ~0    NC ~0
 ```
+(TT, CI, CR, AK, EM are sparse high-elevation/high-latitude western variants
+with very low absolute biomass, so their large percentages are noisy.)
 
 Figure: `calibration/output/gompit_fvs_allvariants.png` (trajectories + sorted
 percent-change). The effect size tracks BOTH ORGANON-proxy fit and stand

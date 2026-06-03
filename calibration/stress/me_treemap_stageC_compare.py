@@ -29,14 +29,18 @@ C_FRACTION = 0.47
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--traj", required=True)
+    ap.add_argument("--traj", required=True,
+                    help="comma-separated trajectory CSV(s) "
+                         "(default/calibrated + gompit)")
     ap.add_argument("--donors", required=True)
     ap.add_argument("--start", type=int, default=2025)
     ap.add_argument("--out-dir", required=True)
     a = ap.parse_args()
     os.makedirs(a.out_dir, exist_ok=True)
 
-    tr = pd.read_csv(a.traj, dtype={"PLT_CN": str})
+    tr = pd.concat([pd.read_csv(p, dtype={"PLT_CN": str})
+                    for p in a.traj.split(",") if os.path.exists(p)],
+                   ignore_index=True)
     dn = pd.read_csv(a.donors, dtype={"PLT_CN": str})[["PLT_CN", "area_ha"]]
     # one plot may back several TM_IDs -> sum area per PLT_CN
     area = dn.groupby("PLT_CN")["area_ha"].sum().reset_index()

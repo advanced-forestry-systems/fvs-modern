@@ -1,0 +1,181 @@
+# Gompit mortality in FVS: Fortran integration handoff
+
+Greg Johnson's CONUS gompit survival now runs **inside the FVS Fortran growth
+loop** (TREGRO -> MORTS), substituted for native mortality per tree, per cycle,
+so growth and density interact with the substituted mortality each cycle. This
+supersedes the post-hoc TPA-overlay approach, which validation rejected (it
+disabled FVS mortality and made FVS growth run away). Branch:
+`feature/gompit-projection-wiring`, PR #67.
+
+This document is the single reference for what was built, how it works, current
+coverage, validation results, how to run it, and the two decisions that remain
+yours.
+
+---
+
+## 1. The model
+
+Per species, annual hazard with a cycle-length exposure:
+
+```
+eta = b0 + b1*(cr+0.01)^b2 + b3*cch^b4
+H   = exp(eta)                 ! annual hazard
+S   = exp(-H * FINT)           ! period survival, FINT = cycle length (yrs)
+trees killed = PROB * (1 - S)
+```
+
+`cr` is crown ratio (FVS `ICR/100`). `cch` is crown closure at the subject
+tree's tip, recomputed each cycle from the live treelist by an ORGANON
+crown-closure port and mapped onto the gompit cch scale by the validated affine
+fit `cch = CCH_A + CCH_B*cch_hat` (CCH_A=0.062, CCH_B=0.0036; 35d_validate_cch.R,
+Spearman 0.93 vs the panel's stored CCH1).
+
+Coefficients: `conus_mort/full_out/greg_mortality_coefficients.csv` (133 species,
+columns SPCD,n,b0..b4). Model-level validation on 7.6M FIA remeasurement records:
+gompit AUC 0.740 vs base-rate 0.673, log loss 0.420 vs 0.443, 131/133 species
+improved; gompit tracks observed survival into the most crowded crown-closure
+quartile where the base rate misses crowding mortality
+(`calibration/output/gompit_mortality_validation.md`).
+
+---
+
+## 2. The code
+
+| file | role |
+|------|------|
+| `src-converted/common/GOMPMC.f90` | shared state (COMMON): `LGOMP`, `NGOMP`, `GB(MAXSP,5)`, `GHAVE(MAXSP)`, `GGRP(MAXSP)`, `CCHT(MAXTRE)`. INCLUDE after PRGPRM. (Reached via the `base/common` symlink.) |
+| `src-converted/base/gompmort.f90` | `GOMPLOAD` (read env, load coeffs, resolve to variant species via FIAJSP, assign ORGANON group); `GOMPCCH` (ORGANON crown-closure-at-tip port, affine-mapped, fills CCHT each cycle); `GOMPSURV(ispc,cr,cch,years,surv)` (period survival). |
+
+The hook in each variant's `morts.f90` is five edits: INCLUDE GOMPMC; declare
+`CRG,SURVG`; `IF(LGOMP) CALL GOMPCCH` once before the per-tree loop; per-tree
+override for fitted species (`WKI = PROB*(1-S)`); `CALL GOMPLOAD` in MORCON. For
+variants that call VARMRT, the native SDI redistribution is bypassed when LGOMP
+(gompit is density-aware via cch). For the ORGANON-logistic `vwc` family the
+hook replaces the annual rate `RIP` with `1-exp(-H)` and lets the routine's own
+period conversion finish, reproducing gompit period survival exactly.
+
+`GOMPLOAD` is SAVE-guarded (loads once per run). All activation is env-gated, so
+one binary does native or gompit with no recompile.
+
+---
+
+## 3. Activation
+
+```bash
+export FVS_GOMPIT=1
+export FVS_GOMPIT_COEF=/path/to/greg_mortality_coefficients.csv
+# run FVS normally; unset FVS_GOMPIT for native mortality
+```
+
+A `GOMPMORT` keyfile keyword is intentionally NOT implemented (see Section 6).
+
+---
+
+## 4. Coverage (24 of 25 variants hooked, 23 built, 18 validated)
+
+Hook applies across **all five mortality-routine families** in the engine:
+
+| family | routine | variants | status |
+|--------|---------|----------|--------|
+| eastern TWIGS (shared) | `vls/morts.f90` | NE, CS, LS | built, validated |
+| eastern (own) | `sn/morts.f90` | SN | built, validated |
+| Dixon SDI / VARMRT (own) | `<v>/morts.f90` | CR, WS, EC, CA, BM, NC, OC, SO, UT, EM, OP, ACD, ON | built (ON exe blocked*), most validated |
+| Hamilton/Prognosis (own) | `<v>/morts.f90` | AK, CI, IE, KT | built, AK/CI/IE validated |
+| ORGANON-logistic (shared) | `vwc/morts.f90` | WC, PN | built, validated |
+
+\* ON (Ontario) morts compiles and is hooked, but its executable fails to LINK
+on a pre-existing, unrelated fire-module error (`fmcrow_` undefined) that is
+independent of gompit.
+
+**Not done:** BC (British Columbia). Its `canada/bc/morts.f90` has different
+control flow; the automated insertion broke a DO/IF block, so it was reverted.
+It needs a hand-placed hook (same five edits, careful anchoring).
+
+**Built but not yet validated** (no stress standinit on Cardinal): OC, OP, TT,
+KT, ACD. Their hook compiles and links; they just need stress stands to A/B.
+
+### Validation results (yr100 mean AGB, native -> gompit, ~8-200 stands/variant)
+
+All bounded, none runs away or crashes. Sorted by effect:
+
+```
+SN -78   CI -75   WC -56   WS -44   EM -43   PN -42   LS -41   AK -38
+CR -35   IE -24   NE -21   CS -21   CA -15   BM -9    EC -5    SO ~0   NC ~0
+```
+
+Figure: `calibration/output/gompit_fvs_allvariants.png` (trajectories + sorted
+percent-change). The effect size tracks BOTH ORGANON-proxy fit and stand
+density/crown closure: western conifer (EC, SO, NC ~0) is the best proxy fit and
+nearly matches native; SN/CI (southern, central Idaho) the largest. Dense wet
+PNW (WC -56, PN -42) shows a large effect because high crown closure drives the
+cch term. UT is excluded from the figure (degenerate 0-biomass sample).
+
+---
+
+## 5. How to reproduce
+
+Build a variant executable with gompit (Cardinal, `module load gcc/12.3.0`):
+
+```bash
+cd ~/fvs-modern
+bash deployment/scripts/build_fvs_executables.sh src-converted <out_lib_dir> ne
+```
+
+Validate native vs gompit on stress stands (the driver lives on Cardinal at
+`/fs/scratch/PUOM0008/crsfaaron/fvs_gompit/gompit_fvs_validate.py`):
+
+```bash
+export FVS_LIB_DIR=<out_lib_dir> VAL_VARIANT=ne VAL_N=200
+unset FVS_GOMPIT;  VAL_MODE=native  python3 gompit_fvs_validate.py
+export FVS_GOMPIT=1; VAL_MODE=gompit python3 gompit_fvs_validate.py
+```
+
+Adding a new variant of an existing family: add `../base/gompmort.f90` to its
+`bin/FVS<v>_sourceList.txt`, apply the five-edit hook (the patchers
+`/tmp/patch_morts2.py` for the FINT-line form, `patch_morts3.py` for the
+WK2(I)=WKI form capture the transforms), compile-check, build, validate.
+
+---
+
+## 6. Two decisions that are yours (not autopiloted)
+
+1. **Group-map refinement.** The coarse FIA->ORGANON group proxy (softwood->1
+   DF, hardwood->16 RA) is the loosest validated assumption. The variant spread
+   now quantifies it: western conifer (EC/SO/NC ~0) fits well, southern species
+   (SN -78) poorly. It cannot be changed in isolation -- the affine cch map was
+   calibrated against this exact proxy's `cch_hat`, so a finer crosswalk requires
+   re-running `35d_validate_cch.R` to re-fit CCH_A/CCH_B. That is your science
+   loop.
+
+2. **`GOMPMORT` keyword.** Activation is env-gated and validated. A keyfile
+   keyword would require editing the shared `base/keywds.f90` TABLE and
+   `keyrdr.f90` dispatch compiled by all 25 variants -- high build-break risk for
+   a reproducibility nicety. Deferred deliberately.
+
+---
+
+## 7. Suggested next steps (safe to autopilot)
+
+* Hand-hook BC; rebuild ON once the unrelated fire-link issue is resolved.
+* A/B the built-but-unvalidated variants (OC, OP, TT, KT, ACD) once stress
+  stands exist.
+* Scale every variant's A/B to a few hundred stands for manuscript tables.
+* After the group map is settled, re-run the full sweep so all variants share
+  the refined crosswalk and affine map.
+
+---
+
+## 8. Artifact index (all under PR #67)
+
+* Fortran: `src-converted/base/gompmort.f90`, `src-converted/common/GOMPMC.f90`,
+  the hooked `*/morts.f90`, updated `bin/FVS*_sourceList.txt`.
+* Model-level validation: `calibration/output/gompit_mortality_validation.{md,png}`,
+  `calibration/R/40_gompit_mortality_validation_figure.R`.
+* In-engine validation: `calibration/output/gompit_fvs_integration_validation.md`,
+  `gompit_fvs_inengine.png`, `gompit_fvs_allvariants.png`,
+  `calibration/R/41_*`, `calibration/R/42_*`, per-variant CSVs under
+  `calibration/output/gompit_fvs_csls/`.
+* Rejected post-hoc approach (kept as the negative-result record):
+  `calibration/python/run_gompit_projection.py`,
+  `calibration/python/GOMPIT_INTEGRATION_FINDINGS.md`, and the gompit helper
+  modules `greg_mortality.py`, `cch_organon.py`, `project_mortality.py`.

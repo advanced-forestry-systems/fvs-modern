@@ -150,20 +150,34 @@ WK2(I)=WKI form capture the transforms), compile-check, build, validate.
 
 ---
 
-## 6. Two decisions that are yours (not autopiloted)
+## 6. The two flagged items -- both now RESOLVED
 
-1. **Group-map refinement.** The coarse FIA->ORGANON group proxy (softwood->1
-   DF, hardwood->16 RA) is the loosest validated assumption. The variant spread
-   now quantifies it: western conifer (EC/SO/NC ~0) fits well, southern species
-   (SN -78) poorly. It cannot be changed in isolation -- the affine cch map was
-   calibrated against this exact proxy's `cch_hat`, so a finer crosswalk requires
-   re-running `35d_validate_cch.R` to re-fit CCH_A/CCH_B. That is your science
-   loop.
+1. **Group-map refinement -- tested, rejected on evidence; coarse proxy kept.**
+   A genus/crown-form crosswalk over all 18 ORGANON groups was built and the
+   affine cch map re-fit on the held validation sample (113k trees). It DEGRADES
+   the cch reproduction: Spearman 0.853 (full genus) and 0.875 (conifer-only) vs
+   0.925 for the coarse softwood/hardwood proxy. The PNW-specific ORGANON crown
+   equations add species variance that does not match how the stored CCH1 was
+   generated; uniformity wins for a rank-order proxy. The coarse proxy is
+   retained unchanged and is now *justified*, not a limitation -- the variant
+   spread in gompit effect is a real cch-sensitivity property, not a crosswalk
+   artifact. See `calibration/output/cch_crosswalk_refinement_test.md` and
+   `calibration/python/refine_cch_crosswalk.py`.
 
-2. **`GOMPMORT` keyword.** Activation is env-gated and validated. A keyfile
-   keyword would require editing the shared `base/keywds.f90` TABLE and
-   `keyrdr.f90` dispatch compiled by all 25 variants -- high build-break risk for
-   a reproducibility nicety. Deferred deliberately.
+2. **`GOMPMORT` keyword -- implemented and validated.** Added at the only safe
+   point in the legacy dispatcher: `keywds.f90` TABLE slot 148 (previously
+   blank, no index shift) + a new GOTO target and handler in `vbase/initre.f90`
+   that calls `GOMPON` (flags `LGOMPKW`); `GOMPLOAD` then activates on (env OR
+   keyword); `BLOCK DATA GOMPBD` initialises the flags. Coeff path stays in
+   `FVS_GOMPIT_COEF`. Validated on NE: native 211.1, env-gompit 175.5,
+   keyword-gompit 175.5 (byte-identical to env).
+
+## 6b. Stress test (robustness pass)
+
+19 variants x ~60 stands x native/gompit (~45,000 projection-years) produced
+**zero** NaN/inf/negative/>2000-t-ac gompit values and no crashes; gompit effect
+ranges NC -4% to UT -82%, with productive variants in a tight -13% to -27% band.
+See `calibration/output/gompit_stress_test.md` + `gompit_stress_summary.csv`.
 
 ---
 

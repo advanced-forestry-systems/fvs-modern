@@ -15,12 +15,14 @@ args <- commandArgs(trailingOnly = TRUE)
 ga <- function(f,d=NULL){i<-grep(paste0("^--",f,"="),args,value=TRUE);if(!length(i))return(d);sub(paste0("^--",f,"="),"",i[1])}
 INDIR <- ga("indir","."); OUT <- ga("out","gompit_fvs_allvariants.png")
 
-vorder <- c("ne","cs","ls","sn","cr","ws","ec","ca","wc","pn")
-region <- c(ne="East",cs="East",ls="East",sn="East",cr="West",ws="West",
-            ec="West",ca="West",wc="West",pn="West")
-vlab <- c(ne="NE",cs="CS",ls="LS",sn="SN",cr="CR",ws="WS",ec="EC",ca="CA",wc="WC",pn="PN")
+vorder <- c("ne","cs","ls","sn","bm","em","ak",
+            "cr","ws","ec","ca","wc","pn","ci","ie","nc","so")
+region <- c(ne="East",cs="East",ls="East",sn="East",bm="West",em="West",ak="West",
+            cr="West",ws="West",ec="West",ca="West",wc="West",pn="West",
+            ci="West",ie="West",nc="West",so="West")
+vlab <- setNames(toupper(vorder), vorder)
 
-files <- list.files(INDIR, pattern="^val_(ne|cs|ls|sn|cr|ws|ec|ca|wc|pn)_(native|gompit)\\.csv$", full.names=TRUE)
+files <- list.files(INDIR, pattern="^val_(ne|cs|ls|sn|bm|em|ak|cr|ws|ec|ca|wc|pn|ci|ie|nc|so)_(native|gompit)\\.csv$", full.names=TRUE)
 dat <- map_dfr(files, read_csv, show_col_types=FALSE) %>%
   mutate(v=tolower(VARIANT),
          variant=factor(v, levels=vorder, labels=vlab[vorder]),
@@ -32,10 +34,10 @@ summ <- dat %>% group_by(variant, mode, PROJ_YEAR) %>%
 col_nat<-"#999999"; col_gom<-"#0072B2"
 pA <- ggplot(summ, aes(PROJ_YEAR, AGB, colour=mode)) +
   geom_line(linewidth=0.8) +
-  facet_wrap(~variant, nrow=2, scales="free_y") +
+  facet_wrap(~variant, nrow=3, scales="free_y") +
   scale_colour_manual(values=c("Native FVS"=col_nat,"Gompit-in-FVS"=col_gom), name=NULL) +
   labs(x="Projection year", y="Mean AGB (tons/ac)",
-       title="A  In-engine gompit vs native, ten variants (5 mortality-routine families)",
+       title="A  In-engine gompit vs native, 17 validated variants",
        subtitle="100-yr no-harvest; bounded and realistic everywhere, no runaway") +
   theme_minimal(base_size=11) +
   theme(legend.position="top", panel.grid.minor=element_blank(),
@@ -61,6 +63,6 @@ pB <- ggplot(chg, aes(variant, pct, fill=Region)) +
   theme(panel.grid.major.x=element_blank(), panel.grid.minor=element_blank(),
         plot.title=element_text(face="bold"), legend.position="top")
 
-fig <- pA / pB + plot_layout(heights=c(1.4,1))
-ggsave(OUT, fig, width=10, height=8.4, dpi=300, bg="white")
+fig <- pA / pB + plot_layout(heights=c(1.6,1))
+ggsave(OUT, fig, width=12, height=9.5, dpi=300, bg="white")
 cat("wrote", OUT, "\n"); print(chg %>% select(variant, Region, pct) %>% mutate(pct=round(pct)))

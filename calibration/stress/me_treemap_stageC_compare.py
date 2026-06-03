@@ -23,7 +23,7 @@ import argparse, os
 import numpy as np, pandas as pd
 
 AC_PER_HA = 2.4710538
-TONS_TO_TG = 0.000907185      # short tons -> Tg
+TONS_TO_TG = 9.07185e-7       # short tons -> Tg (1 short ton = 0.907185 Mg)
 C_FRACTION = 0.47
 
 

@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-"""ME TreeMap pilot, Stage B: run FVS on the Maine donor FIA plots.
+"""ME TreeMap pilot, Stage B (v2): run FVS on the Maine donor plots using
+TreeMap's own tree lists.
 
-Reads me_treemap_donors.csv (PLT_CN list from Stage A), finds each plot in the
-CONUS standinit (STATE, VARIANT, location), builds standinit + treeinit, and
-projects 100 yr in default and calibrated FVS (add gompit via a second pass with
-the gompit lib + FVS_GOMPIT=1). Output me_donor_trajectories.csv:
+Builds the FVS treeinit from the TreeMap-2022 tree table (me_donor_trees.csv,
+the imputed donor tree list -- the correct, self-consistent source for a TreeMap
+projection) and the standinit location from me_donor_standinit.csv, then projects
+100 yr in the requested configs. Output me_donor_trajectories[...].csv:
     PLT_CN, STATE, VARIANT, CONFIG, PROJ_YEAR, AGB_TONS_AC
 
-Stage C then paints ME = sum over donors of AGB_density(year) x area_ha (TreeMap
-expansion) and compares to FIADB expansion.
+Gompit arm: set FVS_LIB_DIR=fvs_gompit/lib + FVS_GOMPIT=1 and --configs default,
+then relabel CONFIG=gompit downstream.
 """
 from __future__ import annotations
 import argparse, os, sys
@@ -22,94 +23,97 @@ import perseus_100yr_projection as P
 import run_conus_task_fvstreeinit as RC
 
 FIPS = RC.FIPS
-STANDINIT = "/fs/scratch/PUOM0008/crsfaaron/FIA/ENTIRE_FVS_STANDINIT_PLOT.csv"
-TI_DIR = "/fs/scratch/PUOM0008/crsfaaron/FIA_fresh/treeinit"
-KEEP = ["STAND_CN", "VARIANT", "STATE", "INV_YEAR", "LATITUDE", "LONGITUDE",
-        "ELEVFT", "SLOPE", "ASPECT", "AGE"]
+
+
+def treeinit_from_treemap(trees: pd.DataFrame, sid: str) -> pd.DataFrame:
+    """TreeMap tree table rows -> fvs_treeinit schema."""
+    recs = []
+    for i, t in enumerate(trees.itertuples(index=False)):
+        dia = getattr(t, "DIA", np.nan)
+        if pd.isna(dia) or float(dia) < 1.0:
+            continue
+        ht = getattr(t, "HT", 0)
+        cr = getattr(t, "CR", 0)
+        recs.append({
+            "stand_id": sid,
+            "plot_id": int(float(getattr(t, "SUBP", 1) or 1)),
+            "tree_id": i + 1,
+            "tree_count": float(getattr(t, "TPA_UNADJ", 1.0) or 1.0),
+            "species": int(float(getattr(t, "SPCD", 0) or 0)),
+            "diameter": round(float(dia), 1),
+            "ht": round(float(ht), 0) if pd.notna(ht) and float(ht) > 0 else 0,
+            "crratio": int(float(cr)) if pd.notna(cr) and float(cr) > 0 else 0,
+        })
+    return pd.DataFrame(recs)
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--donors", required=True)
+    ap.add_argument("--trees", required=True)
+    ap.add_argument("--standinit", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--configs", default="default,calibrated")
     a = ap.parse_args()
     cfgs = [c.strip() for c in a.configs.split(",")]
     arm = [(None if c == "default" else c, c) for c in cfgs]
 
-    dn = pd.read_csv(a.donors, dtype={"PLT_CN": str})
-    want = set(dn["PLT_CN"].dropna().astype(str))
-    print(f"{len(want)} donor PLT_CNs", flush=True)
-
-    # pull donor stands from the CONUS standinit
-    chunks = []
-    for ch in pd.read_csv(STANDINIT, usecols=lambda c: c in KEEP,
-                          low_memory=False, chunksize=200000):
-        ch["STAND_CN"] = ch["STAND_CN"].apply(
-            lambda x: str(int(float(x))) if pd.notna(x) else "")
-        sel = ch[ch["STAND_CN"].isin(want)]
-        if len(sel):
-            chunks.append(sel)
-    si = pd.concat(chunks, ignore_index=True) if chunks else pd.DataFrame(columns=KEEP)
-    print(f"matched {si['STAND_CN'].nunique()} of {len(want)} donors in standinit",
+    tr = pd.read_csv(a.trees, dtype={"PLT_CN": str})
+    by_plot = {k: v for k, v in tr.groupby("PLT_CN")}
+    si = pd.read_csv(a.standinit, low_memory=False)
+    si["STAND_CN"] = si["STAND_CN"].apply(
+        lambda x: str(int(float(x))) if pd.notna(x) else "")
+    print(f"{len(by_plot)} plots with TreeMap trees, {len(si)} standinit rows",
           flush=True)
 
     nsbe = P.NSBECalculator(P.NSBE_ROOT)
     rows = []
-    cache = {}
-    for state_fips, grp in si.groupby("STATE"):
+    n = 0
+    for _, stand in si.iterrows():
+        cn = stand["STAND_CN"]
+        trees = by_plot.get(cn)
+        if trees is None or trees.empty:
+            continue
+        variant = str(stand.get("VARIANT", "ne")).lower()
         try:
-            state = FIPS[int(float(state_fips))]
+            state = FIPS[int(float(stand.get("STATE")))]
         except (KeyError, ValueError, TypeError):
+            state = "ME"
+        sid = f"S{cn}"
+        iy = int(float(stand.get("INV_YEAR") or 2010))
+        pdat = {"INVYR": iy, "LAT": stand.get("LATITUDE"),
+                "LON": stand.get("LONGITUDE"),
+                "ELEV": stand.get("ELEVFT") or 500,
+                "SLOPE": stand.get("SLOPE") or 10,
+                "ASPECT": stand.get("ASPECT") or 180,
+                "STDAGE": stand.get("AGE") or 50}
+        try:
+            sdf = P.build_fvs_standinit(pdat, sid, variant)
+            tdf = treeinit_from_treemap(trees, sid)
+        except Exception:
             continue
-        tfile = os.path.join(TI_DIR, f"{state}_FVS_TREEINIT_PLOT.csv")
-        if not os.path.exists(tfile):
+        if tdf.empty:
             continue
-        if state not in cache:
-            tt = pd.read_csv(tfile, low_memory=False)
-            tt["STAND_CN"] = tt["STAND_CN"].apply(
-                lambda x: str(int(float(x))) if pd.notna(x) else "")
-            cache[state] = {k: v for k, v in tt.groupby("STAND_CN")}
-        by_cn = cache[state]
-        for _, stand in grp.iterrows():
-            cn = stand["STAND_CN"]
-            fvs_rows = by_cn.get(cn)
-            if fvs_rows is None or fvs_rows.empty:
-                continue
-            variant = str(stand.get("VARIANT", "ne")).lower()
-            sid = f"S{cn}"
-            iy = int(float(stand.get("INV_YEAR") or 2010))
-            pdat = {"INVYR": iy, "LAT": stand.get("LATITUDE"),
-                    "LON": stand.get("LONGITUDE"),
-                    "ELEV": stand.get("ELEVFT") or 500,
-                    "SLOPE": stand.get("SLOPE") or 10,
-                    "ASPECT": stand.get("ASPECT") or 180,
-                    "STDAGE": stand.get("AGE") or 50}
+        n += 1
+        for cfg, label in arm:
             try:
-                sdf = P.build_fvs_standinit(pdat, sid, variant)
-                tdf = RC.treeinit_for_stand(fvs_rows, sid)
+                fr = P.run_fvs_projection(sdf, tdf, sid, variant,
+                                          config_version=cfg,
+                                          num_cycles=20, cycle_length=5)
+                for cy, tl in sorted(fr["treelists"].items()):
+                    py = cy - iy
+                    if py < 0:
+                        continue
+                    agb = P.compute_plot_agb(tl, nsbe)
+                    rows.append({"PLT_CN": cn, "STATE": state,
+                                 "VARIANT": variant.upper(), "CONFIG": label,
+                                 "PROJ_YEAR": py,
+                                 "AGB_TONS_AC": round(float(agb), 4)})
             except Exception:
-                continue
-            if tdf.empty:
-                continue
-            for cfg, label in arm:
-                try:
-                    fr = P.run_fvs_projection(sdf, tdf, sid, variant,
-                                              config_version=cfg,
-                                              num_cycles=20, cycle_length=5)
-                    for cy, tl in sorted(fr["treelists"].items()):
-                        py = cy - iy
-                        if py < 0:
-                            continue
-                        agb = P.compute_plot_agb(tl, nsbe)
-                        rows.append({"PLT_CN": cn, "STATE": state,
-                                     "VARIANT": variant.upper(), "CONFIG": label,
-                                     "PROJ_YEAR": py,
-                                     "AGB_TONS_AC": round(float(agb), 4)})
-                except Exception:
-                    pass
+                pass
+        if n % 500 == 0:
+            print(f"  {n} plots projected", flush=True)
     pd.DataFrame(rows).to_csv(a.out, index=False)
-    print(f"wrote {len(rows)} rows -> {a.out}", flush=True)
+    print(f"projected {n} plots, wrote {len(rows)} rows -> {a.out}", flush=True)
 
 
 if __name__ == "__main__":

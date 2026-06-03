@@ -50,9 +50,19 @@ CHARACTER(LEN=512) LINE
 INTEGER I, J, NG, IOS, U, IFIA, NN, ISPC
 REAL B0,B1,B2,B3,B4
 LOGICAL, SAVE :: LDONE = .FALSE.
+LOGICAL LENABLE
 !
-! resolve once per run (COMMON state persists across the per-stand MORCON calls)
+! resolve once per run (COMMON state persists across the per-stand MORCON calls).
+! Activation comes from the FVS_GOMPIT env var OR the GOMPMORT keyword (LGOMPKW,
+! set by GOMPON in initre, which runs before MORCON). Do not lock LDONE until
+! actually activated, so a keyword seen on a later stand can still turn it on.
 IF (LDONE) RETURN
+LENABLE = .TRUE.
+CALL GETENV('FVS_GOMPIT', CVAL)
+IF (CVAL.EQ.' ') LENABLE = .FALSE.
+IF (CVAL(1:1).EQ.'0' .OR. CVAL(1:1).EQ.'n' .OR. CVAL(1:1).EQ.'N' &
+    .OR. CVAL(1:1).EQ.'f' .OR. CVAL(1:1).EQ.'F') LENABLE = .FALSE.
+IF (.NOT.(LENABLE .OR. LGOMPKW)) RETURN
 LDONE = .TRUE.
 !
 LGOMP = .FALSE.
@@ -64,11 +74,6 @@ DO ISPC=1,MAXSP
     GB(ISPC,J) = 0.0
   ENDDO
 ENDDO
-!
-CALL GETENV('FVS_GOMPIT', CVAL)
-IF (CVAL.EQ.' ') RETURN
-IF (CVAL(1:1).EQ.'0' .OR. CVAL(1:1).EQ.'n' .OR. CVAL(1:1).EQ.'N' &
-    .OR. CVAL(1:1).EQ.'f' .OR. CVAL(1:1).EQ.'F') RETURN
 !
 CALL GETENV('FVS_GOMPIT_COEF', CPATH)
 IF (CPATH.EQ.' ') THEN
@@ -301,4 +306,30 @@ DO I=1,ITRN
   CCHT(I) = CCH_A + CCH_B*CCHHAT
 ENDDO
 RETURN
+END
+
+
+SUBROUTINE GOMPON
+!  GOMPMORT keyword hook (called from vbase/initre.f90 when the GOMPMORT keyword
+!  is read). Flags keyword activation; GOMPLOAD (called from MORCON, which runs
+!  after the keyword reader) then loads coefficients and sets LGOMP. The coeff
+!  file path still comes from FVS_GOMPIT_COEF (a deployment detail); the keyword
+!  records the on/off choice reproducibly in the keyfile.
+IMPLICIT NONE
+INCLUDE 'PRGPRM.f90'
+INCLUDE 'GOMPMC.f90'
+LGOMPKW = .TRUE.
+RETURN
+END
+
+
+BLOCK DATA GOMPBD
+!  Initialise the gompit COMMON flags so LGOMP / LGOMPKW / GHAVE are defined
+!  before any activation. Required because the morts hook tests
+!  IF(LGOMP.AND.GHAVE(ISPC)) and Fortran does not guarantee short-circuit .AND.
+IMPLICIT NONE
+INCLUDE 'PRGPRM.f90'
+INCLUDE 'GOMPMC.f90'
+DATA LGOMP /.FALSE./, LGOMPKW /.FALSE./, GHAVE /MAXSP*.FALSE./
+DATA NGOMP /0/, GGRP /MAXSP*16/
 END

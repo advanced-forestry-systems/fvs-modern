@@ -61,17 +61,38 @@ a partial stand-replacing event). Monte Carlo N draws -> the `[mean, lo, hi]`
 band the dashboard expects. Maps directly to metrics `any_disturbance_rate_pct`,
 `insect/disease/animal/human_rate_state_pct`.
 
-**Harvest.** No standalone harvest-probability raster exists yet. Three options,
-in increasing realism:
-  (a) **BAU rotation** by state/forest-type (simple, matches CEM's
-      `managed (harvest)` class for apples-to-apples) -- recommended first cut;
-  (b) **FIA-derived** harvest rates from the human-disturbance component
-      (`human_rate_state_pct`) and FIA TRTCD/DSTRBCD removal records;
-  (c) **econ/stumpage-driven** using `perseus_wire/api/stumpage.json`.
-Output `harvest_c_yr` flux + the post-harvest stock trajectory.
+**Harvest -- the model already exists** (`conus_hcs`, Harvest Choice System,
+canonical rd-corrected v4, 2026-05-31). It is a fitted, CV-validated, CONUS-wide,
+two-stage harvest model conditioned on **price, ownership, region, and relative
+density** -- exactly the data-driven, landowner/region/forest-type-specific,
+market-aligned, repeatable spec. Delivered both as fitted models and as 240 m
+CONUS annual-probability + intensity **rasters**
+(`conus_hcs/data/analytic/maps_conus_canonical/`):
 
-Cost: MEDIUM. Reuses the campaign harness; new work is the FVS scenario-keyword
-injection, the raster sampling per stand, and the MC wrapper.
+* occurrence: `conus_p_partial_annual`, `conus_p_clearcut_annual`,
+  `conus_p_stand_replacement_annual` (each + SD; per-region; +50%-price
+  sensitivity layer);
+* intensity: `conus_intensity_partial/clearcut`,
+  `conus_expected_ba_removed_annual`, `conus_vol_removed_annual`;
+* class/value: `conus_hcs_class_*`, `conus_value_at_risk*`;
+* prices: `conus_stumpage_panel.parquet` (state x year x product, 2020 USD/m3,
+  RPA subregion, source-aware western prices).
+
+So harvest is a **coupling** task, not a modelling task: per FVS stand, sample
+its pixel's `p_partial`/`p_clearcut`/`p_stand_replacement` (and intensity); per
+5-yr cycle convert annual->period prob and draw; on a partial event apply an FVS
+thinning to the modelled residual (`expected_ba_removed`/`intensity_partial`),
+on a clearcut/stand-replacement event apply FVS clearcut+regen; Monte Carlo for
+bands; price scenarios via the stumpage panel + the +50%-price layer. Output
+`harvest_c_yr` flux + post-harvest stock. This *is* the layered
+BAU/FIA-derived/stumpage approach you wanted, already estimated.
+
+`conus_svi` (stand vulnerability index) is the natural-disturbance companion
+surface to pair with `p_disturbance` for the disturbance scenario.
+
+Cost: MEDIUM, and lower than a from-scratch build -- the harvest probabilities
+are done; new work is the FVS scenario-keyword injection, per-stand raster
+sampling, and the MC wrapper.
 
 ## 3. TreeMap2022 spatially-explicit -- the key feasibility result
 
@@ -121,16 +142,17 @@ and the scale below which imputation error dominates.
 
 Steps 1-3 I can run on autopilot now. 4-7 each have one design decision below.
 
-## 6. Decisions for Aaron (each unblocks a step)
+## 6. Decisions (resolved 2026-06-03)
 
-* **Harvest definition** (step 5): BAU rotation by forest type (fast,
-  CEM-comparable) vs FIA-derived removals vs econ/stumpage? Recommend BAU first.
-* **Disturbance application** (step 4): mortality-pulse magnitude per agent --
-  use FIA DSTRBCD-implied severities, or a single generic severity to start?
-* **Climate** : CEM has RCP45/85. Do the FVS engines stay climate-static
-  (cleaner attribution of the mortality/calibration difference), or do we add
-  the FVS Climate-FVS extension to match CEM's scenarios?
-* **TreeMap scope**: CONUS-wide now, or ME/Lake-States pilot first (recommended)?
+* **Harvest**: RESOLVED -- use the existing `conus_hcs` canonical v4 probability +
+  intensity rasters (data-driven, ownership/region/price-aware, repeatable).
+  Couple to FVS as above; no new harvest model needed.
+* **Climate**: RESOLVED -- FVS engines stay climate-static (clean attribution of
+  the default vs calibrated vs gompit difference).
+* **TreeMap scope**: RESOLVED -- ME/region pilot first, then CONUS.
+* **Disturbance application** (step 4, open): mortality-pulse magnitude per agent
+  -- pair `p_disturbance` with `conus_svi`; use FIA DSTRBCD-implied severities, or
+  a single generic severity to start. (Minor; can default and refine.)
 
 ## 7. Bottom line
 

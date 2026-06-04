@@ -25,6 +25,19 @@ bootstrap uncertainty are built. From here, in rough priority order.
    more defensible than the percentile band, and separates parameter uncertainty
    from sampling and structural (engine-spread) uncertainty. This is the single
    biggest scientific upgrade.
+
+   *Concrete design (scoped, ready to build):* the draws JSONs already exist
+   (`config/calibrated/<variant>_draws.json`); `config_loader` supports
+   `version="custom", custom_config=<path>`, and `run_fvs_projection` takes a
+   config_version. Propagation: for each of N draws (start N=30), materialize the
+   draw's parameter vector as a custom config JSON, run a per-state plot
+   *subsample* (~80 plots/state is enough for the density CI) through the
+   projection with that config, collect carbon. The ensemble across draws gives
+   the parametric density CI per state/year; scale to population totals by the
+   existing area model. Cost ~ 80 plots x 50 states x 30 draws x 2 scenarios,
+   one SLURM array, comparable to one campaign arm. Only the calibrated variants
+   have posteriors, so the CI attaches to the calibrated engine. Validate on one
+   state (e.g. ME, 30 draws) before the full array.
 4. **Forest-type stratum trends.** The membership table carries FORTYPCD; add a
    fourth aggregation scale (forest type) to the trend layer for type-specific
    trajectories.

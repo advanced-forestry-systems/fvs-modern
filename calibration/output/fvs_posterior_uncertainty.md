@@ -50,3 +50,16 @@ ID/ie, OR/wc, WA/wc), both scenarios, then merge the calibrated-engine inner CI
 onto the dashboard. Only calibrated variants carry posteriors, so the parameter
 CI attaches to the calibrated engine. Pipeline: `fvs_posterior_uncertainty.py`
 (`--draw-idx` array) -> per-draw CSVs -> percentile aggregation -> CI.
+
+## Scaled to all FIA-anchored states (live)
+
+Ran the draw array over the 7 anchored states on their dominant calibrated
+variant (GA/sn, IN/cs, ID/ci, MN/ls, OR/so, WA/ec, ME/ne), 30 draws x 60 plots
+each, then applied each state's relative CI as the lo/hi band on
+`fvs_national_calibrated_v1` via `fvs_posterior_ribbon.py`. Live on the dashboard.
+
+Parameter CI width at 2075: ID 18%, WA 8%, OR 5%, ME 2.4%, and ~0% for GA/IN/MN
+(whose calibration barely perturbs stand-level carbon). Even the widest (ID) is
+well inside the 30-60% structural engine spread, confirming the headline: the
+mortality-model choice dominates projection uncertainty, not the calibrated
+parameters. `posterior_ci_all.csv` carries the per-state relative bands.

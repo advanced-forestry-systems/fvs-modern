@@ -58,6 +58,11 @@ MODELS = {
 # metric -> kind. both physical Tg, no unit calibration.
 MET = {"agc_live_total": "tg", "agb_dry": "tg"}
 BUCKET = "reserve (no harvest)"
+MANAGED_BUCKET = "managed (harvest)"
+# optional: dir containing managed_<cfg>/managed_<ST>.csv (harvest+disturbance
+# scenario from fvs_managed_scenario.py). When set, a managed (harvest) bucket
+# and harvest_c_yr flux are injected alongside the reserve trajectory.
+MANAGED_ROOT = os.environ.get("FVS_MANAGED_ROOT")
 
 
 def load_native(path):
@@ -75,6 +80,15 @@ def load_counts(path):
         for r in csv.DictReader(open(path)):
             out[r["state"]] = int(r["n_plots"])
     return out
+
+
+def load_managed(path):
+    """metric -> {year: density} for the managed scenario (one state)."""
+    d = defaultdict(dict)
+    if os.path.exists(path):
+        for r in csv.DictReader(open(path)):
+            d[r["metric"]][int(r["year"])] = float(r["value"])
+    return d
 
 
 # ---- load every available config arm ----
@@ -178,6 +192,25 @@ for st in all_states:
             node[:] = [s for s in node if s.get("model") != model]   # idempotent
             node.append({"model": model, "cls": CLS, "label": label, "pts": pts})
             metrics_here.add(metric)
+
+        # ---- managed (harvest) scenario, if available ----
+        if MANAGED_ROOT:
+            mpath = os.path.join(MANAGED_ROOT, f"managed_{cfg}",
+                                 f"managed_{st}.csv")
+            mg = load_managed(mpath)
+            mlabel = label.replace("no harvest",
+                                   "harvest+disturbance, conus_hcs")
+            for metric in ("agc_live_total", "agb_dry", "harvest_c_yr"):
+                if metric not in mg:
+                    continue
+                nb = mg[metric]
+                pts = [[y, round(phys_total(v, st), 3)]
+                       for y, v in sorted(nb.items()) if y >= START]
+                node = ser.setdefault(metric, {}).setdefault(MANAGED_BUCKET, [])
+                node[:] = [s for s in node if s.get("model") != model]
+                node.append({"model": model, "cls": CLS, "label": mlabel,
+                             "pts": pts})
+                metrics_here.add(metric)
     json.dump(ser, open(spath, "w"), separators=(",", ":"))
     touched += 1
 

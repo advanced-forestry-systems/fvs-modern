@@ -83,11 +83,20 @@ def load_counts(path):
 
 
 def load_managed(path):
-    """metric -> {year: density} for the managed scenario (one state)."""
-    d = defaultdict(dict)
+    """metric -> mgmt bucket -> {year: density} for the managed scenarios."""
+    d = defaultdict(lambda: defaultdict(dict))
     if os.path.exists(path):
         for r in csv.DictReader(open(path)):
-            d[r["metric"]][int(r["year"])] = float(r["value"])
+            v = r.get("value", "")
+            if v in ("", None):
+                continue
+            try:
+                fv = float(v)
+            except (TypeError, ValueError):
+                continue
+            if fv != fv:                       # NaN
+                continue
+            d[r["metric"]][r.get("mgmt", MANAGED_BUCKET)][int(r["year"])] = fv
     return d
 
 
@@ -193,24 +202,27 @@ for st in all_states:
             node.append({"model": model, "cls": CLS, "label": label, "pts": pts})
             metrics_here.add(metric)
 
-        # ---- managed (harvest) scenario, if available ----
+        # ---- managed scenarios (extensive / harvest / intensive), if available ----
         if MANAGED_ROOT:
             mpath = os.path.join(MANAGED_ROOT, f"managed_{cfg}",
                                  f"managed_{st}.csv")
             mg = load_managed(mpath)
-            mlabel = label.replace("no harvest",
-                                   "harvest+disturbance, conus_hcs")
+            tags = {"managed (extensive)": "extensive partial harvest, natural stands",
+                    "managed (harvest)": "harvest+disturbance, intensive on plantations",
+                    "managed (intensive)": "intensive clearcut regime (bound)"}
             for metric in ("agc_live_total", "agb_dry", "harvest_c_yr"):
                 if metric not in mg:
                     continue
-                nb = mg[metric]
-                pts = [[y, round(phys_total(v, st), 3)]
-                       for y, v in sorted(nb.items()) if y >= START]
-                node = ser.setdefault(metric, {}).setdefault(MANAGED_BUCKET, [])
-                node[:] = [s for s in node if s.get("model") != model]
-                node.append({"model": model, "cls": CLS, "label": mlabel,
-                             "pts": pts})
-                metrics_here.add(metric)
+                for bucket, nb in mg[metric].items():
+                    mlabel = label.replace(
+                        "no harvest", tags.get(bucket, "harvest"))
+                    pts = [[y, round(phys_total(v, st), 3)]
+                           for y, v in sorted(nb.items()) if y >= START]
+                    node = ser.setdefault(metric, {}).setdefault(bucket, [])
+                    node[:] = [s for s in node if s.get("model") != model]
+                    node.append({"model": model, "cls": CLS, "label": mlabel,
+                                 "pts": pts})
+                    metrics_here.add(metric)
     json.dump(ser, open(spath, "w"), separators=(",", ":"))
     touched += 1
 

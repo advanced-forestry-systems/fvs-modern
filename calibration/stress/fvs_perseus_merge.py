@@ -40,7 +40,12 @@ api = os.path.join(repo, "public", "api")
 fia = json.load(open(os.path.join(api, "fia.json")))
 
 CLS = "FVS"
-START = 2025
+# FVS reports the inventory (PROJ_YEAR 0 = 2025) treelist before it imputes
+# missing tree heights, and NSBE biomass needs height, so the 2025 point is
+# systematically understated (50-90% low, in proportion to each state's
+# missing-height fraction) and jumps by 2030. We therefore anchor and report
+# the FVS series from 2030, the first year with complete (FVS-filled) heights.
+START = 2030
 # config -> (model id, label)
 MODELS = {
     "default":    ("fvs_national_default_v1",
@@ -163,6 +168,8 @@ for st in all_states:
             nb = nat[metric][BUCKET]
             pts = []
             for y in sorted(nb):
+                if y < START:           # drop pre-2030 height-fill artifact
+                    continue
                 v, lo, hi = nb[y]
                 pts.append([y, round(phys_total(v, st), 3),
                                round(phys_total(lo, st), 3),

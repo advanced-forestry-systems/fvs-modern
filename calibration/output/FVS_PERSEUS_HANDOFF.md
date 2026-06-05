@@ -5,6 +5,12 @@ Status: the full-FIADB CONUS FVS projection system is built, validated, and
 This document is the single reference for what exists, how it fits together, the
 key findings, and what is left.
 
+**Data deposit (Zenodo):** the processed projection products, pipeline code, and
+findings docs are archived and citable.
+Concept DOI (latest version): https://doi.org/10.5281/zenodo.20555666 |
+v1.0.0: https://doi.org/10.5281/zenodo.20555667 (CC-BY-4.0).
+Derived from the fvs-modern software (DOI 10.5281/zenodo.19802672).
+
 ## 1. What is live
 
 Three national FVS engines, each with four management scenarios, anchored to FIA

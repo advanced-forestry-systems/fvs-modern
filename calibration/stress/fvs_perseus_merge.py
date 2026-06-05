@@ -194,6 +194,7 @@ for st in all_states:
                 if y < START:           # drop pre-2030 height-fill artifact
                     continue
                 v, lo, hi = nb[y]
+                lo, hi = min(lo, v), max(hi, v)   # band must contain the value
                 pts.append([y, round(phys_total(v, st), 3),
                                round(phys_total(lo, st), 3),
                                round(phys_total(hi, st), 3)])

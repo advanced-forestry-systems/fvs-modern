@@ -1,4 +1,4 @@
-# Upstream Change Report (2026-05-25)
+# Upstream Change Report (2026-06-08)
 
 ## FVS Core (7 new commits)
 

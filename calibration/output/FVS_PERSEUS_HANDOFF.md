@@ -19,11 +19,12 @@ carbon, for all 49 forested states (cls `FVS` on the dashboard):
 | engine | model id | character |
 |--------|----------|-----------|
 | default | `fvs_national_default_v1` | native (Dixon/VARMRT) mortality; over-accumulates with no harvest |
-| calibrated | `fvs_national_calibrated_v1` | Bayesian-calibrated growth; 13-32% below default; carries a posterior parameter band on the 7 FIA-anchored states |
+| calibrated | `fvs_national_calibrated_v1` | Bayesian-calibrated growth; 13-32% below default; carries a posterior parameter band on 34 calibrated states |
 | gompit | `fvs_national_gompit_v1` | Johnson national density-dependent mortality; caps and gently declines in late succession |
 
-Scenarios (buckets) per engine: `reserve (no harvest)`, `managed (extensive)`,
-`managed (harvest)` (realistic), `managed (intensive)`, plus `harvest_c_yr`.
+Scenarios (buckets) per engine: `reserve (no harvest)`, `managed (conservation)`
+(lightest), `managed (harvest)` (realistic), `managed (intensive)`, plus
+`harvest_c_yr`.
 Metrics: `agc_live_total` (Tg C) and `agb_dry` (Tg). The invariant stress test
 (`fvs_dashboard_stress.py`) passes with 0 violations.
 

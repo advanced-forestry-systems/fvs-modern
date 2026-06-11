@@ -39,7 +39,10 @@ def load_membership(d):
     m["PLT_CN"] = m["PLT_CN"].str.replace(r"\.0$", "", regex=True)
     m["owner4"] = m["owner4"].fillna("Unknown")
     m["prov_name"] = m["prov_name"].fillna("Unknown")
-    return m[["PLT_CN", "owner4", "prov_name"]].drop_duplicates("PLT_CN")
+    ftcol = "ft_group" if "ft_group" in m.columns else "FORTYPCD"
+    m["ft_group"] = m[ftcol].fillna("Unknown").astype(str)
+    return m[["PLT_CN", "owner4", "prov_name", "ft_group"]
+             ].drop_duplicates("PLT_CN")
 
 
 def managed_factor(reserve_by_year, h, a):
@@ -103,6 +106,7 @@ def main():
     wide = wide.merge(mem, on="PLT_CN", how="left")
     wide["owner4"] = wide["owner4"].fillna("Unknown")
     wide["prov_name"] = wide["prov_name"].fillna("Unknown")
+    wide["ft_group"] = wide["ft_group"].fillna("Unknown")
     print(f"{len(wide)} plots with full year set + area + strata")
 
     # managed per-plot densities
@@ -123,7 +127,8 @@ def main():
     man = pd.DataFrame(man, columns=pys, index=wide.index)
 
     out = []
-    scales = {"owner": "owner4", "ecoregion": "prov_name", "state": "STATE"}
+    scales = {"owner": "owner4", "ecoregion": "prov_name", "state": "STATE",
+              "forest_type": "ft_group"}
     for scale, col in scales.items():
         for key, g in wide.groupby(col):
             mg = man.loc[g.index]

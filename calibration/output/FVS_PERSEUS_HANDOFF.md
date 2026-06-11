@@ -138,7 +138,7 @@ regen is additive by model id), but a full series rebuild from the database woul
 not recreate them -- after any such rebuild, re-run pipeline STAGE 7 (merge +
 ribbon + stress). Both gates must pass before a push: `fvs_dashboard_stress.py`
 (0 violations) and the repo's `scripts/check_api_integrity.py` (PASS). The
-parameter-CI band currently covers 19 calibrated states (posterior_ci_all.csv).
+parameter-CI band currently covers 34 calibrated states (posterior_ci_all.csv); the carbon-dominant states are covered, the ~15 omitted are sparse-forest (negligible carbon).
 
 ## 6. To refresh / reproduce
 

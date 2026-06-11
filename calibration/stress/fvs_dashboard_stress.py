@@ -24,7 +24,7 @@ fia = json.load(open(os.path.join(api, "fia.json")))
 MODELS = ["fvs_national_default_v1", "fvs_national_calibrated_v1",
           "fvs_national_gompit_v1"]
 ENG = {m: m.split("_")[2] for m in MODELS}
-ORDER = ["reserve (no harvest)", "managed (extensive)",
+ORDER = ["reserve (no harvest)", "managed (conservation)",
          "managed (harvest)", "managed (intensive)"]
 METRIC = "agc_live_total"
 TOL = 1e-6

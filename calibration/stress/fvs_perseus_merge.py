@@ -208,7 +208,7 @@ for st in all_states:
             mpath = os.path.join(MANAGED_ROOT, f"managed_{cfg}",
                                  f"managed_{st}.csv")
             mg = load_managed(mpath)
-            tags = {"managed (extensive)": "extensive partial harvest, natural stands",
+            tags = {"managed (conservation)": "light partial harvest, natural stands (no plantation intensive)",
                     "managed (harvest)": "harvest+disturbance, intensive on plantations",
                     "managed (intensive)": "intensive clearcut regime (bound)"}
             for metric in ("agc_live_total", "agb_dry", "harvest_c_yr"):

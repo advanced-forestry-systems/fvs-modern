@@ -29,9 +29,12 @@ to plantations. Buckets:
 | bucket | regime |
 |--------|--------|
 | reserve (no harvest) | no harvest (upper bound) |
-| managed (extensive) | every managed plot gets `h_ext` (all-partial counterfactual) |
+| managed (conservation) | every managed plot gets `h_ext` (light, all-partial; the dashboard's canonical light-management bucket) |
 | managed (harvest) | **realistic**: plantation -> `h_int`, natural -> `h_ext` |
 | managed (intensive) | every managed plot gets `h_int` (all-intensive bound) |
+
+(The light bucket is emitted as `managed (conservation)` to match the dashboard's
+canonical scenario taxonomy; it was internally conceived as "extensive".)
 
 ## Result (2125 live AGC, Mg C/ha, default engine)
 

@@ -15,7 +15,7 @@ This conserves the observed statewide removal while confining the heavier regime
 to plantations.
 
 Scenario buckets (live AGC / AGB density, Mg/ha):
-  managed (extensive)       : every managed plot gets h_ext (light, all-partial)
+  managed (conservation)       : every managed plot gets h_ext (light, all-partial)
   managed (harvest)         : plantation -> h_int, natural -> h_ext (REALISTIC,
                               reproduces the empirical statewide rate)
   managed (intensive)       : every managed plot gets h_int (heavy bound)
@@ -115,7 +115,7 @@ def main():
                     if metric == "agc_live_total":
                         fluxd.setdefault(y, []).append(
                             (h_int if is_pl else h_ext) * dr[y])
-            for bucket, dd in (("managed (extensive)", ext),
+            for bucket, dd in (("managed (conservation)", ext),
                                ("managed (harvest)", real),
                                ("managed (intensive)", intn)):
                 for y in sorted(dd):

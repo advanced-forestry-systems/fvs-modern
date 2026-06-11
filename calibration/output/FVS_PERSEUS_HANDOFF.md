@@ -11,6 +11,39 @@ Concept DOI (latest version): https://doi.org/10.5281/zenodo.20555666 |
 v1.0.0: https://doi.org/10.5281/zenodo.20555667 (CC-BY-4.0).
 Derived from the fvs-modern software (DOI 10.5281/zenodo.19802672).
 
+## 0. Executive summary
+
+A modernized, Bayesian-calibrated Forest Vegetation Simulator was run over the
+entire USDA FIA database (49 states, every plot, to 2125) and wired into the
+PERSEUS Forest Intelligence dashboard as three growth/mortality engines
+(default, calibrated, gompit), each under four management scenarios anchored to
+FIA carbon. The single most consequential moment was a QA catch *before*
+publication: the DataMart tree lists silently under-expanded overstory ~6.5x,
+making the first campaign's biomass ~6x too light. That was diagnosed against the
+raw FIA TREE table, fixed, and the whole campaign re-run. On top of the corrected
+projections we added: a data-driven harvest+disturbance managed scenario with
+intensive management confined to FIADB plantations; a CONUS TreeMap
+spatially-explicit layer and a FIADB-vs-TreeMap multi-scale comparison; bootstrap
+trend breakdowns by landowner, ecoregion, state, and forest type; and a Bayesian
+posterior-draw parameter-uncertainty band (34 states). The headline scientific
+result: structural (engine-choice) uncertainty of 30-60% dominates parameter
+uncertainty of 0-18%, so the mortality model matters far more than the calibrated
+coefficients. Everything is live, passes both the project's API-integrity check
+and a dedicated invariant stress test (0 violations), is archived on Zenodo with
+a DOI, and is reproducible from raw FIA via one pipeline script.
+
+## 0b. Deliverables (all live / committed)
+
+* **Dashboard (live):** 3 FVS engines x 4 scenarios x 49 states + `harvest_c_yr`,
+  with a calibrated posterior band on 34 states. cls `FVS` on
+  holoros.github.io/perseus-forest-intelligence. Passes `check_api_integrity.py`.
+* **Zenodo dataset:** concept DOI 10.5281/zenodo.20555666 (v1.0.0 .20555667),
+  21 files, CC-BY-4.0, cross-linked to the fvs-modern software DOI.
+* **Reproducible pipeline:** `run_fvs_perseus_pipeline.sh` (raw FIA -> dashboard).
+* **Analysis products (repo + Zenodo):** owner/ecoregion/state/forest-type trends
+  with bootstrap CI; FIADB-vs-TreeMap multi-scale comparison; posterior CI table.
+* **Documentation:** this handoff + eight findings docs + a roadmap.
+
 ## 1. What is live
 
 Three national FVS engines, each with four management scenarios, anchored to FIA

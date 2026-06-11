@@ -24,10 +24,15 @@ modestly. NIPF dominates the national total (~half the forest). See figure.
 
 ![owner trends](fvs_owner_trends.png)
 
-Output `strata_trends_<engine>.csv` carries all three scales (owner / ecoregion /
-state) x 2 scenarios x 5 years with `total_TgC`, `total_lo/hi` (95% CI), and
-`mean_MgC_ha`. Ecoregion (87 EPA L3 provinces) and state breakdowns are in the
-same file. Rerun per engine with `--config` for the calibrated / gompit brackets.
+Output `strata_trends_<engine>.csv` carries **four** scales (owner / ecoregion /
+state / forest_type) x 2 scenarios x 5 years with `total_TgC`, `total_lo/hi`
+(95% CI), and `mean_MgC_ha`. Ecoregion (87 EPA L3 provinces), state, and
+forest-type-group breakdowns are in the same file. Rerun per engine with
+`--config` for the calibrated / gompit brackets.
+
+Forest-type-group totals (default reserve, 2125 Tg C) are dominated by
+Oak/hickory (~7,790), Maple/beech/birch (~3,820), Oak/pine (~2,040), and
+Spruce/fir (~1,880) -- the expected eastern-hardwood-led ordering.
 
 ## Note on uncertainty layers
 

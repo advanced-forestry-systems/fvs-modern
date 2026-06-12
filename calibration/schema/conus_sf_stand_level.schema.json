@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "conus_sf stand-level constraint layer",
+  "type": "object",
+  "properties": {
+    "stand_level": {
+      "type": "object",
+      "properties": {
+        "states": {
+          "type": "object",
+          "properties": {
+            "H": { "$ref": "#/$defs/transition", "description": "top height, Chapman-Richards GADA difference form, asymptote driven by productivity" },
+            "N": { "$ref": "#/$defs/transition", "description": "density, self-thinning tied to SDImax" },
+            "G": { "$ref": "#/$defs/transition", "description": "basal area, driven by H, N, productivity" }
+          }
+        },
+        "disaggregation": {
+          "type": "object",
+          "properties": {
+            "mode":   { "type": "string", "enum": ["diagnostic", "constrain"] },
+            "rule":   { "type": "string", "enum": ["proportional_ritchie_hann"] },
+            "targets":{ "type": "array", "items": { "type": "string", "enum": ["G","N","H"] } }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "transition": {
+      "type": "object",
+      "description": "age-independent annualized transition y2=f(y1, dt, productivity); must be path-invariant",
+      "properties": {
+        "form":      { "type": "string" },
+        "params":    { "type": "object" },
+        "site_link": { "type": "string", "enum": ["BGI", "CSPI", "none"] },
+        "posterior": { "type": "object", "properties": { "n_draws": {"type":"integer"}, "path": {"type":"string"} } }
+      }
+    }
+  }
+}

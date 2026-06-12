@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "conus_sf ingrowth (count + composition)",
+  "type": "object",
+  "properties": {
+    "ingrowth": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "object",
+          "properties": {
+            "form": { "type": "string", "enum": ["negbinom", "hurdle", "zinb"] },
+            "predictors": { "type": "array", "items": { "type": "string" } },
+            "params": { "type": "object" }
+          }
+        },
+        "composition": {
+          "type": "object",
+          "description": "trait-driven species shares of recruits",
+          "properties": {
+            "form": { "type": "string", "enum": ["multinomial_logit", "dirichlet_multinomial"] },
+            "drivers": { "type": "array", "items": { "type": "string" },
+              "description": "overstory_composition, site, disturbance, shade_tolerance, dispersal_traits" },
+            "params": { "type": "object" }
+          }
+        }
+      }
+    }
+  }
+}

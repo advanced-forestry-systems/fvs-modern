@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CONUS species-free FVS variant config",
+  "description": "Per-component engine config carrying BOTH species-dependent (Leg A) and species-independent (Leg B, trait-driven) terms plus a per-species blend and a posterior-draw reference for uncertainty propagation.",
+  "type": "object",
+  "required": ["variant", "components"],
+  "properties": {
+    "variant": { "type": "string", "const": "conus_sf" },
+    "units":   { "type": "string", "const": "metric", "description": "DBH cm, HT m, BA/BAL m2/ha" },
+    "components": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/component" }
+    }
+  },
+  "$defs": {
+    "component": {
+      "type": "object",
+      "required": ["form", "shared", "species_independent", "blend"],
+      "properties": {
+        "form":   { "type": "string" },
+        "shared": { "type": "object", "description": "fixed slopes shared across species" },
+        "species_independent": {
+          "type": "object",
+          "required": ["trait_cols", "gamma", "scale_mean", "scale_sd"],
+          "description": "Leg B: intercept = standardize(W, scale_mean, scale_sd) %*% gamma",
+          "properties": {
+            "trait_cols": { "type": "array", "items": { "type": "string" } },
+            "gamma":      { "type": "array", "items": { "type": "number" } },
+            "scale_mean": { "type": "array", "items": { "type": "number" } },
+            "scale_sd":   { "type": "array", "items": { "type": "number" } }
+          }
+        },
+        "species_dependent": {
+          "type": "object",
+          "description": "Leg A: fitted per-species intercepts; present only for species at or above min_n_legA",
+          "properties": {
+            "spcd":  { "type": "array", "items": { "type": "integer" } },
+            "b0":    { "type": "array", "items": { "type": "number" } },
+            "n_obs": { "type": "array", "items": { "type": "integer" } }
+          }
+        },
+        "blend": {
+          "type": "object",
+          "required": ["rule"],
+          "description": "b0_used(s) = w_s*b0[s] + (1-w_s)*(W[s] %*% gamma), w_s = n_s/(n_s+kappa)",
+          "properties": {
+            "rule":       { "type": "string", "enum": ["shrinkage", "source_map", "pure_sf"] },
+            "kappa":      { "type": "number" },
+            "min_n_legA": { "type": "integer" }
+          }
+        },
+        "site_term": {
+          "type": "object",
+          "properties": {
+            "source":       { "type": "string", "enum": ["BGI", "CSPI"] },
+            "cspi_version": { "type": "string" }
+          }
+        },
+        "modifier": {
+          "type": "object",
+          "properties": {
+            "form":                 { "type": "string", "enum": ["common", "trait_mediated", "none"] },
+            "alpha_0":              { "type": "number" },
+            "alpha":                { "type": "object" },
+            "trait_mediated_types": { "type": "array", "items": { "type": "string" } },
+            "gamma":                { "type": "object" }
+          }
+        },
+        "posterior": {
+          "type": "object",
+          "description": "thinned draws for parameter-uncertainty propagation",
+          "properties": {
+            "n_draws": { "type": "integer" },
+            "path":    { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

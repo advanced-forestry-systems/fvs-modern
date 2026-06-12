@@ -363,3 +363,13 @@ lib_pre_rebuild_*/
 config/calibrated/*.pre_conus_*
 # SF integration preview configs (intermediate)
 config/calibrated/*.sf_preview.json
+
+# Local consolidation symlink (calibration work lives in standalone fvs-conus)
+/calibration
+# SF preview configs anywhere
+*.sf_preview.json
+# pre_sf timestamped config backups
+config/calibrated/*.pre_sf_*
+# ephemeral build log + manuscript edit-backup
+build_ne_magfix.log
+manuscript/*.pre_edits*.docx

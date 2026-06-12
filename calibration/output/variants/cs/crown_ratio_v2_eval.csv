@@ -1,2 +1,0 @@
-variant,model_version,inference_method,n_obs,n_species,n_species_grouped,response,family,r2_insample,rmse_insample,bias_insample,formula
-cs,v2_level,HMC_beta_v2,30000,99,65,CR_t2,beta,0.33873996479554336,0.10493694169454741,0.0017520269911156417,CR_t2 ~ CR_t1_std + DBH_std + I(DBH_std^2) + BA_std + BAL_std + SI_std + relDBH_std + (1 + DBH_std | SPCD_grouped)

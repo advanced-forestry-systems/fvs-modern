@@ -1,2 +1,0 @@
-variant,model_version,inference_method,n_obs,n_dead,mort_rate,n_species,n_species_grouped,auc_insample,formula,has_elev,has_slope
-nc,v2,HMC_CmdStanR_v2,13229,1294,0.09781540554841636,29,22,0.7571522459691179,survived ~ DBH_std + I(DBH_std^2) + BAL_std + CR_std + SI_std + BA_std + DBH_BAL + ELEV_std + SLOPE_std + (1 + DBH_std + BAL_std | SPCD_grouped),TRUE,TRUE

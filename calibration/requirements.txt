@@ -1,9 +1,0 @@
-# Python dependencies for the calibration and projection pipeline.
-# Install with: pip install -r calibration/requirements.txt
-#
-# Python 3.9+ required.
-# These are the third-party packages used by scripts in calibration/python/.
-# Standard library modules (argparse, json, os, sqlite3, etc.) are omitted.
-
-numpy>=1.22
-pandas>=1.5

@@ -354,3 +354,12 @@ lib_pre_rebuild_*/
 
 # FORTRAN scratch files at root
 /fort.*
+
+# Script-accident dirs (unexpanded shell vars)
+\$O/
+\$OUTDIR/
+\$HOME_OUT/
+# Timestamped calibration config backups
+config/calibrated/*.pre_conus_*
+# SF integration preview configs (intermediate)
+config/calibrated/*.sf_preview.json

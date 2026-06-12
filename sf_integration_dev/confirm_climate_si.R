@@ -1,23 +1,31 @@
-## Confirm whether the calibration data climate_si is the broken climate-RF (csi)
-## by correlating it with FIA SICOND and with cspi_v2/v3 at the same plots.
+## Within calibration data: compare climate_si (used by models) vs the unused
+## cspi column, and against any site-index truth column present. Also diagnose
+## the key formats for the external join.
 suppressMessages(library(data.table))
 dat <- as.data.table(readRDS("calibration/data/conus_remeasurement_pairs_metric_cond_v2.rds"))
 nm <- names(dat)
-cat("candidate cols:", paste(grep("si$|_si|cspi|csi|PLT|^CN$|PLOT", nm, value=TRUE, ignore.case=TRUE), collapse=", "), "\n")
-pid <- intersect(c("PLT_CN","PLT_CN1","PLOT_CN","CN","PLOT"), nm)[1]
-sivar <- intersect(c("climate_si","CSPI","csi"), nm)[1]
-cat("using plot id:", pid, " | productivity col:", sivar, "\n")
-if (is.na(pid) || is.na(sivar)) { cat("MISSING pid or sivar; abort\n"); quit(save="no", status=0) }
-d1 <- unique(dat[, c(pid, sivar), with=FALSE]); setnames(d1, c("PLT_CN","prod"))
-d1[, PLT_CN := format(PLT_CN, scientific=FALSE, trim=TRUE)]
+cat("=== key format diagnosis ===\n")
+cat("PLT_CN_cond1 head:", paste(head(as.character(dat$PLT_CN_cond1),4),collapse=" | "), "\n")
 v2 <- fread("/fs/scratch/PUOM0008/crsfaaron/cspi_v2/cspi_v2_at_plots.csv", colClasses=list(character="PLT_CN"))
-m <- merge(d1, v2[, .(PLT_CN, SICOND, cspi_v2)], by="PLT_CN")
-m <- m[is.finite(SICOND) & SICOND>0 & is.finite(prod)]
-cat("joined plots:", nrow(m), "\n")
-co <- function(y,x){ok<-is.finite(x)&is.finite(y); round(cor(y[ok],x[ok]),3)}
-cat(sprintf("cor(calib %s, FIA SICOND) = %.3f\n", sivar, co(m$SICOND, m$prod)))
-cat(sprintf("cor(calib %s, cspi_v2)    = %.3f\n", sivar, co(m$cspi_v2, m$prod)))
-cat(sprintf("cor(cspi_v2, FIA SICOND)  = %.3f\n", co(m$SICOND, m$cspi_v2)))
-cat(sprintf("range calib %s: %s\n", sivar, paste(round(range(m$prod),2), collapse=" .. ")))
-fwrite(m, "/users/PUOM0008/crsfaaron/fvs-conus/output/conus/sf_integration/climate_si_check.csv")
+cat("v2 PLT_CN head:", paste(head(v2$PLT_CN,4),collapse=" | "), "\n\n")
+
+prods <- intersect(c("climate_si","cspi","CSPI","csi"), nm)
+cat("=== productivity cols present:", paste(prods,collapse=", "), "===\n")
+for (p in prods) {
+  x <- dat[[p]]; cat(sprintf("  %-12s NA%%=%.1f  range=[%s]  sd=%.3f\n", p,
+    100*mean(!is.finite(x)), paste(round(range(x[is.finite(x)]),2),collapse=", "), sd(x[is.finite(x)])))
+}
+if (all(c("climate_si","cspi") %in% nm)) {
+  ok <- is.finite(dat$climate_si) & is.finite(dat$cspi)
+  cat(sprintf("\n  cor(climate_si, cspi) = %.3f  (n=%d)\n", cor(dat$climate_si[ok], dat$cspi[ok]), sum(ok)))
+}
+## look for any site index truth column
+sicols <- grep("SICOND|site_index|^SI_|_SI$|SI_m|SDImax|SICOND_cond", nm, value=TRUE, ignore.case=TRUE)
+cat("\n=== candidate site-index truth cols:", paste(head(sicols,10),collapse=", "), "===\n")
+for (s in head(sicols,6)) {
+  for (p in prods) {
+    ok <- is.finite(dat[[s]]) & is.finite(dat[[p]])
+    if (sum(ok) > 50) cat(sprintf("  cor(%s, %s) = %.3f (n=%d)\n", p, s, cor(dat[[p]][ok], dat[[s]][ok]), sum(ok)))
+  }
+}
 cat("DONE\n")

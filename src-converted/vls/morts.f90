@@ -50,6 +50,9 @@ INCLUDE 'VARCOM.f90'
 INCLUDE 'WORKCM.f90'
 !
 !
+INCLUDE 'GOMPMC.f90'
+!
+!
 !OMMONS
 !----------
 !  DEFINITIONS:
@@ -126,6 +129,7 @@ DATA IMAPNE/ &
 !  RN      = TREES/ACRE LOSS EXPRESSED AS PER YEAR LOSS
 !----------
 LOGICAL DEBUG,LINCL
+REAL CRG,CCHG,SURVG
 !-----------
 !  SEE IF WE NEED TO DO SOME DEBUG.
 !-----------
@@ -455,6 +459,10 @@ IF(DEBUG) WRITE(JOSTND,*) 'TESTMORTS, RN=',RN, &
 !  START LOOP TO ESTIMATE SDI BASED MORTALITY RATE.
 !  TREES ARE PROCESSED ONE AT A TIME WITHIN A SPECIES.
 !----------
+!  GOMPIT: recompute per-tree crown closure at tip for this cycle so the
+!  in-loop gompit override has current cch values.
+!----------
+IF(LGOMP) CALL GOMPCCH
 DO 50 ISPC=1,MAXSP
 I1=ISCT(ISPC,1)
 IF(I1.LE.0) GO TO 50
@@ -527,6 +535,23 @@ IF(WKI.GT.P) WKI=P
 IF(DEBUG) WRITE(JOSTND,9070) I,D,RI,RN,RIP
 9070 FORMAT('MORTALITY RATE ESTIMATES FOR TREE ',I4,', DBH = ',F6.2/ &
        ' RI = ',F7.5,' RN = ',F7.5,' RIP = ',F7.5)
+!----------
+!  GOMPIT OVERRIDE: for species with a fitted gompit row, gompit owns
+!  mortality (density-aware via crown closure at tip), replacing both the
+!  background and SDI rates above. Unfit species fall back to background
+!  rate only (no SDI redistribution; VARMRT is skipped below when LGOMP).
+!----------
+IF(LGOMP) THEN
+  IF(GHAVE(ISPC)) THEN
+    CRG=REAL(ICR(I))/100.0
+    CCHG=CCHT(I)
+    CALL GOMPSURV(ISPC,CRG,CCHG,FINT,SURVG)
+    WKI=P*(1.0-SURVG)
+  ELSE
+    WKI=P*(1.0-(1.0-RI)**FINT)
+  ENDIF
+  IF(WKI.GT.P) WKI=P
+ENDIF
 WK2(I)=WKI
 !----------
 !  END OF TREE LOOP.  PRINT DEBUG INFO IF DESIRED.
@@ -552,7 +577,9 @@ ENDIF
 SUMTRE = 0.0
 IF(RIP .EQ. RN)SUMTRE = T-TN10
 IF(SUMTRE .LT. 0.0)SUMTRE=0.0
-IF(TN10 .GE. 0.1)THEN
+! GOMPIT owns density mortality via crown closure, so the native SDI
+! redistribution (VARMRT) is bypassed when gompit is active.
+IF(TN10 .GE. 0.1 .AND. .NOT.LGOMP)THEN
   CALL VARMRT(SUMTRE,DEBUG,SUMKIL)
 ENDIF
 !----------
@@ -1058,6 +1085,8 @@ ENTRY MORCON
 CEPMRT = 0.
 SLPMRT = 0.
 TPAMRT = 0.
+!  GOMPIT: load coefficients + resolve species once (env-gated, SAVE-guarded).
+CALL GOMPLOAD
 RETURN
 END
 

@@ -58,6 +58,28 @@ INTEGER IRSTRTCD,ISTOPDONE,IRTNCD,ISTOPRES,lenCl
 !
 !     ******************     EXECUTION BEGINS     ******************
 !
+! 2026-05-16 holoros fork: ensure FVS unit-number COMMON variables have
+! their canonical defaults before any I/O. In upstream FVS these are
+! set by `DATA IREAD,ISTDAT,JOLIST,JOSTND,JOSUM,JOTREE/15,2,3,16,4,8/`
+! inside each variant's BLOCK DATA BLKDAT, but the F77 -> F90 conversion
+! in this fork left BLOCK DATA's initializers not being applied to the
+! /CONTRL/ common block at executable load time (verified via objdump
+! -j .data: the contrl_ region is zero-filled). Without these, every
+! call to OPEN(UNIT=IREAD, ...) and WRITE(UNIT=JOSTND, ...) collides on
+! unit 0, the keyword reader hits an immediate EOF, and FVS reports
+! "FVS02 ERROR: NO STOP RECORD IN KEYWORD FILE; RECORDS READ=0".
+!
+! Only set when still zero so we don't clobber a value the API caller
+! (rFVS / fvsOL) already plumbed in. With BLKDAT's initializers not
+! firing the variables start at zero, so this hits on first invocation
+! through the standalone exe / fresh shared library load.
+IF (IREAD  .EQ. 0) IREAD  = 15
+IF (ISTDAT .EQ. 0) ISTDAT = 2
+IF (JOLIST .EQ. 0) JOLIST = 3
+IF (JOSTND .EQ. 0) JOSTND = 16
+IF (JOSUM  .EQ. 0) JOSUM  = 4
+IF (JOTREE .EQ. 0) JOTREE = 8
+
 DEBUG=.FALSE.
 !-----------
 !  SEE IF WE NEED TO DO SOME DEBUG.

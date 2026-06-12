@@ -153,6 +153,13 @@ BJTHET = 0.42
 ASPECT = 0.
 LAUTON = .FALSE.
 LFIA = .FALSE.
+! 2026-05-16: default ACD to FIA NSVB volume / biomass / carbon equations.
+! NSVB (National Scale Volume and Biomass; Westfall et al. 2024, GTR WO-104)
+! replaces the legacy CRM component-ratio method. The FIAVBC subsystem
+! (commit 08e833b2 upstream) is already wired into the FVSacd build via
+! fiavbc/nvbeqdef.f90 + dbsqlite/dbs_fiavbc_*.f90; this flag flips it ON
+! by default for ACD runs. Users can override with `FIAVBC OFF` keyword.
+LFIANVB = .TRUE.
 AUTMAX = 60.0
 AUTMIN = 45.0
 BAF = 40.

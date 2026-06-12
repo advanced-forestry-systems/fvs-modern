@@ -2226,5 +2226,105 @@
       "draws_csv": "calibration/output/conus/cr_recession_cspi_traits1_fixed_draws.csv",
       "notes": "Posterior summary; full draws referenced via draws_csv."
     }
+  },
+  "calibration_multipliers": {
+    "htdbh_multiplier": [
+      1,
+      5.33052256,
+      4.69066059,
+      6.17375605,
+      2.06366699,
+      4.3278824,
+      1.85814948,
+      2.24806972,
+      1,
+      1,
+      1,
+      4.93631333
+    ],
+    "mort_multiplier": [
+      1,
+      1.73211291,
+      0.97452694,
+      2.96782629,
+      1.65023298,
+      0.64384792,
+      0.81874308,
+      1.28784571,
+      1,
+      1,
+      1,
+      0.31627115
+    ],
+    "cr_multiplier": [
+      0.93149892,
+      0.97045271,
+      0.87035901,
+      0.93149892,
+      0.80007084,
+      0.93149892,
+      0.98899545,
+      1.04570396,
+      0.93149892,
+      0.93149892,
+      0.93149892,
+      1.0639783
+    ],
+    "dds_multiplier": [
+      1,
+      1.09980255,
+      1.16808442,
+      1.02411422,
+      0.81701564,
+      1.05770061,
+      0.91901261,
+      0.78561786,
+      1,
+      1,
+      1,
+      1.01997622
+    ],
+    "htg_multiplier": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "provenance": {
+      "variant": "nc",
+      "maxsp": 12,
+      "clip": [
+        0.1,
+        10
+      ],
+      "available": {
+        "HD": true,
+        "MORT": true,
+        "CR": true,
+        "DG": true,
+        "SDI": true,
+        "HI": false
+      },
+      "definitions": {
+        "htdbh_multiplier": "HD asymptote ratio (a_pooled + r_SPCD__a)/a_pooled",
+        "mort_multiplier": "mortality-rate ratio from survival logit incl species RE",
+        "cr_multiplier": "exp(r_SPCD_grouped) relative crown-ratio factor",
+        "dds_multiplier": "DG intercept-shift exp(delta b0); dense index, approximate, adopted variants only",
+        "htg_multiplier": "HI intercept-shift exp(delta b0); dense index, approximate, adopted variants only"
+      },
+      "htdbh_n_species": 32,
+      "mort_n_species": 29,
+      "cr_n_species": 38,
+      "dds_n_species": 29,
+      "dds_mapping": "exact (species_index crosswalk)"
+    }
   }
 }

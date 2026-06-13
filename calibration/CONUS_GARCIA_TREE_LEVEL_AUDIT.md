@@ -79,6 +79,29 @@ solution. The two exceptions matter differently:
 6. **Affirm the global/local structure**; the hierarchical species and ecoregion effects are
    already García's GADA decomposition, so no change there, just recognition.
 
+## 3a. CR2 annualization fix, validated (job 11553509)
+
+Implemented and tested the principled fix for the one annualization gap. The current CR2 model
+maps logit(CR2) from logit(CR1) with no interval term, so it predicts a fixed change even over a
+zero-length interval. The García-consistent replacement is an exponential approach to an
+equilibrium crown ratio:
+
+```
+logit(CR2) = E + (logit(CR1) - E) * exp(-k * T_years)
+E = b0 + trait + random effects + b1 dbh + b2 dbh^2 + b3 ba + b4 bal + b6 ln_csi   (equilibrium)
+```
+
+A quick validation fit on 200,000 trees (mean interval 6.5 years) confirms it works: the annual
+approach rate k estimates to 0.064 per year (a crown-ratio adjustment half-life near 11 years,
+biologically sensible), and the form is path invariant to machine precision (ten one-year steps
+equal one ten-year step). At a zero interval it correctly returns CR2 = CR1, which the current
+model cannot. Its in-sample R2 on logit(CR2) is 0.40 against 0.43 for the current form; the small
+gap is the trivial autocorrelation the current b_cr1 term picks up, not real skill, and the
+production test is a held-out ΔLOO on the Stan models. The annualized Stan model
+(`crown_ratio_t2_annualized.stan`, with a `T_years` data input and `k` replacing `b_cr1`) is
+written and ready; the remaining step is to add `T_years` to the CR2 fit driver and run the
+current-versus-annualized ΔLOO.
+
 ## 4. The unifying point
 
 Annualization is not just bookkeeping for FIA's variable intervals; it is the same property

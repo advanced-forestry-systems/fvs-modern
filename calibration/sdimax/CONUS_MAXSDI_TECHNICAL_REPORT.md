@@ -99,7 +99,57 @@ The 28 percent bias and the predictive-skill advantage are national results on F
 
 A second caveat is definitional consistency. The FIA-estimated maximum is on a specific SDI convention (metric, summation method); adopting it operationally requires matching the convention FVS uses internally so the relative density that drives self-thinning is computed consistently. This is a units-and-definitions check, not a modeling obstacle.
 
-## 8. Bottom line
+## 8. Side-by-side FVS projections (Pacific Northwest demonstration)
+
+To show the operational consequence inside FVS rather than only in the statistical self-thinning test,
+we ran paired FVS Pacific Northwest (PN) projections on 101 remeasured Oregon and Washington plots,
+identical in every respect except the maximum SDI: the FVS default (species-weighted, internal) versus
+the localized FIA-derived value supplied per stand through the SDIMAX keyword. The PN region is the
+intended hard case, high-density Douglas-fir and western hemlock where species-weighting should be
+most consequential. We measured each projection two ways: against the observed remeasurement (does the
+localized maximum predict the observed density better) and over a 100-year horizon (how the choice
+compounds).
+
+**The localized maximum improves the density prediction, and the improvement scales with how dense the
+stand is, exactly as the mechanism predicts.** Error in projected density (trees per hectare) against
+the observed remeasurement:
+
+| stand set | n | default (species-weighted) % RMSE | localized (FIA-derived) % RMSE |
+|---|---:|---:|---:|
+| all stands | 101 | 46 | 42 |
+| binding (relative density > 0.45) | 68 | 39 | 34 |
+| dense (relative density > 0.6) | 30 | 35 | 26 |
+
+In the densest stands, where the density limit actually governs the projection, localizing the maximum
+cuts the density error by about a quarter (35 to 26 percent RMSE). Basal area and quadratic mean
+diameter are essentially unchanged (within a point), which is the correct and reassuring signature: the
+maximum SDI governs density and self-thinning, not tree size, so a correct maximum should move density
+and leave size alone. The improvement is concentrated where it should be and absent where it should be.
+
+**A candid limitation that is itself a useful finding for the FVS staff.** FVS's projection sensitivity
+to the maximum SDI is bounded by design: the density limit drives the density-dependent component of
+mortality once a stand approaches it, so in stands well below the limit the choice of maximum changes
+little, and over a 100-year horizon the per-stand density difference between the two maxima is modest
+on average (a few trees per hectare) but real, signed, and growing with relative density (panel B of
+the figure). The practical reading is that correcting the maximum matters most for dense-stand and
+long-horizon applications (carbon, fuels, density management), and matters little for young or open
+stands. This bounds the claim honestly: the strong statistical evidence for the localized maximum (the
+85 percent better self-thinning prediction) translates inside FVS into a meaningful density improvement
+concentrated in the binding regime, not a wholesale change to every projection.
+
+![Default versus localized maximum SDI in FVS PN projections](pn_maxSDI_demo.png)
+
+*Figure. Paired FVS PN projections, default versus localized maximum SDI, 101 remeasured OR/WA plots.
+(A) Density error against the observed remeasurement falls with the localized maximum, most in dense,
+binding stands. (B) Over a 100-year projection the per-stand density difference is real, signed
+(localized thins slightly more), and grows with relative density.*
+
+This demonstration is reproducible (`calibration/python/pn_sdimax_sidebyside.py` in fvs-modern). The
+natural extension, which we recommend, is to repeat it on an interior-West variant where the native
+species-weighted maximum and the FIA value diverge most, and to pair it with the same demonstration on
+the regional variants where species-weighting is known to be furthest off.
+
+## 9. Bottom line
 
 Maximum SDI is not observable, so the case rests on predictive skill, and on that ground the result is clear: a localized, FIA-derived maximum predicts observed self-thinning about 85 percent better than the species-weighted maximum, in every region, while species-weighting is also biased about 28 percent high and explains almost none of the plot-level variation. The recommended change is to set the density limit from a localized, data-derived maximum SDI per stand, supplied to FVS through the SDIMAX keyword and to any other model as its maximum-SDI input, decoupling the density limit from the internal species table. It is a small operational change with a measurable improvement in the density dynamics the model exists to reproduce, and it generalizes beyond FVS.
 

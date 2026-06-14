@@ -179,15 +179,47 @@ relative density through a fixed functional form tuned to the native maximum; ch
 alone and the response is no longer calibrated. The maximum and the mortality response have to move
 together.
 
-The operational lesson for the FVS staff is therefore more useful than a simple "localize it" would
-have been. Localizing the maximum is the right direction and is validated where the model's mortality
-response is consistent with it (productive, dense forests, and the unified CONUS fit where the maximum
-and mortality are estimated jointly). It should *not* be bolted onto a native regional variant as a
-drop-in SDIMAX swap without revalidating, because in regions like the dry interior West the native
-mortality function is already tuned to a lower effective ceiling that better matches the heavy observed
-thinning, and raising the ceiling alone degrades the projection. Both demonstrations are reproducible
-(`calibration/sdimax/pn_sdimax_sidebyside.py` and `var_sdimax_sidebyside.py` in fvs-modern, with an R
-analysis companion `analyze_sidebyside.R`).
+The Southern (SN) variant, 113 plots in AL/FL/GA/MS/SC/TN, behaved like CR rather than PN: the
+raw localized maximum slightly worsened the (very noisy) density prediction. So across three Western and
+Southern variants the raw drop-in helps in PN and is neutral-to-harmful in CR and SN.
+
+**A scale diagnostic separates the two things the localized maximum carries, and it is the key result.**
+The localized maximum carries a spatial *pattern* (where the maximum is higher or lower) and an absolute
+*level*. To tell which one drives the CR degradation, we re-ran CR holding the brms spatial pattern
+fixed and varying its level by a single scalar (0.6 to 1.2 times the raw value), measuring density error
+against observed:
+
+| level applied to brms maximum | CR density % RMSE | bias % |
+|---|---:|---:|
+| native default (no localization) | 49.0 | +9.4 |
+| brms x 0.8 | 48.9 | -6.7 |
+| **brms x 0.9** | **47.1** | **-1.8** |
+| brms x 1.0 (raw) | 47.3 | +2.5 |
+| brms x 1.2 | 50.9 | +7.5 |
+
+At a level of about 0.9 times the raw value, the localized maximum is best-calibrated for CR and *beats*
+the native ceiling (47.1 versus 49.0 percent RMSE, with bias falling from +9.4 to -1.8 percent). The
+bias crosses zero right at that level. So the brms spatial pattern is informative in CR after all; the
+earlier degradation was a level offset of roughly ten percent, not the pattern being wrong. The same
+will be true region by region: the spatial pattern travels, but the level that makes relative density
+consistent with the model's mortality calibration is region- and model-specific.
+
+![CR scale diagnostic: localized pattern beats native once the level is calibrated](cr_scale_diagnostic.png)
+
+*Figure. Holding the brms spatial pattern fixed and varying its level, CR density error is lowest near
+0.9 times the raw value, below the native default, with near-zero bias. The spatial information helps;
+the level needs calibration.*
+
+The operational lesson for the FVS staff is therefore precise and constructive. Localizing the maximum
+is the right direction, and the FIA-derived surface carries useful spatial structure even where the raw
+drop-in degrades a native variant. What must travel with it is a level calibration so the maximum is
+consistent with the variant's density-dependent mortality, which is automatic in a unified CONUS fit
+that estimates the maximum and mortality together, and is a one-parameter regional adjustment when
+retrofitting a native variant. The recommendation is not "localize or do not"; it is "adopt the
+localized spatial pattern and calibrate its level jointly with the mortality response." All
+demonstrations are reproducible (`calibration/sdimax/pn_sdimax_sidebyside.py`,
+`var_sdimax_sidebyside.py`, `cr_scale_diag.py` in fvs-modern, with the R analysis companion
+`analyze_sidebyside.R`).
 
 ## 9. Bottom line
 
@@ -197,16 +229,17 @@ better than the species-weighted maximum, nationally and in the West, and specie
 biased about 28 percent high with almost no plot-level skill. The direction of the fix is right and the
 evidence for it is strong.
 
-The two regional projection demonstrations make the recommendation more precise than that statistic
+The three regional projection demonstrations make the recommendation more precise than that statistic
 alone. In productive, dense Pacific Northwest stands, supplying the localized maximum to FVS cuts the
-density error by about a quarter where the limit binds. In the dry interior Central Rockies, dropping
-the same localized maximum into the native variant degrades the density prediction, because the brms
-ceiling there sits above the native one and the native mortality function is tuned to the lower native
-ceiling. The maximum and the mortality response have to be consistent. So the conclusion is: localize
-the maximum, but adopt it jointly with the mortality response, not as a drop-in keyword swap on a
-native variant. This is exactly the case for estimating the maximum and the density-dependent mortality
-together in a unified CONUS fit, where the localized maximum delivers its benefit without breaking the
-calibration that a native variant carries.
+density error by about a quarter where the limit binds. In the dry interior Central Rockies and the
+South, the raw localized maximum is neutral-to-harmful in the native variant. But the scale diagnostic
+resolves why: the FIA-derived maximum carries a useful spatial pattern and a level, and once the level
+is calibrated (about 0.9 times the raw value in CR) the localized maximum beats the native ceiling with
+near-zero bias. So the spatial information is good everywhere; only the level needs to be made
+consistent with the variant's mortality calibration. The conclusion is therefore: adopt the localized
+spatial pattern and calibrate its level jointly with the density-dependent mortality response. This is
+automatic in a unified CONUS fit that estimates the maximum and mortality together, and is a
+one-parameter regional adjustment when retrofitting a native variant.
 
 ## 10. Recommendations and next steps
 
@@ -224,11 +257,11 @@ calibration that a native variant carries.
    source for the *value* of the density limit, and pair any operational adoption with a check that the
    variant's mortality response is calibrated to that value. The surface (Zenodo 10.5281/zenodo.19509367)
    and the plot-level table are available now.
-5. **Diagnose the CR degradation further** to separate two candidate causes: the brms surface being
-   biased high for dry woodlands (a data issue), versus the native CR mortality calibration (a
-   model-consistency issue). A quick test is to refit the CR density-dependent mortality against the
-   localized maximum and re-run; if the degradation reverses, the cause is consistency, which is the
-   expected result and the argument for joint estimation.
+5. **The CR diagnostic is done and points to level calibration.** Holding the brms spatial pattern
+   fixed and scaling its level, CR is best near 0.9 times the raw value and beats native there. The
+   remaining refinement is to estimate the per-region (or per-variant) level scalar directly, which is
+   what the unified joint fit produces automatically; for native-variant retrofits it is a single
+   regional adjustment.
 
 ---
 

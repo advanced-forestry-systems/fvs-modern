@@ -30,7 +30,7 @@ key2sdi=dict(zip(b.ID.astype(str),b["SDImax.mean"]))
 rem=plot.dropna(subset=["PREV_PLT_CN"]).copy(); rem["PREV_PLT_CN"]=rem.PREV_PLT_CN.astype("int64")
 rem["interval"]=rem.apply(lambda r:r.MEASYEAR-yr.get(r.PREV_PLT_CN,np.nan),axis=1)
 rem=rem[(rem.interval>=5)&(rem.interval<=15)]; rem=rem[rem.plot_key.map(lambda k:k in key2sdi)]
-rem=rem.sample(n=min(110,len(rem)),random_state=5)
+rem=rem.sample(n=min(int(_os.environ.get("NSAMP","110")),len(rem)),random_state=int(_os.environ.get("SEED","5")))
 tr1=G.load_fia_trees(VAR,rem.PREV_PLT_CN.tolist(),Path(FIA)); tr2=G.load_fia_trees(VAR,rem.CN.astype("int64").tolist(),Path(FIA))
 def metr(df):
     d=df[(df.DIA>0)&(df.TPA_UNADJ>0)]

@@ -270,6 +270,32 @@ variants. Left: native versus level-calibrated density error; calibrated is at o
 20. Right: the RMSE-optimal level is variant-specific, from 0.6 to 2.0 (median 1.2), most variants
 needing the brms maximum scaled up.*
 
+**The required level is partly predictable from each variant's native bias, which is the consistency
+story made quantitative.** The optimal level tracks how much a variant's native configuration over- or
+under-thins (correlation about -0.35; level roughly 1.1 minus 0.016 times the native density bias).
+Variants whose native mortality over-thins (a negative density bias, for example the Klamath Mountains,
+Acadian, and Northeast) need the localized maximum scaled up, because a higher ceiling reduces the
+over-thinning; the two variants that over-retain (Central Rockies and Utah, the only positive biases)
+sit near or below the raw level. So the level is not arbitrary, it compensates for the variant's
+mortality calibration, which is exactly why it must be estimated jointly with mortality and why a
+unified fit removes the need for a per-variant scalar.
+
+![Optimal level tracks native bias](level_vs_bias.png)
+
+*Figure. The level each variant needs tracks its native density bias: over-thinning variants need the
+maximum scaled up. This is why the level must be calibrated with the mortality response, not set
+globally.*
+
+**Two honest qualifications.** First, the engine effect is concentrated, not universal. Where the
+ceiling does not strongly bind over a remeasurement interval, the localized maximum is roughly neutral;
+the Pacific Northwest and the other Oregon and Washington variants, on a clean multi-sample basis, show
+native and calibrated density error within about a point (around 47 to 50 percent RMSE). The clear
+engine gains are in variants whose native level is most off (Klamath Mountains, Acadian, Northeast,
+Southern Oregon). Second, Utah is the genuine exception: it has the weakest self-thinning signal of any
+region (deviance explained 0.04) and its native configuration already under-thins, so density there is
+governed by drought and disturbance rather than the density ceiling, and no level of the localized
+maximum improves it. The exception is therefore mechanistic and expected, not a failure of the surface.
+
 The operational lesson for the FVS staff is therefore precise and constructive. Localizing the maximum
 is the right direction, and the FIA-derived surface carries useful spatial structure even where the raw
 drop-in degrades a native variant. What must travel with it is a level calibration so the maximum is

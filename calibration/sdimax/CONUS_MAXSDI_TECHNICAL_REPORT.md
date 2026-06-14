@@ -210,6 +210,24 @@ consistent with the model's mortality calibration is region- and model-specific.
 0.9 times the raw value, below the native default, with near-zero bias. The spatial information helps;
 the level needs calibration.*
 
+**A joint maximum-and-mortality analysis on 7.25 million remeasured plots explains why, and tells the
+FVS staff where the density limit matters most.** Fitting observed self-thinning against relative
+density across 19 FVS regions yields two results. First, the predictive skill of a flexible
+self-thinning fit is invariant to the maximum's overall *level* (multiplying the maximum by a constant
+does not change the fit), so the FIA maximum's statistical value is in its spatial *pattern*, and the
+*level* is necessarily set by the mortality model, not the data. That is the formal reason the level
+was invisible in the statistical test of Section 4 yet decisive in the FVS projection of CR: in the
+engine the mortality response is a fixed function of relative density, so the level fixes where each
+stand sits on it. Second, the strength of the self-thinning signal varies about four-fold by region: it
+is weakest in the dry interior West (Utah 0.04, Central Idaho 0.05, Central Rockies 0.06 deviance
+explained) and strongest in the moist East, South, and Pacific Northwest (Southern 0.14, Blue Mountains
+0.12, Pacific Northwest 0.10, Northeast 0.10). Density-dependent self-thinning is a primary mortality
+control where growth is fast and canopies close, and a secondary one where drought and disturbance
+dominate. This is the same axis as the projection result: the localized maximum helps most exactly
+where self-thinning governs (PN), and least where it does not (the dry interior West), so the maximum
+should be localized and its level jointly calibrated, with the largest payoff in the East, South, and
+moist West.
+
 The operational lesson for the FVS staff is therefore precise and constructive. Localizing the maximum
 is the right direction, and the FIA-derived surface carries useful spatial structure even where the raw
 drop-in degrades a native variant. What must travel with it is a level calibration so the maximum is

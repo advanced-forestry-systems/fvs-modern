@@ -15,7 +15,9 @@ First, the species-weighted maximum is biased high by about 28 percent relative 
 
 Second, and decisively, maximum SDI is not directly observable, so the case cannot rest on matching any one estimate. The criterion that is not circular is whether the choice of maximum improves the prediction of observed stand dynamics. Relative density (SDI divided by the maximum) is the variable that drives self-thinning, so the better maximum is the one whose relative density better predicts observed density loss in remeasurement. On 82,130 remeasured plots, a localized FIA-derived maximum predicts observed self-thinning about 85 percent better than the species-weighted maximum (deviance explained 0.107 versus 0.058), and it wins in every region, East and West.
 
-The recommendation is to treat the maximum SDI as a localized, data-derived stand attribute, looked up by location and composition from an FIA-based surface, rather than computed from per-species constants inside the model. In FVS this is the per-stand SDIMAX keyword; in any other engine it is the stand's maximum-SDI input. This decouples the density limit from the model's internal species table and is reusable by any growth-and-yield model.
+Two regional FVS projection demonstrations (Sections 7 and 8) make the recommendation precise. Supplying the localized maximum to FVS cuts density error by about a quarter in dense Pacific Northwest stands, but degrades it in the dry interior Central Rockies, where the localized ceiling sits above the native one and the native mortality function is tuned to the lower native ceiling. The maximum and the mortality response must be consistent.
+
+The recommendation is therefore to treat the maximum SDI as a localized, data-derived stand attribute, looked up by location and composition from an FIA-based surface rather than computed from per-species constants, and to adopt it jointly with the density-dependent mortality response (as in a unified CONUS fit) rather than as a drop-in SDIMAX override on a native variant. In FVS the value enters through the per-stand SDIMAX keyword; in any other engine it is the stand's maximum-SDI input. This decouples the density limit from the model's internal species table and is reusable by any growth-and-yield model, with the consistency caveat above.
 
 ---
 
@@ -93,9 +95,9 @@ This is deliberately model-agnostic. The maximum becomes a per-stand input rathe
 
 The change is small and does not touch FVS source or species tables. For each stand, look up the localized maximum (raster value at the stand coordinates, or the plot's FIA value where it is an FIA plot, or the forest-type-plus-geography fallback) and set it through the SDIMAX keyword per stand. Setting every species in the stand to the localized stand maximum makes the basal-area-weighted stand maximum equal that localized value regardless of composition, which is the intended behavior. We have implemented this as a small per-stand lookup-and-keyword module that resolves the maximum from the raster, the FIA plot table, or the fallback, and emits the SDIMAX block. Units convert from trees per hectare to the FVS internal trees-per-acre convention. The same per-stand value serves as the maximum input to any non-FVS engine.
 
-## 7. Caveats and the proposed confirming test
+## 7. Caveats and the confirming tests we ran
 
-The 28 percent bias and the predictive-skill advantage are national results on FIA remeasurement; the magnitude varies regionally. In the Northeast specifically, the native species-weighted maximum is already close to adequate for density (the FIA value there is only marginally better), so the payoff of localization is concentrated where species-weighting is most wrong: the West and structurally complex mixed stands. The natural confirming test, which we recommend and intend to run, is the same density benchmark on a Western variant (for example PN or CR), comparing the species-weighted SDIMAX against the localized value, where the localized surface should reduce both the density bias and any over-thinning. We would welcome the FVS staff's view on the most useful variant and FIA stratification for that test.
+The 28 percent bias and the predictive-skill advantage are national results on FIA remeasurement; the magnitude and even the direction of the in-engine effect vary regionally. In the Northeast the native species-weighted maximum is already close to adequate for density. To confirm where localization actually helps inside FVS, we ran paired projections on two Western variants, the Pacific Northwest (PN) and the Central Rockies (CR), reported in Section 8. They came back opposite: localization helps in PN and hurts in CR, which is the key operational finding and the reason the recommendation is to adopt the localized maximum jointly with the mortality response rather than as a drop-in override.
 
 A second caveat is definitional consistency. The FIA-estimated maximum is on a specific SDI convention (metric, summation method); adopting it operationally requires matching the convention FVS uses internally so the relative density that drives self-thinning is computed consistently. This is a units-and-definitions check, not a modeling obstacle.
 
@@ -144,14 +146,89 @@ concentrated in the binding regime, not a wholesale change to every projection.
 binding stands. (B) Over a 100-year projection the per-stand density difference is real, signed
 (localized thins slightly more), and grows with relative density.*
 
-This demonstration is reproducible (`calibration/python/pn_sdimax_sidebyside.py` in fvs-modern). The
-natural extension, which we recommend, is to repeat it on an interior-West variant where the native
-species-weighted maximum and the FIA value diverge most, and to pair it with the same demonstration on
-the regional variants where species-weighting is known to be furthest off.
+**The interior-West confirmation came back the other way, and that is the most important result here.**
+We repeated the identical paired-projection test on the FVS Central Rockies (CR) variant, 99 remeasured
+plots in Colorado, Wyoming, Utah, and New Mexico. There the localized maximum made the density
+prediction *worse*, not better, across every density stratum:
+
+| region | stand set | n | default % RMSE | localized % RMSE |
+|---|---|---:|---:|---:|
+| PN (productive, dense) | dense (RD > 0.6) | 30 | 35 | **26** |
+| CR (dry interior) | dense (RD > 0.6) | 36 | 42 | **44** |
+| CR (dry interior) | all stands | 99 | 47 | **52** |
+
+The mechanism is clear and instructive. In CR the brms localized maximum (mean 858 trees/ha) sits
+*above* the native CR species-weighted ceiling, so injecting it makes FVS thin *less*, while these dry
+interior stands actually thinned *more* than even the native ceiling allowed. Raising the ceiling moved
+the prediction the wrong way. In PN the localized maximum sat at or below the effective native ceiling,
+so it thinned slightly more and matched the observed heavy self-thinning of dense conifer stands better.
+
+![PN versus CR: localizing max SDI helps in one region and hurts in the other](pn_vs_cr_maxSDI.png)
+
+*Figure. The same default-vs-localized test in two regions. Localizing the maximum cuts density error
+in productive, dense Pacific Northwest stands (left) and increases it in dry interior Central Rockies
+stands (right). The benefit is regional.*
+
+**This does not contradict the statistical evidence; it sharpens the recommendation.** The
+self-thinning test in Section 4 still holds: relative density built from the brms maximum predicts
+observed density loss better than from species-weighting, nationally and in the West. The reason the CR
+projection degrades is not that the brms maximum is wrong about the *relationship*, it is that dropping
+a new ceiling into a native variant whose mortality function was parameterized against that variant's
+own ceiling breaks the consistency between the two. FVS density-dependent mortality responds to
+relative density through a fixed functional form tuned to the native maximum; change the denominator
+alone and the response is no longer calibrated. The maximum and the mortality response have to move
+together.
+
+The operational lesson for the FVS staff is therefore more useful than a simple "localize it" would
+have been. Localizing the maximum is the right direction and is validated where the model's mortality
+response is consistent with it (productive, dense forests, and the unified CONUS fit where the maximum
+and mortality are estimated jointly). It should *not* be bolted onto a native regional variant as a
+drop-in SDIMAX swap without revalidating, because in regions like the dry interior West the native
+mortality function is already tuned to a lower effective ceiling that better matches the heavy observed
+thinning, and raising the ceiling alone degrades the projection. Both demonstrations are reproducible
+(`calibration/sdimax/pn_sdimax_sidebyside.py` and `var_sdimax_sidebyside.py` in fvs-modern, with an R
+analysis companion `analyze_sidebyside.R`).
 
 ## 9. Bottom line
 
-Maximum SDI is not observable, so the case rests on predictive skill, and on that ground the result is clear: a localized, FIA-derived maximum predicts observed self-thinning about 85 percent better than the species-weighted maximum, in every region, while species-weighting is also biased about 28 percent high and explains almost none of the plot-level variation. The recommended change is to set the density limit from a localized, data-derived maximum SDI per stand, supplied to FVS through the SDIMAX keyword and to any other model as its maximum-SDI input, decoupling the density limit from the internal species table. It is a small operational change with a measurable improvement in the density dynamics the model exists to reproduce, and it generalizes beyond FVS.
+Maximum SDI is not observable, so the case rests on predictive skill. On the statistical test that
+ground is clear: a localized, FIA-derived maximum predicts observed self-thinning about 85 percent
+better than the species-weighted maximum, nationally and in the West, and species-weighting is also
+biased about 28 percent high with almost no plot-level skill. The direction of the fix is right and the
+evidence for it is strong.
+
+The two regional projection demonstrations make the recommendation more precise than that statistic
+alone. In productive, dense Pacific Northwest stands, supplying the localized maximum to FVS cuts the
+density error by about a quarter where the limit binds. In the dry interior Central Rockies, dropping
+the same localized maximum into the native variant degrades the density prediction, because the brms
+ceiling there sits above the native one and the native mortality function is tuned to the lower native
+ceiling. The maximum and the mortality response have to be consistent. So the conclusion is: localize
+the maximum, but adopt it jointly with the mortality response, not as a drop-in keyword swap on a
+native variant. This is exactly the case for estimating the maximum and the density-dependent mortality
+together in a unified CONUS fit, where the localized maximum delivers its benefit without breaking the
+calibration that a native variant carries.
+
+## 10. Recommendations and next steps
+
+1. **Adopt the localized maximum where the mortality response is consistent with it.** In the unified
+   CONUS fit, estimate the maximum SDI (from the FIA-derived surface) and the density-dependent
+   mortality jointly so relative density is internally consistent. This is where localization pays off
+   without side effects.
+2. **Do not ship the localized maximum as a drop-in SDIMAX override on native regional variants**
+   without per-region revalidation. It helps in productive dense forests and hurts in the dry interior
+   West, for the calibration-consistency reason above.
+3. **Run the paired test on the remaining variant families** (a southern and a Lake States variant, and
+   an interior-West variant other than CR) to map where the drop-in helps, is neutral, or hurts. The
+   harness is built and reproducible; this is a bounded, mechanical extension.
+4. **For the FVS staff specifically:** treat the FIA-derived maximum-SDI surface as the recommended
+   source for the *value* of the density limit, and pair any operational adoption with a check that the
+   variant's mortality response is calibrated to that value. The surface (Zenodo 10.5281/zenodo.19509367)
+   and the plot-level table are available now.
+5. **Diagnose the CR degradation further** to separate two candidate causes: the brms surface being
+   biased high for dry woodlands (a data issue), versus the native CR mortality calibration (a
+   model-consistency issue). A quick test is to refit the CR density-dependent mortality against the
+   localized maximum and re-run; if the degradation reverses, the cause is consistency, which is the
+   expected result and the argument for joint estimation.
 
 ---
 

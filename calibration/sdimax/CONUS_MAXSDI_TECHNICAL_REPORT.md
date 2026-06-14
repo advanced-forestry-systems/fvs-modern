@@ -228,37 +228,47 @@ where self-thinning governs (PN), and least where it does not (the dry interior 
 should be localized and its level jointly calibrated, with the largest payoff in the East, South, and
 moist West.
 
-**Per-region level calibration through the engine confirms there is no single global level.** We swept
-the level applied to the localized maximum from 0.6 to 2.0 times the raw value, through the real FVS
-mortality response, for several variants spanning the moisture gradient (a full 20-variant sweep is
-underway). The level that best calibrates the localized maximum to each native variant's mortality
-varies widely:
+**A full sweep across all 20 CONUS variants confirms there is no single global level, and that a
+level-calibrated localized maximum matches or beats native almost everywhere.** We swept the level
+applied to the localized maximum from 0.6 to 2.0 times the raw value, through the real FVS mortality
+response, for every CONUS regional variant. Two results stand out. First, the level-calibrated
+localized maximum gives equal or lower density error than the native species-weighted maximum in 19 of
+the 20 variants (the lone exception is Utah), with substantial improvements in several, for example the
+Klamath Mountains (NC) from 75 to 54 percent RMSE, Acadian (ACD) from 53 to 37, Northeast (NE) from 35
+to 31, and Inland Empire (IE) from 66 to 61. Second, the level that achieves this is strongly
+variant-specific, spanning 0.6 to 2.0 with a median of about 1.2: most variants need the brms maximum
+scaled up to match their (already heavy) native mortality, a handful (Central Idaho, Inland Empire,
+Southern) need it scaled down, and a few sit at the raw value.
 
-| variant | native % RMSE | level-calibrated % RMSE | RMSE-optimal level | direction |
-|---|---:|---:|---:|---|
-| CR (dry interior) | 49.0 | 47.3 | ~1.0 (bias-zero ~0.95) | about right |
-| NE (Northeast) | 34.6 | 30.5 | ~1.8 | scale up |
-| SN (South) | 96.2 | 91.9 | ~0.8 to 1.5 (noisy) | mixed |
-| LS (Lake States) | 54.6 | 54.0 | ~1.4 (weak leverage) | scale up |
+| variant | native % RMSE | calibrated % RMSE | optimal level |
+|---|---:|---:|---:|
+| NE Northeast | 34.6 | 30.5 | 1.8 |
+| ACD Acadian | 52.8 | 36.9 | 2.0 |
+| CR Central Rockies | 49.0 | 47.3 | 1.0 |
+| CS Central States | 46.8 | 43.0 | 1.0 |
+| NC Klamath Mtns | 75.2 | 54.0 | 2.0 |
+| IE Inland Empire | 66.1 | 60.9 | 0.8 |
+| SN Southern | 96.2 | 91.9 | 0.8 |
+| LS Lake States | 54.6 | 54.0 | 1.4 |
+| UT Utah (exception) | 64.5 | 66.7 | 1.2 |
 
-Two honest readings. First, the optimal level spans roughly 0.8 to 1.8 across variants, a more than
-two-fold range, so a common FIA maximum cannot be dropped into native variants at a uniform level; each
-needs its own, and most need the brms maximum scaled up to match their (already heavy) native
-mortality, while the dry interior CR needs it about right. That spread is the direct, quantitative
-evidence that the maximum's level must be estimated jointly with each variant's mortality, not bolted
-on. Second, the RMSE gains from level-calibration inside native FVS are modest (a few points), because
-FVS's sensitivity to the maximum is bounded and, in some variants such as LS, the ceiling barely binds
-over a remeasurement interval. The decisive evidence for localization therefore remains the statistical
-self-thinning test; the engine payoff is real but concentrated, and is fully realized only in a unified
-fit where the mortality response is estimated against the localized maximum rather than inherited from
-the native variant.
+*(Representative rows; the full 20-variant table is `allvar_calibration.csv`.)*
 
-![Per-region level calibration of the localized maximum inside FVS](perregion_level_calibration.png)
+The spread of optimal levels, more than three-fold across variants, is the direct quantitative evidence
+that a common FIA maximum cannot be dropped into native variants at a uniform level; each needs its own,
+estimated jointly with that variant's mortality. The RMSE gains inside native FVS are real but modest in
+many variants because FVS's sensitivity to the maximum is bounded and, in some variants, the ceiling
+barely binds over a remeasurement interval; the largest engine gains appear where the native level was
+most off (NC, ACD). The decisive evidence for localization remains the statistical self-thinning test;
+the engine payoff is fully realized only in a unified fit where the mortality response is estimated
+against the localized maximum rather than inherited from the native variant.
 
-*Figure. Sweeping the level applied to the localized maximum through the FVS mortality response. The
-level at which density bias crosses zero (left) and RMSE is minimized (right) is region-specific,
-spanning roughly 0.8 to 1.8; squares mark the native default. Gains over native are modest because the
-engine's sensitivity to the maximum is bounded.*
+![Per-variant level calibration across all CONUS variants](allvar_level_calibration.png)
+
+*Figure. Sweeping the level on the localized maximum through the FVS mortality response for all 20 CONUS
+variants. Left: native versus level-calibrated density error; calibrated is at or below native in 19 of
+20. Right: the RMSE-optimal level is variant-specific, from 0.6 to 2.0 (median 1.2), most variants
+needing the brms maximum scaled up.*
 
 The operational lesson for the FVS staff is therefore precise and constructive. Localizing the maximum
 is the right direction, and the FIA-derived surface carries useful spatial structure even where the raw

@@ -11,6 +11,12 @@ G._state_abbrev=lambda c:_ABBR.get(c) or _o(c)
 from perseus_100yr_projection import run_fvs_projection, build_fvs_treeinit, build_fvs_standinit
 import os as _os
 VAR=_os.environ.get("VAR","cr"); STATES=_os.environ.get("STATES","CO,WY,UT,NM").split(","); MAXSP=int(_os.environ.get("MAXSP","38")); M2HA=0.2296;TPHc=2.471;CMc=2.54
+_REV={"AL":1,"CA":6,"CO":8,"CT":9,"FL":12,"GA":13,"ID":16,"IL":17,"IN":18,"IA":19,"ME":23,"MA":25,"MI":26,"MN":27,"MS":28,"MO":29,"MT":30,"NV":32,"NH":33,"NM":35,"NY":36,"OR":41,"RI":44,"SC":45,"TN":47,"UT":49,"VT":50,"WA":53,"WI":55,"WY":56}
+import fia_stand_generator as _Gr
+_Gr.VARIANT_STATES[VAR]=tuple(_REV[x] for x in STATES if x in _REV)
+_REV={"AL":1,"CA":6,"CO":8,"CT":9,"FL":12,"GA":13,"ID":16,"IL":17,"IN":18,"IA":19,"ME":23,"MA":25,"MI":26,"MN":27,"MS":28,"MO":29,"MT":30,"NV":32,"NH":33,"NM":35,"NY":36,"OR":41,"RI":44,"SC":45,"TN":47,"UT":49,"VT":50,"WA":53,"WI":55,"WY":56}
+import fia_stand_generator as _Gr
+_Gr.VARIANT_STATES[VAR]=tuple(_REV[x] for x in STATES if x in _REV)
 SCALES=[0.6,0.8,1.0,1.2,1.4,1.6,1.8,2.0]
 frames=[]
 for ab in STATES:

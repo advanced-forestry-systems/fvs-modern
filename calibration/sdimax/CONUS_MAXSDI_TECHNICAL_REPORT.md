@@ -228,6 +228,38 @@ where self-thinning governs (PN), and least where it does not (the dry interior 
 should be localized and its level jointly calibrated, with the largest payoff in the East, South, and
 moist West.
 
+**Per-region level calibration through the engine confirms there is no single global level.** We swept
+the level applied to the localized maximum from 0.6 to 2.0 times the raw value, through the real FVS
+mortality response, for several variants spanning the moisture gradient (a full 20-variant sweep is
+underway). The level that best calibrates the localized maximum to each native variant's mortality
+varies widely:
+
+| variant | native % RMSE | level-calibrated % RMSE | RMSE-optimal level | direction |
+|---|---:|---:|---:|---|
+| CR (dry interior) | 49.0 | 47.3 | ~1.0 (bias-zero ~0.95) | about right |
+| NE (Northeast) | 34.6 | 30.5 | ~1.8 | scale up |
+| SN (South) | 96.2 | 91.9 | ~0.8 to 1.5 (noisy) | mixed |
+| LS (Lake States) | 54.6 | 54.0 | ~1.4 (weak leverage) | scale up |
+
+Two honest readings. First, the optimal level spans roughly 0.8 to 1.8 across variants, a more than
+two-fold range, so a common FIA maximum cannot be dropped into native variants at a uniform level; each
+needs its own, and most need the brms maximum scaled up to match their (already heavy) native
+mortality, while the dry interior CR needs it about right. That spread is the direct, quantitative
+evidence that the maximum's level must be estimated jointly with each variant's mortality, not bolted
+on. Second, the RMSE gains from level-calibration inside native FVS are modest (a few points), because
+FVS's sensitivity to the maximum is bounded and, in some variants such as LS, the ceiling barely binds
+over a remeasurement interval. The decisive evidence for localization therefore remains the statistical
+self-thinning test; the engine payoff is real but concentrated, and is fully realized only in a unified
+fit where the mortality response is estimated against the localized maximum rather than inherited from
+the native variant.
+
+![Per-region level calibration of the localized maximum inside FVS](perregion_level_calibration.png)
+
+*Figure. Sweeping the level applied to the localized maximum through the FVS mortality response. The
+level at which density bias crosses zero (left) and RMSE is minimized (right) is region-specific,
+spanning roughly 0.8 to 1.8; squares mark the native default. Gains over native are modest because the
+engine's sensitivity to the maximum is bounded.*
+
 The operational lesson for the FVS staff is therefore precise and constructive. Localizing the maximum
 is the right direction, and the FIA-derived surface carries useful spatial structure even where the raw
 drop-in degrades a native variant. What must travel with it is a level calibration so the maximum is

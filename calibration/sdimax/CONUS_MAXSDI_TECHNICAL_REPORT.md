@@ -353,6 +353,8 @@ one-parameter regional adjustment when retrofitting a native variant.
 
 ### Selected references
 
+Batista, E.K.L., J.D. Birch, M. Dickinson, C.M. Hoffman, J.A. Lutz, and J.R. Miesel. 2026. Benchmarking and calibrating FVS diameter growth predictions with tree-rings and forest inventory data in Sierra Nevada mixed-conifer forests. Forest Ecology and Management 618:123981. https://doi.org/10.1016/j.foreco.2026.123981
+
 Chivhenge, E., A. Weiskittel, C. Woodall, A. D'Amato, and A. Daigneault. A 30 m wall-to-wall raster of stand density index, maximum stand density index, and relative density for the conterminous United States from TreeMap 2022 and FIA. Zenodo. https://doi.org/10.5281/zenodo.19509367
 
 Houtman, R., et al. TreeMap 2022: a tree-level model of the forests of the conterminous United States.

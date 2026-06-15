@@ -7,8 +7,27 @@ forests. *Forest Ecology and Management* 618:123981. Online 11 June 2026.
 
 ## One line
 
-An independent group, using ground-truth tree rings, reaches the same conclusions our program reaches
-and recommends the same fix, which is strong external corroboration of all three steps.
+An independent group reaches the same qualitative conclusions and recommends our Step 3, which is
+useful directional corroboration; but its diameter-growth benchmark rests on tree rings, a biased
+growth reference, and this program already calibrated diameter growth on FIA remeasurement, the better
+reference, so it adds nothing quantitative to the growth calibration already in place.
+
+## Two corrections to an over-enthusiastic first read
+
+1. **Tree rings are a biased measure of tree growth.** Increment cores come from trees that survived to
+   be measured, so the sample over-represents fast-growing large survivors and underrepresents the
+   suppressed trees that died small. Back-calculating diameter from survivor cores reconstructs a
+   growth trajectory that is systematically too high for the population (the survivorship, or
+   large-tree selection, bias; e.g. Brienen et al. 2012). The benchmark in this paper is therefore
+   biased upward, and the reported 41 percent underprediction is partly an artifact of that, not a
+   clean property of FVS-WS. It should not be read as a quantitative magnitude.
+2. **We already calibrated FVS diameter growth on FIA remeasurement.** FIA remeasurement directly
+   measures diameter change on every tagged tree over the interval, including trees that die. It is
+   population-representative and actually measured, so it is the less-biased reference for the growth
+   channel, and the calibration is already done here. The external study uses a weaker reference for a
+   step we have completed.
+
+So the paper is directional support, not validation, and not new for the growth channel.
 
 ## What they did and found
 
@@ -61,7 +80,10 @@ plan.
 
 ## Net
 
-This paper corroborates the three-step framing end to end and recommends our Step 3 explicitly. It
-belongs in the FVS-team materials as external, independent, very recent support, and it strengthens the
-case that systematic structure-dependent bias in FVS variants is general and that the fix is
-recalibration now plus flexible size-dependent equations next.
+The paper is directional support: it shows another group sees FVS variants as systematically
+structure-biased, endorses the multiplicative-calibration philosophy, and explicitly calls for flexible
+size-dependent equations (our Step 3). It is not quantitative validation, because its diameter-growth
+benchmark rests on a biased growth reference (survivor tree rings), and it does not add to the
+diameter-growth calibration this program already completed on FIA remeasurement, which is the
+less-biased and population-representative reference. In the FVS-team materials it is cited as related
+work with these qualifications, not as independent validation.

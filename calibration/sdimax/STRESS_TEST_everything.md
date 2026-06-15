@@ -26,7 +26,12 @@ rest on a single fixed-seed sample of ~80-140 plots each. The within-variant nat
 comparison is valid (same plots), but cross-variant magnitudes are noisy and not seed-consistent.
 Confidence: medium on "calibrated >= native in most variants," low on any specific variant's magnitude.
 Action: rerun all variants with multiple seeds before any quantitative claim is published; for the
-briefing, state it qualitatively.
+briefing, state it qualitatively. **Quantified (this session):** a three-seed check on Pacific Northwest
+gave native RMSE of 49, 68, and 62 percent across seeds 7, 11, 23, an 18-point spread, which directly
+confirms the per-variant magnitudes are seed-sensitive and must be read qualitatively until a
+multi-seed average is computed. The within-variant native-versus-calibrated direction was stable across
+those seeds (calibration neutral-to-helpful in each), so the directional conclusion holds; only the
+magnitudes are noisy.
 
 **A4. Joint fit: per-variant level doubles self-thinning R2 (0.021 -> 0.046).** Weakness: both numbers
 are tiny, and the data-estimated levels correlate only 0.12 with the engine levels, i.e. the levels are
@@ -54,9 +59,10 @@ high.
 **B3. Species-free equations are not merged.** PR #70 is open; the bundles are banked; the injection is
 a prototype. Confidence: high.
 
-**B4. Some mortality multipliers hit the clip bounds (0.10, 10.0).** That suggests the mortality
-calibration is doing heavy lifting and may be absorbing structure it should not. Worth a look before
-relying on long-horizon mortality. Confidence: flag.
+**B4. Mortality multipliers at the clip bounds: checked, not a systemic problem.** Across variants only
+0 to 4 percent of species hit the 0.10 or 10.0 bound (acd 0, ne 0, cr 0, cs 0, sn 0, ls 3 percent, ak 4
+percent, on 1 percent), and those are rare species with sparse data. So the mortality calibration is not
+broadly saturating; the concern is resolved. Confidence: resolved (audited).
 
 ## C. Species-free and Greg comparisons
 

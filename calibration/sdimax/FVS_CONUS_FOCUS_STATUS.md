@@ -48,7 +48,22 @@ composition), and the stand-level density layer (built on the localized maximum 
 
 ## What is not done (honest gaps)
 
-- **Engine injection: the blocker is now fixed and the path is open (shadow run is the next step).**
+- **Engine injection: environment unblocked, FVS class runs with stop points; one tree-loading bug
+  remains.** Update 2026-06-15 PM: the real blocker was the Python environment, not the design.
+  fvs2py needs Python 3.10+ (it uses union type hints and ParamSpec, 25+ such occurrences); the
+  Cardinal default venv is 3.9, so every prior projection silently fell through the harness's
+  subprocess fallback, which cannot do stop points or per-tree injection. The `python/3.12` module is
+  available; in a clean 3.12 venv (`~/fvs312`, pandas+numpy) fvs2py imports, `FVS(lib_path=FVSne.so)`
+  loads the library, and `run(stop_point_code=5, stop_point_year=-1)` executes without error. The one
+  remaining issue is that the stand's trees are not reaching the engine through the class path
+  (ntrees=0 after the run, exit_code 2 = ran to completion), whereas the same standinit/treeinit load
+  fine through the subprocess path. So the next step is a bounded debug: get the class-driven keyfile
+  or database load to populate the tree list, then read it at stop point 5. The mechanism and
+  environment are proven; this is the last detail before a working shadow run. Shadow test script:
+  `calibration/python/shadow_injection_test.py`.
+
+- **(superseded) Engine injection prototype note:** `sf_injector.py` is wiring-complete against the
+  confirmed FVS API (stop point 5 plus per-tree attribute read/write).
   We found why the injection had never run: fvs2py would not import on the Cardinal Python 3.9
   environment because `_base.py` used Python 3.10+ union type hints (`str | os.PathLike`). A one-line
   lazy-annotations fix (`from __future__ import annotations`) resolves it. Confirmed this session:

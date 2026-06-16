@@ -660,8 +660,16 @@ class FvsConfigLoader:
                 lines.append(f"!! Components: {meta.get('components_updated', [])}")
             lines.append("!!")
 
-        # SDIMAX keyword: sets maximum SDI per species
-        sdi_values = self._find_sdi_param(cats)
+        # SDIMAX keyword: DISABLED 2026-06-16 (WO-1, A. Weiskittel sign-off).
+        # The per-species emission used the wrong FVS keyword field order
+        # (species index in field 1, which FVS reads as the max-SDI VALUE),
+        # so FVS set MAX SDI ~= 1 for all species and over-thinned TPH by
+        # 25-35 percent across variants while only restating native defaults.
+        # Re-enable ONLY with corrected field order (field 1 = value, field 2
+        # = species) AND the revised localized max-SDI values, verified to bind
+        # (per-species stand max is BA-weighted with retention flags).
+        emit_sdimax = bool(self.config.get("_emit_sdimax", False))
+        sdi_values = self._find_sdi_param(cats) if emit_sdimax else None
         if sdi_values is not None:
             lines.append(self._format_sdimax_keywords(sdi_values, include_comments))
 

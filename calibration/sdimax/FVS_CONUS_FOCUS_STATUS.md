@@ -48,9 +48,16 @@ composition), and the stand-level density layer (built on the localized maximum 
 
 ## What is not done (honest gaps)
 
-- **Engine injection is a prototype, not running.** `sf_injector.py` is wiring-complete against the
-  confirmed FVS API (stop point 5 plus per-tree attribute read/write) but has not had an integration
-  run; the attribute names and the call signature need a shadow-mode confirmation.
+- **Engine injection: the blocker is now fixed and the path is open (shadow run is the next step).**
+  We found why the injection had never run: fvs2py would not import on the Cardinal Python 3.9
+  environment because `_base.py` used Python 3.10+ union type hints (`str | os.PathLike`). A one-line
+  lazy-annotations fix (`from __future__ import annotations`) resolves it. Confirmed this session:
+  `from fvs2py import FVS` imports, `FVS(lib_path="lib/FVSne.so")` instantiates, `run(stop_point_code,
+  stop_point_year)` exposes the stop points, and tree dimensions are accessible. The keyfile is set
+  via `fvs.keyfile`. So the mechanism (stop point 5, then per-tree read/write) is now runnable; the
+  remaining step is a shadow-mode run (build a one-stand keyfile, stop at point 5, read the tree list,
+  log species-free vs engine increment, no SET). The fix is committed on the Cardinal checkout; it
+  still needs a clean push to the branch (the branch is ahead of Cardinal's local copy).
 - **The unified joint fit is a statistical prototype**, not the production estimation. The current
   bundles are fit per component; the joint estimation of mortality with the localized maximum (so the
   density level is intrinsic) is prototyped, not adopted.

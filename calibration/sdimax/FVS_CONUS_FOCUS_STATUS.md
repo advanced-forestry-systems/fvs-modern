@@ -48,8 +48,24 @@ composition), and the stand-level density layer (built on the localized maximum 
 
 ## What is not done (honest gaps)
 
-- **Engine injection: environment unblocked, FVS class runs with stop points; one tree-loading bug
-  remains.** Update 2026-06-15 PM: the real blocker was the Python environment, not the design.
+- **Engine injection: environment unblocked, blocker isolated to the fvs2py shared-library path.**
+  Update 2 (2026-06-16): the tree-loading issue is now precisely characterized. The exact same stand,
+  trees, keyfile, and sqlite database load perfectly through the subprocess executable
+  (`run_fvs_projection` auto path: full summary, 639 TPA, 48 ft2/ac BA, SDI 118, projected to 2010 and
+  2020). The same inputs through the fvs2py shared-library path (`FVS(lib).load_keyfile().run()`) load
+  zero trees (ntrees 0, exit 2). So the data and keyfile are correct; the gap is that the fvs2py
+  shared-library path does not initialize FVS to read the stand from the database, even though the .so
+  carries the sqlite extension (248 symbols, dbsopen_). That path has never actually been exercised
+  (the harness always prefers the subprocess executable), so this is a latent bug in the fvs2py
+  wrapper. Two candidate fixes, the next concrete step: (a) supply the FVS input/output unit
+  assignments the subprocess provides via stdin (keyfile, tree file, output, treelist) which the
+  fvs2py `load_keyfile` does not set, or (b) load the initial tree list via the FVS API `fvsAddTrees`
+  instead of the database keyword. Once the .so path loads a stand, stop point 5 plus per-tree
+  read/write completes the injection. The stepwise mechanism and the 3.12 environment are proven; this
+  one FVS-API initialization gap is the last blocker, and it likely needs a focused session or the
+  fvs2py maintainer's input. Diagnostics: `calibration/python/shadow2.py`, `shadow3.py`.
+
+- **(Update 1, 2026-06-15 PM) environment root cause:** the real blocker was the Python environment.
   fvs2py needs Python 3.10+ (it uses union type hints and ParamSpec, 25+ such occurrences); the
   Cardinal default venv is 3.9, so every prior projection silently fell through the harness's
   subprocess fallback, which cannot do stop points or per-tree injection. The `python/3.12` module is

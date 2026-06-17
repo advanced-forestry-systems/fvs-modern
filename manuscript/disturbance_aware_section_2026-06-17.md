@@ -61,16 +61,18 @@ inflates merchantable volume +5 to +10%. Eighty-two per-species correction ratio
 several variants show a shape error, refitting the curve coefficients is preferred over a uniform
 multiplier. REGHMULT (height growth) is not the right lever for the static imputation bias.
 
-## Result 6: the four-lever calibration, validated
+## Result 6: the four-lever adjustment, evaluated in-sample over one interval
 
 Combining the levers (site-specific brms SDImax; sign-aware recruitment injection at the per-variant FIA
 rate; a signed diameter-growth multiplier; and an HT-DBH curve correction) and validating default vs
 calibrated across all variants on the undisturbed stratum reduces the QMD bias (median |bias| ~11% ->
 ~4%) and the TPH bias wherever it was under-predicted, while leaving the already-good variants alone (the
 recruitment injection is applied only where TPH is under-predicted). Across 15 variants the median
-absolute bias falls from 11.1 to 4.4% for QMD, 9.9 to 7.9% for basal area, and 17.6 to 14.3% for
-merchantable volume, with TPH improving wherever it was under-predicted (the full four-metric per-variant
-stress table is in calib_final.csv).
+absolute bias falls from 11.1 to 6.4% for QMD, 9.9 to 7.9% for basal area, 19.2 to 9.1% for TPH (the
+sign-aware injection is what produces the TPH gain), and 15.4 to 12.8% for merchantable volume (full
+four-metric per-variant table: calib_final.csv). These are IN-SAMPLE figures: the adjustment levers are
+derived from FIA and evaluated on the same plots over a single ~5-10 yr remeasurement interval, so they
+are apparent (goodness-of-fit) reductions and an upper bound on out-of-sample performance.
 
 ## Discussion framing
 
@@ -87,7 +89,20 @@ brms SDImax is keyed by plot rather than species.
 
 ## Caveats
 
-COND-based disturbance classification; western state pools trimmed for compute; brms plot match ~63%
-(variant-median fallback otherwise); biomass on the FVS side requires the FFE carbon report; recruitment
-injection should remain sign-aware. The single-interval validation understates the SDImax lever, whose
-effect is demonstrated separately at the 100-year horizon.
+This is a prototype adjustment layer, not a finished, out-of-sample-validated calibration. Key
+limitations, to be resolved before submission: (1) Levers are derived from and evaluated on the same FIA
+plots; reported reductions are in-sample and require a spatially-blocked held-out fold for an honest
+out-of-sample estimate. (2) The volume/BA validation uses FIA-supplied heights (where FVS self-calibrates
+the HT-DBH curve), while the HT-DBH bias is shown only with heights blanked; the two configurations must
+be reported together and the volume bias decomposed into diameter and height-imputation components. (3)
+The 100-yr SDImax leverage is an FVS-vs-FVS simulation, not validated against multi-decade observations,
+and the revised SDImax is a p95 of current stand SDI rather than a fitted maximum size-density boundary;
+the causal "over-stocking is why FVS over-predicts long-term" is therefore softened to "lowers the 100-yr
+asymptote." (4) The disturbance-artifact claim should be confirmed by the converse test - simulating the
+recorded removals on harvested plots and showing FVS growth is then unbiased - which is not yet done. (5)
+COND under-counts disturbance (TRTCD=10 only, DSTRBCD above threshold only); brms SDImax is plot-level for
+~63% of plots and variant-median otherwise; ec/wc/pn share one OR+WA plot pool (not independent); several
+variants have small n (cr, ut = 8); no confidence intervals are yet reported; biomass is not yet computed
+on the FVS side (needs FFE); and the fixed-rate ingrowth form is density-independent and untested over a
+rotation. See the red-team review and revision roadmap (20260617_RED_TEAM_review_and_revision_roadmap.md)
+for the ordered fixes.

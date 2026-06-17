@@ -452,3 +452,7 @@ Priors are informative and centered on the original FVS parameter values,
 so the calibrated estimates represent an empirical Bayes update of the
 existing FVS parameters rather than fitting from scratch. Where FIA data
 are sparse, estimates remain close to defaults.
+
+## Disturbance-aware validation and deployable adjustment levers
+
+See calibration/DISTURBANCE_AWARE_VALIDATION.md for the FIA COND-stratified validation protocol and the four deployable levers (brms site-specific max SDI, sign-aware recruitment injection, signed BAIMULT, and HT-DBH curve correction), with the per-variant config in calibration/validation/data/calibration_config.csv and the all-variant stress test in calib_final.csv. Added 2026-06-17.

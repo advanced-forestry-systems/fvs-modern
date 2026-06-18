@@ -60,21 +60,37 @@ reproduced four ways, which together exclude the obvious causes:
 The earlier "unrecognized token: '" output-DB error appeared only when DSNIN and DSNOUT shared one file;
 pointing DSNOUT at a separate file clears it, after which the run reaches growth and then segfaults.
 
-Conclusion: the in-process growth / stop-point-5 path in the .so faults. This is a source-level engine bug
-(the stop-point restart wiring or the growth initialization under the in-process API), not a Python-side
-or data issue. Fixing it needs gdb on the loaded .so to capture the faulting Fortran frame.
+Conclusion (after gdb): the fault is a data-loading chain, not a growth-equation bug. gdb on the loaded
+.so captured the faulting frame:
 
-Next steps to finish Route A (revised):
+    #0 extree () at base/extree.f90:38   ->  IMCI = IMC(INS1)   (INS1 = INS(I), I = 1..6)
+    #1 fvs (irtncd=0) at base/fvs.f90:306  ->  CALL EXTREE ("assign the example trees to the output arrays")
 
-1. Run FVSne under gdb in process: load the .so, set a breakpoint, step to stop point 5, and capture the
-   faulting frame and backtrace. Likely candidates are the stop-point restart save/restore (the SPESET /
-   restart-code machinery) or a growth/FFE initializer that the standalone executable reaches differently.
-2. Compare the in-process stop-point path against rFVS, which exercises the same fvs API stop points in R;
-   if rFVS steps stop point 5 cleanly on the same .so, the gap is in how fvs2py drives the run loop, not
-   the engine.
-3. If the stop-point path proves unreliable, fall back to a cycle-boundary override: run a full cycle, read
-   the projected tree list, rescale diameters to the fvs-conus prediction, reload, and project the next
-   cycle. Coarser than a mid-cycle override but avoids the stop-point-5 fault entirely.
+extree assigns up to six example trees to the output arrays every cycle; it indexes IMC and ISP by the
+example-tree indices INS(1..6). In process those indices are unset (0), so IMC(0) reads out of bounds and
+segfaults. INS is set during the cycle's tree distribution only after the stand's trees are fully loaded.
+The trees never load because the in-process database read fails first: the recurring SQLite error
+"unrecognized token: '" means the in-process DBS extension cannot execute the STANDSQL / TREESQL against
+the SQLite file (the error persists even with the literal stand id substituted for the %StandID% macro and
+with TREELIST removed). So the true root cause is the in-process SQLite read; the extree segfault is a
+downstream symptom of an unpopulated stand.
+
+Full chain: in-process DBS SQL fails (unrecognized token) -> trees not loaded -> example-tree indices INS
+unset -> extree.f90:38 IMC(INS(I)) out of bounds -> SIGSEGV.
+
+Next steps to finish Route A (revised after the gdb root-cause):
+
+1. RECOMMENDED: load the stand through the API with fvsAddTrees instead of the keyword-file database DSN.
+   The blocker is the in-process DBS SQLite read, so bypassing the database removes the whole failure
+   chain. fvsAddTrees is exported and already bound in _core.py. Build the in-memory tree arrays (species,
+   dbh, ht, crown ratio, tpa) from the FIA tree list and add them after the engine reads the keyword file,
+   with no STANDSQL / TREESQL. This is the clean path and avoids the extree fault because the trees, and
+   therefore INS, are properly populated.
+2. Alternatively, debug the in-process DBS SQL generation: capture the exact statement the in-process DBS
+   extension builds (the "unrecognized token: '" suggests a stray or doubled quote in the generated SQL),
+   and fix the quoting in the DBS extension or the keyword so the SQLite read succeeds in process.
+3. Cross-check against rFVS, which drives the same fvs API stop points and DBS reads from R; if rFVS loads
+   the same SQLite stand cleanly, the gap is in how fvs2py sets up the database connection, not the engine.
 
 Earlier framing of the remaining work (kept for reference):
 

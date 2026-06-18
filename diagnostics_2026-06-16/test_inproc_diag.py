@@ -23,13 +23,12 @@ DATABASE
 DSNIN
 {db_path}
 STANDSQL
-SELECT * FROM fvs_standinit WHERE stand_id = '%StandID%'
+SELECT * FROM fvs_standinit WHERE stand_id = '{stand_id}'
 ENDSQL
 TREESQL
-SELECT * FROM fvs_treeinit WHERE stand_id = '%StandID%'
+SELECT * FROM fvs_treeinit WHERE stand_id = '{stand_id}'
 ENDSQL
 END
-TREELIST           0
 TIMEINT            0        10
 NUMCYCLE           2
 PROCESS

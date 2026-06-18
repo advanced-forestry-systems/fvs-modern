@@ -82,10 +82,18 @@ Next steps to finish Route A (revised after the gdb root-cause):
 
 1. RECOMMENDED: load the stand through the API with fvsAddTrees instead of the keyword-file database DSN.
    The blocker is the in-process DBS SQLite read, so bypassing the database removes the whole failure
-   chain. fvsAddTrees is exported and already bound in _core.py. Build the in-memory tree arrays (species,
-   dbh, ht, crown ratio, tpa) from the FIA tree list and add them after the engine reads the keyword file,
-   with no STANDSQL / TREESQL. This is the clean path and avoids the extree fault because the trees, and
-   therefore INS, are properly populated.
+   chain. fvsAddTrees is exported and bound in _core.py; its signature (base/apisubs.f90:844), to wrap as
+   a fvs2py method, is:
+
+       fvsAddTrees(in_dbh, in_species, in_ht, in_cratio, in_plot, in_tpa, ntrees, rtnCode)
+
+   all six inputs real(kind=8) arrays of length ntrees passed by reference; the routine appends them to
+   the engine arrays (dbh, isp, ht, icr, itre, prob), sets imc=2, and computes crown width via cwcalc, so
+   the example-tree machinery is properly populated and extree will not fault. Harness: read a keyword file
+   that sets up the stand with NO DATABASE block (so no STANDSQL/TREESQL), run to stop point 7, call
+   fvsAddTrees with the FIA tree list, then step the cycles with the stop-point-5 override. The one unknown
+   to solve is stand-level setup without a database (site index, plot design, sampling weights) via
+   keywords or the species/stand attribute API; that is the focused next implementation step.
 2. Alternatively, debug the in-process DBS SQL generation: capture the exact statement the in-process DBS
    extension builds (the "unrecognized token: '" suggests a stray or doubled quote in the generated SQL),
    and fix the quoting in the DBS extension or the keyword so the SQLite read succeeds in process.

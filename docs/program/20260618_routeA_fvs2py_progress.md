@@ -127,3 +127,24 @@ Bottom line: the maintainer-level capability gap (in-process per-tree read and w
 committed. What remains is a build or stand-loading-path fix so a stand projects in process, after which
 the true in-engine four-arm is a short step. Until then, the committed four-arm uses the per-species
 multiplier emulation, which is honestly labeled.
+
+## fvsAddTrees milestone (2026-06-18, evening) - the segfault is gone
+
+Added an add_trees() method to fvs2py wrapping fvsAddTrees, and tested the database-free load path: a
+keyword file with NO DATABASE block, run to stop point 7 (zero trees), then add_trees() to load the stand
+in memory, then project. Result: add_trees loads the stand (50 synthetic trees, ntrees goes 0 -> 50) and
+the engine projects WITHOUT the extree.f90 segfault. The documented Route A blocker is resolved: bypassing
+the in-process DBS read via fvsAddTrees populates the tree arrays so extree no longer indexes unset
+example-tree slots.
+
+Remaining issue, downstream and more tractable: during PROCESS the reporting routine prtexm.f90 line 69
+(print example trees) hits a Fortran I/O error, I/O past end of record on an unformatted scratch file
+(unit 8), together with an OPEN FAILED FOR 17 (output database ref -1). The in-process API path has not
+opened the main output and scratch files that the standalone executable opens, so the example-tree print
+fails. Next: open or suppress the FVS output/scratch units in the in-process path (set the output file via
+the API, or suppress the example-tree and main-output writes since results are read through the summary
+API), then read the projected summary. This is output-unit plumbing, not a growth or memory fault.
+
+Net: the in-memory tree load works and the segfault is eliminated. One output-init step remains before a
+clean in-process projection, after which the fvs-conus DG/HD predictions wire into the stop-point-5 loop
+for the true in-engine arms C and D.

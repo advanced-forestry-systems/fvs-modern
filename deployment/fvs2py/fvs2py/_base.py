@@ -609,6 +609,36 @@ class FVS(FvsCore):
         """Read several per-tree attributes into a DataFrame (one row per live tree)."""
         return pd.DataFrame({a: self.get_tree_attr(a) for a in attrs}, copy=False)
 
+    def add_trees(self, dbh, species, ht, cratio, plot, tpa) -> int:
+        """Add tree records to the engine in memory, via the fvsAddTrees API.
+
+        Loads a stand without a keyword-file database, which avoids the in-process DBS SQLite read
+        that otherwise leaves the example-tree arrays unpopulated and segfaults extree. Call after the
+        engine has read its (database-free) keyword file, then project. All six inputs are equal-length;
+        species and plot are stored as doubles per the API but hold integer indices.
+
+        Args:
+            dbh: DBH per tree (inches). species: FVS species index. ht: total height (ft).
+            cratio: crown ratio (0-100). plot: plot/point number. tpa: trees per acre (expansion).
+        Returns:
+            number of trees added.
+        """
+        n = len(dbh)
+        a_dbh, a_sp, a_ht, a_cr, a_plot, a_tpa = (
+            np.ascontiguousarray(x, dtype=np.float64) for x in (dbh, species, ht, cratio, plot, tpa)
+        )
+        nd = np.ctypeslib.ndpointer(np.float64, ndim=1, flags=STR_C_CONTIGUOUS)
+        self._fvsAddTrees.argtypes = [nd, nd, nd, nd, nd, nd, ct.POINTER(ct.c_int), ct.POINTER(ct.c_int)]
+        self._fvsAddTrees.restype = None
+        ntrees = ct.c_int(n)
+        rtncode = ct.c_int(0)
+        self._fvsAddTrees(a_dbh, a_sp, a_ht, a_cr, a_plot, a_tpa, ct.byref(ntrees), ct.byref(rtncode))
+        if rtncode.value != 0:
+            raise RuntimeError(
+                f"fvsAddTrees returned {rtncode.value} (1 = no room for the trees, or ntrees is zero)"
+            )
+        return n
+
     def apply_calibrated_config(self) -> dict[str, bool]:
         """Apply calibrated parameters from a JSON config file.
 

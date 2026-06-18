@@ -19,19 +19,30 @@ CCF quadratic is close to a perfect square, so the linear MCW recovery is faithf
 Douglas fir at 1.06) flag species where the published CCF curve is not exactly a squared linear MCW and
 the recovered B0/B1 are an approximation of the endpoints.
 
-## Coverage
+## Coverage across all 25 variants (complete accounting)
 
-15 of 17 variants with a `ccfcal.f90` parse directly (333 variant x species curves): ak, bm, ca?, ci, cr,
-ec, em, ie, kt, nc, pn, so, tt, ut, ws, wc. Two delegate CCF to a separate crown width routine and are not
-yet captured here:
+The crown-width axis is now fully characterized for every variant:
 
-- `ca` calls `R5CRWD` then `CCFT = CRWD5^2 * 0.001803`.
-- `ls` calls `CWCALC` then `CCFT = 0.001803 * TEMCW^2`.
+- Recovered (15 western CCF variants): bm, ci, cr, ec, em, ie, kt, nc, pn, so, tt, ut, ws, wc, and the
+  INDCCF-mapped pn/wc form. MCW = B0 + B1*D from RD1/RD3 (333 variant x species curves). The
+  scientifically meaningful cross-variant inconsistency lives here, with Douglas-fir spanning five curves.
+- Recovered (power form): ak stores a direct MCW power equation (MCW = B1*D^B2 via EQMAP), captured.
+- Delegated to a crown-width routine: ca calls R5CRWD (the Region 5 crown-width routine) then
+  CCFT = CRWD5^2 * 0.001803; ls calls CWCALC, which holds inline per-species crown-width equations with
+  per-species caps (for example CW capped at 34, 33, 29 ft) rather than clean coefficient arrays. MCW for
+  these two lives inside the named routine and is extracted by reading it, not by the CCF inversion.
+- No parabolic MCW (eastern variants ne, acd, sn, cs): these zero the base crown-width coefficients
+  (CWDL0 = CWDL1 = CWDL2 = 0 in grinit.f90), so they do not carry a per-species parabolic maximum crown
+  width competition term in the CCF form. There is therefore no CCF-form MCW curve to unify for these
+  variants; crown dynamics are handled through the crown-ratio models. If a unified crown width is wanted
+  for the Northeast and Acadian region, the Russell and Weiskittel (2010) MCW equations are the
+  recommended source.
+- Out of scope: the Canadian variants bc and on have no FIA coverage and are handled separately.
 
-For both, MCW is computed directly inside the named routine (R5CRWD, CWCALC) rather than from coefficient
-arrays in ccfcal; read those routines to extract the curve. The four eastern variants without a variant
-`ccfcal.f90` (ne, acd, cs, sn) inherit the base crown width path; the Acadian region should use the
-Russell and Weiskittel (2010) MCW equations per the roadmap.
+Net: the unification target (the western CCF variants whose MCW curves disagree across variants) is fully
+recovered; the eastern variants do not present the same parabolic-MCW inconsistency; ca and ls are the two
+that still need a short read of their delegated routines if their curves are to be folded into the
+cross-variant selection.
 
 ## Headline: cross variant spread per species (MCW at 20 in DBH)
 

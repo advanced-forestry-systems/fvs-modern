@@ -19,6 +19,7 @@ KEY = """STDIDENT
 ADDTREE_TEST
 STDINFO        1        11       470         5        50
 INVYEAR     2000
+NOTREES
 TIMEINT        0        10
 NUMCYCLE       1
 PROCESS
@@ -46,9 +47,12 @@ while fvs.itrncd==0 and k<8:
     fvs.run(); k+=1
     if fvs.restart_code==100 or fvs.itrncd!=0: break
 s=fvs.summary
-bacol=next((c for c in (s.columns if s is not None else []) if str(c).upper()=="BA"),None)
-ba=float(s[bacol].iloc[-1]) if (s is not None and len(s) and bacol) else float("nan")
+bacol=next((c for c in (s.columns if s is not None else []) if str(c).lower() in ("atba","ba","baa")),None)
+volcol=next((c for c in (s.columns if s is not None else []) if str(c).lower() in ("mcuft","tcuft")),None)
 pr("summary cols", list(s.columns) if s is not None else None)
-pr("final BA", round(ba,2))
-pr("ADDTREES_WORKS" if ba>0 else "RAN_NO_BA")
+if s is not None and len(s):
+    pr("summary rows:"); pr(s[[c for c in ("year","age","tpa",bacol,volcol,"attopht") if c in s.columns]].to_string(index=False))
+ba=float(s[bacol].iloc[-1]) if (s is not None and len(s) and bacol) else float("nan")
+pr("final stand BA (atba):", round(ba,2))
+pr("ROUTE_A_INPROCESS_PROJECTION_WORKS" if ba>0 else "RAN_BUT_BA_ZERO")
 pr("DONE_ADDTREES")

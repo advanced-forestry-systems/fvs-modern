@@ -148,3 +148,26 @@ API), then read the projected summary. This is output-unit plumbing, not a growt
 Net: the in-memory tree load works and the segfault is eliminated. One output-init step remains before a
 clean in-process projection, after which the fvs-conus DG/HD predictions wire into the stop-point-5 loop
 for the true in-engine arms C and D.
+
+## In-process projection now COMPLETES (2026-06-18, late) - last detail isolated
+
+Two fixes took the in-process path from a hard crash to a completed projection:
+1. fvsAddTrees loads the stand in memory (no database), eliminating the extree segfault.
+2. A surgical patch to vbase/prtexm.f90 adds ERR= to its six unformatted reads of the example-tree
+   scratch (matching the existing END= recovery labels), so a malformed in-process scratch no longer
+   aborts the run. There is no keyword to suppress that table (ITABLE(2) is never set in source).
+
+Result: the engine projects an in-memory stand and returns a full summary DataFrame (year, age, tpa,
+mcuft, atba, attopht, ...). The 50 added trees register by count: summary tpa = 250 = 50 trees x 5 TPA.
+
+Last detail: the added trees DBH and height are not populating the stand attributes (atba, attopht,
+volume all 0 at cycle 0), and get_tree_attr(dbh) reads 0 right after add_trees. So fvsAddTrees writes the
+expansion factor (prob) that reaches the summary, but the size arrays it sets (dbh, ht) are not the ones
+the inventory/BA computation reads in the in-process path, or the trees need a finalize/recompute step
+after add_trees before the first summary. This is a tree-attribute-population detail in the add path, not
+a crash or memory fault. Next: confirm which DBH array the summary uses (compare get_tree_attr after a
+cycle vs at add time), and either set that array in add_trees or trigger the per-tree initialization that
+populates it; then read atba and wire the fvs-conus DG/HD predictions into the stop-point-5 loop.
+
+Net: Route A went from a fundamental segfault to a completed in-process projection this session; one
+tree-size-population step remains before the in-engine arms C and D are live.

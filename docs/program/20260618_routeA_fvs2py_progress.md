@@ -32,16 +32,66 @@ the in-process .so path through fvsSetCmdLine(--keywordfile=...) trips the EOF. 
 that the installed FVSne.so was not rebuilt with the keyrdr fix, or the in-process keyword-reader needs the
 stub handling that the build-fixes branch added.
 
+## Rebuild result (2026-06-18, this session)
+
+Rebuilt FVSne fresh into lib-test/FVSne.so from the current source with the build-fixes build script
+(env FC=gfortran CC=gcc build_fvs_libraries.sh src-converted ./lib-test ne). Results, verified in process:
+
+- The keyrdr.f90 EOF blocker is GONE. The rebuilt .so reads an in-process keyword file without the fort.15
+  EOF error.
+- In-process load, load_keyfile, and run to stop point 7 work: the stand loads and dims['ntrees'] returns
+  the correct live tree count (67 for the test stand).
+- The new get_tree_attr and set_tree_attr bindings WORK in process: reading 'dbh' and 'dg' returns
+  per-tree arrays of the right length, and set_tree_attr('dg', ...) executes without error.
+
+The one remaining blocker, now isolated to the engine itself (not the wrapper, not the tree-attr code, not
+the database): stepping the in-process engine to stop point 5 (after growth and mortality are computed,
+before applied) SEGFAULTS inside the FVS step routine (_base.py run, the self._fvs call). This was
+reproduced four ways, which together exclude the obvious causes:
+
+- Trimmed input-only keyword file: segfault at the first stop-point-5 step.
+- Full keyword file with DSNOUT on a separate output database (so the output DB opens cleanly): still
+  segfaults at the first stop-point-5 step. This rules out the database.
+- Without touching any tree attribute (no get/set before the step): still segfaults. This rules out the
+  new tree-attr binding.
+- At stop point 7 the tree count is correct (67) but per-tree dbh and dg read as 0.0, confirming the
+  working tree arrays are not yet populated that early; the crash is at the growth step regardless.
+
+The earlier "unrecognized token: '" output-DB error appeared only when DSNIN and DSNOUT shared one file;
+pointing DSNOUT at a separate file clears it, after which the run reaches growth and then segfaults.
+
+Conclusion: the in-process growth / stop-point-5 path in the .so faults. This is a source-level engine bug
+(the stop-point restart wiring or the growth initialization under the in-process API), not a Python-side
+or data issue. Fixing it needs gdb on the loaded .so to capture the faulting Fortran frame.
+
+Next steps to finish Route A (revised):
+
+1. Run FVSne under gdb in process: load the .so, set a breakpoint, step to stop point 5, and capture the
+   faulting frame and backtrace. Likely candidates are the stop-point restart save/restore (the SPESET /
+   restart-code machinery) or a growth/FFE initializer that the standalone executable reaches differently.
+2. Compare the in-process stop-point path against rFVS, which exercises the same fvs API stop points in R;
+   if rFVS steps stop point 5 cleanly on the same .so, the gap is in how fvs2py drives the run loop, not
+   the engine.
+3. If the stop-point path proves unreliable, fall back to a cycle-boundary override: run a full cycle, read
+   the projected tree list, rescale diameters to the fvs-conus prediction, reload, and project the next
+   cycle. Coarser than a mid-cycle override but avoids the stop-point-5 fault entirely.
+
+Earlier framing of the remaining work (kept for reference):
+
 ## Next steps to finish Route A
 
-1. Rebuild the variant .so files from the build-fixes-2026-05-06 source (the keyrdr / INCLUDE-file and stub
-   fixes) so the in-process keyword reader does not hit the EOF, and confirm with the tree-attr test.
-2. Alternatively, drive the engine entirely through the API (fvsAddTrees to load the stand in memory rather
-   than through a keyword-file DSN), which sidesteps the keyword-file reader. fvsAddTrees is exported and
-   bound; this is the cleaner long-term path for a pure in-process harness.
-3. Once a stand projects in process, wire the fvs-conus DG and HD predictions into the stop-point-5 loop
-   (replace the +30 percent stand-in in test_treeattr_injection.py with the fvs-conus equation evaluation),
-   producing true in-engine arms C and D, and drop the emulation caveat from the four-arm.
+1. Read and modify tree attrs only after the stand is fully set up. Step past stop point 7 to the first
+   point where the tree arrays are populated (run one full cycle with no stop, or stop at code 1/2 at the
+   first cycle), confirm get_tree_attr('dbh') returns the real diameters, then introduce the stop-point-5
+   override. The zero-valued reads at stop point 7 are the cause of the growth-step segfault.
+2. Resolve the output-DB path for the full template: point DSNOUT at a separate file from DSNIN, or drop
+   the output-DB keywords and read all results through the summary and tree_table APIs (the latter is the
+   intended in-process pattern). This clears the "unrecognized token: '" output-DB error.
+3. If DB-driven loading stays fragile, drive the engine entirely through the API: fvsAddTrees to load the
+   stand in memory (exported and bound), bypassing the keyword-file DSN altogether. Cleaner long-term path.
+4. Once a stand projects cleanly in process, wire the fvs-conus DG and HD predictions into the
+   stop-point-5 loop (replace the +30 percent stand-in with the fvs-conus equation evaluation), producing
+   true in-engine arms C and D, and drop the emulation caveat from the four-arm.
 
 ## Artifacts
 

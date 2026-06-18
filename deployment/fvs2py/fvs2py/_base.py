@@ -559,17 +559,22 @@ class FVS(FvsCore):
         Mirrors `_species_attr` but the array is sized to the live tree count,
         which is dynamic, so dims are read fresh on every call.
         """
-        ntrees = self.dims[STR_NTREES]
-        if action == FvsAttributeAccessor.GET:
-            buf = np.empty(dtype=np.float64, shape=(ntrees,))
-        else:
+        dims = self.dims
+        ntrees = dims[STR_NTREES]
+        maxtrees = dims[STR_MAXTREES]
+        # Allocate to the maximum tree capacity (mirrors the species accessor, which
+        # allocates to maxspecies): the engine may index the full array, so a buffer
+        # sized only to the current live count can be written past, segfaulting.
+        buf = np.zeros(dtype=np.float64, shape=(maxtrees,))
+        if action == FvsAttributeAccessor.SET:
             if arr is None:
                 msg = "Must provide `arr` if `action` is 'set'"
                 raise TypeError(msg)
-            buf = np.ascontiguousarray(arr, dtype=np.float64)
-            if buf.shape != (ntrees,):
-                msg = f"`arr` must have shape (ntrees,)=({ntrees},), got {buf.shape}"
+            src = np.ascontiguousarray(arr, dtype=np.float64)
+            if src.shape != (ntrees,):
+                msg = f"`arr` must have shape (ntrees,)=({ntrees},), got {src.shape}"
                 raise ValueError(msg)
+            buf[:ntrees] = src
 
         self._fvsTreeAttr.argtypes = [
             ct.POINTER(ct.c_char),  # attr name
@@ -596,7 +601,7 @@ class FVS(FvsCore):
                 raise NameError(msg)
             raise RuntimeError(f"fvsTreeAttr returned code {rtncode.value} for '{attr}'")
 
-        return buf if action == FvsAttributeAccessor.GET else None
+        return buf[:ntrees].copy() if action == FvsAttributeAccessor.GET else None
 
     def tree_table(
         self, attrs: tuple[str, ...] = ("id", "species", "dbh", "ht", "dg", "htg", "crwdth")

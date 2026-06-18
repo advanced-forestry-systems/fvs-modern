@@ -66,9 +66,28 @@ Douglas fir spans five distinct curves across variants, confirming the Marshall 
    crown width path, with Russell and Weiskittel (2010) for Acadian.
 2. Map the variant species abbreviations to FIA SPCD; for the ~232 FIA species with no direct FVS curve,
    assign by genus, then by softwood / hardwood.
-3. Select one CONUS consistent MCW per species (candidate rule: the cross variant median curve, or a
-   preferred published source where one exists), and feed it into the crown / CCF competition term of the
+3. Select one CONUS consistent MCW per species, and feed it into the crown / CCF competition term of the
    calibrated engine and the fvs-conus crown component. This is the lever the defective CRNMULT keyword
    could not reach.
+
+## CONUS-consistent selection (done)
+
+`mcw_unify.py` selects a consensus curve per species as the cross-variant median of the recovered B0 and
+B1 (linear form), producing one CONUS-consistent MCW = B0 + B1*D per species. 44 species receive a
+consensus curve, 25 of them informed by more than one variant. Examples (MCW in feet, D in inches):
+
+| species | n variants | B0 | B1 | MCW at 20 in | cross-variant spread |
+|---|---|---|---|---|---|
+| Douglas-fir (DF) | 5 | 4.71 | 1.499 | 34.69 | 5.01 |
+| white fir (WF) | 4 | 5.45 | 1.253 | 30.51 | 10.72 |
+| ponderosa pine (PP) | 3 | 3.49 | 1.343 | 30.34 | 1.29 |
+| lodgepole pine (LP) | 3 | 3.27 | 1.423 | 31.72 | 11.78 |
+| Engelmann spruce (ES) | 4 | 4.04 | 1.199 | 28.05 | 3.72 |
+
+Full table: mcw_conus_consensus.csv. The median rule collapses the multi-curve spread (Douglas-fir from
+five curves spanning 5 ft to a single consensus) into one defensible CONUS curve per species; a preferred
+published source overrides the median where one exists (Russell and Weiskittel 2010 for the Acadian and
+Northeast region). Remaining application step: emit these as the per-species crown-width coefficients in
+the engine competition term and the fvs-conus crown component.
 
 Script: `mcw_recovery.py`. Outputs: `mcw_by_variant_species.csv`, `mcw_cross_variant_spread.csv`.

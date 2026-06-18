@@ -481,6 +481,53 @@ by (i) trajectory overlap, (ii) year 100 basal area divergence as
 percent of default, and (iii) fraction of scenario pairs satisfying
 each Bakuzis law.
 
+## 3.4 Disturbance-aware benchmark and out-of-sample validation
+
+The internal benchmark in Section 3.1 pools all remeasurement
+conditions regardless of what occurred on the ground between
+measurements. Because the default projection grows every stand
+forward without cutting, conditions that were harvested or heavily
+thinned during the interval carry basal area in the projection that
+the real stand lost, which inflates the apparent over-prediction. To
+separate this benchmark-design effect from genuine growth-equation
+bias, we stratified each condition by its FIA COND record into
+undisturbed, disturbed, and harvested classes using the treatment
+codes (TRTCD1 through TRTCD3, with code 10 denoting harvest) and the
+disturbance codes (DSTRBCD1 through DSTRBCD3), and evaluated bias
+separately within each class.
+
+We confirmed the mechanism with a removal-simulation converse test.
+On harvested conditions we removed the trees that FIA recorded as cut
+and projected the residual stand, then compared the projection to the
+observed later measurement. If the apparent over-prediction on
+harvested plots is unsimulated removal rather than growth error,
+accounting for the recorded harvest should collapse the bias toward
+the undisturbed level.
+
+The adjustment layer applies three levers as FVS keywords: the brms
+site-specific maximum stand density index, a density-dependent
+recruitment term, and a per-species basal area increment multiplier.
+The recruitment term replaces a fixed per-variant rate with recruits
+equal to R_max times max(0, 1 minus SDI_t1 divided by SDImax) times
+the interval, so recruitment declines to zero as a stand approaches
+its site-specific density limit. R_max is fit on the calibration data
+so that the term reproduces the observed recruitment there.
+
+We tested generalization with spatially blocked out-of-sample
+validation. Counties were hashed to two folds; the recruitment rate
+and the basal area increment multiplier were derived on fold A and
+applied unchanged to the held-out fold B. We report default and
+adjusted bias on fold B for basal area, trees per hectare, quadratic
+mean diameter, and net merchantable cubic volume, with 95 percent
+percentile-bootstrap confidence intervals that resample conditions.
+We organized the comparison as four arms on a common disturbance-clean
+basis: default FVS (arm A) and the keyword-adjusted engine (arm B) in
+the FVS engine, and the default and the fvs-conus species-free
+equations in the standalone projector (arms A-prime and C). Because
+the engine over-predicts and the projector under-predicts undisturbed
+basal area, we report each arm as its improvement relative to its own
+framework default, which is the framework-invariant comparison.
+
 # 4. Results and applications
 
 ## 4.1 Modernization outcomes
@@ -779,6 +826,55 @@ site low density cells where stand structure is least dynamic; the
 widest bands are at high site high density Pine and Oak Pine,
 where compounding interactions between calibrated diameter growth,
 mortality, and SDImax produce the largest combined spread.
+
+## 4.7 Disturbance artifact and the four-arm comparison
+
+Stratifying the benchmark by disturbance changes its interpretation.
+Across the variants with adequate FIA coverage, the default engine
+over-predicts undisturbed basal area by a median of only 1.8 percent,
+while the pooled over-prediction near 14 percent and the
+harvested-class over-prediction above 40 percent come from the
+disturbance the default run does not simulate. The removal-simulation
+converse test confirms the mechanism: simulating the recorded harvest
+collapses the harvested-class basal area bias to the undisturbed
+level (Northeast 51.2 to 1.3 percent, Southern 110.1 to 0.1 percent,
+Pacific Northwest 41.9 to 12.9 percent). The widely cited FVS
+over-prediction is therefore largely a benchmark-design artifact
+rather than a growth-equation bias, which is why recalibrating the
+growth equations downward does not improve undisturbed predictions.
+
+On the disturbance-clean basis the adjustment layer generalizes
+out-of-sample for the size and density levers. Across eight variants
+with adequate held-out samples, the keyword adjustment reduced median
+absolute quadratic mean diameter bias from 15.7 to 2.2 percent, basal
+area from 11.3 to 7.6 percent, and net merchantable volume from 13.4
+to 8.3 percent on the spatially held-out fold (Table 6). Trees per
+hectare improved only modestly in the median (20.7 to 18.9 percent)
+because the density-dependent recruitment term helps some variants
+(Northeast, Klamath, East Cascades) and over-corrects others (Central
+Rockies, Pacific Northwest); the Central Rockies estimate rests on a
+small held-out sample and reads as indicative. The density-dependent
+recruitment form is the key change from a fixed per-variant rate,
+which had over-corrected recruitment out-of-sample.
+
+The four-arm comparison shows the engine adjustment and the fvs-conus
+equations are complementary rather than competing (Figure 6). The
+keyword adjustment delivers the size and density gains, in quadratic
+mean diameter and trees per hectare, while the fvs-conus species-free
+equations, evaluated on 21,811 undisturbed Northeast conditions,
+deliver the level and scatter gains, reducing basal area bias from
+12.3 to 7.2 percent and net merchantable volume bias from 15.7 to 9.2
+percent. Combining the fvs-conus equations with the density layer is
+the natural next step and requires running the fvs-conus equations
+inside the FVS engine.
+
+![Figure 6. Within-framework reduction in median absolute bias for the keyword-adjusted FVS engine (eight variants, out-of-sample) and the fvs-conus species-free equations (Northeast, 21,811 undisturbed conditions). The keyword adjustment reduces quadratic mean diameter and trees per hectare bias; the fvs-conus equations reduce basal area and volume bias. Each arm is shown relative to its own framework default, the framework-invariant comparison.](../diagnostics_2026-06-16/fourarm_headline_20260618.png){width=6.5in}
+
+We therefore frame this work as a disturbance-aware benchmark and a
+prototype adjustment layer rather than a fully calibrated and
+validated national model. The size levers are validated
+out-of-sample; the recruitment lever is a prototype that transfers
+for most variants and needs a site-resolved form for the remainder.
 
 # 5. Discussion
 

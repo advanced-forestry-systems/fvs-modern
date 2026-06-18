@@ -19,7 +19,7 @@ plots or simulate the recorded harvest before comparing.
 
 Spatial held-out fold B (county-hash folds; brms maxSDI + density-dependent recruitment + fold-A BAIMULT
 derived on fold A only). FVS engine, COND-undisturbed, one remeasurement cycle. Job 11745221, NSAMP=400.
-Values are % bias, default -> calibrated. (ut, ec, wc completing; refresh on job close.)
+Values are % bias, default -> calibrated. ut skipped (fold too small, fold A n=8 < 10).
 
 | variant | nB | BA | TPH | QMD | merch VOL |
 |---|---|---|---|---|---|
@@ -28,12 +28,17 @@ Values are % bias, default -> calibrated. (ut, ec, wc completing; refresh on job
 | kt | 51 | +16.6 -> +9.7 | -36.9 -> -22.6 | +23.0 -> -5.6 | +17.0 -> +8.0 |
 | pn | 53 | +8.5 -> +6.7 | -23.6 -> -25.7 | +17.5 -> +1.7 | +9.1 -> +8.6 |
 | nc | 42 | +3.1 -> +6.1 | -14.5 -> -4.9 | +21.9 -> -0.5 | -9.9 -> -5.6 |
+| ec | 53 | -13.9 -> -1.7 | -36.0 -> -15.2 | +23.4 -> -5.8 | -20.7 -> -10.3 |
+| wc | 53 | +1.8 -> +1.0 | -23.4 -> -22.6 | +13.9 -> -2.2 | -5.0 -> -5.1 |
 | cr | 15 | +28.0 -> +23.9 | +18.0 -> +27.1 | -1.0 -> -15.4 | +37.1 -> +33.4 |
+| **median \|bias\|** | 8 var | **11.3 -> 7.6** | **20.7 -> 18.9** | **15.7 -> 2.2** | **13.4 -> 8.3** |
 
-Reading: QMD bias is sharply reduced out-of-sample in every variant with adequate sample (ne, sn, kt, pn,
-nc all collapse toward zero); BA and merch volume improve where BAIMULT engages (sn, kt). cr (n=15) is the
-small-sample exception where the size lever over-corrects QMD and TPH; treat western point estimates with
-small n as indicative, not final. Full per-arm bootstrap CIs in fourarm_engine_20260618.csv.
+Reading: the headline is QMD: median |bias| collapses from 15.7% to 2.2% out-of-sample, reduced toward
+zero in every variant with adequate sample (ne, sn, kt, pn, nc, ec, wc). BA (11.3 -> 7.6) and merch volume
+(13.4 -> 8.3) also improve in the median; TPH barely moves in the median (20.7 -> 18.9) because the
+recruitment lever helps some variants (ne, nc, ec) and over-corrects others (cr, pn). cr (n=15) is the
+small-sample exception where the size lever over-corrects; treat western point estimates with small n as
+indicative, not final. Full per-arm bootstrap CIs in fourarm_engine_20260618.csv.
 
 ## 3. Projector arms A' (default) and C (fvs-conus equations), NE, with CIs
 
@@ -94,7 +99,7 @@ merch-top definitions is the open volume item.
 
 ## 7. Outstanding (carried to next pass)
 
-1. Close ut, ec, wc in the engine four-arm; recompute cross-variant medians on all nine.
+1. Raise the ut sample so its fold clears n>=10 (currently skipped); the medians above are over 8 variants.
 2. Extend removal-sim and held-out to more variants and larger n (western undisturbed samples are thin).
 3. Volume gross/net + merch-top sensitivity; biomass via FFE.
 4. Arm D (combined) once the fvs-conus equations run in the engine (fvs2py) or via per-species multiplier

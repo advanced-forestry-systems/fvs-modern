@@ -56,8 +56,8 @@ headline figure for both manuscripts.
 
 | arm | definition | framework | state |
 |---|---|---|---|
-| A | default FVS | engine | NE done OOS with CIs; all-variant run completing (job 11745221) |
-| B | brms maxSDI + density-dependent recruitment + BAIMULT | engine | NE done OOS with CIs; all-variant run completing |
+| A | default FVS | engine | done, 8 variants OOS with CIs (job 11745221; ut skipped, small fold) |
+| B | brms maxSDI + density-dependent recruitment + BAIMULT | engine | done, 8 variants OOS; median QMD \|bias\| 15.7 -> 2.2, BA 11.3 -> 7.6, VOL 13.4 -> 8.3 |
 | C | fvs-conus species-free equations | projector | done on NE disturbance-clean; extend beyond NE |
 | D | fvs-conus equations + maxSDI + recruitment | engine (needs fvs2py) | BLOCKED on in-engine fvs-conus injection |
 

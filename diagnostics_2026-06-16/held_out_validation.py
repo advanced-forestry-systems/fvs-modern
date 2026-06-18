@@ -29,6 +29,9 @@ def fold_of(statecd,countycd):  # spatial block: hash of state-county -> A/B
     return "A" if h%2==0 else "B"
 def allsp(kw,val): return "\n".join("%-16s%10d%10.4f"%(kw,i+1,val) for i in range(MAXSP))
 def sdimax_kw(val): return "\n".join("%-10s%10d%10.1f"%("SDIMAX",i+1,val) for i in range(MAXSP))
+def stand_sdi(al):  # Reineke summation SDI, English per acre: sum TPA*(DIA/10)^1.605
+    d=al[(al.DIA>0)&(al.TPA_UNADJ>0)]
+    return float((d.TPA_UNADJ*(d.DIA/10.0)**1.605).sum()) if len(d) else 0.0
 def seed_rows(tdf,rt,spp):
     if rt<=0 or not spp: return tdf
     base=int(tdf.tree_id.max())+1; per=rt/len(spp); rows=[{"stand_id":tdf.stand_id.iloc[0],"plot_id":1,"tree_id":base+j,"tree_count":per,"species":int(sp),"diameter":1.0,"ht":13.0,"crratio":40} for j,sp in enumerate(spp)]
@@ -65,6 +68,13 @@ def g(r,k):
     except: return 0.0
 def bias(f,o):
     m=[(x,y) for x,y in zip(f,o) if y>0]; return float("nan") if not m else 100*sum(x-y for x,y in m)/sum(y for _,y in m)
+def boot_ci(f,o,nb=2000,seed=11):  # percentile bootstrap 95% CI on the aggregate % bias, resampling plots
+    m=[(x,y) for x,y in zip(f,o) if y>0]
+    if len(m)<3: return (float("nan"),float("nan"))
+    rng=np.random.default_rng(seed); fa=np.array([x for x,_ in m],float); oa=np.array([y for _,y in m],float); n=len(m); out=[]
+    for _ in range(nb):
+        i=rng.integers(0,n,n); out.append(100*(fa[i]-oa[i]).sum()/oa[i].sum())
+    return (round(float(np.percentile(out,2.5)),1),round(float(np.percentile(out,97.5)),1))
 rows=[]
 for var in VARS:
     states=VARMAP.get(var)
@@ -89,11 +99,20 @@ for var in VARS:
         sc,cc,pkey=cnty[cn]; fold=fold_of(sc,cc)
         t1set=set(zip(a.SUBP,a.TREE)); ing=bl[~bl.set_index(["SUBP","TREE"]).index.isin(t1set)]
         recs[fold].append({"t1":t1,"cn":cn,"al":al,"oBA":oBA,"oTPH":oTPH,"oQMD":oQMD,"yrs":int(r.interval),
-                           "statecd":sc,"sdi":BRMS.get(pkey),"ing_tpa":ing.TPA_UNADJ.sum(),"init_tpa":float(al.TPA_UNADJ.sum()),
+                           "statecd":sc,"sdi":BRMS.get(pkey),"sdi_t1":stand_sdi(al),"ing_tpa":ing.TPA_UNADJ.sum(),"init_tpa":float(al.TPA_UNADJ.sum()),
                            "spp":list(al.SPCD.value_counts().index[:3]),"yr10frac":int(r.interval)/10.0})
     if len(recs["A"])<10 or len(recs["B"])<10: print(var,"fold too small A=%d B=%d"%(len(recs["A"]),len(recs["B"]))); sys.stdout.flush(); continue
     # derive calibration on fold A: ingrowth rate, and BAIMULT minimizing |QMD bias| on A
     rateA=100*np.mean([r["ing_tpa"] for r in recs["A"]])/max(np.mean([r["init_tpa"] for r in recs["A"]]),1e-9)/np.mean([r["yrs"] for r in recs["A"]])*10/100.0
+    # DENSITY-DEPENDENT RECRUITMENT (replaces fixed rate*interval*initialTPA). headroom shuts recruitment
+    # off as the stand approaches its brms site-specific max SDI; R_max is fit on fold A so that
+    # recruits = R_max * headroom * interval reproduces fold-A observed ingrowth, then applied unchanged to B.
+    def headroom(rec):
+        return max(0.0,1.0-rec["sdi_t1"]/rec["sdi"]) if rec.get("sdi") and rec["sdi"]>0 and rec["sdi_t1"]>0 else 0.0
+    _num=sum(rec["ing_tpa"] for rec in recs["A"] if headroom(rec)>0)
+    _den=sum(headroom(rec)*rec["yrs"] for rec in recs["A"] if headroom(rec)>0)
+    Rmax=_num/_den if _den>0 else 0.0   # recruits per acre per year at zero density (headroom=1)
+    def recruit_tpa(rec): return Rmax*headroom(rec)*rec["yrs"]
     # QMD over-predicted? decide injection sign from fold A default TPH
     def run_arm(rec,baimult,inject):
         std=build_fvs_standinit({"INVYR":2000,"STATECD":rec["statecd"],"COUNTYCD":0},str(rec["t1"]),var); std["inv_plot_size"]=1.0; std["brk_dbh"]=99.0
@@ -101,7 +120,7 @@ for var in VARS:
         kw=""
         if rec["sdi"] and rec["sdi"]>0: kw+=sdimax_kw(rec["sdi"])+"\n"
         if baimult is not None: kw+=allsp("BAIMULT",baimult)+"\n"
-        tdf_c=seed_rows(tdf,rateA*rec["yr10frac"]*rec["init_tpa"]*FRAC,rec["spp"]) if inject else tdf
+        tdf_c=seed_rows(tdf,recruit_tpa(rec)*FRAC,rec["spp"]) if inject else tdf
         s=run(std,tdf_c,str(rec["t1"]),kw,rec["yrs"],var); return s
     # default fold A TPH sign
     defA={m:{"f":[],"o":[]} for m in ("BA","TPH","QMD")}
@@ -119,7 +138,7 @@ for var in VARS:
                 kw=""
                 if rec["sdi"] and rec["sdi"]>0: kw+=sdimax_kw(rec["sdi"])+"\n"
                 if baimult is not None: kw+=allsp("BAIMULT",baimult)+"\n"
-                tdf2=seed_rows(tdf,rateA*rec["yr10frac"]*rec["init_tpa"]*FRAC,rec["spp"]) if inject else tdf
+                tdf2=seed_rows(tdf,recruit_tpa(rec)*FRAC,rec["spp"]) if inject else tdf
                 s=run(std,tdf2,str(rec["t1"]),kw,rec["yrs"],var)
             if s is None or len(s)==0: continue
             l=s.iloc[-1]; ba=g(l,"BA")*M2HA
@@ -134,16 +153,24 @@ for var in VARS:
         if q<best: best=q; best_bai=bm
     # apply fold-A calibration (best_bai, rateA, injectA) to held-out fold B
     defB=eval_fold("B",None,False); calB=eval_fold("B",best_bai,injectA); calA=eval_fold("A",best_bai,injectA)
-    row={"variant":var,"nA":len(recs["A"]),"nB":len(recs["B"]),"ingrowth_rateA_pct_dec":round(rateA*100,1),"baimultA":best_bai,"injectA":int(injectA),
+    row={"variant":var,"nA":len(recs["A"]),"nB":len(recs["B"]),"ingrowth_rateA_pct_dec":round(rateA*100,1),"Rmax_tpa_ac_yr":round(Rmax,4),"baimultA":best_bai,"injectA":int(injectA),
          "INSAMPLE_A_BA":"%+.1f>%+.1f"%(bias(defA["BA"]["f"],defA["BA"]["o"]),bias(calA["BA"]["f"],calA["BA"]["o"])),
          "INSAMPLE_A_QMD":"%+.1f>%+.1f"%(bias(defA["QMD"]["f"],defA["QMD"]["o"]),bias(calA["QMD"]["f"],calA["QMD"]["o"])),
          "INSAMPLE_A_TPH":"%+.1f>%+.1f"%(bias(defA["TPH"]["f"],defA["TPH"]["o"]),bias(calA["TPH"]["f"],calA["TPH"]["o"])),
          "OOS_B_BA":"%+.1f>%+.1f"%(bias(defB["BA"]["f"],defB["BA"]["o"]),bias(calB["BA"]["f"],calB["BA"]["o"])),
          "OOS_B_QMD":"%+.1f>%+.1f"%(bias(defB["QMD"]["f"],defB["QMD"]["o"]),bias(calB["QMD"]["f"],calB["QMD"]["o"])),
          "OOS_B_TPH":"%+.1f>%+.1f"%(bias(defB["TPH"]["f"],defB["TPH"]["o"]),bias(calB["TPH"]["f"],calB["TPH"]["o"]))}
+    # bootstrap 95% CIs on the CALIBRATED bias (the number that must transfer), both folds, all metrics
+    row.update({
+        "INSAMPLE_A_BA_ci95":"[%+.1f,%+.1f]"%boot_ci(calA["BA"]["f"],calA["BA"]["o"]),
+        "INSAMPLE_A_QMD_ci95":"[%+.1f,%+.1f]"%boot_ci(calA["QMD"]["f"],calA["QMD"]["o"]),
+        "INSAMPLE_A_TPH_ci95":"[%+.1f,%+.1f]"%boot_ci(calA["TPH"]["f"],calA["TPH"]["o"]),
+        "OOS_B_BA_ci95":"[%+.1f,%+.1f]"%boot_ci(calB["BA"]["f"],calB["BA"]["o"]),
+        "OOS_B_QMD_ci95":"[%+.1f,%+.1f]"%boot_ci(calB["QMD"]["f"],calB["QMD"]["o"]),
+        "OOS_B_TPH_ci95":"[%+.1f,%+.1f]"%boot_ci(calB["TPH"]["f"],calB["TPH"]["o"])})
     rows.append(row)
-    print("%-4s nA=%d nB=%d rate=%.1f%% BAIMULT=%.2f inj=%d | IN-SAMPLE(A) QMD %s BA %s TPH %s | OUT-OF-SAMPLE(B) QMD %s BA %s TPH %s"%(
-        var,row["nA"],row["nB"],row["ingrowth_rateA_pct_dec"],best_bai,injectA,row["INSAMPLE_A_QMD"],row["INSAMPLE_A_BA"],row["INSAMPLE_A_TPH"],row["OOS_B_QMD"],row["OOS_B_BA"],row["OOS_B_TPH"])); sys.stdout.flush()
+    print("%-4s nA=%d nB=%d Rmax=%.3f tpa/ac/yr BAIMULT=%.2f inj=%d | OOS(B) QMD %s %s BA %s %s TPH %s %s"%(
+        var,row["nA"],row["nB"],Rmax,best_bai,injectA,row["OOS_B_QMD"],row["OOS_B_QMD_ci95"],row["OOS_B_BA"],row["OOS_B_BA_ci95"],row["OOS_B_TPH"],row["OOS_B_TPH_ci95"])); sys.stdout.flush()
 if rows:
     with open(OUT,"w",newline="") as fh: w=csv.DictWriter(fh,fieldnames=list(rows[0].keys())); w.writeheader(); w.writerows(rows)
     print("wrote",OUT)

@@ -171,3 +171,21 @@ populates it; then read atba and wire the fvs-conus DG/HD predictions into the s
 
 Net: Route A went from a fundamental segfault to a completed in-process projection this session; one
 tree-size-population step remains before the in-engine arms C and D are live.
+
+## Tree-state init: the precise final gap (2026-06-18, night)
+
+Diagnostic: immediately after add_trees at stop point 7, get_tree_attr reads 0 for BOTH dbh and tpa,
+yet the cycle summary later reports tpa = 250 (the 50 added trees). So at stop point 7 the working tree
+arrays that fvsTreeAttr and the inventory read are not yet populated; the trees are staged. The expansion
+factor (prob) propagates to the summary, but the size (dbh, ht) does not reach the basal-area computation
+(atba stays 0), and set_tree_attr at stop point 7 crashes because those arrays are not live yet.
+
+Conclusion: fvsAddTrees registers the tree records (count, prob) but does not run the full per-tree
+initialization that the database / treeinit read path performs (the derived size and inventory arrays the
+BA computation uses). The fix is one of:
+  1. Call fvsAddTrees, then step to the first point where the tree arrays are live (stop point 5 / after
+     the cycle-0 setup), and read/modify dbh and dg there, not at stop point 7; confirm atba then.
+  2. Extend the add path to populate the derived inventory arrays after setting dbh/ht (mirror what the
+     normal tree read does post-load), so the cycle-0 inventory sees the sizes.
+This is focused FVS tree-initialization source work, the genuine boundary of quick iteration. The crash
+and projection-completion blockers are solved and committed; the in-process engine projects to a summary.

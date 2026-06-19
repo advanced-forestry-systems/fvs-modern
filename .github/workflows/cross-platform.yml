@@ -1,0 +1,48 @@
+name: Cross-platform build and load
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  build-load:
+    name: Build NE + load (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install gfortran (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y gfortran
+      - name: Install gfortran (macOS)
+        if: runner.os == 'macOS'
+        run: brew install gcc
+      - name: Set up MSYS2 (Windows)
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          install: mingw-w64-x86_64-gcc-fortran make coreutils
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build NE and ctypes-load (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          bash deployment/scripts/build_fvs_libraries.sh . lib ne
+          ls -la lib/
+          python3 - << "PY"
+          import ctypes, glob, sys
+          libs = glob.glob("lib/FVSne.*")
+          assert libs, "no FVSne shared library produced"
+          lib = ctypes.CDLL(libs[0]); print("loaded", libs[0])
+          for sym in ("fvssetcmdline_","fvs_"):
+              print(sym, "present" if hasattr(lib, sym) else "absent")
+          PY
+      - name: Build NE and ctypes-load (Windows/MSYS2)
+        if: runner.os == 'Windows'
+        shell: msys2 {0}
+        run: |
+          bash deployment/scripts/build_fvs_libraries.sh . lib ne
+          ls -la lib/
+          python -c "import ctypes,glob; libs=glob.glob('lib/FVSne.*'); assert libs,'no FVSne lib'; ctypes.CDLL(libs[0]); print('loaded',libs[0])"

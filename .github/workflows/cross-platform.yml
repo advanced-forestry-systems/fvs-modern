@@ -61,4 +61,5 @@ jobs:
         run: |
           VERBOSE=1 bash deployment/scripts/build_fvs_libraries.sh src-converted lib ne
           ls -la lib/
-          python -c "import ctypes,glob,os; L=glob.glob('lib/FVSne.*'); assert L,'no FVSne lib'; lib=ctypes.CDLL(os.path.abspath(L[0])); print('loaded',L[0]); assert hasattr(lib,'fvssetcmdline_'); print('PASS API ok')"
+          WINBIN=$(cygpath -w "$MINGW_PREFIX/bin" 2>/dev/null || echo "")
+          python -c "import os,ctypes,glob; d=r'$WINBIN'; (os.path.isdir(d) and os.add_dll_directory(d)); L=glob.glob('lib/FVSne.*'); assert L,'no FVSne lib'; lib=ctypes.CDLL(os.path.abspath(L[0])); print('loaded',L[0]); assert hasattr(lib,'fvssetcmdline_'); print('PASS API ok')"

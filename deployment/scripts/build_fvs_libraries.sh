@@ -355,7 +355,7 @@ for var in "${VARIANTS[@]}"; do
             UND=$( { nm -u "$SOF" 2>/dev/null || nm -D -u "$SOF" 2>/dev/null; } \
                    | awk "{print \$NF}" | sed "s/^_//" \
                    | grep -E "^[a-z][a-z0-9_]+_$" \
-                   | grep -vE "^(gfortran|_gfortran|gomp|omp_|gcov)" | sort -u )
+                   | grep -vE "^(gfortran|_gfortran|gomp|omp_|gcov)" | sort -u || true )
             if [ -n "$UND" ]; then
                 ASF="$VARDIR/autostub_${var}.f90"; : > "$ASF"
                 for sym in $UND; do nm0="${sym%_}"; printf "subroutine %s\nend subroutine %s\n" "$nm0" "$nm0" >> "$ASF"; done
@@ -391,3 +391,5 @@ if [ $BUILT -gt 0 ]; then
     ls -lh "$OUTPUT_DIR"/FVS*.so 2>/dev/null
 fi
 echo "================================================================"
+
+exit 0

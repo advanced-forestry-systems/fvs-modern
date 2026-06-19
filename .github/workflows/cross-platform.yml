@@ -29,7 +29,7 @@ jobs:
         if: runner.os != 'Windows'
         shell: bash
         run: |
-          bash deployment/scripts/build_fvs_libraries.sh . lib ne
+          bash deployment/scripts/build_fvs_libraries.sh src-converted lib ne
           ls -la lib/
           python3 - << "PY"
           import ctypes, glob, sys
@@ -43,6 +43,6 @@ jobs:
         if: runner.os == 'Windows'
         shell: msys2 {0}
         run: |
-          bash deployment/scripts/build_fvs_libraries.sh . lib ne
+          bash deployment/scripts/build_fvs_libraries.sh src-converted lib ne
           ls -la lib/
           python -c "import ctypes,glob; libs=glob.glob('lib/FVSne.*'); assert libs,'no FVSne lib'; ctypes.CDLL(libs[0]); print('loaded',libs[0])"

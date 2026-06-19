@@ -304,7 +304,7 @@ for var in "${VARIANTS[@]}"; do
             *)
                 EXTRALINK=(-Wl,--unresolved-symbols=ignore-all) ;;
         esac
-        if $FC -shared -o "$OUTPUT_DIR/FVS${var}.so" "${SHLIB_OBJECTS[@]}" -L"$OUTPUT_DIR" "${RPATHFLAG[@]}" "${STUBLINK[@]}" "${EXTRALINK[@]}" 2>"$VARDIR/link.err"; then
+        if $FC -shared -o "$OUTPUT_DIR/FVS${var}.so" "${SHLIB_OBJECTS[@]}" -L"$OUTPUT_DIR" ${RPATHFLAG[@]+"${RPATHFLAG[@]}"} ${STUBLINK[@]+"${STUBLINK[@]}"} ${EXTRALINK[@]+"${EXTRALINK[@]}"} 2>"$VARDIR/link.err"; then
             NOBJ=${#SHLIB_OBJECTS[@]}
             SIZE=$(ls -lh "$OUTPUT_DIR/FVS${var}.so" | awk '{print $5}')
             echo "DONE ($NOBJ objects, $COMPILE_ERRORS skipped, $SIZE)"

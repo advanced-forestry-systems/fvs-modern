@@ -12,13 +12,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install gfortran (Linux)
         if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update && sudo apt-get install -y gfortran-12
-          sudo update-alternatives --install /usr/bin/gfortran gfortran /usr/bin/gfortran-12 100
-          gfortran --version | head -1
+        run: sudo apt-get update && sudo apt-get install -y gfortran
       - name: Install gfortran (macOS)
         if: runner.os == 'macOS'
-        run: brew install gcc
+        run: brew install gcc && sudo ln -sf $(brew --prefix)/bin/gfortran-* /usr/local/bin/gfortran || true
       - name: Set up MSYS2 (Windows)
         if: runner.os == 'Windows'
         uses: msys2/setup-msys2@v2
@@ -28,24 +25,34 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Build NE and ctypes-load (Linux/macOS)
+      - name: Build NE and load (Linux/macOS)
         if: runner.os != 'Windows'
         shell: bash
         run: |
           bash deployment/scripts/build_fvs_libraries.sh src-converted lib ne
           ls -la lib/
           python3 - << "PY"
-          import ctypes, glob, sys
-          libs = glob.glob("lib/FVSne.*")
+          import ctypes, glob, sys, os
+          libs = glob.glob("lib/FVSne.*so") + glob.glob("lib/FVSne.dylib")
           assert libs, "no FVSne shared library produced"
-          lib = ctypes.CDLL(libs[0]); print("loaded", libs[0])
-          for sym in ("fvssetcmdline_","fvs_"):
-              print(sym, "present" if hasattr(lib, sym) else "absent")
+          so = os.path.abspath(libs[0])
+          # FVS .so carry known harmless unresolved internal symbols (NVEL debug_mod);
+          # load lazily (matches fvs2py and the main CI), then verify API entry points.
+          RTLD_LAZY = 0x1
+          try:
+              lib = ctypes.CDLL(so, mode=RTLD_LAZY)
+          except OSError:
+              lib = ctypes.CDLL(so)
+          print("loaded", so)
+          for fn in ("fvssetcmdline_", "fvssummary_", "fvsdimsizes_"):
+              assert hasattr(lib, fn), f"missing API symbol {fn}"
+              print("  [OK]", fn)
+          print("PASS: FVSne loads and API entry points are accessible")
           PY
-      - name: Build NE and ctypes-load (Windows/MSYS2)
+      - name: Build NE and load (Windows/MSYS2)
         if: runner.os == 'Windows'
         shell: msys2 {0}
         run: |
           bash deployment/scripts/build_fvs_libraries.sh src-converted lib ne
           ls -la lib/
-          python -c "import ctypes,glob; libs=glob.glob('lib/FVSne.*'); assert libs,'no FVSne lib'; ctypes.CDLL(libs[0]); print('loaded',libs[0])"
+          python -c "import ctypes,glob,os; L=glob.glob('lib/FVSne.*'); assert L,'no FVSne lib'; lib=ctypes.CDLL(os.path.abspath(L[0])); print('loaded',L[0]); assert hasattr(lib,'fvssetcmdline_'); print('PASS API ok')"

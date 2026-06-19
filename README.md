@@ -40,11 +40,11 @@ at Zenodo: data DOI [10.5281/zenodo.20760580](https://doi.org/10.5281/zenodo.207
 - Linux: validated. The full regression suite passes (42 of 42), and the standalone executables and the fvs2py
   shared libraries build and load via the CI (`.github/workflows/ci.yml`) and the Docker image
   (`.github/workflows/docker-publish.yml`, the recommended reproducible build).
-- Cross-platform CI (`.github/workflows/cross-platform.yml`) builds and load-tests on Ubuntu, macOS, and
-  Windows (MSYS2/MinGW). **Linux and macOS build and load from source** (the matrix gates on both); a
-  self-contained-library pass stubs the few harmless unresolved internal NVEL symbols so the libraries load on
-  macOS, whose loader cannot defer them. Native-Windows (MSYS2) from-source builds are in progress and tracked
-  in issue #72; Windows users should use WSL2 (Linux) or the Docker image, which are fully supported.
+- Cross-platform CI (`.github/workflows/cross-platform.yml`) builds and load-tests on **Ubuntu, macOS, and
+  Windows (MSYS2/MinGW) — all three build the variant shared library, load it, and verify the FVS API symbols.**
+  A pre-link stub pass plus a self-contained post-link pass resolve the few harmless unresolved internal NVEL
+  symbols so the library is self-contained on macOS and Windows, whose loaders cannot defer them; on Windows the
+  MinGW runtime DLLs are bundled beside the library. Windows users can also use WSL2 or the Docker image.
 - Verification: a default-vs-calibrated FVS-NE projection over 30 years on remeasured stands confirms the
   calibrated configs load and apply (they trim the default basal-area over-prediction by a few percent, the
   expected direction); the standalone regression suite passes 42 of 42.

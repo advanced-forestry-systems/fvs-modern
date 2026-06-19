@@ -19,8 +19,8 @@ jobs:
       - name: Install gfortran (macOS)
         if: runner.os == 'macOS'
         run: |
-          brew install gcc
-          GF=$(ls "$(brew --prefix)"/bin/gfortran-[0-9]* 2>/dev/null | sort -V | tail -1)
+          brew install gcc@13 || brew install gcc
+          GF=$(ls "$(brew --prefix)"/bin/gfortran-13 "$(brew --prefix)"/bin/gfortran-[0-9]* 2>/dev/null | head -1)
           echo "using $GF"
           sudo mkdir -p /usr/local/bin
           sudo ln -sf "$GF" /usr/local/bin/gfortran
@@ -39,7 +39,7 @@ jobs:
         if: runner.os != 'Windows'
         shell: bash
         run: |
-          bash deployment/scripts/build_fvs_libraries.sh src-converted lib ne
+          VERBOSE=1 bash deployment/scripts/build_fvs_libraries.sh src-converted lib ne
           ls -la lib/
           python3 - << "PY"
           import ctypes, glob, sys, os
@@ -59,6 +59,6 @@ jobs:
         if: runner.os == 'Windows'
         shell: msys2 {0}
         run: |
-          bash deployment/scripts/build_fvs_libraries.sh src-converted lib ne
+          VERBOSE=1 bash deployment/scripts/build_fvs_libraries.sh src-converted lib ne
           ls -la lib/
           python -c "import ctypes,glob,os; L=glob.glob('lib/FVSne.*'); assert L,'no FVSne lib'; lib=ctypes.CDLL(os.path.abspath(L[0])); print('loaded',L[0]); assert hasattr(lib,'fvssetcmdline_'); print('PASS API ok')"

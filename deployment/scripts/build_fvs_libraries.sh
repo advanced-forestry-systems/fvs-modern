@@ -274,6 +274,28 @@ for var in "${VARIANTS[@]}"; do
 
     done < "$SRCLIST"
 
+    # Windows pre-link self-containment (#72): PE DLLs cannot contain unresolved symbols and the
+    # post-link auto-stub cannot help (the link must succeed first). Derive symbols referenced (U)
+    # but defined by no object, stub them, and add to the link so it has zero unresolved symbols.
+    case "$(uname -s)" in
+        MINGW*|MSYS*|CYGWIN*)
+            if [ ${#OBJECTS[@]} -gt 0 ]; then
+                DEFD=$(nm "${OBJECTS[@]}" 2>/dev/null | awk 'NF>=3 && $2 ~ /^[TtDdBbRr]$/ {print $3}' | sort -u)
+                REFD=$(nm "${OBJECTS[@]}" 2>/dev/null | awk '$1=="U"{print $2} NF==2 && $1 ~ /^[Uu]$/{print $2}' | sort -u)
+                TOSTUB=$(comm -23 <(printf '%s\n' "$REFD") <(printf '%s\n' "$DEFD") 2>/dev/null \
+                        | grep -E '^[a-z][a-z0-9_]+_$' | grep -vE '^(gfortran|_gfortran|__|gomp|omp_|gcov|main)' || true)
+                if [ -n "$TOSTUB" ]; then
+                    PSF="$VARDIR/prelinkstub_${var}.f90"; : > "$PSF"
+                    for sym in $TOSTUB; do nm0="${sym%_}"; printf 'subroutine %s\nend subroutine %s\n' "$nm0" "$nm0" >> "$PSF"; done
+                    PSO="$VARDIR/prelinkstub_${var}.o"
+                    if compile_file "$PSF" "$PSO" "$INCDIRS" 2>/dev/null && [ -f "$PSO" ]; then
+                        OBJECTS+=("$PSO")
+                        echo "  [win pre-link] stubbed $(printf '%s\n' $TOSTUB | wc -l | tr -d ' ') undefined symbol(s) for PE link"
+                    fi
+                fi
+            fi ;;
+    esac
+
     # Filter out main.o (the executable entry point; not needed for shared library)
     SHLIB_OBJECTS=()
     for obj in "${OBJECTS[@]}"; do

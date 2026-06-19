@@ -274,17 +274,6 @@ for var in "${VARIANTS[@]}"; do
 
     done < "$SRCLIST"
 
-    # --- portability fix (2026-06-19): always link base stub routines that are
-    # referenced by many variants but listed in no sourceList (varver_, etc.),
-    # so the shared library is self-contained for ctypes/fvs2py.
-    for stub in "$SOURCE_DIR"/base/varver_stub.f90 "$SOURCE_DIR"/base/*_stub.f90; do
-        [ -f "$stub" ] || continue
-        sobj="$VARDIR/stublink_$(basename "${stub%.*}").o"
-        if compile_file "$stub" "$sobj" "$INCDIRS" 2>/dev/null && [ -f "$sobj" ]; then
-            OBJECTS+=("$sobj")
-        fi
-    done
-
     # Filter out main.o (the executable entry point; not needed for shared library)
     SHLIB_OBJECTS=()
     for obj in "${OBJECTS[@]}"; do

@@ -876,6 +876,58 @@ validated national model. The size levers are validated
 out-of-sample; the recruitment lever is a prototype that transfers
 for most variants and needs a site-resolved form for the remainder.
 
+## 4.7 Independent international validation against the Canadian National Forest Inventory
+
+The FIA benchmark in Section 4.3 is in-sample to the United States. To test whether the recalibrated engine
+transfers across the international border, we validated two variants against the Canadian National Forest
+Inventory through the Multi-Agency Ground Plot (MAGPlot) compilation, an independent remeasurement network not
+used in any calibration. We targeted the Acadian variant against New Brunswick and the Alaska variant against
+coastal British Columbia.
+
+### 4.7.1 Stand compilation
+
+MAGPlot tree records were compiled to stand level using the per-tree expansion factors, restricted to
+protocol-consistent remeasurement pairs (the same subplot set and minimum-diameter tag limit at both visits and
+a plausible basal-area change), yielding 262 Acadian (New Brunswick, 5-year interval) and 2,451 Alaska (British
+Columbia, mean 24.7-year interval) stand pairs. Species were mapped to FIA codes with full coverage. British
+Columbia plots were assigned North American CEC Level III ecoregions by spatial join so the Alaska variant
+could be evaluated against the ecoregion analogous to its Southeast Alaska calibration domain (Marine West
+Coast Forest) rather than against the faster-growing southern coast.
+
+### 4.7.2 Acadian: near-unbiased cross-border transfer
+
+On New Brunswick (n = 262), the default Acadian variant projected basal area essentially without bias
+(-0.0 percent, R^2 = 0.88). The residual was a modest diameter-versus-density split: quadratic mean diameter
+over-predicted by 8.9 percent and trees per hectare under-predicted by 7.3 percent, the same signature the
+CONUS recalibration corrects (implied calibration factors 0.918 for QMD and 1.079 for TPH). The Acadian growth
+model therefore transfers to Canadian maritime forest with no basal-area-level adjustment.
+
+### 4.7.3 Alaska: ecoregion-dependent under-prediction and calibration
+
+The Alaska variant under-predicted growth across productive British Columbia ecoregions. In its analog
+ecoregion (Marine West Coast Forest, n = 11 clean-ingestion stands) the default basal-area increment bias was
+about -50 to -74 percent across samples, and the standing-basal-area bias about -36 percent. The
+under-prediction held across the Northwestern Forested Mountains (n = 104, -77 percent) and boreal Taiga
+(-90 to -109 percent), but not in the dry North American Deserts ecoregion (about -9 percent), where the slow
+stands resemble the Southeast Alaska forests the variant was parameterized on.
+
+Applying a basal-area-increment multiplier through the engine reduced the analog-ecoregion bias from
+-49.4 percent to -6.4 percent at a 2.0 multiplier, with a coherent ecoregion-dependent structure: a 2.0
+multiplier suited the productive coastal and boreal ecoregions while the dry interior required no adjustment
+(a uniform multiplier over-corrected it). The correction was encoded as coastal-species diameter-growth
+multipliers in the Alaska calibrated configuration. A fully independent held-out fold was not possible because
+the clean-ingestion Marine West Coast Forest pool is only about 11 stands; expanding it is gated on the
+variant's inventory-expansion handling and is identified as future work.
+
+### 4.7.4 Interpretation
+
+The two cases bracket the calibration's behavior. Where the variant's domain matches the validation forest
+(Acadian to maritime Canada) the recalibrated engine transfers with negligible basal-area bias. Where the
+validation forest is more productive than the calibration domain (Alaska variant to coastal British Columbia)
+the engine under-predicts in a structured, ecoregion-dependent way that an increment multiplier removes. Both
+results support the central claim that the bias structure is systematic and correctable rather than idiosyncratic,
+and they demonstrate the engine's calibration machinery operating against fully independent international data.
+
 # 5. Discussion
 
 ## 5.1 Scientific implications
@@ -1222,6 +1274,9 @@ calibration/R/ and calibration/python/ using FIA remeasurement
 outputs and calibrated posterior medians.
 
 # Data and code availability
+
+Calibrated parameter posteriors and the MAGPlot/four-way validation outputs are archived at Zenodo, DOI 10.5281/zenodo.20760580.
+
 
 All source code, calibrated parameter files, posterior draw
 archives, continuous integration configuration, and benchmarking

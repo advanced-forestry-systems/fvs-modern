@@ -742,13 +742,7 @@ class FvsConfigLoader:
                 continue
             if val > 0:
                 # SDIMAX keyword: species_index  sdi_value
-                # FVS fixed-column fields: keyword cols 1-10, field 1 (species) cols
-            # 11-20, field 2 (value) cols 21-30. SDIMAX option 89 (vbase/initre.f90)
-            # reads field 1 as the species code (SPDECD; 0 = all) and field 2 as the
-            # max SDI value. The old spacing pushed species out of field 1 (read
-            # blank = all species) and the value into field 1, setting MAX SDI = 1.
-            # Corrected and verified per-species + binding 2026-06-16.
-            lines.append(f"{'SDIMAX':<10}{i + 1:10d}{val:10.1f}")
+                lines.append(f"SDIMAX          {i + 1:10d}{val:10.1f}")
         return "\n".join(lines)
 
     def _format_bamax_keywords(self, values: list, comments: bool) -> str:

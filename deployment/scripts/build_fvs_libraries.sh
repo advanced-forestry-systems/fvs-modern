@@ -309,6 +309,27 @@ for var in "${VARIANTS[@]}"; do
             SIZE=$(ls -lh "$OUTPUT_DIR/FVS${var}.so" | awk '{print $5}')
             echo "DONE ($NOBJ objects, $COMPILE_ERRORS skipped, $SIZE)"
             BUILT=$((BUILT + 1))
+
+            # --- self-contained pass (#72): stub any remaining UNDEFINED FVS-internal Fortran
+            # symbols and re-link them in, so the library also loads on macOS/Windows (whose
+            # dlopen cannot defer unresolved symbols like Linux lazy binding does). Only undefined
+            # symbols are stubbed, so this never duplicates a real definition. Stubbed routines are
+            # ones this variant does not link or call; behavior matches the prior lazy-load.
+            SOF="$OUTPUT_DIR/FVS${var}.so"
+            UND=$( { nm -u "$SOF" 2>/dev/null || nm -D -u "$SOF" 2>/dev/null; } \
+                   | awk "{print \$NF}" | sed "s/^_//" \
+                   | grep -E "^[a-z][a-z0-9_]+_$" \
+                   | grep -vE "^(gfortran|_gfortran|gomp|omp_|gcov)" | sort -u )
+            if [ -n "$UND" ]; then
+                ASF="$VARDIR/autostub_${var}.f90"; : > "$ASF"
+                for sym in $UND; do nm0="${sym%_}"; printf "subroutine %s\nend subroutine %s\n" "$nm0" "$nm0" >> "$ASF"; done
+                ASO="$VARDIR/autostub_${var}.o"
+                if compile_file "$ASF" "$ASO" "$INCDIRS" 2>/dev/null && [ -f "$ASO" ]; then
+                    if $FC -shared -o "$SOF" "${SHLIB_OBJECTS[@]}" "$ASO" -L"$OUTPUT_DIR" ${RPATHFLAG[@]+"${RPATHFLAG[@]}"} ${STUBLINK[@]+"${STUBLINK[@]}"} ${EXTRALINK[@]+"${EXTRALINK[@]}"} 2>"$VARDIR/relink.err"; then
+                        echo "  [self-contained] stubbed $(printf "%s\n" $UND | wc -l | tr -d " ") undefined symbol(s) for portable load"
+                    fi
+                fi
+            fi
         else
             echo "LINK FAILED"
             if [ "$VERBOSE" -eq 1 ]; then

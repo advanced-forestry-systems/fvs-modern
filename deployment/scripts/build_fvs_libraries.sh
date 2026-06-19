@@ -290,12 +290,21 @@ for var in "${VARIANTS[@]}"; do
         # varver_) resolve from the stubs. Using -l (not direct object add) pulls a stub ONLY for
         # an otherwise-undefined symbol, so it never duplicates a real definition. $ORIGIN rpath
         # lets the loaded .so find the stub libs sitting beside it.
-        STUBLINK=(); RPATHFLAG=()
-        if [ "$(uname -s)" = "Linux" ]; then
-            RPATHFLAG=(-Wl,-rpath,\$ORIGIN)
-            for sl in "$OUTPUT_DIR"/libfvs_stubs*.so; do [ -f "$sl" ] && STUBLINK+=("-l:$(basename "$sl")"); done
-        fi
-        if $FC -shared -o "$OUTPUT_DIR/FVS${var}.so" "${SHLIB_OBJECTS[@]}" -L"$OUTPUT_DIR" "${RPATHFLAG[@]}" "${STUBLINK[@]}" 2>"$VARDIR/link.err"; then
+        # OS-aware shared-library link. Linux -shared tolerates undefined symbols by default
+        # and uses the stub-library fallback + rpath; macOS ld64 and Windows/MinGW PE linking
+        # reject undefined symbols at link time, so they need an explicit allow flag (the FVS .so
+        # carry harmless unresolved internal NVEL symbols resolved lazily at load).
+        STUBLINK=(); RPATHFLAG=(); EXTRALINK=()
+        case "$(uname -s)" in
+            Linux)
+                RPATHFLAG=(-Wl,-rpath,\$ORIGIN)
+                for sl in "$OUTPUT_DIR"/libfvs_stubs*.so; do [ -f "$sl" ] && STUBLINK+=("-l:$(basename "$sl")"); done ;;
+            Darwin)
+                EXTRALINK=(-Wl,-undefined,dynamic_lookup) ;;
+            *)
+                EXTRALINK=(-Wl,--unresolved-symbols=ignore-all) ;;
+        esac
+        if $FC -shared -o "$OUTPUT_DIR/FVS${var}.so" "${SHLIB_OBJECTS[@]}" -L"$OUTPUT_DIR" "${RPATHFLAG[@]}" "${STUBLINK[@]}" "${EXTRALINK[@]}" 2>"$VARDIR/link.err"; then
             NOBJ=${#SHLIB_OBJECTS[@]}
             SIZE=$(ls -lh "$OUTPUT_DIR/FVS${var}.so" | awk '{print $5}')
             echo "DONE ($NOBJ objects, $COMPILE_ERRORS skipped, $SIZE)"

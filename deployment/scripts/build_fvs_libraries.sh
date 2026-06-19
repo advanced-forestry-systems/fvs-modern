@@ -325,7 +325,9 @@ for var in "${VARIANTS[@]}"; do
                 EXTRALINK=(-Wl,-undefined,dynamic_lookup) ;;
             MINGW*|MSYS*|CYGWIN*)
                 for sl in "$OUTPUT_DIR"/libfvs_stubs*.so; do [ -f "$sl" ] && STUBLINK+=("-l:$(basename "$sl")"); done
-                EXTRALINK=(-Wl,--unresolved-symbols=ignore-all -Wl,--enable-auto-import) ;;
+                # Statically bundle the gfortran/gcc runtime so the PE DLL is self-contained
+                # (no libgfortran-5.dll/libgcc/libquadmath dependency at load time).
+                EXTRALINK=(-static-libgfortran -static-libgcc -static-libquadmath -Wl,--enable-auto-import -Wl,--unresolved-symbols=ignore-all) ;;
             *)
                 EXTRALINK=(-Wl,--unresolved-symbols=ignore-all) ;;
         esac

@@ -337,6 +337,15 @@ for var in "${VARIANTS[@]}"; do
             echo "DONE ($NOBJ objects, $COMPILE_ERRORS skipped, $SIZE)"
             BUILT=$((BUILT + 1))
 
+            # On Windows, copy the MinGW runtime DLLs next to the variant library so it is
+            # self-contained for loading/distribution (the Windows loader searches the DLL's dir).
+            case "$(uname -s)" in
+                MINGW*|MSYS*|CYGWIN*)
+                    for _d in libgfortran-5 libgcc_s_seh-1 libquadmath-0 libwinpthread-1 libstdc++-6 libgomp-1; do
+                        cp "${MINGW_PREFIX:-/mingw64}/bin/${_d}.dll" "$OUTPUT_DIR/" 2>/dev/null || true
+                    done ;;
+            esac
+
             # --- self-contained pass (#72): stub any remaining UNDEFINED FVS-internal Fortran
             # symbols and re-link them in, so the library also loads on macOS/Windows (whose
             # dlopen cannot defer unresolved symbols like Linux lazy binding does). Only undefined

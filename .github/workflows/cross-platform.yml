@@ -12,7 +12,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install gfortran (Linux)
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y gfortran
+        run: |
+          sudo apt-get update && sudo apt-get install -y gfortran-12
+          sudo update-alternatives --install /usr/bin/gfortran gfortran /usr/bin/gfortran-12 100
+          gfortran --version | head -1
       - name: Install gfortran (macOS)
         if: runner.os == 'macOS'
         run: brew install gcc

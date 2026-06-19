@@ -301,6 +301,9 @@ for var in "${VARIANTS[@]}"; do
                 for sl in "$OUTPUT_DIR"/libfvs_stubs*.so; do [ -f "$sl" ] && STUBLINK+=("-l:$(basename "$sl")"); done ;;
             Darwin)
                 EXTRALINK=(-Wl,-undefined,dynamic_lookup) ;;
+            MINGW*|MSYS*|CYGWIN*)
+                for sl in "$OUTPUT_DIR"/libfvs_stubs*.so; do [ -f "$sl" ] && STUBLINK+=("-l:$(basename "$sl")"); done
+                EXTRALINK=(-Wl,--unresolved-symbols=ignore-all -Wl,--enable-auto-import) ;;
             *)
                 EXTRALINK=(-Wl,--unresolved-symbols=ignore-all) ;;
         esac
@@ -333,7 +336,7 @@ for var in "${VARIANTS[@]}"; do
         else
             echo "LINK FAILED"
             echo "  --- link.err (tail) ---"
-            tail -20 "$VARDIR/link.err" 2>/dev/null | sed 's/^/    /'
+            tail -40 "$VARDIR/link.err" 2>/dev/null | sed 's/^/    /'
             FAILED=$((FAILED + 1))
         fi
     else

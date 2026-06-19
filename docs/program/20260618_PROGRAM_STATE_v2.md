@@ -74,3 +74,20 @@ species selected (mcw_conus_consensus.csv). Feed into the crown/CCF competition 
 eae8b4f arm-D result; c32d40c/60960d6/9680389/4a2fa16 Route A diagnosis; 1b51a2b MCW consensus;
 9e4eae7/bd10a12 forest-type+ecoregion; c7b324f build+regression deployment-ready; 5d1acc6 Canadian-NFI plan;
 72406d0/1aba13c ADK; 4266a47/3415706/9f84242 Route A in-process projection works, tree-init gap documented.
+
+## 2026-06-18 evening update
+
+- Four-way comparison COMPLETE and committed (39dcf8a, 8c1764c): calib_4way_margins.csv plus
+  fig_4way_landowner.png and fig_4way_ecoregion.png. Variant margin is full (951 conditions, n 40-112/variant);
+  calibration cuts QMD bias across 11 of 13 variants (kt 26.3->3.9, ec 14.7->-2.2, sn 14.9->5.7, ne 8.7->2.9,
+  acd 9.9->5.0). Ecoregion (L2) and landowner margins reported on the 123-condition disturbance-clean joined
+  subset; species margin is thin there and is covered by the species-stress test. Join gate lowered 0.2 -> 0.1
+  (the cspiv6 disturbance-clean universe legitimately carries ~13% of harness conditions).
+- MAGPlot staged and fully ingested (c457b61). Confirmed real schema. ACD target = NB (NS/PE not in package);
+  AK target = BC. Built remeasurement pairs from source: ACD/NB 263 (prior, validated), AK/BC 2,451 clean
+  protocol-consistent pairs (from 6,845 raw; filtered for matching subplots/tag-limit across visits).
+- ACD/NB is the validated maritime reference: near-unbiased BA (-0.04%, R2 0.88), QMD +9% is the calibration
+  target. AK/BC machinery and species crosswalk validated (100% coverage); FVS-AK projection blocked on a
+  treeinit TPA-scaling + cycle-length ingestion bug under region 10 (reads ~7x low TPA, 1-year cycles). One
+  focused engine-debug fix from a real AK bias number. Route A tree-init work and this AK ingestion fix are the
+  same class of focused FVS-source task.

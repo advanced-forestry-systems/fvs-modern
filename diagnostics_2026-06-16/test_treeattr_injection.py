@@ -18,7 +18,7 @@ try:
     from fvs2py import FVS
 except Exception:
     from fvs2py._base import FVS
-LIB=P+"/lib/FVSne.so"; VAR="ne"
+LIB=os.environ.get("LIB", P+"/lib/FVSne.so"); VAR="ne"
 
 # build one NE remeasurement stand
 G.VARIANT_STATES[VAR]=(23,33,50)  # ME,NH,VT

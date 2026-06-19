@@ -39,7 +39,14 @@ dbh=rng.uniform(5,20,n); ht=8.0+2.5*dbh; cr=np.full(n,40.0); sp=np.ones(n); plot
 added=fvs.add_trees(dbh, sp, ht, cr, plot, tpa)
 pr("added", added, "trees; ntrees now", fvs.dims["ntrees"])
 tbl=fvs.tree_table(("species","dbh","ht"))
-pr("in-engine after add: n", len(tbl), " mean dbh", round(float(tbl["dbh"].mean()),2))
+pr("after add_trees: n", len(tbl), " mean dbh", round(float(tbl["dbh"].mean()),2),
+   " mean tpa", round(float(fvs.get_tree_attr("tpa").mean()),2) if "tpa" else "na")
+# populate size arrays explicitly via the tree-attr API (in case add_trees wrote a different array)
+try:
+    fvs.set_tree_attr("dbh", dbh); fvs.set_tree_attr("ht", ht)
+    chk=fvs.get_tree_attr("dbh"); pr("after set_tree_attr dbh: mean", round(float(chk.mean()),2))
+except Exception as e:
+    pr("set_tree_attr failed:", e)
 
 # project to completion
 k=0

@@ -290,8 +290,12 @@ for var in "${VARIANTS[@]}"; do
         # varver_) resolve from the stubs. Using -l (not direct object add) pulls a stub ONLY for
         # an otherwise-undefined symbol, so it never duplicates a real definition. $ORIGIN rpath
         # lets the loaded .so find the stub libs sitting beside it.
-        STUBLINK=(); for sl in "$OUTPUT_DIR"/libfvs_stubs*.so; do [ -f "$sl" ] && STUBLINK+=("-l:$(basename "$sl")"); done
-        if $FC -shared -o "$OUTPUT_DIR/FVS${var}.so" "${SHLIB_OBJECTS[@]}" -L"$OUTPUT_DIR" -Wl,-rpath,\$ORIGIN "${STUBLINK[@]}" 2>"$VARDIR/link.err"; then
+        STUBLINK=(); RPATHFLAG=()
+        if [ "$(uname -s)" = "Linux" ]; then
+            RPATHFLAG=(-Wl,-rpath,\$ORIGIN)
+            for sl in "$OUTPUT_DIR"/libfvs_stubs*.so; do [ -f "$sl" ] && STUBLINK+=("-l:$(basename "$sl")"); done
+        fi
+        if $FC -shared -o "$OUTPUT_DIR/FVS${var}.so" "${SHLIB_OBJECTS[@]}" -L"$OUTPUT_DIR" "${RPATHFLAG[@]}" "${STUBLINK[@]}" 2>"$VARDIR/link.err"; then
             NOBJ=${#SHLIB_OBJECTS[@]}
             SIZE=$(ls -lh "$OUTPUT_DIR/FVS${var}.so" | awk '{print $5}')
             echo "DONE ($NOBJ objects, $COMPILE_ERRORS skipped, $SIZE)"

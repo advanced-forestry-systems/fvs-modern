@@ -15,14 +15,21 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y gfortran
       - name: Install gfortran (macOS)
         if: runner.os == 'macOS'
-        run: brew install gcc && sudo ln -sf $(brew --prefix)/bin/gfortran-* /usr/local/bin/gfortran || true
+        run: |
+          brew install gcc
+          GF=$(ls "$(brew --prefix)"/bin/gfortran-[0-9]* 2>/dev/null | sort -V | tail -1)
+          echo "using $GF"
+          sudo mkdir -p /usr/local/bin
+          sudo ln -sf "$GF" /usr/local/bin/gfortran
+          gfortran --version | head -1
       - name: Set up MSYS2 (Windows)
         if: runner.os == 'Windows'
         uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW64
-          install: mingw-w64-x86_64-gcc-fortran make coreutils
+          install: mingw-w64-x86_64-gcc-fortran mingw-w64-x86_64-python make coreutils
       - uses: actions/setup-python@v5
+        if: runner.os != 'Windows'
         with:
           python-version: "3.11"
       - name: Build NE and load (Linux/macOS)
@@ -36,13 +43,9 @@ jobs:
           libs = glob.glob("lib/FVSne.*so") + glob.glob("lib/FVSne.dylib")
           assert libs, "no FVSne shared library produced"
           so = os.path.abspath(libs[0])
-          # FVS .so carry known harmless unresolved internal symbols (NVEL debug_mod);
-          # load lazily (matches fvs2py and the main CI), then verify API entry points.
           RTLD_LAZY = 0x1
-          try:
-              lib = ctypes.CDLL(so, mode=RTLD_LAZY)
-          except OSError:
-              lib = ctypes.CDLL(so)
+          try: lib = ctypes.CDLL(so, mode=RTLD_LAZY)
+          except OSError: lib = ctypes.CDLL(so)
           print("loaded", so)
           for fn in ("fvssetcmdline_", "fvssummary_", "fvsdimsizes_"):
               assert hasattr(lib, fn), f"missing API symbol {fn}"

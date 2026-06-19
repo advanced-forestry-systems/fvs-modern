@@ -41,8 +41,13 @@ at Zenodo: data DOI [10.5281/zenodo.20760580](https://doi.org/10.5281/zenodo.207
   shared libraries build and load via the CI (`.github/workflows/ci.yml`) and the Docker image
   (`.github/workflows/docker-publish.yml`, the recommended reproducible build).
 - Cross-platform CI (`.github/workflows/cross-platform.yml`) builds and load-tests on Ubuntu, macOS, and
-  Windows (MSYS2/MinGW). macOS and native-Windows from-source builds are works in progress (toolchain
-  discovery and shared-library naming); Linux and the Docker container are the supported deployment paths.
+  Windows (MSYS2/MinGW). **Linux and macOS build and load from source** (the matrix gates on both); a
+  self-contained-library pass stubs the few harmless unresolved internal NVEL symbols so the libraries load on
+  macOS, whose loader cannot defer them. Native-Windows (MSYS2) from-source builds are in progress and tracked
+  in issue #72; Windows users should use WSL2 (Linux) or the Docker image, which are fully supported.
+- Verification: a default-vs-calibrated FVS-NE projection over 30 years on remeasured stands confirms the
+  calibrated configs load and apply (they trim the default basal-area over-prediction by a few percent, the
+  expected direction); the standalone regression suite passes 42 of 42.
 - fvs2py / ctypes note: the FVS shared libraries carry a few harmless unresolved internal NVEL symbols, so load
   them lazily (the default ctypes behavior, RTLD_LAZY); the simulation API entry points (`fvssetcmdline_`,
   `fvssummary_`, `fvsdimsizes_`, ...) are fully resolved and callable.

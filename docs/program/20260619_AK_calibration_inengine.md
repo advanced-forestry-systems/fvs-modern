@@ -50,3 +50,16 @@ diameter-growth multipliers (calibrated against FIA Alaska), which do not reflec
 under-prediction; this MAGPlot result is the basis for updating it.
 
 Scripts: diagnostics_2026-06-16/magplot/ak_calib_par.py, ak_calib_results.csv.
+
+## Held-out validation note (2026-06-19)
+
+Encoded the coastal 2.0x dds_multiplier into config/calibrated/ak.json (species SF, YC, SS, RC, WH, MH, RA,
+CW; dry-interior species retain the FIA-Alaska values; the original array is preserved as
+dds_multiplier_fia_original). Attempting an independent held-out fold (random seed 99 vs the calibration seed 7)
+returned the identical 11 Marine West Coast Forest stands: the clean-ingestion MWCF pool is only about 11 stands,
+so any sample contains all of them and a true train/test split is not possible at the current sample size. The
+2.0x correction reduces the MWCF increment bias from -49.4 percent to -6.4 percent on this full clean pool. A
+genuinely held-out validation requires expanding the MWCF clean-ingestion sample, which is gated on the FVS-AK
+inventory-expansion fix (the engine only ingests a fraction of BC stands cleanly). The encoded multiplier and the
+ecoregion-dependent structure (2x coastal/boreal, 1x dry interior) are the deliverable; the held-out test is
+sample-limited, not yet independent.

@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     # Linux is the supported/gating build; macOS and native-Windows from-source builds are
     # work-in-progress (toolchain + shared-library portability), so they report but do not fail CI.
-    continue-on-error: ${{ matrix.os != 'ubuntu-latest' }}
+    continue-on-error: ${{ matrix.os == 'windows-latest' }}
     steps:
       - uses: actions/checkout@v4
       - name: Install gfortran (Linux)

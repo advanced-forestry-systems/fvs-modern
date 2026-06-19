@@ -332,9 +332,8 @@ for var in "${VARIANTS[@]}"; do
             fi
         else
             echo "LINK FAILED"
-            if [ "$VERBOSE" -eq 1 ]; then
-                tail -5 "$VARDIR/link.err" 2>/dev/null | sed 's/^/    /'
-            fi
+            echo "  --- link.err (tail) ---"
+            tail -20 "$VARDIR/link.err" 2>/dev/null | sed 's/^/    /'
             FAILED=$((FAILED + 1))
         fi
     else

@@ -78,7 +78,7 @@ class FvsConfigLoader:
     #                marks it leg_a), else fall back to the species-free (Leg B)
     #                trait effect. Recommended default once both legs are landed.
     VALID_VERSIONS = ("default", "calibrated", "conus", "hybrid", "custom",
-                      "conus_sf", "conus_hybrid")
+                      "conus_sf", "conus_hybrid", "conus_greg")
 
     def __init__(
         self,
@@ -131,7 +131,7 @@ class FvsConfigLoader:
         if self.version == "custom" and self._custom_config_path is not None:
             return self._custom_config_path
         if self.version in ("calibrated", "conus", "hybrid",
-                            "conus_sf", "conus_hybrid"):
+                            "conus_sf", "conus_hybrid", "conus_greg"):
             # All live in the same variant JSON; the version selects which
             # top-level block to read (categories / categories_conus /
             # categories_conus_sf).

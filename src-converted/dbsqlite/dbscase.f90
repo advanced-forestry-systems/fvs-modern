@@ -275,7 +275,7 @@ WRITE(SQLStmtStr,*)"INSERT INTO FVS_Cases", &
     TRIM(ADJUSTL(SLSET)),"','", &
     TRIM(ADJUSTL(TIMESTAMP)),"');"
 
-!      write(*,*) 'in DBSCASE - ',SQLStmtStr
+!     write(*,*) 'DBSCASE_SQL: ',trim(SQLStmtStr)
 
 IRCODE = fsql3_exec(IoutDBref,trim(SQLStmtStr)//CHAR(0))
 IF (IRCODE.ne.0) then
@@ -312,9 +312,8 @@ SUBROUTINE REMOVEQUOTES (CS)
 IMPLICIT NONE
 CHARACTER(LEN=*) CS
 INTEGER I
-IF (LEN_TRIM(CS).LE.0) RETURN
-DO I=1,LEN_TRIM(CS)
-  IF (CS(I:I) .EQ. "'") CS(I:I)=' '
+DO I=1,LEN(CS)
+  IF (CS(I:I) .EQ. "'" .OR. ICHAR(CS(I:I)) .LT. 32) CS(I:I)=' '
 ENDDO
 RETURN
 END

@@ -8,7 +8,8 @@ already carries z_sp.
 
 ## 1. The form to support
 
-Deployed survival eta (per tree, annual hazard; S = exp(-exp(eta) * FINT)):
+Deployed survival eta (per tree). NOTE the sign: the hazard is exp(-eta), so higher eta means higher
+survival (survival_unified_v2_crz.stan lines 12-13: annual_hazard = exp(-eta); P(survive T) = exp(-exp(-eta)*T)):
 
   eta = b0 + trait_effect[sp] + z_sp[sp]
       + z_L1[L1] + z_L2[L2] + z_L3[L3] + z_FT[fortype]
@@ -101,10 +102,12 @@ Both are stand- or tree-level quantities FVS already tracks; the work is mapping
     sbar = sqrt( max(BA*0.2296,0) * max(rd,0) )
     eta = eta + BV(1)*DBH + BV(2)*DBH*DBH + BV(3)*crz + BV(4)*crz*crz
               + BV(5)*LNCSI + BV(6)*(BALSW+BALHW) + BV(7)*sbar + BV(8)*cchz + BV(9)*cchz*cchz
-    clamp eta to [-30,30]; HZ = exp(eta); SURV = exp(-HZ*FINTL)
+    clamp eta to [-30,30]; HZ = exp(-eta); SURV = exp(-HZ*FINTL)   ! NOTE exp(-eta): high eta -> high survival
 
-Same hazard/exposure structure as v1, so the morts.f90 hook (IF(LGOMP.AND.GHAVE(ISPC)) ... GOMPSURV ...) needs
-only to call GOMPSURV2 when GMODE==2, passing the extra tree/stand arguments it already has in scope.
+Sign matters: surv_crz uses hazard = exp(-eta), the OPPOSITE of v1 gompmort.f90 as currently coded (which uses
+exp(+eta) and is itself wrong for Greg's gompit; see the stress-test finding and task #24). The morts.f90 hook
+(IF(LGOMP.AND.GHAVE(ISPC)) ... GOMPSURV ...) calls GOMPSURV2 when GMODE==2, passing the extra tree/stand
+arguments it already has in scope. Add the same benign/stress biological-plausibility gate as v1 before enabling.
 
 ## 7. Validation plan (mirrors this turn's v1 check)
 

@@ -12,14 +12,49 @@ DG annual diameter increment (in/yr), coeffs B0..B6:
 HG annual height increment (ft/yr), coeffs B0=max_ht, b1..b8:
     dht = mx*b1*b2*cr^b3*exp(-b1*ht -b4*ccfl -b8*cch^0.5 -b5*elev +b6*sqrt(TD) +b7*EMT)*(1-exp(-b1*ht))^(b2-1)
 
-## Engine substitution points (NE; generalizes to all eastern variants)
-- DGF(DIAM) computes DDS (change in squared diameter) per tree into WK2. Greg gives an annual dbh increment g,
-  so for a covered tree: dnew = dbh + g*FINT; DDS = dnew*dnew - dbh*dbh; store into WK2 in place of the native
-  NE-TWIGS DDS. FINT = cycle length in years (CONTRL).
-- HTGF computes the periodic height increment into HTG. Greg gives an annual height increment dht, so for a
-  covered tree: HTG(i) = dht*FINT, replacing the native HTCALC increment.
-Both substitutions are guarded per species by a GHAVE flag, exactly like morts.f90 does
-(IF(LGREG.AND.GHAVE_DG(ISPC)) ... ), so unfit species keep the native equations.
+## Engine substitution points (NE; verified against the source -- read carefully, subtle)
+Both substitutions are guarded per species by a GHAVE flag, like morts.f90 (IF(LGREG.AND.GHAVE_DG(ISPC))...),
+so unfit species keep the native equations.
+
+### DGF (diameter growth) -- the WK2 it stores is LOG of inside-bark DDS, not raw DDS
+The native (dgf.f90) iterates an ANNUAL DG 10 times (DO 1000 ILOOP=1,10) updating TEMD(I), then computes:
+    BARK  = BRATIO(ISPC, TEMD(I), HT(I))
+    DIAGR = (TEMD(I) - DIAM(I)) * BARK            ! inside-bark period increment
+    DDS   = DIAGR * (2.0*DIAM(I)*BARK + DIAGR)
+    WK2(I)= ALOG(DDS) + COR(ISPC)
+So the Greg hook must produce the SAME WK2 form. For a covered tree, replace the 10-iteration native block with
+a 10-step Greg loop (cr, ht, bal, elev, emt held fixed across the cycle; only D updates):
+    D = DIAM(I); do y=1,FINT_years:  D = D + GREGDG(ISPC,D,cr,ht,bal,elev,emt)   ! outside-bark dbh
+    BARK  = BRATIO(ISPC, D, HT(I))
+    DIAGR = (D - DIAM(I)) * BARK
+    DDS   = DIAGR * (2.0*DIAM(I)*BARK + DIAGR);  if (DDS < 1e-6) DDS = 1e-6
+    WK2(I)= ALOG(DDS)            ! OMIT COR(ISPC): that is the native NE-TWIGS calibration, not Greg's
+Greg's dg is an OUTSIDE-bark dbh increment (FIA dbh is outside bark); BRATIO converts to the inside-bark DDS
+the engine consumes. Inserts just before the WK2(I)=ALOG(DDS)+COR(ISPC) line, replacing it for covered species.
+
+### HTGF (height growth) -- bypass the native modifiers for Greg
+The native (htgf.f90) builds HTG(I) from HTCALC then applies BALMOD, a relative-height temper, OLDRN random,
+SCALE, XHT and HTCON. Greg's HG already encodes competition (ccfl, cch) and climate, so for a covered tree
+REPLACE the whole native HTG(I) with:
+    HTG(I) = GREGHG(ISPC, HT(I), ICR(I)/100., ccfl, cch_frac, elev, td, emt) * FINT_years
+Insert after the native HTG(I) is first set, guarded by GHAVE_HG; do NOT then apply BALMOD/SCALE/HTCON.
+
+### Per-tree inputs and the two gotchas
+- dbh = DIAM(I); cr = ICR(I)/100.0; ht = HT(I) (ARRAYS common). FINT_years from CONTRL.
+- bal (ft2/ac, basal area in larger): computed by BADIST/BALMOD; confirm the per-tree BAL array name/common
+  (BADIST stores it) -- needed raw, not the BAGMOD modifier.
+- ccfl (crown competition factor in larger): FVS computes a CCF-in-larger; confirm the per-tree array.
+- GOTCHA 1 (cch scale): GREGHG wants the ORGANON crown-closure FRACTION (0-1). GOMPCCH currently fills CCHT(I)
+  on the gompit AFFINE scale (0.062 + 0.0036*cch_hat). Expose the pre-affine cch_hat (0-1) for HG, or recompute;
+  do NOT feed the affine CCHT into GREGHG.
+- GOTCHA 2 (bark): DG must round-trip through BRATIO as above; feeding Greg's outside-bark increment straight
+  into DDS without BARK would be wrong.
+- elev/emt/td: per stand. FIRST VERSION supply as scalars via env (FVS_GREG_EMT, FVS_GREG_TD) + stand ELEV, so
+  the single-stand net01.key A/B is runnable; FULL version reads the per-stand greg_emt_td_lookup (export to CSV).
+
+These mechanics (LOG-DDS + BRATIO, modifier bypass, cch fraction, BAL/CCFL arrays) are why this is a careful
+maintainer-domain edit with a rebuild-and-A/B loop, not a blind patch. The evaluators are already validated;
+the risk is entirely in the wiring above.
 
 ## GREGMC common block (new; pattern of GOMPMC.f90)
     INTEGER NGDG, NGHG

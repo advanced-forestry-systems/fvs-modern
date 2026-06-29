@@ -660,14 +660,17 @@ class FvsConfigLoader:
                 lines.append(f"!! Components: {meta.get('components_updated', [])}")
             lines.append("!!")
 
-        # SDIMAX keyword: DISABLED 2026-06-16 (WO-1, A. Weiskittel sign-off).
-        # The per-species emission used the wrong FVS keyword field order
-        # (species index in field 1, which FVS reads as the max-SDI VALUE),
-        # so FVS set MAX SDI ~= 1 for all species and over-thinned TPH by
-        # 25-35 percent across variants while only restating native defaults.
-        # Re-enable ONLY with corrected field order (field 1 = value, field 2
-        # = species) AND the revised localized max-SDI values, verified to bind
-        # (per-species stand max is BA-weighted with retention flags).
+        # SDIMAX keyword: FORMAT FIXED 2026-06-29 (was DISABLED 2026-06-16, WO-1).
+        # Root cause (initre.f90 option 89): the field ORDER is correct (species,
+        # value); the real bug was the keyword written as "SDIMAX"+10 spaces, a
+        # 16-char prefix that pushed species/value out of their fixed 10-col fields
+        # so FVS misread them (garbage MAX SDI -> over-thinning). _format_sdimax_
+        # keywords now left-justifies the keyword to 10 cols (matches the tested
+        # %-10s%10d%10.1f in sdimax_binding_test.py). Localized max-SDI surfaces
+        # exist (brms_SDImax_site_specific.csv, alphaearth maxsdi_*_lookup.csv);
+        # NA dropouts handled by make_sdifix. Note sdimax is often non-binding
+        # (growth-engine-dominated, per the 2026-06-10 audit). Re-enable per variant
+        # via config "_emit_sdimax": true once the NE binding test confirms binding.
         emit_sdimax = bool(self.config.get("_emit_sdimax", False))
         sdi_values = self._find_sdi_param(cats) if emit_sdimax else None
         if sdi_values is not None:
@@ -742,7 +745,7 @@ class FvsConfigLoader:
                 continue
             if val > 0:
                 # SDIMAX keyword: species_index  sdi_value
-                lines.append(f"SDIMAX          {i + 1:10d}{val:10.1f}")
+                lines.append(f"{'SDIMAX':<10}{i + 1:10d}{val:10.1f}")  # fixed: 10-col keyword (was SDIMAX+10 spaces, misaligned fields)
         return "\n".join(lines)
 
     def _format_bamax_keywords(self, values: list, comments: bool) -> str:

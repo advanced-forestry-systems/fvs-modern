@@ -671,7 +671,7 @@ class FvsConfigLoader:
         # NA dropouts handled by make_sdifix. Note sdimax is often non-binding
         # (growth-engine-dominated, per the 2026-06-10 audit). Re-enable per variant
         # via config "_emit_sdimax": true once the NE binding test confirms binding.
-        emit_sdimax = bool(self.config.get("_emit_sdimax", False))
+        emit_sdimax = bool(self.config.get("_emit_sdimax", True))
         sdi_values = self._find_sdi_param(cats) if emit_sdimax else None
         if sdi_values is not None:
             lines.append(self._format_sdimax_keywords(sdi_values, include_comments))

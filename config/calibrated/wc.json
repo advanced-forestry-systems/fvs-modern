@@ -377,12 +377,21 @@
       "hybrid_source_map": {
         "SPCD": [11, 12, 15, 17, 19, 20, 61, 63, 64, 65, 66, 68, 69, 71, 73, 81, 93, 94, 95, 97, 101, 105, 106, 107, 108, 110, 111, 116, 121, 122, 125, 126, 128, 129, 131, 132, 133, 202, 221, 222, 241, 242, 261, 263, 264, 313, 316, 317, 318, 351, 371, 372, 375, 391, 402, 403, 407, 408, 409, 461, 462, 475, 491, 521, 531, 541, 543, 544, 552, 591, 602, 611, 621, 631, 641, 653, 691, 693, 694, 701, 711, 731, 741, 743, 746, 756, 762, 802, 805, 806, 809, 812, 813, 814, 818, 820, 822, 823, 824, 826, 827, 831, 832, 833, 835, 837, 838, 901, 912, 931, 951, 971, 972, 975],
         "source": ["leg_a", "leg_b", "leg_a", "leg_a", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_a", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b"]
+      },
+      "hybrid_reliability": {
+        "gate": "shrinkage",
+        "w_min": 0.5,
+        "n_present": 13,
+        "n_leg_a": 13,
+        "n_gated_to_leg_b": 0,
+        "SPCD": [11, 15, 17, 19, 93, 108, 122, 202, 242, 263, 264, 375, 746],
+        "shrink_w": [0.8664, 0.87, 0.9043, 0.855, 0.877, 0.8939, 0.8753, 0.8378, 0.8388, 0.875, 0.875, 0.91, 0.8847]
       }
     },
     "metadata": {
       "pipeline_version": "fvs-conus species-free (Leg B)",
       "integration_date": "2026-07-02",
-      "default_policy": "hybrid_per_species: leg_a where per-species fit reliable, else leg_b",
+      "default_policy": "hybrid_per_species: leg_a where per-species fit reliable (shrinkage, w>=0.5), else leg_b",
       "components_present": ["diameter_growth", "height_growth", "height_diameter", "height_crown_base", "crown_recession", "mortality"]
     },
     "height_growth": {
@@ -442,7 +451,16 @@
       },
       "hybrid_source_map": {
         "SPCD": [11, 12, 15, 17, 19, 20, 61, 63, 64, 65, 66, 68, 69, 71, 73, 81, 93, 94, 95, 97, 101, 105, 106, 107, 108, 110, 111, 116, 121, 122, 125, 126, 128, 129, 131, 132, 133, 202, 221, 222, 241, 242, 261, 263, 264, 313, 316, 317, 318, 351, 371, 372, 375, 391, 402, 403, 407, 408, 409, 461, 462, 475, 491, 531, 541, 543, 544, 552, 591, 602, 611, 621, 631, 641, 653, 691, 693, 694, 701, 711, 731, 741, 743, 746, 756, 762, 802, 805, 806, 809, 812, 813, 814, 818, 820, 823, 824, 826, 827, 831, 832, 833, 835, 837, 838, 901, 912, 931, 951, 971, 972, 975],
-        "source": ["leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b"]
+        "source": ["leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b"]
+      },
+      "hybrid_reliability": {
+        "gate": "shrinkage",
+        "w_min": 0.5,
+        "n_present": 3,
+        "n_leg_a": 0,
+        "n_gated_to_leg_b": 3,
+        "SPCD": [108, 122, 202],
+        "shrink_w": [0.0228, 0.026, 0.0238]
       }
     },
     "height_diameter": {
@@ -502,7 +520,16 @@
       },
       "hybrid_source_map": {
         "SPCD": [11, 12, 15, 17, 19, 20, 61, 63, 64, 65, 66, 68, 69, 71, 73, 81, 93, 94, 95, 97, 101, 105, 106, 107, 110, 111, 116, 121, 122, 125, 126, 128, 129, 131, 132, 133, 202, 221, 222, 241, 242, 261, 263, 264, 313, 315, 316, 317, 318, 351, 356, 361, 371, 372, 373, 375, 391, 402, 403, 407, 408, 409, 461, 462, 475, 491, 521, 531, 541, 543, 544, 552, 555, 591, 602, 611, 621, 631, 641, 653, 682, 691, 693, 694, 701, 711, 731, 741, 742, 743, 746, 756, 762, 802, 805, 806, 809, 812, 813, 814, 818, 820, 822, 823, 824, 826, 827, 831, 832, 833, 835, 837, 838, 901, 912, 922, 931, 951, 971, 972, 975, 994, 1081, 2020, 2021],
-        "source": ["leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b"]
+        "source": ["leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b"]
+      },
+      "hybrid_reliability": {
+        "gate": "shrinkage",
+        "w_min": 0.5,
+        "n_present": 2,
+        "n_leg_a": 0,
+        "n_gated_to_leg_b": 2,
+        "SPCD": [122, 202],
+        "shrink_w": [0.0235, 0.1375]
       }
     },
     "height_crown_base": {
@@ -563,6 +590,15 @@
       "hybrid_source_map": {
         "SPCD": [11, 12, 15, 17, 19, 20, 61, 63, 64, 65, 66, 68, 69, 71, 73, 81, 93, 94, 95, 97, 101, 105, 106, 107, 110, 111, 116, 121, 122, 125, 126, 128, 129, 131, 132, 133, 202, 221, 222, 241, 242, 261, 263, 264, 313, 315, 316, 317, 318, 351, 356, 361, 371, 372, 373, 375, 391, 402, 403, 407, 408, 409, 461, 462, 475, 491, 521, 531, 541, 543, 544, 552, 555, 591, 602, 611, 621, 631, 641, 653, 682, 691, 693, 694, 701, 711, 731, 741, 742, 743, 746, 756, 762, 802, 805, 806, 809, 812, 813, 814, 818, 820, 822, 823, 824, 826, 827, 831, 832, 833, 835, 837, 838, 901, 912, 922, 931, 951, 971, 972, 975, 994, 1081, 2020, 2021],
         "source": ["leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b"]
+      },
+      "hybrid_reliability": {
+        "gate": "shrinkage",
+        "w_min": 0.5,
+        "n_present": 2,
+        "n_leg_a": 2,
+        "n_gated_to_leg_b": 0,
+        "SPCD": [122, 202],
+        "shrink_w": [0.8802, 0.8818]
       }
     },
     "crown_recession": {
@@ -623,6 +659,15 @@
       "hybrid_source_map": {
         "SPCD": [11, 12, 15, 17, 19, 20, 61, 63, 64, 65, 66, 68, 69, 71, 73, 81, 93, 94, 95, 97, 101, 105, 106, 107, 108, 110, 111, 116, 121, 122, 125, 126, 128, 129, 131, 132, 133, 202, 221, 222, 241, 242, 261, 263, 264, 313, 316, 317, 318, 351, 371, 372, 375, 391, 402, 403, 407, 408, 409, 461, 462, 475, 491, 521, 531, 541, 543, 544, 552, 591, 602, 611, 621, 631, 641, 653, 691, 693, 694, 701, 711, 731, 741, 743, 746, 756, 762, 802, 805, 806, 809, 812, 813, 814, 818, 820, 822, 823, 824, 826, 827, 831, 832, 833, 835, 837, 838, 901, 912, 931, 951, 971, 972, 975, 1081, 2020, 2021],
         "source": ["leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b"]
+      },
+      "hybrid_reliability": {
+        "gate": "shrinkage",
+        "w_min": 0.5,
+        "n_present": 6,
+        "n_leg_a": 6,
+        "n_gated_to_leg_b": 0,
+        "SPCD": [19, 108, 122, 202, 263, 746],
+        "shrink_w": [0.9685, 0.97, 0.9698, 0.9702, 0.9685, 0.9682]
       }
     },
     "mortality": {
@@ -683,6 +728,15 @@
       "hybrid_source_map": {
         "SPCD": [11, 12, 15, 17, 19, 20, 61, 63, 64, 65, 66, 68, 69, 71, 73, 81, 93, 94, 95, 97, 101, 105, 106, 107, 108, 110, 111, 116, 121, 122, 125, 126, 128, 129, 131, 132, 133, 202, 221, 222, 241, 242, 261, 263, 264, 313, 315, 316, 317, 318, 351, 356, 361, 371, 372, 375, 391, 402, 403, 407, 408, 409, 461, 462, 475, 491, 521, 531, 541, 543, 544, 552, 555, 591, 602, 611, 621, 631, 641, 653, 682, 691, 693, 694, 701, 711, 731, 741, 742, 743, 746, 756, 762, 802, 805, 806, 809, 812, 813, 814, 818, 820, 822, 823, 824, 826, 827, 831, 832, 833, 835, 837, 838, 901, 912, 922, 931, 951, 971, 972, 975, 994, 1081, 2020, 2021],
         "source": ["leg_b", "leg_b", "leg_a", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b"]
+      },
+      "hybrid_reliability": {
+        "gate": "shrinkage",
+        "w_min": 0.5,
+        "n_present": 8,
+        "n_leg_a": 8,
+        "n_gated_to_leg_b": 0,
+        "SPCD": [15, 19, 93, 108, 122, 202, 263, 746],
+        "shrink_w": [0.9746, 0.9759, 0.9761, 0.978, 0.9776, 0.9781, 0.9738, 0.9768]
       }
     }
   }

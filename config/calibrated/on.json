@@ -377,12 +377,21 @@
       "hybrid_source_map": {
         "SPCD": [11, 12, 15, 17, 19, 20, 61, 63, 64, 65, 66, 68, 69, 71, 73, 81, 93, 94, 95, 97, 101, 105, 106, 107, 108, 110, 111, 116, 121, 122, 125, 126, 128, 129, 131, 132, 133, 202, 221, 222, 241, 242, 261, 263, 264, 313, 316, 317, 318, 351, 371, 372, 375, 391, 402, 403, 407, 408, 409, 461, 462, 475, 491, 521, 531, 541, 543, 544, 552, 591, 602, 611, 621, 631, 641, 653, 691, 693, 694, 701, 711, 731, 741, 743, 746, 756, 762, 802, 805, 806, 809, 812, 813, 814, 818, 820, 822, 823, 824, 826, 827, 831, 832, 833, 835, 837, 838, 901, 912, 931, 951, 971, 972, 975],
         "source": ["leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_a", "leg_b", "leg_a", "leg_b", "leg_a", "leg_a", "leg_a", "leg_a", "leg_a", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_a", "leg_b", "leg_a", "leg_a", "leg_a", "leg_a", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_a", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_a", "leg_a", "leg_b", "leg_a", "leg_b"]
+      },
+      "hybrid_reliability": {
+        "gate": "shrinkage",
+        "w_min": 0.5,
+        "n_present": 32,
+        "n_leg_a": 32,
+        "n_gated_to_leg_b": 0,
+        "SPCD": [12, 68, 125, 129, 241, 261, 316, 318, 371, 375, 391, 402, 403, 407, 462, 491, 531, 541, 543, 544, 602, 693, 701, 746, 762, 802, 823, 833, 837, 931, 951, 972],
+        "shrink_w": [0.6645, 0.7335, 0.8258, 0.8689, 0.7579, 0.8388, 0.9124, 0.6966, 0.809, 0.8189, 0.7995, 0.8242, 0.8384, 0.842, 0.8299, 0.7322, 0.7714, 0.9174, 0.8635, 0.9273, 0.789, 0.8842, 0.7714, 0.7744, 0.8677, 0.8639, 0.8082, 0.8704, 0.9141, 0.7941, 0.7058, 0.8915]
       }
     },
     "metadata": {
       "pipeline_version": "fvs-conus species-free (Leg B)",
       "integration_date": "2026-07-02",
-      "default_policy": "hybrid_per_species: leg_a where per-species fit reliable, else leg_b",
+      "default_policy": "hybrid_per_species: leg_a where per-species fit reliable (shrinkage, w>=0.5), else leg_b",
       "components_present": ["diameter_growth", "height_growth", "height_diameter", "height_crown_base", "crown_recession", "mortality"]
     },
     "height_growth": {
@@ -442,7 +451,16 @@
       },
       "hybrid_source_map": {
         "SPCD": [11, 12, 15, 17, 19, 20, 61, 63, 64, 65, 66, 68, 69, 71, 73, 81, 93, 94, 95, 97, 101, 105, 106, 107, 108, 110, 111, 116, 121, 122, 125, 126, 128, 129, 131, 132, 133, 202, 221, 222, 241, 242, 261, 263, 264, 313, 316, 317, 318, 351, 371, 372, 375, 391, 402, 403, 407, 408, 409, 461, 462, 475, 491, 531, 541, 543, 544, 552, 591, 602, 611, 621, 631, 641, 653, 691, 693, 694, 701, 711, 731, 741, 743, 746, 756, 762, 802, 805, 806, 809, 812, 813, 814, 818, 820, 823, 824, 826, 827, 831, 832, 833, 835, 837, 838, 901, 912, 931, 951, 971, 972, 975],
-        "source": ["leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b"]
+        "source": ["leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b"]
+      },
+      "hybrid_reliability": {
+        "gate": "shrinkage",
+        "w_min": 0.5,
+        "n_present": 3,
+        "n_leg_a": 0,
+        "n_gated_to_leg_b": 3,
+        "SPCD": [316, 318, 802],
+        "shrink_w": [0.0377, 0.0339, 0.0343]
       }
     },
     "height_diameter": {
@@ -502,7 +520,16 @@
       },
       "hybrid_source_map": {
         "SPCD": [11, 12, 15, 17, 19, 20, 61, 63, 64, 65, 66, 68, 69, 71, 73, 81, 93, 94, 95, 97, 101, 105, 106, 107, 110, 111, 116, 121, 122, 125, 126, 128, 129, 131, 132, 133, 221, 222, 241, 242, 261, 263, 264, 313, 315, 316, 317, 318, 351, 356, 361, 371, 372, 373, 375, 391, 402, 403, 407, 408, 409, 461, 462, 475, 491, 521, 531, 541, 543, 544, 552, 555, 591, 602, 611, 621, 631, 641, 653, 682, 691, 693, 694, 701, 711, 731, 741, 742, 743, 746, 756, 762, 802, 805, 806, 809, 812, 813, 814, 818, 820, 822, 823, 824, 826, 827, 831, 832, 833, 835, 837, 838, 901, 912, 922, 931, 951, 971, 972, 975, 994, 1081, 2020, 2021],
-        "source": ["leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b"]
+        "source": ["leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b"]
+      },
+      "hybrid_reliability": {
+        "gate": "shrinkage",
+        "w_min": 0.5,
+        "n_present": 3,
+        "n_leg_a": 0,
+        "n_gated_to_leg_b": 3,
+        "SPCD": [316, 318, 802],
+        "shrink_w": [0.0791, 0.0625, 0.0939]
       }
     },
     "height_crown_base": {
@@ -562,7 +589,16 @@
       },
       "hybrid_source_map": {
         "SPCD": [11, 12, 15, 17, 19, 20, 61, 63, 64, 65, 66, 68, 69, 71, 73, 81, 93, 94, 95, 97, 101, 105, 106, 107, 110, 111, 116, 121, 122, 125, 126, 128, 129, 131, 132, 133, 221, 222, 241, 242, 261, 263, 264, 313, 315, 316, 317, 318, 351, 356, 361, 371, 372, 373, 375, 391, 402, 403, 407, 408, 409, 461, 462, 475, 491, 521, 531, 541, 543, 544, 552, 555, 591, 602, 611, 621, 631, 641, 653, 682, 691, 693, 694, 701, 711, 731, 741, 742, 743, 746, 756, 762, 802, 805, 806, 809, 812, 813, 814, 818, 820, 822, 823, 824, 826, 827, 831, 832, 833, 835, 837, 838, 901, 912, 922, 931, 951, 971, 972, 975, 994, 1081, 2020, 2021],
-        "source": ["leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b"]
+        "source": ["leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b"]
+      },
+      "hybrid_reliability": {
+        "gate": "shrinkage",
+        "w_min": 0.5,
+        "n_present": 3,
+        "n_leg_a": 0,
+        "n_gated_to_leg_b": 3,
+        "SPCD": [316, 318, 802],
+        "shrink_w": [0.4028, 0.4, 0.4]
       }
     },
     "crown_recession": {
@@ -623,6 +659,15 @@
       "hybrid_source_map": {
         "SPCD": [11, 12, 15, 17, 19, 20, 61, 63, 64, 65, 66, 68, 69, 71, 73, 81, 93, 94, 95, 97, 101, 105, 106, 107, 110, 111, 116, 121, 122, 125, 126, 128, 129, 131, 132, 133, 221, 222, 241, 242, 261, 263, 264, 313, 316, 317, 318, 351, 371, 372, 375, 391, 402, 403, 407, 408, 409, 461, 462, 475, 491, 521, 531, 541, 543, 544, 552, 591, 602, 611, 621, 631, 641, 653, 691, 693, 694, 701, 711, 731, 741, 743, 746, 756, 762, 802, 805, 806, 809, 812, 813, 814, 818, 820, 822, 823, 824, 826, 827, 831, 832, 833, 835, 837, 838, 901, 912, 931, 951, 971, 972, 975, 1081, 2020, 2021],
         "source": ["leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b"]
+      },
+      "hybrid_reliability": {
+        "gate": "shrinkage",
+        "w_min": 0.5,
+        "n_present": 11,
+        "n_leg_a": 11,
+        "n_gated_to_leg_b": 0,
+        "SPCD": [68, 241, 261, 316, 318, 531, 693, 746, 802, 833, 837],
+        "shrink_w": [0.9694, 0.9685, 0.9692, 0.9703, 0.9698, 0.9689, 0.9684, 0.9681, 0.9704, 0.9697, 0.9689]
       }
     },
     "mortality": {
@@ -683,6 +728,15 @@
       "hybrid_source_map": {
         "SPCD": [11, 12, 15, 17, 19, 20, 61, 63, 64, 65, 66, 68, 69, 71, 73, 81, 93, 94, 95, 97, 101, 105, 106, 107, 110, 111, 116, 121, 122, 125, 126, 128, 129, 131, 132, 133, 221, 222, 241, 242, 261, 263, 264, 313, 315, 316, 317, 318, 351, 356, 361, 371, 372, 375, 391, 402, 403, 407, 408, 409, 461, 462, 475, 491, 521, 531, 541, 543, 544, 552, 555, 591, 602, 611, 621, 631, 641, 653, 682, 691, 693, 694, 701, 711, 731, 741, 742, 743, 746, 756, 762, 802, 805, 806, 809, 812, 813, 814, 818, 820, 822, 823, 824, 826, 827, 831, 832, 833, 835, 837, 838, 901, 912, 922, 931, 951, 971, 972, 975, 994, 1081, 2020, 2021],
         "source": ["leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_a", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_a", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b"]
+      },
+      "hybrid_reliability": {
+        "gate": "shrinkage",
+        "w_min": 0.5,
+        "n_present": 17,
+        "n_leg_a": 17,
+        "n_gated_to_leg_b": 0,
+        "SPCD": [12, 68, 129, 241, 261, 316, 318, 531, 541, 544, 693, 746, 762, 802, 833, 837, 972],
+        "shrink_w": [0.9748, 0.9717, 0.971, 0.9658, 0.9731, 0.9788, 0.9747, 0.9737, 0.9747, 0.9745, 0.9706, 0.9773, 0.9746, 0.9766, 0.975, 0.9762, 0.9744]
       }
     }
   }

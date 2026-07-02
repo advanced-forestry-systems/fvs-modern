@@ -710,5 +710,27 @@
         "source": ["leg_b", "leg_b", "leg_a", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_a", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b", "leg_b"]
       }
     }
+  },
+  "categories_conus_organon": {
+    "diameter_growth": {
+      "model": "organon_dg",
+      "form": "ln(dDBH) = a0 + a1*ln_dbh + a2*dbh_sq + a3*ln_cr_adj + a4*ln_si + a5*bal_over_lndbh + a6*sqrt_sba",
+      "fixed_effects": {
+        "param": ["a0", "a1", "a2", "a3", "a4", "a5", "a6"],
+        "mean": [-3.2, 0.42, -0.00035, 0.98, 0.55, -0.015, -0.045]
+      },
+      "species": {
+        "SPCD": [202, 17, 122, 93, 15, 68, 12, 97],
+        "calib": [1, 1, 1, 1, 1, 1, 1, 1]
+      },
+      "status": "scaffold_pending_fit",
+      "notes": "ORGANON-form (arm 1). Coefficients are NOMINAL placeholders. Backfill via 62c once the CONUS-wide Bayesian ORGANON recalibration and Greg's climate-only DG form land. Selected with version=conus_organon; the shared categories_conus_mod modifier layer applies on top."
+    },
+    "metadata": {
+      "pipeline_version": "conus ORGANON-form arm (arm 1)",
+      "integration_date": "2026-07-02",
+      "components_present": "diameter_growth",
+      "note": "Arm 1 ORGANON-form coefficients; select with version=conus_organon."
+    }
   }
 }

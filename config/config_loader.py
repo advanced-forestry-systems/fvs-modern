@@ -78,7 +78,7 @@ class FvsConfigLoader:
     #                marks it leg_a), else fall back to the species-free (Leg B)
     #                trait effect. Recommended default once both legs are landed.
     VALID_VERSIONS = ("default", "calibrated", "conus", "hybrid", "custom",
-                      "conus_sf", "conus_hybrid")
+                      "conus_sf", "conus_hybrid", "conus_organon")
 
     def __init__(
         self,
@@ -130,7 +130,7 @@ class FvsConfigLoader:
         """Path to the active config file."""
         if self.version == "custom" and self._custom_config_path is not None:
             return self._custom_config_path
-        if self.version in ("calibrated", "conus", "hybrid",
+        if self.version in ("calibrated", "conus", "hybrid", "conus_organon",
                             "conus_sf", "conus_hybrid"):
             # All live in the same variant JSON; the version selects which
             # top-level block to read (categories / categories_conus /
@@ -548,6 +548,118 @@ class FvsConfigLoader:
     # =========================================================================
     # fvs2py Integration
     # =========================================================================
+
+    # =========================================================================
+    # ORGANON-like arm (categories_conus_organon) -- arm 1
+    # =========================================================================
+    def has_conus_organon_block(self) -> bool:
+        """Whether the variant config carries a categories_conus_organon block."""
+        return "categories_conus_organon" in self.config
+
+    def conus_organon_components_present(self) -> list:
+        b = self.config.get("categories_conus_organon", {})
+        return [k for k in b if k != "metadata"] if isinstance(b, dict) else []
+
+    def get_conus_organon_block(self, component: str) -> dict:
+        b = self.config.get("categories_conus_organon", {})
+        if not isinstance(b, dict) or component not in b:
+            raise KeyError(
+                f"no categories_conus_organon.{component} for {self.variant}; "
+                f"available: {self.conus_organon_components_present()}")
+        return b[component]
+
+    def get_conus_organon_runtime_block(self, component: str) -> dict:
+        """Decompose an ORGANON-arm block into runtime lookups: global fixed
+        coefficients + per-species native-form coefficient rows."""
+        b = self.get_conus_organon_block(component)
+        def _d(x):
+            return x if isinstance(x, dict) else {}
+        fe = _d(b.get("fixed_effects", {}))
+        fixed = dict(zip(fe.get("param", []), fe.get("mean", [])))
+        sp = _d(b.get("species", {}))
+        spcds = [int(x) for x in sp.get("SPCD", [])]
+        sp_coef = {s: {} for s in spcds}
+        for key in sp:
+            if key == "SPCD":
+                continue
+            vals = sp.get(key)
+            if isinstance(vals, list) and len(vals) == len(spcds):
+                for s, v in zip(spcds, vals):
+                    sp_coef[s][key] = v
+        return {"_source": "categories_conus_organon", "model": b.get("model"),
+                "fixed": {k: float(v) for k, v in fixed.items()}, "species_coef": sp_coef}
+
+    def organon_linear_predictor(self, component: str, spcd: int,
+                                 covariates: dict, runtime=None) -> float:
+        """ORGANON-form linear predictor: sum of coef * covariate over the
+        native-form parameters (per-species rows override the global fixed
+        effects), plus an intercept term if present."""
+        rt = runtime or self.get_conus_organon_runtime_block(component)
+        coef = dict(rt["fixed"])
+        coef.update(rt["species_coef"].get(int(spcd), {}))
+        eta = float(coef.get("intercept", 0.0))
+        for p, c in coef.items():
+            if p != "intercept" and p in covariates:
+                eta += float(c) * float(covariates[p])
+        return eta
+
+    # =========================================================================
+    # Bayesian modifier layer (categories_conus_mod) -- shared across all arms
+    # =========================================================================
+    def has_modifier_block(self) -> bool:
+        """Whether the variant carries a Bayesian modifier layer."""
+        return "categories_conus_mod" in self.config
+
+    def get_modifier_runtime_block(self, component: str) -> dict:
+        b = self.config.get("categories_conus_mod", {})
+        if not isinstance(b, dict) or component not in b:
+            return {"_present": False}
+        blk = b[component]
+        def _f(x, d=0.0):
+            try:
+                return float(x)
+            except (TypeError, ValueError):
+                return d
+        mgmt = blk.get("management", {}) or {}
+        dstrb = blk.get("disturbance", {}) or {}
+        drv = blk.get("driver_bgi", {}) or {}
+        re = blk.get("re_L1") or {}
+        return {"_present": True,
+                "tau_m": _f(blk.get("tau_m"), 10.0), "tau_d": _f(blk.get("tau_d"), 15.0),
+                "coef_mgmt": _f(mgmt.get("coef")), "coef_dstrb": _f(dstrb.get("coef")),
+                "b_bgi1": _f(drv.get("b1")), "b_bgi2": _f(drv.get("b2")),
+                "bgi_knot": _f(drv.get("knot")),
+                "re_L1": {str(l): _f(m) for l, m in
+                          zip(re.get("level", []), re.get("mean", []))}}
+
+    def modifier_multiplier(self, component: str, eco_codes: dict = None,
+                            drivers: dict = None, runtime=None) -> float:
+        """exp(mod_eta): the shared multiplicative management / disturbance /
+        driver modifier that any base arm applies on top of its native
+        prediction. drivers keys: years_since_trt, years_since_dstrb, bgi
+        (any missing contributes zero). Returns 1.0 (neutral) when the variant
+        has no modifier block."""
+        import math
+        rt = runtime or self.get_modifier_runtime_block(component)
+        if not rt.get("_present"):
+            return 1.0
+        drivers = drivers or {}
+        eta = 0.0
+        yst = drivers.get("years_since_trt")
+        ysd = drivers.get("years_since_dstrb")
+        bgi = drivers.get("bgi")
+        if yst is not None and yst == yst and yst >= 0:
+            eta += rt["coef_mgmt"] * math.exp(-min(yst, 100) / rt["tau_m"])
+        if ysd is not None and ysd == ysd and ysd >= 0:
+            eta += rt["coef_dstrb"] * math.exp(-min(ysd, 100) / rt["tau_d"])
+        if bgi is not None and bgi == bgi:
+            eta += rt["b_bgi1"] * bgi + rt["b_bgi2"] * max(bgi - rt["bgi_knot"], 0.0)
+        if eco_codes:
+            code = eco_codes.get("L1")
+            if code is not None:
+                eta += rt["re_L1"].get(str(code), 0.0)
+        return math.exp(eta)
+
 
     def apply_to_fvs(self, fvs_instance) -> dict[str, bool]:
         """Apply calibrated parameters to a running fvs2py FVS instance.

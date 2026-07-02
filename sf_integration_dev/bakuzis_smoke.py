@@ -26,16 +26,35 @@ import perseus_100yr_projection as P
 P.FVS_LIB_DIR = os.environ.get("FVS_BIN_DIR", "/fs/scratch/PUOM0008/crsfaaron/bin-sf85")
 CONFIG_DIR = os.environ.get("FVS_CONFIG_DIR", "/fs/scratch/PUOM0008/crsfaaron/wt-gompit/config")
 
-# a couple of region-appropriate species per variant (FIA SPCD) for the stand
-VARIANT_SPP = {
-    "ne": [12, 97, 316], "pn": [202, 17, 242], "wc": [202, 17, 263],
-    "ls": [12, 95, 371], "sn": [131, 110, 611], "ca": [15, 122, 81],
-    "em": [93, 19, 202], "ie": [202, 93, 19],
-}
+# per-variant species (FIA SPCD) + max-SDI ceiling, derived from the configs
+# (categories_conus.diameter_growth.species_intercepts + site_index.SDICON/FMSDI).
+# Loaded from variant_params.json; falls back to a generic set if absent.
+import json as _json
+_PARAMS_PATH = os.environ.get("VARIANT_PARAMS",
+                              "/users/PUOM0008/crsfaaron/variant_params.json")
+try:
+    VARIANT_PARAMS = _json.load(open(_PARAMS_PATH))
+except Exception:
+    VARIANT_PARAMS = {}
+# Sanity ceiling for the self-thinning check when the config carries no SDI max.
+# Western conifer variants tolerate higher SDI than eastern; used only as an
+# upper bound on runaway density, not as a hard Reineke max.
+_WEST = {"pn", "wc", "ie", "ca", "nc", "so", "op", "ec", "wsc", "ws", "ut", "tt",
+         "cr", "em", "bm", "ci", "kt", "oc", "ak", "bc", "cs"}
+# Northern Rockies habitat-type variants: height growth keyed to habitat type,
+# not the site-index field (verified: topht invariant to SICOND and site species).
+HABITAT_TYPE_VARIANTS = {"ie", "ci", "kt"}
+def variant_max_sdi(variant):
+    p = VARIANT_PARAMS.get(variant.lower(), {})
+    m = p.get("max_sdi")
+    if m and m > 0:
+        return float(m)
+    return 1100.0 if variant.lower() in _WEST else 800.0
 
 
 def synth_stand(variant, sicond):
-    spp = VARIANT_SPP.get(variant.lower(), [202, 93, 122])
+    spp = (VARIANT_PARAMS.get(variant.lower(), {}).get("spp")
+           or [202, 93, 122])
     plot = {"INVYR": 2010, "LAT": 45.0, "LON": -110.0 if variant not in ("ne","ls","sn") else -69.0,
             "ELEV": 500, "SLOPE": 15, "ASPECT": 180, "STDAGE": 30,
             "SICOND": sicond, "SISP": spp[0]}
@@ -94,27 +113,63 @@ def project(variant, sicond, num_cycles=20, cycle_length=5):
     return out
 
 
-def bakuzis(traj, variant, max_sdi=450.0):
-    """Run the law-like checks across the site gradient. Returns (flags, summary)."""
+def bakuzis(traj, variant, max_sdi=1000.0):
+    """Run the law-like checks across the site gradient. Returns (flags, notes, eich)."""
     flags = []
+    notes = []
     sites = sorted(traj["site"].unique())
-    # 2. monotonic development within each site
+    # 0. site RESPONSE: dominant height should differ across the site gradient.
+    #    If it is flat, the site index is not reaching the height-growth model.
+    #    EXCEPTION: the Northern Rockies habitat-type variants (IE, CI, KT) drive
+    #    height growth on a habitat-type code, not the site-index field, so a
+    #    SICOND gradient legitimately does not move them. Verified empirically:
+    #    topht is invariant to both SICOND (30/55/80) and site species. For these,
+    #    a flat response is expected, not a flag — vary habitat type to test them.
+    late0 = traj[traj["age"] >= traj["age"].max() - 5]
+    ht_by_site = late0.groupby("site")["topht"].mean()
+    if len(ht_by_site) >= 2:
+        spread = float(ht_by_site.max() - ht_by_site.min())
+        if spread < 2.0:
+            if variant.lower() in HABITAT_TYPE_VARIANTS:
+                notes.append(f"[{variant}] site index does not drive height growth (expected: "
+                             f"habitat-type variant; productivity keyed to habitat type, not SICOND). "
+                             f"Vary habitat type to exercise a productivity gradient.")
+            else:
+                flags.append(f"[{variant}] site index not driving height growth: dominant height "
+                             f"flat across sites ({dict(ht_by_site.round(1))}) — check site species/site input")
+    # 2. monotonic development within each site. Dominant height, BA, and volume
+    #    should rise. TPA and QMD are handled JOINTLY: TPA rising while QMD falls
+    #    is the signature of natural regeneration / ingrowth (FVS ESTAB), which is
+    #    biologically realistic, so it is a note, not a flag. Only genuinely
+    #    implausible motion is flagged: TPA rising without QMD falling (trees
+    #    appearing with no size dilution) or QMD falling without ingrowth.
+    ingrowth_seen = False
     for si in sites:
         d = traj[traj["site"] == si].sort_values("age")
-        for v, lab, want_up in [("topht", "dominant height", True),
-                                ("ba", "basal area", True),
-                                ("tcuft", "volume", True),
-                                ("qmd", "QMD", True),
-                                ("tpa", "TPA", False)]:
-            x = d[v].to_numpy()
-            x = x[np.isfinite(x)]
+        for v, lab in [("topht", "dominant height"), ("ba", "basal area"), ("tcuft", "volume")]:
+            x = d[v].to_numpy(); x = x[np.isfinite(x)]
             if len(x) < 3: continue
-            dif = np.diff(x)
             tol = 0.02 * np.nanmax(np.abs(x)) + 1e-6
-            if want_up and np.any(dif < -tol):
+            if np.any(np.diff(x) < -tol):
                 flags.append(f"[{variant} site {si}] {lab} decreases over time (non-monotonic)")
-            if not want_up and np.any(dif > tol):
-                flags.append(f"[{variant} site {si}] {lab} increases over time (TPA should not rise)")
+        tpa = d["tpa"].to_numpy(); qmd = d["qmd"].to_numpy()
+        ok = np.isfinite(tpa) & np.isfinite(qmd)
+        tpa, qmd = tpa[ok], qmd[ok]
+        if len(tpa) < 3: continue
+        dt = np.diff(tpa); dq = np.diff(qmd)
+        ttol = 0.02 * np.nanmax(np.abs(tpa)) + 1e-6
+        qtol = 0.02 * np.nanmax(np.abs(qmd)) + 1e-6
+        # implausible: TPA rises while QMD does not fall (no ingrowth to explain it)
+        if np.any((dt > ttol) & (dq >= -qtol)):
+            flags.append(f"[{variant} site {si}] TPA rises without QMD falling (unexplained tree gain)")
+        # implausible: QMD falls while TPA does not rise (size decline without ingrowth)
+        if np.any((dq < -qtol) & (dt <= ttol)):
+            flags.append(f"[{variant} site {si}] QMD falls without ingrowth (unexplained size loss)")
+        # benign: concurrent TPA-up / QMD-down = regeneration establishing
+        if np.any((dt > ttol) & (dq < -qtol)):
+            ingrowth_seen = True
+    if ingrowth_seen:
+        notes.append(f"[{variant}] TPA rises with QMD falling in places — natural regeneration/ingrowth active (expected)")
     # 1. site ordering at a common late age
     late = traj[traj["age"] >= traj["age"].max() - 5]
     piv = late.groupby("site")[["topht", "tcuft"]].mean()
@@ -123,10 +178,23 @@ def bakuzis(traj, variant, max_sdi=450.0):
         if len(vals) >= 2 and not np.all(np.diff(vals) >= -1e-6):
             flags.append(f"[{variant}] site ordering violated: {lab} not increasing with site index "
                          f"({dict(zip(piv.index.tolist(), np.round(vals,1).tolist()))})")
-    # 3. Reineke self-thinning ceiling
-    mx = traj["sdi"].max()
-    if mx > max_sdi * 1.15:
-        flags.append(f"[{variant}] max SDI {mx:.0f} exceeds plausible Reineke max ~{max_sdi:.0f}")
+    # 3. Reineke self-thinning: a stand that reaches its max density should
+    #    PLATEAU (mortality balances growth), not grow density without bound. So
+    #    flag only runaway density: SDI above the variant ceiling AND still
+    #    climbing late in the projection. A stand sitting at a high but stable
+    #    self-thinning limit (flat max-BA across sites) is correct, not a flag.
+    for si in sites:
+        d = traj[traj["site"] == si].sort_values("age")
+        sdi = d["sdi"].to_numpy()
+        sdi = sdi[np.isfinite(sdi)]
+        if len(sdi) < 4:
+            continue
+        mx = float(np.nanmax(sdi))
+        tail = sdi[-3:]
+        still_climbing = (tail[-1] - tail[0]) / max(tail[0], 1.0) > 0.05
+        if mx > max_sdi and still_climbing:
+            flags.append(f"[{variant} site {si}] runaway density: SDI {mx:.0f} > ceiling "
+                         f"{max_sdi:.0f} and still climbing late (not reaching a self-thinning limit)")
     # 4. Eichhorn: volume vs dominant height similar across sites (compare volume at
     #    matched top height); large spread => flag
     eich_note = ""
@@ -148,12 +216,13 @@ def bakuzis(traj, variant, max_sdi=450.0):
             flags.append(f"[{variant}] Eichhorn weak: volume at matched height varies {cv*100:.0f}% across sites")
     except Exception:
         pass
-    return flags, eich_note
+    return flags, notes, eich_note
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--variants", default="ne")
+    ap.add_argument("--variants",
+                    default="ne,pn,wc,ls,sn,ie,ca,em,nc,oc,op,tt,ut,ws,bm,cs,ec,ci,acd,kt,so,cr")
     ap.add_argument("--sites", default="40,55,70")
     ap.add_argument("--out", default=os.path.expanduser("~/bakuzis_smoke_out"))
     a = ap.parse_args()
@@ -189,15 +258,18 @@ def main():
             continue
         traj = pd.concat(trajs, ignore_index=True)
         traj.to_csv(os.path.join(a.out, f"traj_{v}.csv"), index=False)
-        flags, eich = bakuzis(traj, v)
+        flags, notes, eich = bakuzis(traj, v, max_sdi=variant_max_sdi(v))
         print(f"  {eich}")
+        for n in notes: print("  note:", n)
         if flags:
             print(f"  *** {len(flags)} REALISM FLAG(S):")
             for f in flags: print("     -", f)
         else:
-            print("  OK: all Bakuzis law-like checks pass")
+            print("  OK: all Bakuzis law-like checks pass"
+                  + ("  (with expected-behavior note)" if notes else ""))
         report[v] = {"status": "ok", "n_sites": len(trajs),
-                     "flags": flags, "eichhorn": eich}
+                     "flags": flags, "notes": notes, "eichhorn": eich,
+                     "max_sdi_ceiling": variant_max_sdi(v)}
     with open(os.path.join(a.out, "bakuzis_report.json"), "w") as f:
         json.dump(report, f, indent=2)
     print(f"\n[report] {a.out}/bakuzis_report.json")

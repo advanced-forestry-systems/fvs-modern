@@ -109,6 +109,10 @@ def project(variant, sicond, num_cycles=20, cycle_length=5):
     out["qmd"] = [qmd(b, t) for b, t in zip(out["ba"], out["tpa"])]
     out["sdi"] = [t * (q / 10.0) ** 1.605 if (q == q and t) else float("nan")
                   for t, q in zip(out["tpa"], out["qmd"])]
+    # engine-reported Reineke SDI and the variant's own SDIMax (authoritative;
+    # avoids the hand-rolled SDI + guessed-ceiling unit issues)
+    out["reineke_sdi"] = col("reinekesdi", "sdi")
+    out["sdimax"] = col("sdimax")
     out["site"] = sicond
     return out
 
@@ -185,16 +189,22 @@ def bakuzis(traj, variant, max_sdi=1000.0):
     #    self-thinning limit (flat max-BA across sites) is correct, not a flag.
     for si in sites:
         d = traj[traj["site"] == si].sort_values("age")
-        sdi = d["sdi"].to_numpy()
-        sdi = sdi[np.isfinite(sdi)]
-        if len(sdi) < 4:
+        # Prefer the engine's own ReinekeSDI vs SDIMax (authoritative, unit-exact);
+        # fall back to the hand-rolled SDI + config/default ceiling only if absent.
+        rs = d["reineke_sdi"].to_numpy(); sm = d["sdimax"].to_numpy()
+        if np.isfinite(rs).any() and np.isfinite(sm).any() and np.nansum(sm) > 0:
+            series = rs[np.isfinite(rs)]; ceiling = float(np.nanmax(sm)); src = "engine ReinekeSDI/SDIMax"
+        else:
+            series = d["sdi"].to_numpy(); series = series[np.isfinite(series)]
+            ceiling = max_sdi; src = "hand-rolled SDI/ceiling"
+        if len(series) < 4:
             continue
-        mx = float(np.nanmax(sdi))
-        tail = sdi[-3:]
+        mx = float(np.nanmax(series))
+        tail = series[-3:]
         still_climbing = (tail[-1] - tail[0]) / max(tail[0], 1.0) > 0.05
-        if mx > max_sdi and still_climbing:
-            flags.append(f"[{variant} site {si}] runaway density: SDI {mx:.0f} > ceiling "
-                         f"{max_sdi:.0f} and still climbing late (not reaching a self-thinning limit)")
+        if mx > ceiling * 1.02 and still_climbing:
+            flags.append(f"[{variant} site {si}] runaway density: SDI {mx:.0f} > SDIMax {ceiling:.0f} "
+                         f"({src}) and still climbing late (not reaching a self-thinning limit)")
     # 4. Eichhorn: volume vs dominant height similar across sites (compare volume at
     #    matched top height); large spread => flag
     eich_note = ""

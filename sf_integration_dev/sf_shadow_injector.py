@@ -3,20 +3,40 @@
 sf_shadow_injector.py  --  Stage-1 SHADOW injection of the species-free
 equations into the live FVS engine via the fvs2py stop-point-5 hook.
 
-WHAT THIS IS
-  The fitted species-free component equations currently live only in the R
-  projector and as banked bundles / a conus_sf config block in
-  config/config_loader.py (sf_linear_predictor). Nothing applies them inside a
-  real FVS run. This script wires the first, zero-risk stage of that injection:
-  it boots the real FVS engine, stops every cycle at restart code 5 (after the
-  engine has computed diameter growth (dg) and mortality but BEFORE applying
-  them), reads the per-tree engine increments via get_tree_attr, and LOGS them
-  (no set_tree_attr -> zero behaviour change). It also confirms the conus_sf
-  config block is loadable for the variant so Stage 2 (compute species-free
-  dg/htg per tree and compare / inject) can wire straight on top.
+DATABASE-FREE BOOT (2026-07-02 rewrite)
+  Previously this booted through a DATABASE keyfile (SQLite standinit/treeinit),
+  which segfaults in-process on the DBS SQLite read. It now boots the
+  database-free path: an inventory-free keyfile plus fvs2py `add_trees()`, the
+  same in-memory tree-loading route the engine hook test proved survives the
+  rebuilt (PR #85 prtexm ERR=) .so. Species are passed as FVS variant indices
+  (translated from FIA SPCD via the engine's own `species_codes` table), per
+  the add_trees() contract.
 
-  Reuses perseus_100yr_projection for keyfile/standinit construction so the
-  boot path is identical to the validated engine arms (wo1_v4).
+WHAT THIS DOES
+  1. Boots real FVS (rebuilt .so with the #85 fix) under conus_hybrid, applying
+     the hybrid Leg A parameters to the engine at stop point 7 (run() does NOT
+     auto-apply conus_hybrid, only 'calibrated'/'custom', so we apply manually).
+  2. Injects a synthetic NE stand via add_trees().
+  3. Stops every cycle at restart code 5 (after the engine computes diameter
+     growth and mortality but BEFORE applying them), reads the per-tree engine
+     increments via get_tree_attr, and computes the species-free Leg B linear
+     predictor per tree via config_loader.sf_linear_predictor(). It LOGS both
+     (no set_tree_attr -> zero behaviour change).
+  4. Reports whether the sf-vs-engine increments are sane.
+
+FIDELITY NOTES
+  - The engine increments (dg in/cycle, htg ft/cycle, mort rate) are read
+    directly from engine memory and are exact.
+  - The Leg B DG predictor (kuehne_v8) is log-normal (pred = exp(eta+sigma^2/2),
+    cm/yr) and its eta needs BGI (external climate 3-piece spline), metric BAL by
+    softwood/hardwood, and rd_additive (SDImax-normalized) plus ecoregion- and
+    trait-varying BGI slopes. get_tree_attr exposes dbh/ht/cratio/species/tpa/
+    dg/htg/mort but NOT BAL/BA/BGI, so the in-process DG/HTG SF prediction here
+    is the standard part (intercept + trait_effect + RE + size covariates) with
+    BGI/competition terms flagged. The faithful DG three-way lives offline on the
+    remeasurement pairs (benchmark_sf_vs_legA.R), which already has these
+    covariates precomputed. Treat the in-process SF number as a scale/sign
+    sanity signal, not a re-validation.
 
 STAGES (staged rollout from 20260614_engine_wiring_design.md)
   1  shadow  : GET only, log sf-vs-engine increments per tree   <-- THIS FILE
@@ -24,105 +44,162 @@ STAGES (staged rollout from 20260614_engine_wiring_design.md)
   3  full    : SET dg+htg+mort with localized maxSDI
   4  blended : per-species shrinkage blend, tune kappa
 
-USAGE (smoke, one synthetic NE stand)
-  python3 sf_shadow_injector.py --variant ne --smoke --out shadow_ne_smoke.csv
+USAGE
+  FVSNE_SO=/path/FVSne.so python3 sf_shadow_injector.py --variant ne --smoke \
+      --config conus_hybrid --out shadow_ne.csv
 """
 from __future__ import annotations
-import argparse, os, sys, tempfile, sqlite3, json
+import argparse, os, sys, tempfile, json, math
 import numpy as np, pandas as pd
 
 PROJECT_ROOT = os.environ.get("FVS_PROJECT_ROOT", os.path.expanduser("~/fvs-modern"))
 sys.path.insert(0, PROJECT_ROOT)
-sys.path.insert(0, os.path.expanduser("~/fvs-conus/python"))
-import perseus_100yr_projection as P   # KEYFILE_TEMPLATE, build_fvs_standinit, CONFIG_DIR, FVS_LIB_DIR
+sys.path.insert(0, os.path.join(PROJECT_ROOT, "deployment", "fvs2py"))
+# Point at the config tree that carries the Leg B blocks (the integration
+# worktree), overridable; the main checkout's config may predate Leg B.
+CONFIG_DIR = os.environ.get(
+    "FVS_CONFIG_DIR",
+    "/fs/scratch/PUOM0008/crsfaaron/wt-gompit/config"
+    if os.path.isdir("/fs/scratch/PUOM0008/crsfaaron/wt-gompit/config")
+    else os.path.join(PROJECT_ROOT, "config"))
 
-
-# ---- per-acre seeding fix (identical to run_conus_task_wo1_v4.py) ----------
-_orig_build = P.build_fvs_standinit
-def build_standinit_peracre(plot_data, stand_id, variant):
-    sdf = _orig_build(plot_data, stand_id, variant)
-    sdf["inv_plot_size"] = 1.0
-    sdf["num_plots"] = 1
-    sdf["brk_dbh"] = 999.0
-    sdf["basal_area_factor"] = 0.0
-    return sdf
+# inventory-free keyfile: no DATABASE, no TREEDATA; trees come from add_trees()
+KEYFILE_NOINV = """STDIDENT
+{stand_id} species-free shadow
+STDINFO          922                   1
+DESIGN            -1         1
+INVYEAR       {invyear:.1f}
+NUMCYCLE        {num_cycles:.1f}
+PROCESS
+STOP
+"""
 
 
 def synthetic_ne_stand():
-    """A small, plausible NE mixed stand (per-acre TPA) for the boot smoke."""
+    """A small, plausible NE mixed stand (per-acre TPA) for the boot smoke.
+    SPCD: 12 balsam fir, 97 red spruce, 94 white spruce, 71 tamarack,
+    130 eastern hemlock -- chosen to sit inside the NE variant's 23-species
+    grouped list so they map to distinct FVS indices."""
     plot_data = {"INVYR": 2010, "LAT": 45.0, "LON": -69.0, "ELEV": 500,
-                 "SLOPE": 10, "ASPECT": 180, "STDAGE": 50}
-    # SPCD: 12 balsam fir, 97 red spruce, 316 red maple, 318 sugar maple, 371 yellow birch
-    trees = [
-        # species, dbh_in, ht_ft, cr%, tpa
+                 "SLOPE": 10, "ASPECT": 180, "STDAGE": 50,
+                 # eco codes for the Leg B random effects (NE ecoregion / FT)
+                 "L1": "8", "L2": "8.1", "L3": "8.1.1", "FT": 101}
+    trees = [  # spcd, dbh_in, ht_ft, cr%, tpa
         (12,  6.2, 38, 45, 30.0), (12, 9.1, 52, 40, 18.0),
         (97,  7.8, 46, 50, 24.0), (97, 12.3, 64, 45, 10.0),
-        (316, 5.4, 34, 55, 28.0), (316, 10.7, 58, 50, 12.0),
-        (318, 8.9, 55, 60, 14.0), (371, 11.5, 61, 48, 9.0),
+        (94,  5.4, 34, 55, 28.0), (94, 10.7, 58, 50, 12.0),
+        (130, 8.9, 55, 60, 14.0), (71, 11.5, 61, 48, 9.0),
     ]
-    rows = []
-    for i, (sp, dbh, ht, cr, tpa) in enumerate(trees, start=1):
-        rows.append({"stand_id": "S_SMOKE", "plot_id": 1, "tree_id": i,
-                     "tree_count": tpa, "species": sp, "diameter": dbh,
-                     "ht": ht, "crratio": cr})
+    rows = [{"tree_id": i, "spcd": sp, "dbh": dbh, "ht": ht, "cr": cr, "tpa": tpa}
+            for i, (sp, dbh, ht, cr, tpa) in enumerate(trees, 1)]
     return plot_data, pd.DataFrame(rows)
 
 
-def maybe_load_sf(variant):
-    """Confirm the conus_sf config block is loadable (Stage-2 readiness)."""
+def load_sf_loader(variant, version):
+    """conus_hybrid FvsConfigLoader, or None with a reason."""
     try:
         from config.config_loader import FvsConfigLoader
-        for ver in ("conus_sf", "conus_hybrid"):
-            try:
-                L = FvsConfigLoader(variant.lower(), version=ver, config_dir=P.CONFIG_DIR)
-                if getattr(L, "has_conus_sf_block", False):
-                    comps = L.conus_sf_components_present()
-                    return {"version": ver, "components": comps, "loader": L}
-            except Exception as e:
-                last = str(e)
-        return {"version": None, "error": locals().get("last", "no conus_sf block")}
+        L = FvsConfigLoader(variant.lower(), version=version, config_dir=CONFIG_DIR)
+        return L, None
     except Exception as e:
-        return {"version": None, "error": f"loader import failed: {e}"}
+        return None, str(e)
+
+
+def sf_runtime_blocks(L, components):
+    rt = {}
+    for c in components:
+        try:
+            rt[c] = L.get_conus_sf_runtime_block(c)
+        except Exception as e:
+            rt[c] = {"_error": str(e)}
+    return rt
+
+
+def sf_standard_part(L, component, spcd, eco, runtime, size_covs):
+    """Standard-part Leg B linear predictor: intercept + trait_effect + RE +
+    the size covariates we can read in-process. Competition/BGI covariates are
+    omitted (flagged) so this is a partial eta, not the production predictor."""
+    try:
+        return L.sf_linear_predictor(component, int(spcd), eco, size_covs, runtime=runtime)
+    except Exception as e:
+        return float("nan")
 
 
 def run_shadow(variant, plot_data, tree_df, num_cycles=10, cycle_length=5,
-               config_version="calibrated", out_csv=None):
-    """Boot FVS, loop at stop point 5, log engine increments per cycle (no SET)."""
+               config_version="conus_hybrid", out_csv=None):
     from fvs2py import FVS
-    sdf = build_standinit_peracre(plot_data, "S_SMOKE", variant.lower())
+
+    lib = os.path.expanduser(os.environ.get(
+        "FVSNE_SO",
+        f"/fs/scratch/PUOM0008/crsfaaron/lib-sf85/FVS{variant.lower()}.so"))
+    if not os.path.exists(lib):
+        raise FileNotFoundError(f"variant lib not found: {lib} "
+                                "(set FVSNE_SO or build lib-sf85)")
+
+    L, err = load_sf_loader(variant, config_version)
+    comps = []
+    if L is not None and getattr(L, "has_conus_sf_block", False):
+        comps = L.conus_sf_components_present()
+    print(f"[sf-block] variant={variant} version={config_version} "
+          f"components={comps}{'' if L else '  loader_error='+str(err)}")
+    rt = sf_runtime_blocks(L, [c for c in ("diameter_growth", "height_growth", "mortality")
+                               if c in comps]) if L else {}
+    eco = {k: plot_data.get(k) for k in ("L1", "L2", "L3", "FT")}
 
     with tempfile.TemporaryDirectory() as tmp:
-        db = os.path.join(tmp, "FVS_Data.db")
-        conn = sqlite3.connect(db)
-        sdf.to_sql("fvs_standinit", conn, if_exists="replace", index=False)
-        tree_df.to_sql("fvs_treeinit", conn, if_exists="replace", index=False)
-        conn.close()
-
-        cal_kw = "** DEFAULT PARAMETERS"
-        if config_version == "calibrated":
-            try:
-                from config.config_loader import FvsConfigLoader
-                cal_kw = FvsConfigLoader(variant.lower(), version="calibrated",
-                                         config_dir=P.CONFIG_DIR
-                                         ).generate_keywords(include_comments=False)
-            except Exception as e:
-                print(f"[warn] calibrated keywords unavailable: {e}")
-
-        key = P.KEYFILE_TEMPLATE.format(stand_id="S_SMOKE", db_path=db,
-                                        calibration_keywords=cal_kw,
-                                        num_cycles=num_cycles,
-                                        cycle_length=cycle_length)
-        kpath = os.path.join(tmp, f"{variant}_smoke.key")
+        kpath = os.path.join(tmp, f"{variant}_shadow.key")
         with open(kpath, "w") as f:
-            f.write(key)
+            f.write(KEYFILE_NOINV.format(stand_id="SF01",
+                                         invyear=float(plot_data.get("INVYR", 2010)),
+                                         num_cycles=float(num_cycles)))
+        os.chdir(tmp)
 
-        lib = os.path.join(P.FVS_LIB_DIR, f"FVS{variant.lower()}.so")
-        if not os.path.exists(lib):
-            raise FileNotFoundError(f"variant lib not found: {lib}")
-        print(f"[boot] FVS lib={lib}  config={config_version}")
-
-        fvs = FVS(lib_path=lib, config_version=config_version, config_dir=P.CONFIG_DIR)
+        # config_version=None: we drive conus_hybrid application manually so it
+        # is applied for the hybrid arm (run() only auto-applies calibrated/custom)
+        fvs = FVS(lib_path=lib, config_version=None, config_dir=CONFIG_DIR)
         fvs.load_keyfile(kpath)
+        print(f"[boot] lib={lib}")
+
+        # stop point 7: input read, arrays allocated, before imputation
+        fvs.run(stop_point_code=7, stop_point_year=-1)
+
+        # FIA SPCD -> FVS variant index, from the engine's own table
+        codes = fvs.species_codes
+        fia2idx = {}
+        for _, r in codes.iterrows():
+            fia = str(r["fia"]).strip()
+            if fia.isdigit():
+                fia2idx.setdefault(int(fia), int(r["fvs_index"]))
+        idx = [fia2idx.get(int(s), 1) for s in tree_df["spcd"]]
+        unmapped = [int(s) for s, j in zip(tree_df["spcd"], idx) if int(s) not in fia2idx]
+        if unmapped:
+            print(f"[warn] SPCD not in {variant} species list, mapped to index 1: {unmapped}")
+
+        # apply conus_hybrid Leg A params to the engine
+        applied = {}
+        if L is not None:
+            try:
+                applied = L.apply_to_fvs(fvs)
+            except Exception as e:
+                print(f"[warn] apply_to_fvs({config_version}) failed: {e}")
+        print(f"[hybrid] applied groups: {applied}")
+
+        n_add = fvs.add_trees(
+            np.asarray(tree_df["dbh"], float), np.asarray(idx, float),
+            np.asarray(tree_df["ht"], float), np.asarray(tree_df["cr"], float),
+            np.ones(len(tree_df)), np.asarray(tree_df["tpa"], float))
+        print(f"[add_trees] added {n_add} trees; dims ntrees={fvs.dims.get('ntrees')}")
+
+        # --- self-diagnostic: did add_trees populate the attribute arrays? -----
+        chk = np.asarray(fvs.get_tree_attr("dbh"), float)
+        attrs_ok = np.isfinite(chk).any() and np.nansum(np.abs(chk)) > 0
+        if not attrs_ok:
+            print("[DIAGNOSTIC] add_trees registered the tree COUNT but the per-tree "
+                  "attribute arrays (dbh/species/ht) read all-zero. fvsAddTrees is not "
+                  "populating the arrays that get_tree_attr and the growth routines use. "
+                  "Real per-tree increments cannot be logged until this engine-side "
+                  "plumbing is fixed (fvsAddTrees must write the DBH/ISP/HT/CR arrays, "
+                  "or get_tree_attr must read the array fvsAddTrees writes).")
 
         log = []
         stop = 0
@@ -131,35 +208,64 @@ def run_shadow(variant, plot_data, tree_df, num_cycles=10, cycle_length=5,
             stop += 1
             def ga(name):
                 try:
-                    return np.asarray(fvs.get_tree_attr(name), dtype=float)
+                    return np.asarray(fvs.get_tree_attr(name), float)
                 except Exception:
                     return np.array([])
-            dbh = ga("dbh"); dg = ga("dg"); htg = ga("htg")
-            ht = ga("ht"); spp = ga("species"); tpa = ga("tpa")
+            dbh, dg, htg = ga("dbh"), ga("dg"), ga("htg")
+            mort, spp, cr = ga("mort"), ga("species"), ga("cratio")
             n = len(dbh)
-            row = {"stop": stop, "ntrees": n,
-                   "mean_dbh_in": float(np.nanmean(dbh)) if n else np.nan,
-                   "mean_engine_dg_in": float(np.nanmean(dg)) if len(dg) else np.nan,
-                   "mean_engine_htg_ft": float(np.nanmean(htg)) if len(htg) else np.nan,
-                   "mean_ht_ft": float(np.nanmean(ht)) if len(ht) else np.nan,
-                   "sum_tpa": float(np.nansum(tpa)) if len(tpa) else np.nan}
-            log.append(row)
-            print(f"[stop {stop:2d}] ntrees={n:3d}  mean dbh={row['mean_dbh_in']:.2f}in  "
-                  f"engine dg={row['mean_engine_dg_in']:.4f}in  htg={row['mean_engine_htg_ft']:.3f}ft")
-            # ---- SHADOW: Stage-2 hook would compute sf dg/htg here and compare;
-            #      no set_tree_attr in Stage 1, so engine behaviour is unchanged.
+            for i in range(n):
+                d_in = float(dbh[i]) if i < len(dbh) else float("nan")
+                # size covariates we can build in-process (partial; DG/HG also
+                # need BGI + metric BAL + rd which get_tree_attr does not expose)
+                size_covs = {}
+                if d_in and d_in == d_in and d_in > 0:
+                    size_covs = {"b1": math.log(d_in * 2.54), "b2": d_in * 2.54}
+                spcd_i = int(round(spp[i])) if i < len(spp) else 0
+                sf_dg = sf_standard_part(L, "diameter_growth", spcd_i, eco,
+                                         rt.get("diameter_growth"), size_covs) if L else float("nan")
+                log.append({
+                    "cycle": stop, "tree": i + 1, "spcd_fvs_or_fia": spcd_i,
+                    "dbh_in": d_in,
+                    "engine_dg_in_cyc": float(dg[i]) if i < len(dg) else float("nan"),
+                    "engine_htg_ft_cyc": float(htg[i]) if i < len(htg) else float("nan"),
+                    "engine_mort_rate": float(mort[i]) if i < len(mort) else float("nan"),
+                    "engine_dg_cm_yr": (float(dg[i]) * 2.54 / cycle_length) if i < len(dg) else float("nan"),
+                    "sf_dg_eta_stdpart": sf_dg,
+                    "sf_dg_pred_cm_yr_stdpart": (math.exp(sf_dg) if sf_dg == sf_dg else float("nan")),
+                })
+            md = float(np.nanmean(dbh)) if n else float("nan")
+            print(f"[cycle {stop:2d}] ntrees={n:3d} mean_dbh={md:6.2f}in "
+                  f"engine_dg={float(np.nanmean(dg)) if len(dg) else float('nan'):7.4f}in "
+                  f"engine_htg={float(np.nanmean(htg)) if len(htg) else float('nan'):6.3f}ft")
             fvs.run(stop_point_code=5, stop_point_year=-1)
-
-        # final flush so FVS finishes writing
         try:
             fvs.run()
         except Exception:
             pass
 
         df = pd.DataFrame(log)
-        if out_csv:
+        if out_csv and len(df):
             df.to_csv(out_csv, index=False)
-            print(f"[done] {stop} stop-point-5 hooks logged -> {out_csv}")
+            print(f"[done] {stop} cycles logged, {len(df)} tree-rows -> {out_csv}")
+
+        # ---- sanity verdict ---------------------------------------------------
+        print("\n===== SANITY =====")
+        if not len(df) or not attrs_ok:
+            print("VERDICT: engine increments NOT verifiable in-process. add_trees does "
+                  "not populate per-tree attributes in this build; every dbh/dg/htg read "
+                  "0. The database-free boot itself works (no segfault, #85 fix active), "
+                  "but the tree-attribute plumbing (fvsAddTrees) must be fixed before "
+                  "real sf-vs-engine increments can be logged. Faithful DG/HG/mort "
+                  "comparison remains available offline via benchmark_sf_vs_legA.R.")
+        else:
+            eng = df["engine_dg_cm_yr"].to_numpy()
+            sf = df["sf_dg_pred_cm_yr_stdpart"].to_numpy()
+            eng_ok = np.nanmedian(eng) > 0 and np.nanmedian(eng) < 2.0
+            print(f"engine dg median = {np.nanmedian(eng):.3f} cm/yr "
+                  f"({'plausible' if eng_ok else 'CHECK'} for NE 0.05-1.0)")
+            print(f"sf dg (std part) median = {np.nanmedian(sf):.3f} cm/yr "
+                  "(partial predictor: no BGI/competition terms)")
         return df
 
 
@@ -167,20 +273,17 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--variant", default="ne")
     ap.add_argument("--smoke", action="store_true")
-    ap.add_argument("--config", default="calibrated")
+    ap.add_argument("--config", default="conus_hybrid")
     ap.add_argument("--num-cycles", type=int, default=10)
     ap.add_argument("--cycle-length", type=int, default=5)
     ap.add_argument("--out", default="shadow_log.csv")
     a = ap.parse_args()
-
-    sfinfo = maybe_load_sf(a.variant)
-    print(f"[sf-block] variant={a.variant}: {json.dumps({k:v for k,v in sfinfo.items() if k!='loader'})}")
-
     if not a.smoke:
         print("Only --smoke (synthetic NE stand) is implemented in Stage 1.")
         sys.exit(0)
     plot_data, tdf = synthetic_ne_stand()
-    print(f"[stand] synthetic NE: {len(tdf)} trees, sum TPA={tdf['tree_count'].sum():.0f}")
+    print(f"[stand] synthetic {a.variant.upper()}: {len(tdf)} trees, "
+          f"sum TPA={tdf['tpa'].sum():.0f}")
     run_shadow(a.variant, plot_data, tdf, num_cycles=a.num_cycles,
                cycle_length=a.cycle_length, config_version=a.config, out_csv=a.out)
 

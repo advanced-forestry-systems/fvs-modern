@@ -61,6 +61,9 @@ jobs:
         run: |
           VERBOSE=1 bash deployment/scripts/build_fvs_libraries.sh src-converted lib ne
           ls -la lib/
+          echo "--- bundle MinGW runtime DLLs next to the library (loader searches the DLL dir first) ---"
+          for d in libgfortran-5 libgcc_s_seh-1 libquadmath-0 libwinpthread-1 libstdc++-6 libgomp-1; do cp "$MINGW_PREFIX/bin/$d.dll" lib/ 2>/dev/null || true; done
+          ls lib/*.dll 2>/dev/null || true
           echo "--- FVSne.so dependent DLLs ---"
           objdump -p lib/FVSne.so 2>/dev/null | grep -i "DLL Name" || true
           WINBIN=$(cygpath -w "$MINGW_PREFIX/bin" 2>/dev/null || echo "")

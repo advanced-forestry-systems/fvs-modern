@@ -371,6 +371,49 @@ class FvsConfigLoader:
         block = self.config.get("categories_conus_sf", {})
         return [k for k in block.keys() if k != "metadata"]
 
+    # -------------------------------------------------------------------------
+    # Greg arm (categories_conus_greg) + keyword-selectable site driver
+    # -------------------------------------------------------------------------
+    def has_conus_greg_block(self) -> bool:
+        """Whether the variant config carries a categories_conus_greg block."""
+        return "categories_conus_greg" in self.config
+
+    def get_conus_greg_block(self, component: str) -> dict:
+        """Raw categories_conus_greg.components.{component} block, or KeyError."""
+        greg = self.config.get("categories_conus_greg", {})
+        comps = greg.get("components", {}) if isinstance(greg, dict) else {}
+        if component not in comps:
+            raise KeyError(
+                f"Greg-arm block for '{component}' not present in {self.variant}; "
+                f"available: {list(comps.keys())}"
+            )
+        return comps[component]
+
+    def get_greg_driver_coefficients(self, component, driver=None):
+        """Resolve the site-driver coefficient file for a Greg-arm component.
+
+        The site driver is keyword-selectable (DGDRIVER for diameter_growth,
+        MORTDRIVER for survival). If `driver` is None, use the component's
+        default `site_driver`. Returns the coefficient filename (relative to
+        the config dir). Raises if the driver is not an offered option.
+        A/B evidence (2026-07-03): DG default 'cspi' (driver is a minor lever),
+        survival default 'bgi' (driver matters, ~5.7% log-loss gain).
+        """
+        b = self.get_conus_greg_block(component)
+        drv = driver or b.get("site_driver")
+        opts = b.get("site_driver_options", []) or []
+        cmap = b.get("coefficients_by_driver", {}) or {}
+        if opts and drv not in opts:
+            raise ValueError(
+                f"driver '{drv}' not offered for {component}; options: {opts}"
+            )
+        if drv not in cmap:
+            raise KeyError(
+                f"no coefficient set for driver '{drv}' in {component}; "
+                f"have: {list(cmap.keys())}"
+            )
+        return cmap[drv]
+
     def get_conus_sf_block(self, component: str) -> dict:
         """Raw categories_conus_sf.{component} block, or raise KeyError."""
         sf = self.config.get("categories_conus_sf", {})

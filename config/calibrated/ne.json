@@ -3247,16 +3247,18 @@
       "note": "Confirm release tag/commit with Greg Johnson before production"
     },
     "climate_dependency": {
-      "required": [
-        "EMT",
-        "TD"
-      ],
+      "required": ["EMT", "TD"],
       "definition": "EMT and TD = MWMT - MCMT from ClimateNA 1991-2020 normals at the stand; engine must supply per stand",
       "lookup": "greg_emt_td_lookup.rds"
     },
     "crown": {
       "source": "fvs_conus_cr_recession",
-      "note": "Greg repo has no fitted crown-change equation; CR recession uses the fvs-conus kernel (disclosed)"
+      "greg_alternative": {
+        "coefficients": "greg_crown_coefficients.csv",
+        "form": "dHTLC = (CHT-CHTLC)*(1 - exp(B0 + B1*dHT_ft + B2*dCCH))  (dHT in FEET)",
+        "units": "imperial (confirmed by A/B: feet bias +0.13 m vs meters -2.76 m)"
+      },
+      "note": "A/B on 102k held-out FIA pairs (2026-07-03): fvs-conus CR-recession kernel wins on RMSE (5.61 vs 5.98 m) and is unbiased; Greg's crown (fvs_remodeling 8310b2a) is nearly unbiased with slightly higher r but higher RMSE, and its dCCH term is inert under our CCH scale. Kept kernel as default; Greg retained as a documented alternative pending CCH-scale reconciliation with Greg."
     },
     "species_fallback": {
       "rule": "species outside Greg's fitted sets use the fvs-conus trait / softwood-hardwood median fallback",
@@ -3265,25 +3267,9 @@
     "components": {
       "diameter_growth": {
         "form": "greg_est_dg",
-        "predictors": [
-          "dbh",
-          "cr",
-          "ht",
-          "bal",
-          "elev",
-          "EMT"
-        ],
+        "predictors": ["dbh", "cr", "ht", "bal", "elev", "EMT"],
         "n_species": 84,
-        "coef_names": [
-          "B0",
-          "B1",
-          "B2",
-          "B3",
-          "B4",
-          "B5",
-          "B6",
-          "B7"
-        ],
+        "coef_names": ["B0", "B1", "B2", "B3", "B4", "B5", "B6", "B7"],
         "species_params": [
           {
             "SPCD": 131,
@@ -4209,30 +4195,23 @@
             "B6": 0.015871177598,
             "B7": "NA"
           }
-        ]
+        ],
+        "site_driver": "cspi",
+        "site_driver_options": ["none", "elev", "bgi", "cspi", "esi", "emt"],
+        "coefficients_by_driver": {
+          "none": "greg_dg_coefficients_none.csv",
+          "elev": "greg_dg_coefficients_elev.csv",
+          "bgi": "greg_dg_coefficients_bgi.csv",
+          "cspi": "greg_dg_coefficients_cspi.csv",
+          "esi": "greg_dg_coefficients_esi.csv",
+          "emt": "greg_dg_coefficients.csv"
+        }
       },
       "height_growth": {
         "form": "greg_est_hg",
-        "predictors": [
-          "max_ht",
-          "ccfl",
-          "cch",
-          "elev",
-          "TD",
-          "EMT"
-        ],
+        "predictors": ["max_ht", "ccfl", "cch", "elev", "TD", "EMT"],
         "n_species": 95,
-        "coef_names": [
-          "B0",
-          "B1",
-          "B2",
-          "B3",
-          "B4",
-          "B5",
-          "B6",
-          "B7",
-          "B8"
-        ],
+        "coef_names": ["B0", "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8"],
         "species_params": [
           {
             "SPCD": 131,
@@ -5374,23 +5353,16 @@
             "B7": 0.019269093343,
             "B8": 0.28496604806
           }
-        ]
+        ],
+        "site_driver": "emt",
+        "note": "HG site-driver family deferred: est_hg needs TD/EMT (ClimateNA) + a per-species max-height asymptote; refit in-engine or with Greg, not offline."
       },
       "survival": {
         "form": "greg_gompit",
         "equation": "P_surv = 1 - exp(-exp(b0 + b1*(cr+0.01)^b2 + b3*cch^b4))  (annual)",
-        "predictors": [
-          "cr",
-          "cch"
-        ],
+        "predictors": ["cr", "cch"],
         "n_species": 160,
-        "coef_names": [
-          "b0",
-          "b1",
-          "b2",
-          "b3",
-          "b4"
-        ],
+        "coef_names": ["b0", "b1", "b2", "b3", "b4"],
         "species_params": [
           {
             "SPCD": 131,
@@ -6672,18 +6644,23 @@
             "b3": -0.14641371443,
             "b4": 0.019734763718
           }
-        ]
+        ],
+        "site_driver": "bgi",
+        "site_driver_options": ["none", "elev", "bgi", "cspi", "esi"],
+        "coefficients_by_driver": {
+          "none": "greg_mort_coefficients_none.csv",
+          "elev": "greg_mort_coefficients_elev.csv",
+          "bgi": "greg_mort_coefficients_bgi.csv",
+          "cspi": "greg_mort_coefficients_cspi.csv",
+          "esi": "greg_mort_coefficients_esi.csv"
+        }
       }
     },
     "stand_level": {
       "garcia_constraint": false,
       "note": "density is emergent from the cch-gompit mortality; no fvs-conus Garcia self-thinning / BA carrying-capacity overlay. Optional softened SDIMAX cap only."
     },
-    "components_present": [
-      "diameter_growth",
-      "height_growth",
-      "survival"
-    ]
+    "components_present": ["diameter_growth", "height_growth", "survival", "crown_change"]
   },
   "_emit_sdimax": true,
   "categories_conus_sf_modifier": {
@@ -6823,10 +6800,46 @@
       ],
       "P_trait": 8,
       "trait_gamma_alpha": {
-        "plant": [-0.0054721535929, -0.049589103412, 0.13713900927, -0.13588977466, 0.0077628564659, -0.019183066828, 0.094700685805, -0.064621540539],
-        "insect": [-0.087638772411, -0.070395256939, -0.0041576060877, 0.052388266342, 0.069510192009, 0.045972869035, 0.089936155192, -0.064655080174],
-        "harvest": [-0.0031046556572, -0.0066568473891, 0.00056703923779, -0.1044264314, 0.0089470539806, -0.096829649344, -0.018771919629, -0.036607283628],
-        "cutting": [-0.056407626561, 0.072431723028, 0.093732211728, -0.14869429317, -0.0063225581744, -0.015102730987, -0.011991262882, 0.026783008243]
+        "plant": [
+          -0.0054721535929,
+          -0.049589103412,
+          0.13713900927,
+          -0.13588977466,
+          0.0077628564659,
+          -0.019183066828,
+          0.094700685805,
+          -0.064621540539
+        ],
+        "insect": [
+          -0.087638772411,
+          -0.070395256939,
+          -0.0041576060877,
+          0.052388266342,
+          0.069510192009,
+          0.045972869035,
+          0.089936155192,
+          -0.064655080174
+        ],
+        "harvest": [
+          -0.0031046556572,
+          -0.0066568473891,
+          0.00056703923779,
+          -0.1044264314,
+          0.0089470539806,
+          -0.096829649344,
+          -0.018771919629,
+          -0.036607283628
+        ],
+        "cutting": [
+          -0.056407626561,
+          0.072431723028,
+          0.093732211728,
+          -0.14869429317,
+          -0.0063225581744,
+          -0.015102730987,
+          -0.011991262882,
+          0.026783008243
+        ]
       },
       "trait_standardization": {
         "trait": [

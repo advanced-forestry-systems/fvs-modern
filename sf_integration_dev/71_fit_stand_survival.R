@@ -109,7 +109,7 @@ agg[, trt_active   := as.integer(is.finite(yst) & yst >= 0)]
 agg[, dstrb_active := as.integer(is.finite(ysd) & ysd >= 0)]
 agg[, trt_decay   := ifelse(trt_active   == 1, exp(-pmin(yst, 100) / TAU_M), 0)]
 agg[, dstrb_decay := ifelse(dstrb_active == 1, exp(-pmin(ysd, 100) / TAU_D), 0)]
-agg[, log_years := log(YEARS)]                       # exposure offset (cloglog)
+agg[, log_years := log(YEARS) - 3.9]  # + nominal baseline log-hazard (~1.8%/yr) so cloglog init is not P=1                       # exposure offset (cloglog)
 agg[, L1 := as.character(L1)]
 agg <- agg[!is.na(L1) & L1 != "" & is.finite(log_years)]
 # integer trial/death counts for the binomial response
@@ -142,7 +142,8 @@ rhs <- paste(FIXED, collapse = " + ")
 form <- bf(as.formula(paste0("deaths_i | trials(trials_i) ~ ", rhs,
                              " + (1 | L1) + offset(log_years)")))
 priors <- c(set_prior("normal(0,1)", class = "b"),
-            set_prior("normal(0,0.5)", class = "sd"))
+            set_prior("normal(0,0.5)", class = "sd"),
+            set_prior("normal(0,2)", class = "Intercept"))
 fit <- trycatch_run(
   brm(form, data = ds, family = binomial(link = "cloglog"), prior = priors,
       chains = 4, iter = 800, warmup = 400, cores = 4, seed = 20260702,

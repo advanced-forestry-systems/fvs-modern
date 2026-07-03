@@ -317,6 +317,200 @@ def dg_uncertainty_organon(L, stand_trees, eco, drivers=None, n_draws=1000,
     return out
 
 
+def stand_constrained_mortality_uncertainty(
+        L, stand_trees, eco, T_years=10.0, n_draws=1000,
+        drivers=None,
+        stand_survival_bundle_path="/fs/scratch/PUOM0008/crsfaaron/"
+        "fvs-conus_output_conus/stand_survival/stand_survival_bundle.json",
+        sdimax_samples_path=None, fixed_sdimax=None):
+    """
+    Full-uncertainty stand-constrained MORTALITY path over a synthetic stand.
+
+    Per Monte-Carlo draw d (trees SHARE the drawn stand-level structure, so the
+    stand correlation from the shared draw is preserved):
+
+      (a) Density cap: draw SDIMAX from the self-thinning posterior
+          (sdimax_draws_from_posterior on stand_density_samples.rds); if the rds
+          is unavailable fall back to a fixed SDIMAX (TAGGED). Apply the
+          probabilistic Reineke cap (sdimax_density_cap_draws) to the per-tree
+          TPA so the density ceiling carries the SDIMAX posterior uncertainty.
+
+      (b) Mortality disaggregation: if stand_survival_bundle.json exists, compute
+          the stand mortality target M_stand from it (cloglog + log(YEARS)
+          exposure, using rd/ln_qmd/ba_metric/bgi), then call
+          stand_disaggregate_mortality to solve kappa and rescale the per-tree
+          hazards so the (capped-)TPA-weighted tree mortality equals M_stand.
+          If the bundle is absent, skip disaggregation gracefully (TAGGED
+          "stand_survival pending"): report the unconstrained tree mortality.
+
+    stand_trees: list of dicts each with 'spcd', 'dbh_cm', 'tpa', 'base_hazard'
+                 (per-tree ANNUAL base hazard from the arm's survival model),
+                 and the stand summaries carried on the first tree or passed via
+                 the returned dict. QMD (cm) per tree via 'dbh_cm'.
+    Returns a dict with unconstrained vs constrained stand mortality (mean +
+    q05/q95 over draws), the density-cap effect, kappa summary, and tags.
+    """
+    import json
+    import os
+    # import the stand-constraint helpers (support running as a script or module)
+    try:
+        from stand_constraint import (
+            sdimax_density_cap_draws, sdimax_draws_from_posterior,
+            stand_disaggregate_mortality, stand_mortality_target,
+        )
+    except Exception:
+        from sf_integration_dev.stand_constraint import (  # type: ignore
+            sdimax_density_cap_draws, sdimax_draws_from_posterior,
+            stand_disaggregate_mortality, stand_mortality_target,
+        )
+
+    drivers = drivers or {}
+    T = float(T_years)
+    dbh = np.array([float(t["dbh_cm"]) for t in stand_trees])
+    tpa0 = np.array([float(t["tpa"]) for t in stand_trees])
+    h_base = np.array([float(t["base_hazard"]) for t in stand_trees])
+
+    # stand summaries (TPA-weighted) -- QMD from the per-tree DBH, BA metric,
+    # relative density rd = SDI/SDIMAX (canonical rd from the design note).
+    W = float(np.sum(tpa0))
+    qmd = float(np.sqrt(np.sum(tpa0 * dbh ** 2) / W))            # cm
+    ba_metric = float(np.sum(tpa0 * (math.pi / 4.0) * (dbh / 100.0) ** 2))  # m2/ha
+    ln_qmd = math.log(qmd)
+    bgi = float(drivers.get("bgi", 6.0))
+    sdi_stand = float(np.sum(tpa0 * (dbh / 10.0) ** 1.605))
+
+    tags = []
+
+    # ---- SDIMAX posterior draws (or fixed fallback, tagged) ------------------
+    sdimax_draws = None
+    if sdimax_samples_path is not None:
+        sdimax_draws = sdimax_draws_from_posterior(sdimax_samples_path,
+                                                   n_draws=n_draws, rng=RNG)
+    if sdimax_draws is None:
+        fx = fixed_sdimax if fixed_sdimax is not None else max(sdi_stand * 1.05, 1.0)
+        sdimax_draws = np.full(n_draws, float(fx))
+        tags.append(f"SDIMAX fixed fallback={float(fx):.1f} (posterior rds unavailable)")
+    else:
+        if sdimax_draws.size < n_draws:
+            sdimax_draws = RNG.choice(sdimax_draws, size=n_draws, replace=True)
+        else:
+            sdimax_draws = sdimax_draws[:n_draws]
+        tags.append(f"SDIMAX drawn from self-thinning posterior "
+                    f"(median={float(np.median(sdimax_draws)):.1f})")
+
+    # ---- density cap per draw (probabilistic Reineke) -----------------------
+    cap = sdimax_density_cap_draws(tpa0, dbh, sdimax_draws)     # QMD=dbh here
+    capped_tpa = cap["capped_tpa"]                              # (n_draws, n_trees)
+    sdi_uncapped = cap["sdi"]
+    frac_binds = float(np.mean(cap["binds"]))
+
+    # rd uses the capped SDI vs drawn SDIMAX (density state after the cap)
+    sdi_capped_draws = np.sum(capped_tpa * (dbh[None, :] / 10.0) ** 1.605, axis=1)
+    rd_draws = sdi_capped_draws / np.maximum(sdimax_draws, 1e-9)
+
+    # ---- stand mortality target from the bundle (if present) ----------------
+    bundle = None
+    if os.path.exists(stand_survival_bundle_path):
+        try:
+            with open(stand_survival_bundle_path) as fh:
+                bundle = json.load(fh)
+        except Exception:
+            bundle = None
+    have_bundle = bundle is not None
+
+    # per-draw unconstrained (capped-TPA-weighted) and constrained stand mortality
+    unconstrained = np.zeros(n_draws)
+    constrained = np.zeros(n_draws)
+    kappas = np.zeros(n_draws)
+    m_target_draws = np.zeros(n_draws)
+    for d in range(n_draws):
+        w = capped_tpa[d]
+        surv = np.exp(-h_base * T)
+        m_unc = float(np.sum(w * (1.0 - surv)) / np.sum(w))
+        unconstrained[d] = m_unc
+        if have_bundle:
+            m_tgt = stand_mortality_target(
+                bundle, T, rd=float(rd_draws[d]), ln_qmd=ln_qmd,
+                ba_metric=ba_metric, bgi=bgi,
+                trt_decay=float(drivers.get("trt_decay", 0.0)),
+                dstrb_decay=float(drivers.get("dstrb_decay", 0.0)),
+                L1=(eco or {}).get("L1"))
+            m_target_draws[d] = m_tgt
+            kappa, h_prime = stand_disaggregate_mortality(h_base, w, T, m_tgt)
+            kappas[d] = kappa
+            constrained[d] = float(np.sum(w * (1.0 - np.exp(-h_prime * T)))
+                                   / np.sum(w))
+        else:
+            constrained[d] = m_unc
+            kappas[d] = 1.0
+
+    if not have_bundle:
+        tags.append("stand_survival pending (bundle absent): mortality "
+                    "disaggregation skipped, constrained == unconstrained")
+
+    q = lambda a, p: float(np.quantile(a, p))
+    uncapped_total = float(W)
+    capped_total_mean = float(capped_tpa.sum(axis=1).mean())
+    return {
+        "have_bundle": have_bundle,
+        "T_years": T,
+        "stand_summary": {"qmd_cm": qmd, "ba_m2ha": ba_metric,
+                          "sdi_uncapped": sdi_uncapped,
+                          "rd_mean": float(rd_draws.mean())},
+        "density_cap": {
+            "sdi_uncapped": sdi_uncapped,
+            "sdimax_median": float(np.median(sdimax_draws)),
+            "frac_draws_bind": frac_binds,
+            "tpa_uncapped": uncapped_total,
+            "tpa_capped_mean": capped_total_mean,
+            "tpa_reduction_pct": 100.0 * (1.0 - capped_total_mean / uncapped_total),
+        },
+        "stand_mortality_unconstrained": {
+            "mean": float(unconstrained.mean()),
+            "q05": q(unconstrained, .05), "q95": q(unconstrained, .95)},
+        "stand_mortality_constrained": {
+            "mean": float(constrained.mean()),
+            "q05": q(constrained, .05), "q95": q(constrained, .95)},
+        "stand_mortality_target": {
+            "mean": float(m_target_draws.mean()) if have_bundle else None,
+            "q05": q(m_target_draws, .05) if have_bundle else None,
+            "q95": q(m_target_draws, .95) if have_bundle else None},
+        "kappa": {"mean": float(kappas.mean()), "q05": q(kappas, .05),
+                  "q95": q(kappas, .95)},
+        "n_draws": n_draws,
+        "tags": tags,
+    }
+
+
+def _report_mortality(res):
+    print("\n== Stand-constrained MORTALITY (full uncertainty), synthetic NE stand ==")
+    ss = res["stand_summary"]
+    print(f"  stand: QMD={ss['qmd_cm']:.1f} cm  BA={ss['ba_m2ha']:.2f} m2/ha  "
+          f"SDI={ss['sdi_uncapped']:.1f}  rd(mean)={ss['rd_mean']:.3f}")
+    dc = res["density_cap"]
+    print(f"  DENSITY CAP: SDIMAX(median)={dc['sdimax_median']:.1f}  "
+          f"binds in {100*dc['frac_draws_bind']:.0f}% of draws  "
+          f"TPA {dc['tpa_uncapped']:.1f} -> {dc['tpa_capped_mean']:.1f} "
+          f"({dc['tpa_reduction_pct']:.1f}% mean reduction)")
+    mu = res["stand_mortality_unconstrained"]; mc = res["stand_mortality_constrained"]
+    print(f"  UNCONSTRAINED stand mortality: mean={mu['mean']:.4f} "
+          f"[q05={mu['q05']:.4f}, q95={mu['q95']:.4f}]")
+    mt = res["stand_mortality_target"]
+    if res["have_bundle"]:
+        print(f"  STAND TARGET   (from bundle):  mean={mt['mean']:.4f} "
+              f"[q05={mt['q05']:.4f}, q95={mt['q95']:.4f}]")
+        print(f"  CONSTRAINED stand mortality:   mean={mc['mean']:.4f} "
+              f"[q05={mc['q05']:.4f}, q95={mc['q95']:.4f}]  "
+              f"(matches target: {abs(mc['mean']-mt['mean']):.2e})")
+        kp = res["kappa"]
+        print(f"  kappa (proportional-hazard): mean={kp['mean']:.4f} "
+              f"[q05={kp['q05']:.4f}, q95={kp['q95']:.4f}]")
+    else:
+        print(f"  CONSTRAINED == UNCONSTRAINED (bundle absent)")
+    for t in res["tags"]:
+        print(f"  [tag] {t}")
+
+
 def _report(tag, res):
     print(f"\n== DG full uncertainty ({tag}), synthetic NE stand ==")
     for t in res["tree_pi"]:
@@ -373,5 +567,39 @@ if __name__ == "__main__":
     stand_o = [tree_o(202, 15, .5, 20, 7), tree_o(17, 20, .45, 25, 11),
                tree_o(202, 25, .4, 30, 15), tree_o(17, 30, .5, 35, 19)]
     _report("conus_organon", dg_uncertainty_organon(Lo, stand_o, eco, drivers=drivers, n_draws=ND))
+
+    # --- Stand-constrained MORTALITY path (TASK 1) ---------------------------
+    # Synthetic NE stand: per-tree base ANNUAL hazard from a plausible arm
+    # survival model (smaller / more suppressed trees -> higher hazard). This
+    # is the arm's own per-tree hazard the stand model reconciles.
+    def tree_m(spcd, dbh_cm, cr, bal, tpa):
+        # base hazard: increases with competition (bal) and decreases with size
+        # and crown ratio. eta form mirrors the tree survival scale (h=exp(-eta)).
+        eta = 2.6 + 0.9 * math.log(dbh_cm) + 1.2 * cr - 0.05 * bal
+        return {"spcd": spcd, "dbh_cm": dbh_cm, "tpa": tpa,
+                "base_hazard": math.exp(-eta)}
+    # a moderately dense stand so the density cap is exercised
+    stand_m = [tree_m(12, 12, .35, 14, 180), tree_m(97, 18, .40, 10, 120),
+               tree_m(12, 24, .45, 7, 70),  tree_m(97, 34, .55, 4, 30)]
+    SAMPLES = "/users/PUOM0008/crsfaaron/fvs-conus/output/variants/ne/stand_density_samples.rds"
+    REAL_BUNDLE = ("/fs/scratch/PUOM0008/crsfaaron/fvs-conus_output_conus/"
+                   "stand_survival/stand_survival_bundle.json")
+    STUB_BUNDLE = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                               "stand_survival_bundle_STUB.json")
+
+    # (1) REAL bundle path: absent while the fit is pending -> graceful skip.
+    print("\n--- stand-constrained mortality: REAL bundle path ---")
+    res_real = stand_constrained_mortality_uncertainty(
+        Lb, stand_m, eco, T_years=10.0, n_draws=ND, drivers={"bgi": 6.0},
+        stand_survival_bundle_path=REAL_BUNDLE, sdimax_samples_path=SAMPLES)
+    _report_mortality(res_real)
+
+    # (2) STUB bundle path: demonstrates constrained-matches-target + density cap
+    #     (STUB coefficients; replace with the real bundle when 71_* lands).
+    print("\n--- stand-constrained mortality: STUB bundle path (demo of match) ---")
+    res_stub = stand_constrained_mortality_uncertainty(
+        Lb, stand_m, eco, T_years=10.0, n_draws=ND, drivers={"bgi": 6.0},
+        stand_survival_bundle_path=STUB_BUNDLE, sdimax_samples_path=SAMPLES)
+    _report_mortality(res_stub)
 
     print("\nUNCERTAINTY_OK")

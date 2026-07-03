@@ -30,25 +30,36 @@
 suppressPackageStartupMessages({ library(jsonlite) })
 args <- commandArgs(trailingOnly = TRUE)
 ga <- function(n, d = NULL) { m <- grep(paste0("^--", n, "="), args, value = TRUE); if (length(m)) sub(paste0("^--", n, "="), "", m[1]) else d }
-BLOCK <- ga("block")                       # mod | organon
+BLOCK <- ga("block")                       # mod | organon | stand
 COMPONENT <- ga("component", "dg")
+STAND_KEY <- ga("stand_key", "survival")   # for --block=stand: survival | bagrowth
 BUNDLE <- ga("bundle")
 CONFIG_DIR <- ga("config_dir", "config/calibrated")
 VARIANT <- ga("variant", NULL)
 DRY_RUN <- toupper(ga("dry_run", "TRUE")) %in% c("TRUE","T","1","YES")
-stopifnot(!is.null(BLOCK), BLOCK %in% c("mod","organon"), !is.null(BUNDLE), file.exists(BUNDLE))
+stopifnot(!is.null(BLOCK), BLOCK %in% c("mod","organon","stand"), !is.null(BUNDLE), file.exists(BUNDLE))
 
-KEY_MAP <- c(dg="diameter_growth", hg="height_growth", htdbh="height_diameter",
-             hcb="height_crown_base", mort="mortality", cr="crown_recession")
-CKEY <- KEY_MAP[[COMPONENT]]; if (is.null(CKEY)) stop("unknown component ", COMPONENT)
-TOPKEY <- if (BLOCK == "mod") "categories_conus_mod" else "categories_conus_organon"
+# --block=stand lands categories_conus_stand.{survival|bagrowth}; the sub-key is
+# STAND_KEY (not a tree component). mod/organon land categories_conus_*.{component}.
+if (BLOCK == "stand") {
+  stopifnot(STAND_KEY %in% c("survival","bagrowth"))
+  TOPKEY <- "categories_conus_stand"; CKEY <- STAND_KEY
+  PREVIEW_SUFFIX <- ".standpreview.json"; BACKUP_TAG <- "pre_stand"
+} else {
+  KEY_MAP <- c(dg="diameter_growth", hg="height_growth", htdbh="height_diameter",
+               hcb="height_crown_base", mort="mortality", cr="crown_recession")
+  CKEY <- KEY_MAP[[COMPONENT]]; if (is.null(CKEY)) stop("unknown component ", COMPONENT)
+  TOPKEY <- if (BLOCK == "mod") "categories_conus_mod" else "categories_conus_organon"
+  PREVIEW_SUFFIX <- ".armpreview.json"; BACKUP_TAG <- "pre_arm"
+}
 bundle <- fromJSON(BUNDLE, simplifyVector = TRUE)
 
-cat("== 62c_arms_to_variant_json.R ==\n block:", BLOCK, "-> ", TOPKEY, "\n component:", COMPONENT, "->", CKEY, "\n dry_run:", DRY_RUN, "\n\n")
+cat("== 62c_arms_to_variant_json.R ==\n block:", BLOCK, "-> ", TOPKEY, "\n sub-key:",
+    if (BLOCK == "stand") STAND_KEY else COMPONENT, "->", CKEY, "\n dry_run:", DRY_RUN, "\n\n")
 
 variant_files <- if (!is.null(VARIANT)) file.path(CONFIG_DIR, paste0(VARIANT, ".json")) else {
   fs <- list.files(CONFIG_DIR, pattern = "\\.json$", full.names = TRUE)
-  fs[!grepl("(_draws|pre_conus|pre_sf|pre_arm|sf_preview|armpreview)", fs)]
+  fs[!grepl("(_draws|pre_conus|pre_sf|pre_arm|pre_stand|sf_preview|armpreview|standpreview)", fs)]
 }
 stamp <- format(Sys.time(), "%Y%m%d_%H%M%S"); n_done <- 0L
 for (vf in variant_files) {
@@ -57,15 +68,20 @@ for (vf in variant_files) {
   if (is.null(d[[TOPKEY]])) d[[TOPKEY]] <- list()
   d[[TOPKEY]][[CKEY]] <- bundle
   d[[TOPKEY]]$metadata <- list(
-    pipeline_version = if (BLOCK == "mod") "conus Bayesian modifier layer" else "conus ORGANON-form arm (arm 1)",
+    pipeline_version = switch(BLOCK,
+      mod = "conus Bayesian modifier layer",
+      organon = "conus ORGANON-form arm (arm 1)",
+      stand = "conus stand-level constraint layer (survival / BA-growth)"),
     integration_date = as.character(Sys.Date()),
     components_present = names(d[[TOPKEY]])[names(d[[TOPKEY]]) != "metadata"],
-    note = if (BLOCK == "mod")
-      "Shared multiplicative modifier applied by any arm: growth = base * exp(mod_eta)."
-    else
-      "Arm 1 ORGANON-form coefficients; select with version=conus_organon.")
-  out_path <- if (DRY_RUN) sub("\\.json$", ".armpreview.json", vf) else vf
-  if (!DRY_RUN) file.copy(vf, paste0(vf, ".pre_arm_", stamp), overwrite = FALSE)
+    note = switch(BLOCK,
+      mod = "Shared multiplicative modifier applied by any arm: growth = base * exp(mod_eta).",
+      organon = "Arm 1 ORGANON-form coefficients; select with version=conus_organon.",
+      stand = paste("Stand-level target that reconciles the summed tree predictions",
+                    "(disaggregation): survival -> M_stand for the kappa hazard solve;",
+                    "bagrowth -> stand BA increment for the tree-DG scale. Applied by any arm.")))
+  out_path <- if (DRY_RUN) sub("\\.json$", PREVIEW_SUFFIX, vf) else vf
+  if (!DRY_RUN) file.copy(vf, paste0(vf, ".", BACKUP_TAG, "_", stamp), overwrite = FALSE)
   write_json(d, out_path, auto_unbox = TRUE, pretty = TRUE, digits = 10, null = "null")
   n_done <- n_done + 1L
   cat(sprintf("%s  %s  [%s.%s]\n", if (DRY_RUN) "preview" else "LANDED", basename(out_path), TOPKEY, CKEY))

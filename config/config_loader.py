@@ -39,6 +39,7 @@ from __future__ import annotations
 
 import json
 import logging
+import math
 import os
 from pathlib import Path
 from typing import Any, Optional
@@ -78,7 +79,7 @@ class FvsConfigLoader:
     #                marks it leg_a), else fall back to the species-free (Leg B)
     #                trait effect. Recommended default once both legs are landed.
     VALID_VERSIONS = ("default", "calibrated", "conus", "hybrid", "custom",
-                      "conus_sf", "conus_hybrid")
+                      "conus_sf", "conus_hybrid", "conus_organon")
 
     def __init__(
         self,
@@ -130,7 +131,7 @@ class FvsConfigLoader:
         """Path to the active config file."""
         if self.version == "custom" and self._custom_config_path is not None:
             return self._custom_config_path
-        if self.version in ("calibrated", "conus", "hybrid",
+        if self.version in ("calibrated", "conus", "hybrid", "conus_organon",
                             "conus_sf", "conus_hybrid"):
             # All live in the same variant JSON; the version selects which
             # top-level block to read (categories / categories_conus /
@@ -548,6 +549,348 @@ class FvsConfigLoader:
     # =========================================================================
     # fvs2py Integration
     # =========================================================================
+
+    # =========================================================================
+    # ORGANON-like arm (categories_conus_organon) -- arm 1
+    # =========================================================================
+    def has_conus_organon_block(self) -> bool:
+        """Whether the variant config carries a categories_conus_organon block."""
+        return "categories_conus_organon" in self.config
+
+    def conus_organon_components_present(self) -> list:
+        b = self.config.get("categories_conus_organon", {})
+        return [k for k in b if k != "metadata"] if isinstance(b, dict) else []
+
+    def get_conus_organon_block(self, component: str) -> dict:
+        b = self.config.get("categories_conus_organon", {})
+        if not isinstance(b, dict) or component not in b:
+            raise KeyError(
+                f"no categories_conus_organon.{component} for {self.variant}; "
+                f"available: {self.conus_organon_components_present()}")
+        return b[component]
+
+    def get_conus_organon_runtime_block(self, component: str) -> dict:
+        """Decompose an ORGANON-arm block into runtime lookups: global fixed
+        coefficients + per-species native-form coefficient rows."""
+        b = self.get_conus_organon_block(component)
+        def _d(x):
+            return x if isinstance(x, dict) else {}
+        fe = _d(b.get("fixed_effects", {}))
+        fixed = dict(zip(fe.get("param", []), fe.get("mean", [])))
+        sp = _d(b.get("species", {}))
+        spcds = [int(x) for x in sp.get("SPCD", [])]
+        sp_coef = {s: {} for s in spcds}
+        for key in sp:
+            if key == "SPCD":
+                continue
+            vals = sp.get(key)
+            if isinstance(vals, list) and len(vals) == len(spcds):
+                for s, v in zip(spcds, vals):
+                    sp_coef[s][key] = v
+        return {"_source": "categories_conus_organon", "model": b.get("model"),
+                "fixed": {k: float(v) for k, v in fixed.items()}, "species_coef": sp_coef}
+
+    def organon_linear_predictor(self, component: str, spcd: int,
+                                 covariates: dict, runtime=None) -> float:
+        """ORGANON-form linear predictor: sum of coef * covariate over the
+        native-form parameters (per-species rows override the global fixed
+        effects), plus an intercept term if present."""
+        rt = runtime or self.get_conus_organon_runtime_block(component)
+        coef = dict(rt["fixed"])
+        coef.update(rt["species_coef"].get(int(spcd), {}))
+        eta = float(coef.get("intercept", 0.0))
+        for p, c in coef.items():
+            if p != "intercept" and p in covariates:
+                eta += float(c) * float(covariates[p])
+        return eta
+
+    # =========================================================================
+    # Bayesian modifier layer (categories_conus_mod) -- shared across all arms
+    # =========================================================================
+    def has_modifier_block(self) -> bool:
+        """Whether the variant carries a Bayesian modifier layer."""
+        return "categories_conus_mod" in self.config
+
+    def get_modifier_runtime_block(self, component: str) -> dict:
+        b = self.config.get("categories_conus_mod", {})
+        if not isinstance(b, dict) or component not in b:
+            return {"_present": False}
+        blk = b[component]
+        def _f(x, d=0.0):
+            try:
+                return float(x)
+            except (TypeError, ValueError):
+                return d
+        mgmt = blk.get("management", {}) or {}
+        dstrb = blk.get("disturbance", {}) or {}
+        drv = blk.get("driver_bgi", {}) or {}
+        re = blk.get("re_L1") or {}
+        return {"_present": True,
+                "tau_m": _f(blk.get("tau_m"), 10.0), "tau_d": _f(blk.get("tau_d"), 15.0),
+                "coef_mgmt": _f(mgmt.get("coef")), "coef_dstrb": _f(dstrb.get("coef")),
+                "b_bgi1": _f(drv.get("b1")), "b_bgi2": _f(drv.get("b2")),
+                "bgi_knot": _f(drv.get("knot")),
+                "re_L1": {str(l): _f(m) for l, m in
+                          zip(re.get("level", []), re.get("mean", []))}}
+
+    def modifier_multiplier(self, component: str, eco_codes: dict = None,
+                            drivers: dict = None, runtime=None) -> float:
+        """exp(mod_eta): the shared multiplicative management / disturbance /
+        driver modifier that any base arm applies on top of its native
+        prediction. drivers keys: years_since_trt, years_since_dstrb, bgi
+        (any missing contributes zero). Returns 1.0 (neutral) when the variant
+        has no modifier block."""
+        import math
+        rt = runtime or self.get_modifier_runtime_block(component)
+        if not rt.get("_present"):
+            return 1.0
+        drivers = drivers or {}
+        eta = 0.0
+        yst = drivers.get("years_since_trt")
+        ysd = drivers.get("years_since_dstrb")
+        bgi = drivers.get("bgi")
+        if yst is not None and yst == yst and yst >= 0:
+            eta += rt["coef_mgmt"] * math.exp(-min(yst, 100) / rt["tau_m"])
+        if ysd is not None and ysd == ysd and ysd >= 0:
+            eta += rt["coef_dstrb"] * math.exp(-min(ysd, 100) / rt["tau_d"])
+        if bgi is not None and bgi == bgi:
+            eta += rt["b_bgi1"] * bgi + rt["b_bgi2"] * max(bgi - rt["bgi_knot"], 0.0)
+        if eco_codes:
+            code = eco_codes.get("L1")
+            if code is not None:
+                eta += rt["re_L1"].get(str(code), 0.0)
+        return math.exp(eta)
+
+    # =========================================================================
+    # Stand-level constraint layer (categories_conus_stand) -- stand survival /
+    # BA-growth targets that reconcile (disaggregate) the summed tree predictions
+    # (from 71_fit_stand_survival.R / 72_fit_stand_bagrowth.R, landed via 62c).
+    # =========================================================================
+    def has_stand_constraint_block(self) -> bool:
+        """Whether the variant carries a categories_conus_stand block."""
+        return "categories_conus_stand" in self.config
+
+    def get_stand_survival_runtime(self) -> dict:
+        """Decompose categories_conus_stand.survival into a runtime form: the
+        fixed-effect posterior means (+ SDs), the bgi spline knot, tau decays,
+        and the (1|L1) random-effect table. Returns {'_present': False} when the
+        block is absent, so callers degrade gracefully while the fit is pending.
+
+        Runtime keys:
+          fixed      {param: mean}         Intercept, rd, ln_qmd, ba_metric,
+                                           bgi, bgi_b2, trt_decay, dstrb_decay
+          fixed_sd   {param: sd}           posterior SDs (for uncertainty draws)
+          bgi_knot   float                 2-piece bgi spline knot
+          tau_m/tau_d float                mgmt/dstrb decay e-folding (years)
+          re_L1      {L1_code: mean}       ecoregion random intercepts
+        """
+        b = self.config.get("categories_conus_stand", {})
+        if not isinstance(b, dict) or "survival" not in b:
+            return {"_present": False}
+        surv = b["survival"] or {}
+        fx = surv.get("fixed_effects", {}) or {}
+
+        def _mean(v):
+            if isinstance(v, dict):
+                return float(v.get("mean", 0.0))
+            try:
+                return float(v)
+            except (TypeError, ValueError):
+                return 0.0
+
+        def _sd(v):
+            if isinstance(v, dict):
+                try:
+                    return float(v.get("sd", 0.0))
+                except (TypeError, ValueError):
+                    return 0.0
+            return 0.0
+
+        fixed = {k: _mean(v) for k, v in fx.items()}
+        fixed_sd = {k: _sd(v) for k, v in fx.items()}
+        knot = surv.get("covariates", {}).get("bgi_knot")
+        if knot is None:
+            knot = surv.get("bgi_knot", 0.0)
+        re = surv.get("re_L1") or {}
+        re_lut = {str(l): float(m) for l, m in
+                  zip(re.get("level", []), re.get("mean", []))}
+        return {"_present": True, "_source": "categories_conus_stand.survival",
+                "model": surv.get("model"),
+                "fixed": fixed, "fixed_sd": fixed_sd,
+                "bgi_knot": float(knot or 0.0),
+                "tau_m": float(surv.get("tau_m", 10.0)),
+                "tau_d": float(surv.get("tau_d", 15.0)),
+                "re_L1": re_lut, "sd_L1": float(surv.get("sd_L1", 0.0) or 0.0)}
+
+    def stand_survival_eta(self, rd, ln_qmd, ba_metric, bgi, drivers=None,
+                           runtime=None) -> float:
+        """Stand-survival linear predictor (log annual hazard), mirroring the
+        fitted stand model (cloglog + log(YEARS) exposure). drivers may carry
+        trt_decay / dstrb_decay (already-decayed mgmt/disturbance terms) and an
+        L1 ecoregion code. Returns 0.0 (neutral log-hazard) when the block is
+        absent, so a caller with no stand model applies no stand constraint.
+
+            eta = Intercept + b_rd*rd + b_lnqmd*ln_qmd + b_ba*ba_metric
+                  + b_bgi*bgi + b_bgi_b2*max(bgi-knot,0)
+                  + b_trt*trt_decay + b_dstrb*dstrb_decay + z_L1
+            H_stand = exp(eta);  S(T)=exp(-H*T);  M_stand = 1 - S(T)
+        """
+        rt = runtime or self.get_stand_survival_runtime()
+        if not rt.get("_present"):
+            return 0.0
+        drivers = drivers or {}
+        f = rt["fixed"]
+        bgi_b2 = max(float(bgi) - rt["bgi_knot"], 0.0)
+        eta = (f.get("Intercept", 0.0)
+               + f.get("rd", 0.0) * float(rd)
+               + f.get("ln_qmd", 0.0) * float(ln_qmd)
+               + f.get("ba_metric", 0.0) * float(ba_metric)
+               + f.get("bgi", 0.0) * float(bgi)
+               + f.get("bgi_b2", 0.0) * bgi_b2
+               + f.get("trt_decay", 0.0) * float(drivers.get("trt_decay", 0.0))
+               + f.get("dstrb_decay", 0.0) * float(drivers.get("dstrb_decay", 0.0)))
+        l1 = drivers.get("L1")
+        if l1 is not None:
+            eta += rt["re_L1"].get(str(l1), 0.0)
+        return float(eta)
+
+    def stand_mortality_target(self, T_years, rd, ln_qmd, ba_metric, bgi,
+                               drivers=None, runtime=None) -> float:
+        """M_stand = 1 - exp(-exp(eta)*T) from the fitted stand-survival block.
+        Returns None when the block is absent (target undefined -> no constraint)."""
+        rt = runtime or self.get_stand_survival_runtime()
+        if not rt.get("_present"):
+            return None
+        eta = self.stand_survival_eta(rd, ln_qmd, ba_metric, bgi, drivers, rt)
+        H = math.exp(min(eta, 30.0))
+        return float(1.0 - math.exp(-H * float(T_years)))
+
+    # ---- García/GADA TOP-HEIGHT transition (categories_conus_stand.topht) ----
+    # State-space H2|H1 transition (75_fit_stand_topheight.R), landed via
+    # 62c --block=stand --stand_key=topht. Target feeds
+    # stand_constraint.py::stand_constrain_topheight (scales tree height growth).
+    def get_stand_topheight_runtime(self) -> dict:
+        """Decompose categories_conus_stand.topht into runtime form: fixed-effect
+        posterior means (+SDs), top_n_per_ha basis, and the (1|L1) RE table.
+        Returns {'_present': False} when the block is absent."""
+        b = self.config.get("categories_conus_stand", {})
+        if not isinstance(b, dict) or "topht" not in b:
+            return {"_present": False}
+        th = b["topht"] or {}
+        fx = th.get("fixed_effects", {}) or {}
+
+        def _mean(v):
+            if isinstance(v, dict):
+                return float(v.get("mean", 0.0))
+            try:
+                return float(v)
+            except (TypeError, ValueError):
+                return 0.0
+
+        def _sd(v):
+            return float(v.get("sd", 0.0)) if isinstance(v, dict) else 0.0
+
+        fixed = {k: _mean(v) for k, v in fx.items()}
+        fixed_sd = {k: _sd(v) for k, v in fx.items()}
+        re = th.get("re_L1") or {}
+        re_lut = {str(l): float(m) for l, m in
+                  zip(re.get("level", []), re.get("mean", []))}
+        return {"_present": True, "_source": "categories_conus_stand.topht",
+                "model": th.get("model"),
+                "fixed": fixed, "fixed_sd": fixed_sd,
+                "top_n_per_ha": float(th.get("top_n_per_ha", 100.0)),
+                "re_L1": re_lut, "sd_L1": float(th.get("sd_L1", 0.0) or 0.0)}
+
+    def stand_topheight_target(self, h1, years, rd=None, ln_qmd=None, bgi=None,
+                               L1=None, runtime=None):
+        """Top-height H2 target from the fitted GADA-transition block:
+            H2 = H1*exp(b0 + b_lnH1*ln(H1) + b_lnyr*ln(years) + b_rd*rd
+                        + b_lnqmd*ln_qmd + b_bgi*bgi + z_L1).
+        Returns None when the block is absent (no top-height constraint)."""
+        rt = runtime or self.get_stand_topheight_runtime()
+        if not rt.get("_present"):
+            return None
+        if float(years) <= 0 or float(h1) <= 0:
+            return float(h1)
+        f = rt["fixed"]
+        eta = (f.get("Intercept", 0.0)
+               + f.get("ln_h1", 0.0) * math.log(float(h1))
+               + f.get("ln_years", 0.0) * math.log(float(years)))
+        if rd is not None:
+            eta += f.get("rd", 0.0) * float(rd)
+        if ln_qmd is not None:
+            eta += f.get("ln_qmd", 0.0) * float(ln_qmd)
+        if bgi is not None:
+            eta += f.get("bgi", 0.0) * float(bgi)
+        if L1 is not None:
+            eta += rt["re_L1"].get(str(L1), 0.0)
+        return float(h1) * math.exp(eta)
+
+    # ---- García state-space STEM-DENSITY N(t) transition ---------------------
+    # (categories_conus_stand.stems, 76_fit_stand_stems.R, landed via
+    # 62c --block=stand --stand_key=stems). cloglog exposure hazard, SAME scale
+    # as stand survival. Target feeds stand_constraint.py::stand_constrain_stems.
+    def get_stand_stems_runtime(self) -> dict:
+        """Decompose categories_conus_stand.stems into runtime form: fixed-effect
+        posterior means (log-hazard scale, intercept already refolded to raw
+        log(YEARS)), top_n_per_ha basis, and the (1|L1) RE table.
+        Returns {'_present': False} when absent."""
+        b = self.config.get("categories_conus_stand", {})
+        if not isinstance(b, dict) or "stems" not in b:
+            return {"_present": False}
+        st = b["stems"] or {}
+        fx = st.get("fixed_effects", {}) or {}
+
+        def _mean(v):
+            if isinstance(v, dict):
+                return float(v.get("mean", 0.0))
+            try:
+                return float(v)
+            except (TypeError, ValueError):
+                return 0.0
+
+        def _sd(v):
+            return float(v.get("sd", 0.0)) if isinstance(v, dict) else 0.0
+
+        fixed = {k: _mean(v) for k, v in fx.items()}
+        fixed_sd = {k: _sd(v) for k, v in fx.items()}
+        re = st.get("re_L1") or {}
+        re_lut = {str(l): float(m) for l, m in
+                  zip(re.get("level", []), re.get("mean", []))}
+        return {"_present": True, "_source": "categories_conus_stand.stems",
+                "model": st.get("model"),
+                "fixed": fixed, "fixed_sd": fixed_sd,
+                "top_n_per_ha": float(st.get("top_n_per_ha", 100.0)),
+                "re_L1": re_lut, "sd_L1": float(st.get("sd_L1", 0.0) or 0.0)}
+
+    def stand_stems_eta(self, n1, top_ht, rd, ln_qmd, L1=None, runtime=None) -> float:
+        """Stem-transition linear predictor (log annual stand hazard):
+            eta_h = b0 + b_lnN1*ln(N1) + b_topht*top_ht + b_rd*rd + b_lnqmd*ln_qmd + z_L1.
+        Returns 0.0 (neutral) when the block is absent."""
+        rt = runtime or self.get_stand_stems_runtime()
+        if not rt.get("_present"):
+            return 0.0
+        f = rt["fixed"]
+        eta = (f.get("Intercept", 0.0)
+               + f.get("ln_n1", 0.0) * math.log(max(float(n1), 1e-9))
+               + f.get("top_ht", 0.0) * float(top_ht)
+               + f.get("rd", 0.0) * float(rd)
+               + f.get("ln_qmd", 0.0) * float(ln_qmd))
+        if L1 is not None:
+            eta += rt["re_L1"].get(str(L1), 0.0)
+        return float(eta)
+
+    def stand_stems_target(self, n1, T_years, top_ht, rd, ln_qmd, L1=None,
+                           runtime=None):
+        """Surviving-stems N2 target = N1*exp(-exp(eta_h)*T) from the fitted
+        stem-transition block. Returns None when the block is absent."""
+        rt = runtime or self.get_stand_stems_runtime()
+        if not rt.get("_present"):
+            return None
+        eta = self.stand_stems_eta(n1, top_ht, rd, ln_qmd, L1, rt)
+        H = math.exp(min(eta, 30.0))
+        return float(float(n1) * math.exp(-H * float(T_years)))
+
 
     def apply_to_fvs(self, fvs_instance) -> dict[str, bool]:
         """Apply calibrated parameters to a running fvs2py FVS instance.

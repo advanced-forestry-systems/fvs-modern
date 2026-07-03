@@ -128,18 +128,20 @@ if (COMPONENT == "dg") {
   BASE_CTRL <- c("cr1_logit", "dbh", "dbh_sq", "ba_metric", "bal_metric")
 
 } else if (COMPONENT == "mort") {
-  # mortality: Bernoulli/logit on survival (alive=1). Mirrors benchmark_mort_legA
-  # covariate forms (dbh, dbh_sq, cr_z(+sq), bal, sqrt_ba_rd). Task specifies
-  # brms family=bernoulli, so we model P(alive) on the annualized logit scale
-  # rather than the cloglog-exposure form; YEARS enters as a base control offset.
-  FAMILY <- "bernoulli"
+  # mortality: continuous-time exponential-hazard survival, CONSISTENT with the
+  # base model survival_unified_v2_crz (log S = -exp(-eta) * T_years). That maps
+  # to a cloglog GLM of the mortality EVENT with a log(YEARS) exposure offset:
+  #   P(death) = 1 - exp(-exp(eta_h) * T),  cloglog(P_death) = eta_h + log(T).
+  # The modifier terms enter the log-hazard eta_h and multiply the base hazard by
+  # exp(mod_eta), matching how the base survival model applies effects.
+  FAMILY <- "bernoulli_cloglog"
   if (!"TREESTATUS1" %in% names(d)) d[, TREESTATUS1 := 1L]
   d <- d[TREESTATUS1 == 1 & !is.na(TREESTATUS2) & TREESTATUS2 %in% c(1, 2) &
          is.finite(DBH1) & DBH1 >= 2.54 & is.finite(CR1) & CR1 > 0 & CR1 <= 1 &
          is.finite(BA1) & BA1 >= 0 & is.finite(BAL_SW1) & is.finite(BAL_HW1) &
          is.finite(YEARS) & YEARS >= 1 & YEARS <= 20 &
          is.finite(sdi_additive1) & is.finite(SDImax_brms) & SDImax_brms > 0]
-  d[, y := as.integer(TREESTATUS2 == 1)]      # response: survived
+  d[, y := as.integer(TREESTATUS2 == 2)]      # response: mortality event (died)
   d[, resp := y]
   d[, dbh := DBH1]
   d[, dbh_sq := DBH1^2]
@@ -149,9 +151,12 @@ if (COMPONENT == "dg") {
   d[, rd_ratio := sdi_additive1 / SDImax_brms]
   d[, sqrt_ba_rd := sqrt(pmax(BA1 * 0.2296, 0) * pmax(rd_ratio, 0))]
   d[, bal_metric := (BAL_SW1 + BAL_HW1)]
-  d[, years_ctrl := YEARS]
-  d <- d[is.finite(sqrt_ba_rd)]
-  BASE_CTRL <- c("dbh", "dbh_sq", "cr_z", "cr_z_sq", "bal_metric", "sqrt_ba_rd", "years_ctrl")
+  # exposure offset with a nominal baseline log-hazard folded in (~1.8%/yr) so
+  # the intercept starts near a realistic mortality rate; without this the
+  # cloglog inverse of log(YEARS) is ~1 at init and survivors give log(0)=-Inf.
+  d[, log_years := log(YEARS) - 3.9]          # log(YEARS) + log(~0.02) baseline hazard
+  d <- d[is.finite(sqrt_ba_rd) & is.finite(log_years)]
+  BASE_CTRL <- c("dbh", "dbh_sq", "cr_z", "cr_z_sq", "bal_metric", "sqrt_ba_rd")
 
 } else {
   elog(paste("component not yet parameterized:", COMPONENT)); quit(status = 1)
@@ -189,10 +194,12 @@ rhs <- paste(c(BASE_CTRL,                            # base controls (partial ou
                "trt_decay", "dstrb_decay",          # management + disturbance modifiers
                "bgi", "bgi_b2"),                    # climate driver modifier
              collapse = " + ")
-form <- bf(as.formula(paste0("y ~ ", rhs, " + (1 | L1)")))   # + ecoregion RE
-is_bern <- identical(FAMILY, "bernoulli")
-# construct the brms family object now that the package is attached
-fam_obj <- if (is_bern) bernoulli() else gaussian()
+off <- if (identical(FAMILY, "bernoulli_cloglog")) " + offset(log_years)" else ""
+form <- bf(as.formula(paste0("y ~ ", rhs, " + (1 | L1)", off)))   # + ecoregion RE (+ exposure offset for mort)
+is_bern <- FAMILY %in% c("bernoulli", "bernoulli_cloglog")
+# construct the brms family object now that the package is attached; mortality
+# uses a cloglog link with a log(YEARS) exposure offset -> modifier on log-hazard
+fam_obj <- if (identical(FAMILY, "bernoulli_cloglog")) bernoulli(link = "cloglog") else if (is_bern) bernoulli() else gaussian()
 priors <- c(set_prior("normal(0,1)", class = "b"),
             set_prior("normal(0,0.5)", class = "sd"))
 if (!is_bern) priors <- c(priors, set_prior("student_t(3,0,1)", class = "sigma"))
@@ -218,7 +225,8 @@ sigma_resid <- if (is_bern) NA_real_ else {
 }
 bundle <- list(
   component = COMPONENT, form = "multiplicative log-modifier",
-  family = FAMILY, response_scale = if (is_bern) "logit(survival)" else "component transform",
+  family = FAMILY,
+  response_scale = if (identical(FAMILY, "bernoulli_cloglog")) "log-hazard (cloglog, log-years exposure offset); multiplier = exp(mod_eta) on the base hazard, consistent with survival_unified_v2_crz" else if (is_bern) "logit(survival)" else "component transform",
   tau_m = TAU_M, tau_d = TAU_D, bgi_knot = bgi_med,
   base_controls = BASE_CTRL,
   sigma_resid = sigma_resid,

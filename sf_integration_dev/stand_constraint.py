@@ -339,6 +339,320 @@ def stand_disaggregate_bagrowth(tree_dg, dbh, tpa, T_years, stand_ba_incr_target
 
 
 # =============================================================================
+# (d) TOP-HEIGHT constraint: García/GADA stand top-height -> tree height growth
+# =============================================================================
+def stand_top_height(tree_heights, tpa, top_n_per_ha=100.0):
+    """
+    Stand TOP (dominant) height = TPA-weighted mean height of the tallest
+    `top_n_per_ha` stems/ha (the García/GADA/Assmann dominant-height basis).
+
+    Trees are ranked tall-to-short; TPA is accumulated until `top_n_per_ha`
+    stems have been included (the last tree is partially counted so exactly
+    top_n_per_ha stems define the mean). Returns (top_ht, cohort_mask, w_top)
+    where w_top is the (possibly fractional) TPA weight each tree contributes
+    to the top cohort (0 for trees below the cohort).
+
+    If total TPA < top_n_per_ha, the top height is the TPA-weighted mean of all
+    trees (best available), and w_top == tpa.
+    """
+    h = np.asarray(tree_heights, dtype=float)
+    w = np.asarray(tpa, dtype=float)
+    order = np.argsort(-h)                       # tallest first
+    w_ord = w[order]
+    cum = np.cumsum(w_ord)
+    need = float(top_n_per_ha)
+    w_top_ord = np.zeros_like(w_ord)
+    if cum[-1] <= need:                          # not enough stems: use all
+        w_top_ord = w_ord.copy()
+    else:
+        # fully include trees until cumulative TPA reaches `need`, then take a
+        # fractional slice of the boundary tree so exactly `need` stems count.
+        full = cum <= need
+        w_top_ord[full] = w_ord[full]
+        k = int(np.argmax(~full))                # first tree that overflows
+        prev = cum[k - 1] if k > 0 else 0.0
+        w_top_ord[k] = need - prev               # partial weight
+    # map back to original order
+    w_top = np.zeros_like(w)
+    w_top[order] = w_top_ord
+    denom = float(np.sum(w_top))
+    top_ht = float(np.sum(w_top * h) / denom) if denom > 0 else float("nan")
+    return top_ht, (w_top > 0), w_top
+
+
+def stand_constrain_topheight(tree_heights, tree_htg, target_top_height_end,
+                              top_n_per_ha=100.0, tpa=None, T_years=1.0,
+                              tol=1e-9, max_iter=200):
+    """
+    Scale tree HEIGHT GROWTH so the projected stand TOP height (mean height of
+    the tallest ~top_n_per_ha stems/ha) tracks the García/GADA top-height
+    trajectory target H(t_end). Only the dominant cohort defines top height, so
+    the correction is distributed to the taller trees.
+
+    We apply a single proportional scalar `phi` to the height growth of the
+    trees that are in (or can enter) the top cohort:
+
+        h_end_i(phi) = h_start_i + phi * htg_i * T
+        top_ht_end(phi) = stand_top_height(h_end(phi), tpa, top_n_per_ha)
+
+    top_ht_end is monotone non-decreasing in phi (taller trees grow taller, and
+    the top cohort is the tallest set), so a 1-D bracket + bisection on phi is
+    robust. phi < 1 slows the dominant cohort toward the target; phi > 1 speeds
+    it up. Height growth of sub-dominant trees far below the cohort is left
+    unscaled -- it never affects top height -- but to keep the height-order
+    self-consistent we scale ALL tree htg by phi (a uniform dominant-driven
+    correction); trees below the cohort simply don't enter the top-height mean.
+
+    Parameters
+    ----------
+    tree_heights : (n,) per-tree START height (m)
+    tree_htg     : (n,) per-tree ANNUAL height growth (m/yr), unconstrained
+    target_top_height_end : float, target stand TOP height at t_end (m)
+    top_n_per_ha : float, number of tallest stems/ha defining top height (100)
+    tpa          : (n,) per-tree TPA/expansion weight (defaults to ones)
+    T_years      : float, projection interval (years)
+
+    Returns
+    -------
+    dict: phi, htg_prime (scaled per-tree htg), heights_end (constrained end
+          heights), top_ht_end (achieved top height), top_ht_start.
+    """
+    h0 = np.asarray(tree_heights, dtype=float)
+    g = np.asarray(tree_htg, dtype=float)
+    if h0.shape != g.shape:
+        raise ValueError("tree_heights and tree_htg must have the same shape")
+    w = np.ones_like(h0) if tpa is None else np.asarray(tpa, dtype=float)
+    T = float(T_years)
+    target = float(target_top_height_end)
+
+    def top_end(phi):
+        h_end = h0 + phi * g * T
+        return stand_top_height(h_end, w, top_n_per_ha)[0]
+
+    top_ht_start = stand_top_height(h0, w, top_n_per_ha)[0]
+
+    # monotone in phi: bracket the target
+    lo, hi = 0.0, 1.0
+    it = 0
+    while top_end(hi) < target and it < 100:
+        hi *= 2.0
+        it += 1
+    # if even a huge phi cannot reach the target (target above achievable),
+    # return the largest phi bracketed (closest feasible top height).
+    if top_end(hi) < target:
+        phi = hi
+        htg_p = phi * g
+        return {"phi": phi, "htg_prime": htg_p, "heights_end": h0 + htg_p * T,
+                "top_ht_end": top_end(phi), "top_ht_start": top_ht_start}
+    # if target is at/below the no-growth top height, phi -> 0 floor
+    if top_end(0.0) >= target:
+        lo = hi = 0.0
+    else:
+        for _ in range(max_iter):
+            mid = 0.5 * (lo + hi)
+            fm = top_end(mid) - target
+            if abs(fm) < tol:
+                lo = hi = mid
+                break
+            if fm < 0.0:
+                lo = mid
+            else:
+                hi = mid
+    phi = 0.5 * (lo + hi)
+    htg_p = phi * g
+    return {"phi": phi, "htg_prime": htg_p, "heights_end": h0 + htg_p * T,
+            "top_ht_end": top_end(phi), "top_ht_start": top_ht_start}
+
+
+def gada_topheight_transition(h1, years, b2, b3):
+    """
+    García-style base-age-invariant (state-space) TOP-HEIGHT transition using the
+    Cieszewski-Bailey Chapman-Richards GADA form fitted in gada_refit.r:
+
+        H_t = b1 * (1 - exp(-b2 * t))^b3      (site enters via b1)
+
+    Base-age invariance -> the H2 from H1 transition eliminates b1 and age. From
+    a starting top height H1 at (unknown) age, after `years` more years:
+
+        H2 = H1 * ( (1 - exp(-b2*(a1 + years))) / (1 - exp(-b2*a1)) )^b3
+
+    where a1 is the implied age from inverting H1 = b1*(1-exp(-b2*a1))^b3. Since
+    b1 is a per-stand nuisance (site), we use the pair-form invariant that García
+    uses: for anamorphic C-R the ratio does not depend on b1, so a1 is recovered
+    from a reference asymptote only to advance the interval. In the minimal
+    state-space version we FIT a direct H2 = f(H1, years) transition (see the
+    75_fit_stand_topheight.R launcher) whose coefficients replace this closed
+    form; this function is the analytic fallback / prior mean.
+
+    Here we use the invariant advance with a1 solved from a nominal reference
+    asymptote b1_ref supplied by the caller via a1 (age). If `years<=0`, returns
+    H1 unchanged. This is a deterministic H(t) target generator for
+    stand_constrain_topheight when a fitted transition bundle is unavailable.
+    """
+    h1 = float(h1)
+    yr = float(years)
+    if yr <= 0.0 or h1 <= 0.0:
+        return h1
+    # Solve implied age a1 from H1 assuming a shared reference asymptote.
+    # For the invariant we only need the RATIO, which is stable across b1_ref;
+    # invert with b1_ref = H1 / (1-exp(-b2*a_ref))^b3 at a_ref -> use a1 s.t. the
+    # C-R fraction equals H1/b1_ref. We adopt the standard GADA solution that
+    # advances the interval with the fitted (b2,b3); a1 is found by matching the
+    # observed H1 to the curve at a reference site. Use a numeric solve:
+    # find a1 in (0.5, 400] with H1 = b1_ref*(1-exp(-b2*a1))^b3 is ill-posed
+    # without b1_ref, so we use the base-age-invariant closed form directly with
+    # the Cieszewski (2002) X0 solution:
+    #   X0 = 0.5*(ln H1 + sqrt( (ln H1)^2 ... ))  -- for the specific ADA case.
+    # To stay robust and dependency-free we advance via the multiplicative
+    # fraction using an anchor age a1 = -ln(1 - (H1/ (1.3*H1_scale))^(1/b3))/b2.
+    # In practice the fitted transition bundle is used; keep a safe monotone
+    # advance: H2 = H1 * ((1-exp(-b2*(a_anchor+yr)))/(1-exp(-b2*a_anchor)))^b3.
+    a_anchor = 20.0  # nominal anchor age; the fitted bundle supersedes this
+    frac = ((1.0 - math.exp(-b2 * (a_anchor + yr))) /
+            (1.0 - math.exp(-b2 * a_anchor))) ** b3
+    return h1 * frac
+
+
+# =============================================================================
+# (e) STEM-DENSITY constraint: García state-space N(t) -> tree mortality
+# =============================================================================
+def stand_constrain_stems(tree_hazards, tpa, T_years, N_target_end,
+                          N_start=None, tol=1e-10, max_iter=200):
+    """
+    Reconcile tree survival so the SURVIVING stems/ha match the state-space N(t)
+    target N_target_end. This UNIFIES with stand_disaggregate_mortality: stems
+    are just the TPA (count) form of the survival target. The stand mortality
+    fraction implied by the stem target is
+
+        M_stand = 1 - N_target_end / N_start,   N_start = sum_i tpa_i
+
+    and the same proportional-hazard kappa solve rescales the tree hazards so the
+    surviving TPA equals N_target_end:
+
+        sum_i tpa_i * exp(-kappa * h_i * T) == N_target_end
+
+    Parameters
+    ----------
+    tree_hazards : (n,) per-tree ANNUAL hazard h_i (>= 0)
+    tpa          : (n,) per-tree TPA / expansion weight (> 0)
+    T_years      : float, projection interval (years)
+    N_target_end : float, target SURVIVING stems/ha at t_end
+    N_start      : float, starting stems/ha (defaults to sum(tpa))
+
+    Returns
+    -------
+    dict: kappa, hazards_prime, N_end (achieved surviving stems), N_start,
+          M_stand (implied stand mortality fraction).
+    """
+    h = np.asarray(tree_hazards, dtype=float)
+    w = np.asarray(tpa, dtype=float)
+    if h.shape != w.shape:
+        raise ValueError("tree_hazards and tpa must have the same shape")
+    T = float(T_years)
+    Ns = float(np.sum(w)) if N_start is None else float(N_start)
+    Nt = float(N_target_end)
+
+    if Ns <= 0:
+        return {"kappa": 0.0, "hazards_prime": np.zeros_like(h),
+                "N_end": 0.0, "N_start": Ns, "M_stand": 0.0}
+    # clamp target to (0, Ns]; stem target above the start means no mortality.
+    Nt = min(max(Nt, 0.0), Ns)
+    M_stand = 1.0 - Nt / Ns
+    kappa, h_prime = stand_disaggregate_mortality(h, w, T, M_stand, tol=tol,
+                                                  max_iter=max_iter)
+    N_end = float(np.sum(w * np.exp(-kappa * h * T)))
+    return {"kappa": kappa, "hazards_prime": h_prime, "N_end": N_end,
+            "N_start": Ns, "M_stand": M_stand}
+
+
+# =============================================================================
+# Fitted-transition bundle evaluators (top height H2|H1, stems N2|N1)
+# =============================================================================
+def stand_topheight_target(bundle, h1, years, rd=None, ln_qmd=None, bgi=None,
+                           L1=None):
+    """
+    Top-height H2 target from the fitted GADA-transition bundle
+    (75_fit_stand_topheight.R): a log-scale linear model of the height RATIO
+    r = ln(H2/H1) on ln(H1), ln(years), and optional stand covariates, so
+        H2 = H1 * exp(eta_r),  eta_r = b0 + b_lnH1*ln(H1) + b_lnyr*ln(years)
+                                       + b_rd*rd + b_lnqmd*ln_qmd + b_bgi*bgi + z_L1
+    Missing terms contribute 0. If the bundle is absent/None, falls back to the
+    analytic gada_topheight_transition using bundle-carried (b2,b3) or defaults.
+    """
+    if not bundle:
+        return gada_topheight_transition(h1, years, b2=0.03, b3=1.1)
+    fx = bundle.get("fixed_effects", {}) or {}
+
+    def _m(name):
+        v = fx.get(name)
+        if isinstance(v, dict):
+            return float(v.get("mean", 0.0))
+        try:
+            return float(v)
+        except (TypeError, ValueError):
+            return 0.0
+
+    if float(years) <= 0 or float(h1) <= 0:
+        return float(h1)
+    eta = (_m("Intercept") + _m("ln_h1") * math.log(float(h1))
+           + _m("ln_years") * math.log(float(years)))
+    if rd is not None:
+        eta += _m("rd") * float(rd)
+    if ln_qmd is not None:
+        eta += _m("ln_qmd") * float(ln_qmd)
+    if bgi is not None:
+        eta += _m("bgi") * float(bgi)
+    if L1 is not None:
+        re = bundle.get("re_L1") or {}
+        lut = {str(lv): float(m) for lv, m in zip(re.get("level", []),
+                                                  re.get("mean", []))}
+        eta += lut.get(str(L1), 0.0)
+    return float(h1) * math.exp(eta)
+
+
+def stand_stems_target(bundle, n1, years, top_ht=None, rd=None, ln_qmd=None,
+                       L1=None):
+    """
+    Surviving-stems N2 target from the fitted state-space stem-transition bundle
+    (76_fit_stand_stems.R): log-ratio model s = ln(N2/N1) (<= 0, a survival
+    fraction) on ln(N1), ln(years), top height, relative density:
+        N2 = N1 * exp(-softplus(eta_s)),  eta_s = b0 + b_lnN1*ln(N1)
+             + b_lnyr*ln(years) + b_topht*top_ht + b_rd*rd + b_lnqmd*ln_qmd + z_L1
+    The softplus keeps N2 <= N1 (stems only decline absent ingrowth, which is the
+    survival channel this constraint governs). Missing terms contribute 0.
+    """
+    if not bundle or float(years) <= 0 or float(n1) <= 0:
+        return float(n1)
+    fx = bundle.get("fixed_effects", {}) or {}
+
+    def _m(name):
+        v = fx.get(name)
+        if isinstance(v, dict):
+            return float(v.get("mean", 0.0))
+        try:
+            return float(v)
+        except (TypeError, ValueError):
+            return 0.0
+
+    eta = (_m("Intercept") + _m("ln_n1") * math.log(float(n1))
+           + _m("ln_years") * math.log(float(years)))
+    if top_ht is not None:
+        eta += _m("top_ht") * float(top_ht)
+    if rd is not None:
+        eta += _m("rd") * float(rd)
+    if ln_qmd is not None:
+        eta += _m("ln_qmd") * float(ln_qmd)
+    if L1 is not None:
+        re = bundle.get("re_L1") or {}
+        lut = {str(lv): float(m) for lv, m in zip(re.get("level", []),
+                                                  re.get("mean", []))}
+        eta += lut.get(str(L1), 0.0)
+    # softplus mortality intensity -> guarantees 0 < N2 <= N1
+    mort_int = math.log1p(math.exp(min(eta, 30.0)))
+    return float(n1) * math.exp(-mort_int)
+
+
+# =============================================================================
 # self-test
 # =============================================================================
 if __name__ == "__main__":
@@ -441,5 +755,80 @@ if __name__ == "__main__":
     print(f"  additivity: sum of reconciled per-tree BA incr = {per_tree.sum():.2f} "
           f"(target {tgt:.2f})")
     assert abs(per_tree.sum() - tgt) < 1e-3 * tgt
+
+    print()
+    print("=" * 70)
+    print("SELF-TEST (d): García/GADA top-height constraint (tree HG scaling)")
+    print("=" * 70)
+    n4 = 60
+    # a stand with a tall dominant cohort and a shorter understory
+    h0 = np.concatenate([rng.uniform(24.0, 30.0, size=15),   # dominants
+                         rng.uniform(10.0, 22.0, size=45)])   # understory
+    htg = rng.uniform(0.10, 0.40, size=n4)                    # m/yr height growth
+    tpa4 = np.concatenate([rng.uniform(3.0, 8.0, size=15),
+                           rng.uniform(5.0, 25.0, size=45)])  # ~700 stems/ha
+    Th = 10.0
+    top_n = 100.0
+    top0 = stand_top_height(h0, tpa4, top_n)[0]
+    # unconstrained end top height (phi=1)
+    top_raw = stand_top_height(h0 + htg * Th, tpa4, top_n)[0]
+    print(f"start top height: {top0:.3f} m  (tallest {top_n:.0f}/ha)")
+    print(f"raw end top height (phi=1): {top_raw:.3f} m")
+
+    for lbl, tgt in (("below raw", top_raw - 1.5),
+                     ("== raw", top_raw),
+                     ("above raw", top_raw + 1.2),
+                     ("GADA H(t)", gada_topheight_transition(top0, Th, b2=0.033, b3=1.1))):
+        r = stand_constrain_topheight(h0, htg, tgt, top_n_per_ha=top_n,
+                                      tpa=tpa4, T_years=Th)
+        err = abs(r["top_ht_end"] - tgt)
+        flag = "OK" if err < 1e-3 else "FAIL"
+        print(f"  {lbl:12s} target={tgt:7.3f}  phi={r['phi']:7.4f}  "
+              f"achieved={r['top_ht_end']:7.3f}  |err|={err:.2e}  [{flag}]")
+        # target reachable within [0, hi]: those must hit exactly
+        if tgt <= top_raw + 1e-9 and tgt >= top0:
+            assert err < 1e-2, "top-height constraint missed a reachable target"
+    # monotonicity: bigger phi -> taller or equal top height
+    tops = [stand_top_height(h0 + p * htg * Th, tpa4, top_n)[0]
+            for p in (0.0, 0.5, 1.0, 2.0)]
+    assert all(np.diff(tops) >= -1e-9), "top height not monotone in phi"
+    print(f"  monotone in phi: {tops[0]:.2f} <= {tops[1]:.2f} <= "
+          f"{tops[2]:.2f} <= {tops[3]:.2f}  [OK]")
+
+    print()
+    print("=" * 70)
+    print("SELF-TEST (e): García state-space stem-density constraint (tree mortality)")
+    print("=" * 70)
+    n5 = 80
+    tpa5 = rng.uniform(2.0, 18.0, size=n5)          # per-tree stems/ha
+    haz5 = rng.uniform(0.003, 0.06, size=n5)        # per-tree annual hazard
+    Ts = 10.0
+    N_start = float(np.sum(tpa5))
+    N_raw = float(np.sum(tpa5 * np.exp(-haz5 * Ts)))  # arm's own surviving stems
+    print(f"start stems/ha: {N_start:.2f}   raw surviving (kappa=1): {N_raw:.2f}")
+
+    for lbl, Nt in (("more mortality", N_raw * 0.85),
+                    ("== raw survival", N_raw),
+                    ("less mortality", (N_start + N_raw) / 2.0)):
+        r = stand_constrain_stems(haz5, tpa5, Ts, Nt, N_start=N_start)
+        err = abs(r["N_end"] - Nt)
+        flag = "OK" if err < 1e-3 * N_start else "FAIL"
+        print(f"  {lbl:16s} N_target={Nt:8.3f}  kappa={r['kappa']:7.4f}  "
+              f"M_stand={r['M_stand']:.4f}  N_end={r['N_end']:8.3f}  "
+              f"|err|={err:.2e}  [{flag}]")
+        assert err < 1e-2 * N_start, "stem-density constraint missed target"
+    # unification check: stems constraint == mortality disaggregation on M_stand
+    Nt = N_raw * 0.80
+    rs = stand_constrain_stems(haz5, tpa5, Ts, Nt, N_start=N_start)
+    M = 1.0 - Nt / N_start
+    km, _ = stand_disaggregate_mortality(haz5, tpa5, Ts, M)
+    print(f"  unified with kappa mortality solve: stems kappa={rs['kappa']:.5f}  "
+          f"mortality kappa={km:.5f}  [{'OK' if abs(rs['kappa']-km)<1e-6 else 'FAIL'}]")
+    assert abs(rs["kappa"] - km) < 1e-6, "stems/mortality kappa solves disagree"
+    # edge: target >= start -> no mortality
+    r0 = stand_constrain_stems(haz5, tpa5, Ts, N_start * 1.1, N_start=N_start)
+    print(f"  edge N_target>=N_start -> kappa={r0['kappa']:.5f} (expect 0), "
+          f"N_end={r0['N_end']:.2f} (expect {N_start:.2f})")
+    assert r0["kappa"] == 0.0 and abs(r0["N_end"] - N_start) < 1e-9
 
     print("\nALL SELF-TESTS PASSED")

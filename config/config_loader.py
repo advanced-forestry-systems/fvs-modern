@@ -765,6 +765,132 @@ class FvsConfigLoader:
         H = math.exp(min(eta, 30.0))
         return float(1.0 - math.exp(-H * float(T_years)))
 
+    # ---- García/GADA TOP-HEIGHT transition (categories_conus_stand.topht) ----
+    # State-space H2|H1 transition (75_fit_stand_topheight.R), landed via
+    # 62c --block=stand --stand_key=topht. Target feeds
+    # stand_constraint.py::stand_constrain_topheight (scales tree height growth).
+    def get_stand_topheight_runtime(self) -> dict:
+        """Decompose categories_conus_stand.topht into runtime form: fixed-effect
+        posterior means (+SDs), top_n_per_ha basis, and the (1|L1) RE table.
+        Returns {'_present': False} when the block is absent."""
+        b = self.config.get("categories_conus_stand", {})
+        if not isinstance(b, dict) or "topht" not in b:
+            return {"_present": False}
+        th = b["topht"] or {}
+        fx = th.get("fixed_effects", {}) or {}
+
+        def _mean(v):
+            if isinstance(v, dict):
+                return float(v.get("mean", 0.0))
+            try:
+                return float(v)
+            except (TypeError, ValueError):
+                return 0.0
+
+        def _sd(v):
+            return float(v.get("sd", 0.0)) if isinstance(v, dict) else 0.0
+
+        fixed = {k: _mean(v) for k, v in fx.items()}
+        fixed_sd = {k: _sd(v) for k, v in fx.items()}
+        re = th.get("re_L1") or {}
+        re_lut = {str(l): float(m) for l, m in
+                  zip(re.get("level", []), re.get("mean", []))}
+        return {"_present": True, "_source": "categories_conus_stand.topht",
+                "model": th.get("model"),
+                "fixed": fixed, "fixed_sd": fixed_sd,
+                "top_n_per_ha": float(th.get("top_n_per_ha", 100.0)),
+                "re_L1": re_lut, "sd_L1": float(th.get("sd_L1", 0.0) or 0.0)}
+
+    def stand_topheight_target(self, h1, years, rd=None, ln_qmd=None, bgi=None,
+                               L1=None, runtime=None):
+        """Top-height H2 target from the fitted GADA-transition block:
+            H2 = H1*exp(b0 + b_lnH1*ln(H1) + b_lnyr*ln(years) + b_rd*rd
+                        + b_lnqmd*ln_qmd + b_bgi*bgi + z_L1).
+        Returns None when the block is absent (no top-height constraint)."""
+        rt = runtime or self.get_stand_topheight_runtime()
+        if not rt.get("_present"):
+            return None
+        if float(years) <= 0 or float(h1) <= 0:
+            return float(h1)
+        f = rt["fixed"]
+        eta = (f.get("Intercept", 0.0)
+               + f.get("ln_h1", 0.0) * math.log(float(h1))
+               + f.get("ln_years", 0.0) * math.log(float(years)))
+        if rd is not None:
+            eta += f.get("rd", 0.0) * float(rd)
+        if ln_qmd is not None:
+            eta += f.get("ln_qmd", 0.0) * float(ln_qmd)
+        if bgi is not None:
+            eta += f.get("bgi", 0.0) * float(bgi)
+        if L1 is not None:
+            eta += rt["re_L1"].get(str(L1), 0.0)
+        return float(h1) * math.exp(eta)
+
+    # ---- García state-space STEM-DENSITY N(t) transition ---------------------
+    # (categories_conus_stand.stems, 76_fit_stand_stems.R, landed via
+    # 62c --block=stand --stand_key=stems). cloglog exposure hazard, SAME scale
+    # as stand survival. Target feeds stand_constraint.py::stand_constrain_stems.
+    def get_stand_stems_runtime(self) -> dict:
+        """Decompose categories_conus_stand.stems into runtime form: fixed-effect
+        posterior means (log-hazard scale, intercept already refolded to raw
+        log(YEARS)), top_n_per_ha basis, and the (1|L1) RE table.
+        Returns {'_present': False} when absent."""
+        b = self.config.get("categories_conus_stand", {})
+        if not isinstance(b, dict) or "stems" not in b:
+            return {"_present": False}
+        st = b["stems"] or {}
+        fx = st.get("fixed_effects", {}) or {}
+
+        def _mean(v):
+            if isinstance(v, dict):
+                return float(v.get("mean", 0.0))
+            try:
+                return float(v)
+            except (TypeError, ValueError):
+                return 0.0
+
+        def _sd(v):
+            return float(v.get("sd", 0.0)) if isinstance(v, dict) else 0.0
+
+        fixed = {k: _mean(v) for k, v in fx.items()}
+        fixed_sd = {k: _sd(v) for k, v in fx.items()}
+        re = st.get("re_L1") or {}
+        re_lut = {str(l): float(m) for l, m in
+                  zip(re.get("level", []), re.get("mean", []))}
+        return {"_present": True, "_source": "categories_conus_stand.stems",
+                "model": st.get("model"),
+                "fixed": fixed, "fixed_sd": fixed_sd,
+                "top_n_per_ha": float(st.get("top_n_per_ha", 100.0)),
+                "re_L1": re_lut, "sd_L1": float(st.get("sd_L1", 0.0) or 0.0)}
+
+    def stand_stems_eta(self, n1, top_ht, rd, ln_qmd, L1=None, runtime=None) -> float:
+        """Stem-transition linear predictor (log annual stand hazard):
+            eta_h = b0 + b_lnN1*ln(N1) + b_topht*top_ht + b_rd*rd + b_lnqmd*ln_qmd + z_L1.
+        Returns 0.0 (neutral) when the block is absent."""
+        rt = runtime or self.get_stand_stems_runtime()
+        if not rt.get("_present"):
+            return 0.0
+        f = rt["fixed"]
+        eta = (f.get("Intercept", 0.0)
+               + f.get("ln_n1", 0.0) * math.log(max(float(n1), 1e-9))
+               + f.get("top_ht", 0.0) * float(top_ht)
+               + f.get("rd", 0.0) * float(rd)
+               + f.get("ln_qmd", 0.0) * float(ln_qmd))
+        if L1 is not None:
+            eta += rt["re_L1"].get(str(L1), 0.0)
+        return float(eta)
+
+    def stand_stems_target(self, n1, T_years, top_ht, rd, ln_qmd, L1=None,
+                           runtime=None):
+        """Surviving-stems N2 target = N1*exp(-exp(eta_h)*T) from the fitted
+        stem-transition block. Returns None when the block is absent."""
+        rt = runtime or self.get_stand_stems_runtime()
+        if not rt.get("_present"):
+            return None
+        eta = self.stand_stems_eta(n1, top_ht, rd, ln_qmd, L1, rt)
+        H = math.exp(min(eta, 30.0))
+        return float(float(n1) * math.exp(-H * float(T_years)))
+
 
     def apply_to_fvs(self, fvs_instance) -> dict[str, bool]:
         """Apply calibrated parameters to a running fvs2py FVS instance.

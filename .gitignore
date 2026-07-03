@@ -382,3 +382,4 @@ manuscript/*.pre_edits*.docx
 *.pre_fiajsp
 bin-test/
 config/greg_emt_td_lookup.csv
+*.pre_mod_*

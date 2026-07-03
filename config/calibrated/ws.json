@@ -6691,5 +6691,289 @@
       "survival"
     ]
   },
-  "_emit_sdimax": true
+  "_emit_sdimax": true,
+  "categories_conus_sf_modifier": {
+    "diameter_growth": {
+      "component": "dg",
+      "form": "common",
+      "disturbance_types": [
+        "plant",
+        "fire",
+        "insect",
+        "disease",
+        "wind",
+        "harvest",
+        "cutting",
+        "siteprep"
+      ],
+      "alpha_0": 0.03956472045,
+      "alpha": {
+        "plant": 0.08382382798,
+        "fire": -0.037889920872,
+        "insect": -0.011424695907,
+        "disease": -0.005778978399,
+        "wind": 0.055976906909,
+        "harvest": 0.015998859117,
+        "cutting": 0.21983155475,
+        "siteprep": 0.11632607893
+      },
+      "note": "engine multiplier = exp(alpha_0 + alpha[type]); species-independent"
+    },
+    "height_growth": {
+      "component": "hg",
+      "form": "common",
+      "disturbance_types": [
+        "plant",
+        "fire",
+        "insect",
+        "disease",
+        "wind",
+        "harvest",
+        "cutting",
+        "siteprep"
+      ],
+      "alpha_0": -0.012554467648,
+      "alpha": {
+        "plant": 0.11205400915,
+        "fire": -0.047378148994,
+        "insect": -0.079361304402,
+        "disease": -0.073521946972,
+        "wind": -0.10596740176,
+        "harvest": 0.066095476365,
+        "cutting": -0.023345660359,
+        "siteprep": -0.032763534225
+      },
+      "note": "engine multiplier = exp(alpha_0 + alpha[type]); species-independent"
+    },
+    "mortality": {
+      "component": "mort",
+      "form": "common",
+      "disturbance_types": [
+        "plant",
+        "fire",
+        "insect",
+        "disease",
+        "wind",
+        "harvest",
+        "cutting",
+        "siteprep"
+      ],
+      "alpha_0": -0.29132971576,
+      "alpha": {
+        "plant": -0.35983407488,
+        "fire": 0.20504014791,
+        "insect": 0.57274697753,
+        "disease": 0.46067291218,
+        "wind": 0.11240667964,
+        "harvest": -0.07350828639,
+        "cutting": -0.31532324453,
+        "siteprep": 0.047772512754
+      },
+      "note": "engine multiplier = exp(alpha_0 + alpha[type]); species-independent"
+    },
+    "ingrowth": {
+      "component": "ingrowth",
+      "form": "common",
+      "disturbance_types": [
+        "plant",
+        "fire",
+        "insect",
+        "disease",
+        "wind",
+        "harvest",
+        "cutting",
+        "siteprep"
+      ],
+      "alpha_0": 0.15728387202,
+      "alpha": {
+        "plant": -0.20078283762,
+        "fire": 0.333421518,
+        "insect": 0.1431338411,
+        "disease": 0.0045090263926,
+        "wind": -0.053443876503,
+        "harvest": -0.074723723351,
+        "cutting": -0.061210199511,
+        "siteprep": -0.1780533192
+      },
+      "note": "engine multiplier = exp(alpha_0 + alpha[type]); species-independent"
+    },
+    "height_crown_base": {
+      "component": "hcb",
+      "form": "traitmed",
+      "disturbance_types": [
+        "plant",
+        "fire",
+        "insect",
+        "disease",
+        "wind",
+        "harvest",
+        "cutting",
+        "siteprep"
+      ],
+      "alpha_0": 0.0041540209585,
+      "alpha": {
+        "plant": -0.16263294495,
+        "fire": 0.25458239528,
+        "insect": 0.022462151974,
+        "disease": -0.004438696046,
+        "wind": 0.11834640234,
+        "harvest": 0.012710103563,
+        "cutting": 0.047050827379,
+        "siteprep": -0.10078586263
+      },
+      "trait_mediated_types": [
+        "plant",
+        "insect",
+        "harvest",
+        "cutting"
+      ],
+      "P_trait": 8,
+      "trait_gamma_alpha": {
+        "plant": [-0.0054721535929, -0.049589103412, 0.13713900927, -0.13588977466, 0.0077628564659, -0.019183066828, 0.094700685805, -0.064621540539],
+        "insect": [-0.087638772411, -0.070395256939, -0.0041576060877, 0.052388266342, 0.069510192009, 0.045972869035, 0.089936155192, -0.064655080174],
+        "harvest": [-0.0031046556572, -0.0066568473891, 0.00056703923779, -0.1044264314, 0.0089470539806, -0.096829649344, -0.018771919629, -0.036607283628],
+        "cutting": [-0.056407626561, 0.072431723028, 0.093732211728, -0.14869429317, -0.0063225581744, -0.015102730987, -0.011991262882, 0.026783008243]
+      },
+      "trait_standardization": {
+        "trait": [
+          "wood_specific_gravity",
+          "shade_tolerance_num",
+          "softwood",
+          "leaf_longevity_months",
+          "max_ht_m",
+          "max_dbh_cm",
+          "vulnerability_score",
+          "sensitivity"
+        ],
+        "scale_mean": [
+          0.49322580645,
+          2.685483871,
+          0.37096774194,
+          18.5056854839,
+          91.7981451613,
+          47.4245645161,
+          37.8341397849,
+          33.5241129032
+        ],
+        "scale_sd": [
+          0.10565743378,
+          1.0751172028,
+          0.48502354206,
+          25.3156672491,
+          30.4208290423,
+          63.4993218432,
+          9.9304208856,
+          12.025249994
+        ]
+      },
+      "note": "engine multiplier = exp(alpha_0 + alpha[type] + (type in trait_mediated_types ? W_std . trait_gamma_alpha[type] : 0)); W standardized as in base bundle gamma.csv"
+    },
+    "crown_recession": {
+      "component": "cr",
+      "form": "traitmed",
+      "disturbance_types": [
+        "plant",
+        "fire",
+        "insect",
+        "disease",
+        "wind",
+        "harvest",
+        "cutting",
+        "siteprep"
+      ],
+      "alpha_0": 0.0010377777243,
+      "alpha": {
+        "plant": 2.1423585393e-05,
+        "fire": -0.0023705630843,
+        "insect": -0.00067583483699,
+        "disease": -0.0007819681202,
+        "wind": -0.0003735263705,
+        "harvest": 0.00047649533412,
+        "cutting": 0.001155776355,
+        "siteprep": -0.015228611715
+      },
+      "trait_mediated_types": [
+        "plant",
+        "insect",
+        "harvest",
+        "cutting"
+      ],
+      "P_trait": 8,
+      "trait_gamma_alpha": {
+        "plant": [
+          -0.0039062803077,
+          -0.00043049321117,
+          -0.0065503809382,
+          0.0029851744959,
+          0.00049482238367,
+          -0.0002441807035,
+          0.0008137607762,
+          -1.3533564401e-05
+        ],
+        "insect": [
+          0.0012989397382,
+          -0.00033886859389,
+          0.00074818169054,
+          0.00097522819618,
+          0.00085312686462,
+          -0.0026040928979,
+          0.00044284671162,
+          -0.00041542244933
+        ],
+        "harvest": [
+          -0.004155705219,
+          0.00017117094317,
+          0.00057663731548,
+          -0.0058325240889,
+          0.0016653273479,
+          0.0070650747306,
+          -0.0031881191111,
+          0.0010848916168
+        ],
+        "cutting": [
+          0.0011937360853,
+          0.0006097879527,
+          0.0015295868455,
+          -0.0005551240869,
+          0.0026405375309,
+          -0.0016221070038,
+          0.0016924683625,
+          0.00074927829631
+        ]
+      },
+      "trait_standardization": {
+        "trait": [
+          "wood_specific_gravity",
+          "shade_tolerance_num",
+          "softwood",
+          "leaf_longevity_months",
+          "max_ht_m",
+          "max_dbh_cm",
+          "vulnerability_score",
+          "sensitivity"
+        ],
+        "scale_mean": [
+          0.49304347826,
+          2.7016521739,
+          0.4,
+          19.389173913,
+          92.2992173913,
+          49.4672608696,
+          37.3586376812,
+          33.4124782609
+        ],
+        "scale_sd": [
+          0.10678042656,
+          1.094017969,
+          0.49204193232,
+          26.0420525383,
+          30.963400017,
+          65.4507520477,
+          9.8246748072,
+          12.2051835834
+        ]
+      },
+      "note": "engine multiplier = exp(alpha_0 + alpha[type] + (type in trait_mediated_types ? W_std . trait_gamma_alpha[type] : 0)); W standardized as in base bundle gamma.csv"
+    }
+  }
 }

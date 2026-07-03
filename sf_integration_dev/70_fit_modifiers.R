@@ -104,11 +104,15 @@ mod_terms <- c("trt_decay", "dstrb_decay", "bgi", "bgi_b2")
 bundle <- list(
   component = COMPONENT, form = "multiplicative log-modifier",
   tau_m = TAU_M, tau_d = TAU_D, bgi_knot = bgi_med,
+  sigma_resid = unname(fx["Intercept", "Est.Error"]) * 0 + as.numeric(summary(fit)$spec_pars["sigma", "Estimate"]),
   management = list(param = "trt_decay", coef = unname(fx["trt_decay", "Estimate"]),
+                    coef_sd = unname(fx["trt_decay", "Est.Error"]),
                     decay = "exp(-years_since_trt / tau_m)"),
   disturbance = list(param = "dstrb_decay", coef = unname(fx["dstrb_decay", "Estimate"]),
+                     coef_sd = unname(fx["dstrb_decay", "Est.Error"]),
                      decay = "exp(-years_since_dstrb / tau_d)"),
-  driver_bgi = list(b1 = unname(fx["bgi", "Estimate"]), b2 = unname(fx["bgi_b2", "Estimate"]),
+  driver_bgi = list(b1 = unname(fx["bgi", "Estimate"]), b1_sd = unname(fx["bgi", "Est.Error"]),
+                    b2 = unname(fx["bgi_b2", "Estimate"]), b2_sd = unname(fx["bgi_b2", "Est.Error"]),
                     knot = bgi_med),
   re_L1 = if (!is.null(re)) list(level = rownames(re), mean = unname(re[, "Estimate"])) else NULL,
   notes = "Multiplier = exp(mod_eta). mod_eta = coef_mgmt*trt_decay + coef_dstrb*dstrb_decay + b1*bgi + b2*(bgi-knot)_+ + z_L1. Baseline (no event) => trt/dstrb decay 0."

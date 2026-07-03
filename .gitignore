@@ -373,3 +373,12 @@ config/calibrated/*.pre_sf_*
 # ephemeral build log + manuscript edit-backup
 build_ne_magfix.log
 manuscript/*.pre_edits*.docx
+# --- Cowork autopilot hygiene 2026-07-03 ---
+*.orig
+*.pre_greg*
+*.pre_arm*
+*.pre_fix*
+*.pre_sdimaxfmt
+*.pre_fiajsp
+bin-test/
+config/greg_emt_td_lookup.csv

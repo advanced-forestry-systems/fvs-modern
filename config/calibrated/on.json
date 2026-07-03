@@ -4200,7 +4200,10 @@
       "note": "Confirm release tag/commit with Greg Johnson before production"
     },
     "climate_dependency": {
-      "required": ["EMT", "TD"],
+      "required": [
+        "EMT",
+        "TD"
+      ],
       "definition": "EMT and TD = MWMT - MCMT from ClimateNA 1991-2020 normals at the stand; engine must supply per stand",
       "lookup": "greg_emt_td_lookup.rds"
     },
@@ -4215,9 +4218,25 @@
     "components": {
       "diameter_growth": {
         "form": "greg_est_dg",
-        "predictors": ["dbh", "cr", "ht", "bal", "elev", "EMT"],
+        "predictors": [
+          "dbh",
+          "cr",
+          "ht",
+          "bal",
+          "elev",
+          "EMT"
+        ],
         "n_species": 84,
-        "coef_names": ["B0", "B1", "B2", "B3", "B4", "B5", "B6", "B7"],
+        "coef_names": [
+          "B0",
+          "B1",
+          "B2",
+          "B3",
+          "B4",
+          "B5",
+          "B6",
+          "B7"
+        ],
         "species_params": [
           {
             "SPCD": 131,
@@ -5147,9 +5166,26 @@
       },
       "height_growth": {
         "form": "greg_est_hg",
-        "predictors": ["max_ht", "ccfl", "cch", "elev", "TD", "EMT"],
+        "predictors": [
+          "max_ht",
+          "ccfl",
+          "cch",
+          "elev",
+          "TD",
+          "EMT"
+        ],
         "n_species": 95,
-        "coef_names": ["B0", "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8"],
+        "coef_names": [
+          "B0",
+          "B1",
+          "B2",
+          "B3",
+          "B4",
+          "B5",
+          "B6",
+          "B7",
+          "B8"
+        ],
         "species_params": [
           {
             "SPCD": 131,
@@ -6296,9 +6332,18 @@
       "survival": {
         "form": "greg_gompit",
         "equation": "P_surv = 1 - exp(-exp(b0 + b1*(cr+0.01)^b2 + b3*cch^b4))  (annual)",
-        "predictors": ["cr", "cch"],
+        "predictors": [
+          "cr",
+          "cch"
+        ],
         "n_species": 160,
-        "coef_names": ["b0", "b1", "b2", "b3", "b4"],
+        "coef_names": [
+          "b0",
+          "b1",
+          "b2",
+          "b3",
+          "b4"
+        ],
         "species_params": [
           {
             "SPCD": 131,
@@ -7587,6 +7632,11 @@
       "garcia_constraint": false,
       "note": "density is emergent from the cch-gompit mortality; no fvs-conus Garcia self-thinning / BA carrying-capacity overlay. Optional softened SDIMAX cap only."
     },
-    "components_present": ["diameter_growth", "height_growth", "survival"]
-  }
+    "components_present": [
+      "diameter_growth",
+      "height_growth",
+      "survival"
+    ]
+  },
+  "_emit_sdimax": true
 }

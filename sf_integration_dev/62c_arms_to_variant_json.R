@@ -42,7 +42,7 @@ stopifnot(!is.null(BLOCK), BLOCK %in% c("mod","organon","stand"), !is.null(BUNDL
 # --block=stand lands categories_conus_stand.{survival|bagrowth}; the sub-key is
 # STAND_KEY (not a tree component). mod/organon land categories_conus_*.{component}.
 if (BLOCK == "stand") {
-  stopifnot(STAND_KEY %in% c("survival","bagrowth"))
+  stopifnot(STAND_KEY %in% c("survival","bagrowth","topht","stems"))
   TOPKEY <- "categories_conus_stand"; CKEY <- STAND_KEY
   PREVIEW_SUFFIX <- ".standpreview.json"; BACKUP_TAG <- "pre_stand"
 } else {
@@ -79,7 +79,10 @@ for (vf in variant_files) {
       organon = "Arm 1 ORGANON-form coefficients; select with version=conus_organon.",
       stand = paste("Stand-level target that reconciles the summed tree predictions",
                     "(disaggregation): survival -> M_stand for the kappa hazard solve;",
-                    "bagrowth -> stand BA increment for the tree-DG scale. Applied by any arm.")))
+                    "bagrowth -> stand BA increment for the tree-DG scale;",
+                    "topht -> García/GADA H2|H1 target for the tree height-growth scale;",
+                    "stems -> García N(t) surviving-stems target (reuses the kappa hazard",
+                    "solve). Applied by any arm.")))
   out_path <- if (DRY_RUN) sub("\\.json$", PREVIEW_SUFFIX, vf) else vf
   if (!DRY_RUN) file.copy(vf, paste0(vf, ".", BACKUP_TAG, "_", stamp), overwrite = FALSE)
   write_json(d, out_path, auto_unbox = TRUE, pretty = TRUE, digits = 10, null = "null")

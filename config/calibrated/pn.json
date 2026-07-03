@@ -957,7 +957,7 @@
     "metadata": {
       "pipeline_version": "conus stand-level constraint layer (survival / BA-growth)",
       "integration_date": "2026-07-03",
-      "components_present": ["bagrowth", "topht"],
+      "components_present": ["bagrowth", "topht", "stems"],
       "note": "Stand-level target that reconciles the summed tree predictions (disaggregation): survival -> M_stand for the kappa hazard solve; bagrowth -> stand BA increment for the tree-DG scale; topht -> García/GADA H2|H1 target for the tree height-growth scale; stems -> García N(t) surviving-stems target (reuses the kappa hazard solve). Applied by any arm."
     },
     "topht": {
@@ -1022,6 +1022,63 @@
       },
       "seed": 20260702,
       "notes": "H2 target feeds stand_constraint.py::stand_constrain_topheight to scale tree height growth so stand top height tracks this García/GADA trajectory."
+    },
+    "stems": {
+      "model": "stand-level García state-space STEM-DENSITY N(t) transition",
+      "scale": "cloglog binomial with centered log(YEARS)-3.9 exposure offset; intercept refolded to raw log(YEARS). Linear predictor eta_h = log stand hazard, SAME scale as 71_fit_stand_survival.R and the tree mortality model",
+      "response": "deaths_i | trials(trials_i); trials = round(N1 stems/ha), deaths = round(N1 - N2 survivors)",
+      "stand_key": "PLT_CN_cond1 x CONDID_cond1 x INVYR1 x INVYR2 (FIA plot-condition-remeasurement)",
+      "top_n_per_ha": 100,
+      "offset_center": 3.9,
+      "transition": "H_stand = exp(eta_h); S(T)=exp(-H_stand*T); N2_target = N1 * S(T); eta_h = b0 + b_lnN1*ln(N1) + b_topht*top_ht + b_rd*rd + b_lnqmd*ln_qmd + z_L1",
+      "novelty": "No García-style stem-number transition existed in the repo (only the Reineke SDIMAX line in 09_fit_stand_density.R); this is the newly fitted N(t) state-space transition",
+      "covariates": {
+        "ln_n1": "log start stand stems/ha (current state N1)",
+        "top_ht": "stand top height (m), tallest top_n_per_ha stems/ha -- self-thinning driver",
+        "rd": "stand SDI / SDIMAX (sdi_additive1 / SDImax_brms)",
+        "ln_qmd": "log stand QMD (cm)"
+      },
+      "n_stand_records": 120000,
+      "fixed_effects": {
+        "Intercept": {
+          "mean": -5.78765977,
+          "sd": 0.11328934,
+          "q2.5": -5.99494176,
+          "q97.5": -5.56049497
+        },
+        "ln_n1": {
+          "mean": 0.21080976,
+          "sd": 0.00065645,
+          "q2.5": 0.20948041,
+          "q97.5": 0.21211407
+        },
+        "top_ht": {
+          "mean": 0.01295426,
+          "sd": 6.894e-05,
+          "q2.5": 0.01281717,
+          "q97.5": 0.0130891
+        },
+        "rd": {
+          "mean": -0.24664977,
+          "sd": 0.00220537,
+          "q2.5": -0.25105354,
+          "q97.5": -0.24235725
+        },
+        "ln_qmd": {
+          "mean": 0.10971351,
+          "sd": 0.00131231,
+          "q2.5": 0.10717723,
+          "q97.5": 0.11230804
+        }
+      },
+      "sd_L1": 0.37051689,
+      "re_L1": {
+        "level": ["0", "10", "11", "12", "13", "15", "5", "6", "7", "8", "9"],
+        "mean": [-0.07170824, -0.56515236, 0.21539691, 0.69371579, -0.04616898, 0.31866098, -0.12461788, -0.1048395, -0.36299148, 0.01311749, 0.14496775],
+        "sd": [0.1129603, 0.11303753, 0.11336998, 0.11321834, 0.11307883, 0.11353349, 0.11299568, 0.11298022, 0.11305736, 0.11299374, 0.11298722]
+      },
+      "seed": 20260702,
+      "notes": "N2 target feeds stand_constraint.py::stand_constrain_stems, which reuses the kappa proportional-hazard solve (N_target is the stems form of M_stand)."
     }
   }
 }

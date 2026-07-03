@@ -481,6 +481,53 @@ by (i) trajectory overlap, (ii) year 100 basal area divergence as
 percent of default, and (iii) fraction of scenario pairs satisfying
 each Bakuzis law.
 
+## 3.4 Disturbance-aware benchmark and out-of-sample validation
+
+The internal benchmark in Section 3.1 pools all remeasurement
+conditions regardless of what occurred on the ground between
+measurements. Because the default projection grows every stand
+forward without cutting, conditions that were harvested or heavily
+thinned during the interval carry basal area in the projection that
+the real stand lost, which inflates the apparent over-prediction. To
+separate this benchmark-design effect from genuine growth-equation
+bias, we stratified each condition by its FIA COND record into
+undisturbed, disturbed, and harvested classes using the treatment
+codes (TRTCD1 through TRTCD3, with code 10 denoting harvest) and the
+disturbance codes (DSTRBCD1 through DSTRBCD3), and evaluated bias
+separately within each class.
+
+We confirmed the mechanism with a removal-simulation converse test.
+On harvested conditions we removed the trees that FIA recorded as cut
+and projected the residual stand, then compared the projection to the
+observed later measurement. If the apparent over-prediction on
+harvested plots is unsimulated removal rather than growth error,
+accounting for the recorded harvest should collapse the bias toward
+the undisturbed level.
+
+The adjustment layer applies three levers as FVS keywords: the brms
+site-specific maximum stand density index, a density-dependent
+recruitment term, and a per-species basal area increment multiplier.
+The recruitment term replaces a fixed per-variant rate with recruits
+equal to R_max times max(0, 1 minus SDI_t1 divided by SDImax) times
+the interval, so recruitment declines to zero as a stand approaches
+its site-specific density limit. R_max is fit on the calibration data
+so that the term reproduces the observed recruitment there.
+
+We tested generalization with spatially blocked out-of-sample
+validation. Counties were hashed to two folds; the recruitment rate
+and the basal area increment multiplier were derived on fold A and
+applied unchanged to the held-out fold B. We report default and
+adjusted bias on fold B for basal area, trees per hectare, quadratic
+mean diameter, and net merchantable cubic volume, with 95 percent
+percentile-bootstrap confidence intervals that resample conditions.
+We organized the comparison as four arms on a common disturbance-clean
+basis: default FVS (arm A) and the keyword-adjusted engine (arm B) in
+the FVS engine, and the default and the fvs-conus species-free
+equations in the standalone projector (arms A-prime and C). Because
+the engine over-predicts and the projector under-predicts undisturbed
+basal area, we report each arm as its improvement relative to its own
+framework default, which is the framework-invariant comparison.
+
 # 4. Results and applications
 
 ## 4.1 Modernization outcomes
@@ -779,6 +826,107 @@ site low density cells where stand structure is least dynamic; the
 widest bands are at high site high density Pine and Oak Pine,
 where compounding interactions between calibrated diameter growth,
 mortality, and SDImax produce the largest combined spread.
+
+## 4.7 Disturbance artifact and the four-arm comparison
+
+Stratifying the benchmark by disturbance changes its interpretation.
+Across the variants with adequate FIA coverage, the default engine
+over-predicts undisturbed basal area by a median of only 1.8 percent,
+while the pooled over-prediction near 14 percent and the
+harvested-class over-prediction above 40 percent come from the
+disturbance the default run does not simulate. The removal-simulation
+converse test confirms the mechanism: simulating the recorded harvest
+collapses the harvested-class basal area bias to the undisturbed
+level (Northeast 51.2 to 1.3 percent, Southern 110.1 to 0.1 percent,
+Pacific Northwest 41.9 to 12.9 percent). The widely cited FVS
+over-prediction is therefore largely a benchmark-design artifact
+rather than a growth-equation bias, which is why recalibrating the
+growth equations downward does not improve undisturbed predictions.
+
+On the disturbance-clean basis the adjustment layer generalizes
+out-of-sample for the size and density levers. Across eight variants
+with adequate held-out samples, the keyword adjustment reduced median
+absolute quadratic mean diameter bias from 15.7 to 2.2 percent, basal
+area from 11.3 to 7.6 percent, and net merchantable volume from 13.4
+to 8.3 percent on the spatially held-out fold (Table 6). Trees per
+hectare improved only modestly in the median (20.7 to 18.9 percent)
+because the density-dependent recruitment term helps some variants
+(Northeast, Klamath, East Cascades) and over-corrects others (Central
+Rockies, Pacific Northwest); the Central Rockies estimate rests on a
+small held-out sample and reads as indicative. The density-dependent
+recruitment form is the key change from a fixed per-variant rate,
+which had over-corrected recruitment out-of-sample.
+
+The four-arm comparison shows the engine adjustment and the fvs-conus
+equations are complementary rather than competing (Figure 6). The
+keyword adjustment delivers the size and density gains, in quadratic
+mean diameter and trees per hectare, while the fvs-conus species-free
+equations, evaluated on 21,811 undisturbed Northeast conditions,
+deliver the level and scatter gains, reducing basal area bias from
+12.3 to 7.2 percent and net merchantable volume bias from 15.7 to 9.2
+percent. Combining the fvs-conus equations with the density layer is
+the natural next step and requires running the fvs-conus equations
+inside the FVS engine.
+
+![Figure 6. Within-framework reduction in median absolute bias for the keyword-adjusted FVS engine (eight variants, out-of-sample) and the fvs-conus species-free equations (Northeast, 21,811 undisturbed conditions). The keyword adjustment reduces quadratic mean diameter and trees per hectare bias; the fvs-conus equations reduce basal area and volume bias. Each arm is shown relative to its own framework default, the framework-invariant comparison.](../diagnostics_2026-06-16/fourarm_headline_20260618.png){width=6.5in}
+
+We therefore frame this work as a disturbance-aware benchmark and a
+prototype adjustment layer rather than a fully calibrated and
+validated national model. The size levers are validated
+out-of-sample; the recruitment lever is a prototype that transfers
+for most variants and needs a site-resolved form for the remainder.
+
+## 4.7 Independent international validation against the Canadian National Forest Inventory
+
+The FIA benchmark in Section 4.3 is in-sample to the United States. To test whether the recalibrated engine
+transfers across the international border, we validated two variants against the Canadian National Forest
+Inventory through the Multi-Agency Ground Plot (MAGPlot) compilation, an independent remeasurement network not
+used in any calibration. We targeted the Acadian variant against New Brunswick and the Alaska variant against
+coastal British Columbia.
+
+### 4.7.1 Stand compilation
+
+MAGPlot tree records were compiled to stand level using the per-tree expansion factors, restricted to
+protocol-consistent remeasurement pairs (the same subplot set and minimum-diameter tag limit at both visits and
+a plausible basal-area change), yielding 262 Acadian (New Brunswick, 5-year interval) and 2,451 Alaska (British
+Columbia, mean 24.7-year interval) stand pairs. Species were mapped to FIA codes with full coverage. British
+Columbia plots were assigned North American CEC Level III ecoregions by spatial join so the Alaska variant
+could be evaluated against the ecoregion analogous to its Southeast Alaska calibration domain (Marine West
+Coast Forest) rather than against the faster-growing southern coast.
+
+### 4.7.2 Acadian: near-unbiased cross-border transfer
+
+On New Brunswick (n = 262), the default Acadian variant projected basal area essentially without bias
+(-0.0 percent, R^2 = 0.88). The residual was a modest diameter-versus-density split: quadratic mean diameter
+over-predicted by 8.9 percent and trees per hectare under-predicted by 7.3 percent, the same signature the
+CONUS recalibration corrects (implied calibration factors 0.918 for QMD and 1.079 for TPH). The Acadian growth
+model therefore transfers to Canadian maritime forest with no basal-area-level adjustment.
+
+### 4.7.3 Alaska: ecoregion-dependent under-prediction and calibration
+
+The Alaska variant under-predicted growth across productive British Columbia ecoregions. In its analog
+ecoregion (Marine West Coast Forest, n = 11 clean-ingestion stands) the default basal-area increment bias was
+about -50 to -74 percent across samples, and the standing-basal-area bias about -36 percent. The
+under-prediction held across the Northwestern Forested Mountains (n = 104, -77 percent) and boreal Taiga
+(-90 to -109 percent), but not in the dry North American Deserts ecoregion (about -9 percent), where the slow
+stands resemble the Southeast Alaska forests the variant was parameterized on.
+
+Applying a basal-area-increment multiplier through the engine reduced the analog-ecoregion bias from
+-49.4 percent to -6.4 percent at a 2.0 multiplier, with a coherent ecoregion-dependent structure: a 2.0
+multiplier suited the productive coastal and boreal ecoregions while the dry interior required no adjustment
+(a uniform multiplier over-corrected it). The correction was encoded as coastal-species diameter-growth
+multipliers in the Alaska calibrated configuration. A fully independent held-out fold was not possible because
+the clean-ingestion Marine West Coast Forest pool is only about 11 stands; expanding it is gated on the
+variant's inventory-expansion handling and is identified as future work.
+
+### 4.7.4 Interpretation
+
+The two cases bracket the calibration's behavior. Where the variant's domain matches the validation forest
+(Acadian to maritime Canada) the recalibrated engine transfers with negligible basal-area bias. Where the
+validation forest is more productive than the calibration domain (Alaska variant to coastal British Columbia)
+the engine under-predicts in a structured, ecoregion-dependent way that an increment multiplier removes. Both
+results support the central claim that the bias structure is systematic and correctable rather than idiosyncratic,
+and they demonstrate the engine's calibration machinery operating against fully independent international data.
 
 # 5. Discussion
 
@@ -1126,6 +1274,9 @@ calibration/R/ and calibration/python/ using FIA remeasurement
 outputs and calibrated posterior medians.
 
 # Data and code availability
+
+Calibrated parameter posteriors and the MAGPlot/four-way validation outputs are archived at Zenodo, DOI 10.5281/zenodo.20760580.
+
 
 All source code, calibrated parameter files, posterior draw
 archives, continuous integration configuration, and benchmarking

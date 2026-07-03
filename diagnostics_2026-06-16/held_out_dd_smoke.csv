@@ -1,0 +1,2 @@
+variant,nA,nB,ingrowth_rateA_pct_dec,Rmax_tpa_ac_yr,baimultA,injectA,INSAMPLE_A_BA,INSAMPLE_A_QMD,INSAMPLE_A_TPH,OOS_B_BA,OOS_B_QMD,OOS_B_TPH,INSAMPLE_A_BA_ci95,INSAMPLE_A_QMD_ci95,INSAMPLE_A_TPH_ci95,OOS_B_BA_ci95,OOS_B_QMD_ci95,OOS_B_TPH_ci95
+ne,18,33,37.0,56.9197,1.0,1,+10.2>+12.5,+11.8>-4.5,-13.5>-2.3,+10.5>+10.5,+12.3>-3.7,-10.4>-4.9,"[+4.7,+23.9]","[-15.4,+4.7]","[-14.8,+17.7]","[+6.1,+16.0]","[-10.3,+3.1]","[-12.4,+7.1]"

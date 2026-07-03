@@ -1,0 +1,2 @@
+[2026-06-18 19:57:30] 4way: no CN column matched > 20%
+[2026-06-18 20:18:38] 4way: no CN column matched > 20%

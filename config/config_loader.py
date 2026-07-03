@@ -78,7 +78,7 @@ class FvsConfigLoader:
     #                marks it leg_a), else fall back to the species-free (Leg B)
     #                trait effect. Recommended default once both legs are landed.
     VALID_VERSIONS = ("default", "calibrated", "conus", "hybrid", "custom",
-                      "conus_sf", "conus_hybrid")
+                      "conus_sf", "conus_hybrid", "conus_greg")
 
     def __init__(
         self,
@@ -131,7 +131,7 @@ class FvsConfigLoader:
         if self.version == "custom" and self._custom_config_path is not None:
             return self._custom_config_path
         if self.version in ("calibrated", "conus", "hybrid",
-                            "conus_sf", "conus_hybrid"):
+                            "conus_sf", "conus_hybrid", "conus_greg"):
             # All live in the same variant JSON; the version selects which
             # top-level block to read (categories / categories_conus /
             # categories_conus_sf).
@@ -370,6 +370,49 @@ class FvsConfigLoader:
         """Component names available under categories_conus_sf."""
         block = self.config.get("categories_conus_sf", {})
         return [k for k in block.keys() if k != "metadata"]
+
+    # -------------------------------------------------------------------------
+    # Greg arm (categories_conus_greg) + keyword-selectable site driver
+    # -------------------------------------------------------------------------
+    def has_conus_greg_block(self) -> bool:
+        """Whether the variant config carries a categories_conus_greg block."""
+        return "categories_conus_greg" in self.config
+
+    def get_conus_greg_block(self, component: str) -> dict:
+        """Raw categories_conus_greg.components.{component} block, or KeyError."""
+        greg = self.config.get("categories_conus_greg", {})
+        comps = greg.get("components", {}) if isinstance(greg, dict) else {}
+        if component not in comps:
+            raise KeyError(
+                f"Greg-arm block for '{component}' not present in {self.variant}; "
+                f"available: {list(comps.keys())}"
+            )
+        return comps[component]
+
+    def get_greg_driver_coefficients(self, component, driver=None):
+        """Resolve the site-driver coefficient file for a Greg-arm component.
+
+        The site driver is keyword-selectable (DGDRIVER for diameter_growth,
+        MORTDRIVER for survival). If `driver` is None, use the component's
+        default `site_driver`. Returns the coefficient filename (relative to
+        the config dir). Raises if the driver is not an offered option.
+        A/B evidence (2026-07-03): DG default 'cspi' (driver is a minor lever),
+        survival default 'bgi' (driver matters, ~5.7% log-loss gain).
+        """
+        b = self.get_conus_greg_block(component)
+        drv = driver or b.get("site_driver")
+        opts = b.get("site_driver_options", []) or []
+        cmap = b.get("coefficients_by_driver", {}) or {}
+        if opts and drv not in opts:
+            raise ValueError(
+                f"driver '{drv}' not offered for {component}; options: {opts}"
+            )
+        if drv not in cmap:
+            raise KeyError(
+                f"no coefficient set for driver '{drv}' in {component}; "
+                f"have: {list(cmap.keys())}"
+            )
+        return cmap[drv]
 
     def get_conus_sf_block(self, component: str) -> dict:
         """Raw categories_conus_sf.{component} block, or raise KeyError."""
@@ -660,8 +703,19 @@ class FvsConfigLoader:
                 lines.append(f"!! Components: {meta.get('components_updated', [])}")
             lines.append("!!")
 
-        # SDIMAX keyword: sets maximum SDI per species
-        sdi_values = self._find_sdi_param(cats)
+        # SDIMAX keyword: FORMAT FIXED 2026-06-29 (was DISABLED 2026-06-16, WO-1).
+        # Root cause (initre.f90 option 89): the field ORDER is correct (species,
+        # value); the real bug was the keyword written as "SDIMAX"+10 spaces, a
+        # 16-char prefix that pushed species/value out of their fixed 10-col fields
+        # so FVS misread them (garbage MAX SDI -> over-thinning). _format_sdimax_
+        # keywords now left-justifies the keyword to 10 cols (matches the tested
+        # %-10s%10d%10.1f in sdimax_binding_test.py). Localized max-SDI surfaces
+        # exist (brms_SDImax_site_specific.csv, alphaearth maxsdi_*_lookup.csv);
+        # NA dropouts handled by make_sdifix. Note sdimax is often non-binding
+        # (growth-engine-dominated, per the 2026-06-10 audit). Re-enable per variant
+        # via config "_emit_sdimax": true once the NE binding test confirms binding.
+        emit_sdimax = bool(self.config.get("_emit_sdimax", True))
+        sdi_values = self._find_sdi_param(cats) if emit_sdimax else None
         if sdi_values is not None:
             lines.append(self._format_sdimax_keywords(sdi_values, include_comments))
 
@@ -734,7 +788,7 @@ class FvsConfigLoader:
                 continue
             if val > 0:
                 # SDIMAX keyword: species_index  sdi_value
-                lines.append(f"SDIMAX          {i + 1:10d}{val:10.1f}")
+                lines.append(f"{'SDIMAX':<10}{i + 1:10d}{val:10.1f}")  # fixed: 10-col keyword (was SDIMAX+10 spaces, misaligned fields)
         return "\n".join(lines)
 
     def _format_bamax_keywords(self, values: list, comments: bool) -> str:

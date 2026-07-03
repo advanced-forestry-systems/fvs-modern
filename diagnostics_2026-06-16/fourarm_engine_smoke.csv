@@ -1,0 +1,2 @@
+variant,nA,nB,Rmax_tpa_ac_yr,baimult,inject,A_BA,B_BA,A_BA_ci,B_BA_ci,A_TPH,B_TPH,A_TPH_ci,B_TPH_ci,A_QMD,B_QMD,A_QMD_ci,B_QMD_ci,A_VOL,B_VOL,A_VOL_ci,B_VOL_ci
+ne,24,44,48.829,1.0,1,6.5,7.1,"[+1.9,+11.7]","[+3.0,+11.6]",-13.5,-7.4,"[-22.2,-4.5]","[-15.6,+3.6]",10.8,-2.6,"[+3.4,+20.3]","[-8.7,+3.4]",18.3,18.5,"[+12.4,+25.6]","[+12.7,+25.7]"

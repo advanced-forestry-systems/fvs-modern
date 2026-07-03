@@ -52,7 +52,10 @@ if (is.null(d)) quit(status = 1)
 # ~/fvs-conus/dev_sf_integration/benchmark_sf_vs_legA.R (prep_hg / prep_htdbh /
 # prep_hcb / prep_cr2) and benchmark_mort_legA.R (survival Bernoulli form).
 logit <- function(p) log(p / (1 - p))
-FAMILY <- gaussian()          # overridden to bernoulli() for mort below
+# FAMILY is chosen here as a NAME string ("gaussian"/"bernoulli") and the brms
+# family object is constructed after library(brms) loads (bernoulli() is a brms
+# function, not base R, so it cannot be called before the package is attached).
+FAMILY <- "gaussian"          # overridden to "bernoulli" for mort below
 if (COMPONENT == "dg") {
   # diameter growth: log(annual dDBH); base controls ln_dbh/ln_cr_adj/comp
   d[, resp := (DBH2 - DBH1) / YEARS]
@@ -129,7 +132,7 @@ if (COMPONENT == "dg") {
   # covariate forms (dbh, dbh_sq, cr_z(+sq), bal, sqrt_ba_rd). Task specifies
   # brms family=bernoulli, so we model P(alive) on the annualized logit scale
   # rather than the cloglog-exposure form; YEARS enters as a base control offset.
-  FAMILY <- bernoulli()
+  FAMILY <- "bernoulli"
   if (!"TREESTATUS1" %in% names(d)) d[, TREESTATUS1 := 1L]
   d <- d[TREESTATUS1 == 1 & !is.na(TREESTATUS2) & TREESTATUS2 %in% c(1, 2) &
          is.finite(DBH1) & DBH1 >= 2.54 & is.finite(CR1) & CR1 > 0 & CR1 <= 1 &
@@ -187,12 +190,14 @@ rhs <- paste(c(BASE_CTRL,                            # base controls (partial ou
                "bgi", "bgi_b2"),                    # climate driver modifier
              collapse = " + ")
 form <- bf(as.formula(paste0("y ~ ", rhs, " + (1 | L1)")))   # + ecoregion RE
-is_bern <- identical(FAMILY$family, "bernoulli")
+is_bern <- identical(FAMILY, "bernoulli")
+# construct the brms family object now that the package is attached
+fam_obj <- if (is_bern) bernoulli() else gaussian()
 priors <- c(set_prior("normal(0,1)", class = "b"),
             set_prior("normal(0,0.5)", class = "sd"))
 if (!is_bern) priors <- c(priors, set_prior("student_t(3,0,1)", class = "sigma"))
 fit <- trycatch_run(
-  brm(form, data = ds, family = FAMILY, prior = priors,
+  brm(form, data = ds, family = fam_obj, prior = priors,
       chains = 4, iter = 800, warmup = 400, cores = 4, seed = 20260702,
       refresh = 100, control = list(adapt_delta = 0.9)),
   "brms fit")
@@ -213,7 +218,7 @@ sigma_resid <- if (is_bern) NA_real_ else {
 }
 bundle <- list(
   component = COMPONENT, form = "multiplicative log-modifier",
-  family = FAMILY$family, response_scale = if (is_bern) "logit(survival)" else "component transform",
+  family = FAMILY, response_scale = if (is_bern) "logit(survival)" else "component transform",
   tau_m = TAU_M, tau_d = TAU_D, bgi_knot = bgi_med,
   base_controls = BASE_CTRL,
   sigma_resid = sigma_resid,

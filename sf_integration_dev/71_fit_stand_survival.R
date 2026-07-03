@@ -147,7 +147,7 @@ priors <- c(set_prior("normal(0,1)", class = "b"),
 fit <- trycatch_run(
   brm(form, data = ds, family = binomial(link = "cloglog"), prior = priors,
       chains = 4, iter = 800, warmup = 400, cores = 4, seed = 20260702,
-      refresh = 100, control = list(adapt_delta = 0.9)),
+      refresh = 100, init = 0, control = list(adapt_delta = 0.9)),
   "brms stand-survival fit")
 if (is.null(fit)) quit(status = 1)
 

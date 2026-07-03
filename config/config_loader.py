@@ -39,6 +39,7 @@ from __future__ import annotations
 
 import json
 import logging
+import math
 import os
 from pathlib import Path
 from typing import Any, Optional
@@ -659,6 +660,110 @@ class FvsConfigLoader:
             if code is not None:
                 eta += rt["re_L1"].get(str(code), 0.0)
         return math.exp(eta)
+
+    # =========================================================================
+    # Stand-level constraint layer (categories_conus_stand) -- stand survival /
+    # BA-growth targets that reconcile (disaggregate) the summed tree predictions
+    # (from 71_fit_stand_survival.R / 72_fit_stand_bagrowth.R, landed via 62c).
+    # =========================================================================
+    def has_stand_constraint_block(self) -> bool:
+        """Whether the variant carries a categories_conus_stand block."""
+        return "categories_conus_stand" in self.config
+
+    def get_stand_survival_runtime(self) -> dict:
+        """Decompose categories_conus_stand.survival into a runtime form: the
+        fixed-effect posterior means (+ SDs), the bgi spline knot, tau decays,
+        and the (1|L1) random-effect table. Returns {'_present': False} when the
+        block is absent, so callers degrade gracefully while the fit is pending.
+
+        Runtime keys:
+          fixed      {param: mean}         Intercept, rd, ln_qmd, ba_metric,
+                                           bgi, bgi_b2, trt_decay, dstrb_decay
+          fixed_sd   {param: sd}           posterior SDs (for uncertainty draws)
+          bgi_knot   float                 2-piece bgi spline knot
+          tau_m/tau_d float                mgmt/dstrb decay e-folding (years)
+          re_L1      {L1_code: mean}       ecoregion random intercepts
+        """
+        b = self.config.get("categories_conus_stand", {})
+        if not isinstance(b, dict) or "survival" not in b:
+            return {"_present": False}
+        surv = b["survival"] or {}
+        fx = surv.get("fixed_effects", {}) or {}
+
+        def _mean(v):
+            if isinstance(v, dict):
+                return float(v.get("mean", 0.0))
+            try:
+                return float(v)
+            except (TypeError, ValueError):
+                return 0.0
+
+        def _sd(v):
+            if isinstance(v, dict):
+                try:
+                    return float(v.get("sd", 0.0))
+                except (TypeError, ValueError):
+                    return 0.0
+            return 0.0
+
+        fixed = {k: _mean(v) for k, v in fx.items()}
+        fixed_sd = {k: _sd(v) for k, v in fx.items()}
+        knot = surv.get("covariates", {}).get("bgi_knot")
+        if knot is None:
+            knot = surv.get("bgi_knot", 0.0)
+        re = surv.get("re_L1") or {}
+        re_lut = {str(l): float(m) for l, m in
+                  zip(re.get("level", []), re.get("mean", []))}
+        return {"_present": True, "_source": "categories_conus_stand.survival",
+                "model": surv.get("model"),
+                "fixed": fixed, "fixed_sd": fixed_sd,
+                "bgi_knot": float(knot or 0.0),
+                "tau_m": float(surv.get("tau_m", 10.0)),
+                "tau_d": float(surv.get("tau_d", 15.0)),
+                "re_L1": re_lut, "sd_L1": float(surv.get("sd_L1", 0.0) or 0.0)}
+
+    def stand_survival_eta(self, rd, ln_qmd, ba_metric, bgi, drivers=None,
+                           runtime=None) -> float:
+        """Stand-survival linear predictor (log annual hazard), mirroring the
+        fitted stand model (cloglog + log(YEARS) exposure). drivers may carry
+        trt_decay / dstrb_decay (already-decayed mgmt/disturbance terms) and an
+        L1 ecoregion code. Returns 0.0 (neutral log-hazard) when the block is
+        absent, so a caller with no stand model applies no stand constraint.
+
+            eta = Intercept + b_rd*rd + b_lnqmd*ln_qmd + b_ba*ba_metric
+                  + b_bgi*bgi + b_bgi_b2*max(bgi-knot,0)
+                  + b_trt*trt_decay + b_dstrb*dstrb_decay + z_L1
+            H_stand = exp(eta);  S(T)=exp(-H*T);  M_stand = 1 - S(T)
+        """
+        rt = runtime or self.get_stand_survival_runtime()
+        if not rt.get("_present"):
+            return 0.0
+        drivers = drivers or {}
+        f = rt["fixed"]
+        bgi_b2 = max(float(bgi) - rt["bgi_knot"], 0.0)
+        eta = (f.get("Intercept", 0.0)
+               + f.get("rd", 0.0) * float(rd)
+               + f.get("ln_qmd", 0.0) * float(ln_qmd)
+               + f.get("ba_metric", 0.0) * float(ba_metric)
+               + f.get("bgi", 0.0) * float(bgi)
+               + f.get("bgi_b2", 0.0) * bgi_b2
+               + f.get("trt_decay", 0.0) * float(drivers.get("trt_decay", 0.0))
+               + f.get("dstrb_decay", 0.0) * float(drivers.get("dstrb_decay", 0.0)))
+        l1 = drivers.get("L1")
+        if l1 is not None:
+            eta += rt["re_L1"].get(str(l1), 0.0)
+        return float(eta)
+
+    def stand_mortality_target(self, T_years, rd, ln_qmd, ba_metric, bgi,
+                               drivers=None, runtime=None) -> float:
+        """M_stand = 1 - exp(-exp(eta)*T) from the fitted stand-survival block.
+        Returns None when the block is absent (target undefined -> no constraint)."""
+        rt = runtime or self.get_stand_survival_runtime()
+        if not rt.get("_present"):
+            return None
+        eta = self.stand_survival_eta(rd, ln_qmd, ba_metric, bgi, drivers, rt)
+        H = math.exp(min(eta, 30.0))
+        return float(1.0 - math.exp(-H * float(T_years)))
 
 
     def apply_to_fvs(self, fvs_instance) -> dict[str, bool]:

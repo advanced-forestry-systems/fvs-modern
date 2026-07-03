@@ -1,0 +1,23 @@
+{
+  "model": "STUB stand-level survival (continuous-time exponential hazard) -- placeholder for demo only",
+  "STUB": true,
+  "scale": "cloglog binomial with log(YEARS) exposure offset; linear predictor = log-hazard",
+  "hazard": "H_stand = exp(linpred); S(T)=exp(-H*T); M_stand=1-S(T)",
+  "covariates": {"bgi_knot": 6.0},
+  "bgi_knot": 6.0,
+  "tau_m": 10, "tau_d": 15,
+  "fixed_effects": {
+    "Intercept":   {"mean": -3.10, "sd": 0.15},
+    "rd":          {"mean":  1.35, "sd": 0.20},
+    "ln_qmd":      {"mean": -0.45, "sd": 0.10},
+    "ba_metric":   {"mean":  0.010, "sd": 0.004},
+    "bgi":         {"mean": -0.05, "sd": 0.03},
+    "bgi_b2":      {"mean":  0.02, "sd": 0.03},
+    "trt_decay":   {"mean": -0.30, "sd": 0.15},
+    "dstrb_decay": {"mean":  0.60, "sd": 0.20}
+  },
+  "re_L1": {"level": ["8"], "mean": [0.05], "sd": [0.10]},
+  "sd_L1": 0.20,
+  "seed": 20260702,
+  "notes": "STUB coefficients (plausible signs) for the arm_uncertainty demo ONLY. Replace with the real stand_survival_bundle.json from 71_fit_stand_survival.R once it lands."
+}

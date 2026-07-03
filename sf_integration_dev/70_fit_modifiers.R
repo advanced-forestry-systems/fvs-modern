@@ -44,13 +44,112 @@ d <- trycatch_run(as.data.table(readRDS(PAIRS)), "read pairs")
 if (is.null(d)) quit(status = 1)
 
 # ---- response + base controls (component-specific) --------------------------
+# Each component defines: y (response on its transformed/link scale), the row
+# filters, the base-control columns, BASE_CTRL (their names), and FAMILY.
+# The MODIFIER design (trt_decay, dstrb_decay, bgi, bgi_b2, (1|L1)) and the
+# bundle output structure are IDENTICAL across components; only the response +
+# base controls below differ. Response definitions + covariate forms mirror
+# ~/fvs-conus/dev_sf_integration/benchmark_sf_vs_legA.R (prep_hg / prep_htdbh /
+# prep_hcb / prep_cr2) and benchmark_mort_legA.R (survival Bernoulli form).
+logit <- function(p) log(p / (1 - p))
+FAMILY <- gaussian()          # overridden to bernoulli() for mort below
 if (COMPONENT == "dg") {
+  # diameter growth: log(annual dDBH); base controls ln_dbh/ln_cr_adj/comp
   d[, resp := (DBH2 - DBH1) / YEARS]
   d[, y := log(pmax(resp, 1e-4))]
   d <- d[is.finite(DBH1) & DBH1 >= 2.54 & is.finite(resp) & resp > 0.01 & resp < 5.0]
   d[, ln_dbh := log(DBH1)]
   d[, ln_cr_adj := log((CR1 + 0.2) / 1.2)]
   d[, comp := (BAL_SW1 + BAL_HW1)]
+  BASE_CTRL <- c("ln_dbh", "ln_cr_adj", "comp")
+
+} else if (COMPONENT == "hg") {
+  # height growth: log(annual dHT) (gaussian); prep_hg covariate forms
+  d[, resp := (HT2 - HT1) / YEARS]
+  d <- d[is.finite(DBH1) & DBH1 >= 2.54 & is.finite(HT1) & HT1 > 1.5 &
+         is.finite(HT2) & HT2 > 1.5 & is.finite(YEARS) & YEARS >= 1 & YEARS <= 20 &
+         is.finite(resp) & resp > 0.001 & resp < 5.0]
+  d[, y := log(resp)]
+  d[, ln_dbh := log(DBH1)]
+  d[, ln_ht := log(pmax(HT1, 1.5))]
+  d[, ln_cr_adj := log((CR1 + 0.2) / 1.2)]
+  d[, bal_log := log((BAL_SW1 + BAL_HW1) + 5)]
+  d[, ba_metric := BA1 * 0.2296]
+  BASE_CTRL <- c("ln_dbh", "ln_ht", "ln_cr_adj", "bal_log", "ba_metric")
+
+} else if (COMPONENT == "htdbh") {
+  # height-diameter: log(HT-1.37) (gaussian); prep_htdbh covariate forms
+  d <- d[is.finite(DBH1) & DBH1 >= 2.54 & DBH1 < 250 & is.finite(HT1) & HT1 >= 1.37 & HT1 < 85 &
+         is.finite(BA1) & BA1 > 0 & is.finite(BAL_SW1) & is.finite(BAL_HW1) &
+         is.finite(sdi_additive1) & is.finite(SDImax_brms) & SDImax_brms > 0]
+  d[, resp := HT1]
+  d[, y := log(pmax(HT1 - 1.37, 0.01))]
+  d[, bal := (BAL_SW1 + BAL_HW1)]
+  d[, sqrt_ba := sqrt(BA1 * 0.2296)]
+  d[, rd_ratio := sdi_additive1 / SDImax_brms]
+  d[, ba_metric := BA1 * 0.2296]
+  d[, ba_x_rd := ba_metric * rd_ratio]
+  d[, bal_x_rd := bal * rd_ratio]
+  d[, inv_dbh := 1 / (DBH1 + 1)]
+  d <- d[is.finite(rd_ratio) & rd_ratio > 0 & rd_ratio < 2]
+  BASE_CTRL <- c("bal", "sqrt_ba", "ba_x_rd", "bal_x_rd", "inv_dbh")
+
+} else if (COMPONENT == "hcb") {
+  # height-crown-base: logit((1-CR1) mapped to (0,1)) (gaussian on logit scale);
+  # prep_hcb response = 1-CR1, covariate forms from prep_hcb
+  d <- d[is.finite(DBH1) & DBH1 >= 2.54 & is.finite(HT1) & HT1 > 1 &
+         is.finite(CR1) & CR1 > 0 & CR1 < 1 & is.finite(BA1) & BA1 >= 0 &
+         is.finite(BAL_SW1) & is.finite(BAL_HW1)]
+  d[, resp := 1 - CR1]
+  d <- d[resp > 0.01 & resp < 0.99]
+  d[, y := logit(pmin(pmax((resp - 0.001) / 0.998, 1e-6), 1 - 1e-6))]
+  d[, ln_ht := log(pmax(HT1, 1.5))]
+  d[, ln_dbh := log(DBH1)]
+  d[, bal_over_ht := (BAL_SW1 + BAL_HW1) / (HT1 + 1)]
+  d[, sqrt_ba := sqrt(BA1 * 0.2296)]
+  BASE_CTRL <- c("ln_ht", "ln_dbh", "bal_over_ht", "sqrt_ba")
+
+} else if (COMPONENT == "cr") {
+  # crown recession: CR2-direct logit(CR2) (gaussian on logit scale); prep_cr2
+  # covariate forms (logit(CR1) + DBH + DBH^2 + BA + BAL controls)
+  d <- d[is.finite(DBH1) & DBH1 >= 2.54 & is.finite(CR1) & CR1 > 0 & CR1 < 1 &
+         is.finite(CR2) & CR2 > 0 & CR2 < 1 & is.finite(BA1) & BA1 >= 0 &
+         is.finite(BAL_SW1) & is.finite(BAL_HW1)]
+  d[, resp := CR2]
+  d[, y := logit(pmin(pmax(CR2, 1e-4), 1 - 1e-4))]
+  d[, cr1_logit := logit(pmin(pmax(CR1, 1e-4), 1 - 1e-4))]
+  d[, dbh := DBH1]
+  d[, dbh_sq := DBH1^2]
+  d[, ba_metric := BA1 * 0.2296]
+  d[, bal_metric := (BAL_SW1 + BAL_HW1)]
+  BASE_CTRL <- c("cr1_logit", "dbh", "dbh_sq", "ba_metric", "bal_metric")
+
+} else if (COMPONENT == "mort") {
+  # mortality: Bernoulli/logit on survival (alive=1). Mirrors benchmark_mort_legA
+  # covariate forms (dbh, dbh_sq, cr_z(+sq), bal, sqrt_ba_rd). Task specifies
+  # brms family=bernoulli, so we model P(alive) on the annualized logit scale
+  # rather than the cloglog-exposure form; YEARS enters as a base control offset.
+  FAMILY <- bernoulli()
+  if (!"TREESTATUS1" %in% names(d)) d[, TREESTATUS1 := 1L]
+  d <- d[TREESTATUS1 == 1 & !is.na(TREESTATUS2) & TREESTATUS2 %in% c(1, 2) &
+         is.finite(DBH1) & DBH1 >= 2.54 & is.finite(CR1) & CR1 > 0 & CR1 <= 1 &
+         is.finite(BA1) & BA1 >= 0 & is.finite(BAL_SW1) & is.finite(BAL_HW1) &
+         is.finite(YEARS) & YEARS >= 1 & YEARS <= 20 &
+         is.finite(sdi_additive1) & is.finite(SDImax_brms) & SDImax_brms > 0]
+  d[, y := as.integer(TREESTATUS2 == 1)]      # response: survived
+  d[, resp := y]
+  d[, dbh := DBH1]
+  d[, dbh_sq := DBH1^2]
+  cr_m <- mean(d$CR1, na.rm = TRUE); cr_s <- sd(d$CR1, na.rm = TRUE); if (!is.finite(cr_s) || cr_s == 0) cr_s <- 1
+  d[, cr_z := (CR1 - cr_m) / cr_s]
+  d[, cr_z_sq := cr_z^2]
+  d[, rd_ratio := sdi_additive1 / SDImax_brms]
+  d[, sqrt_ba_rd := sqrt(pmax(BA1 * 0.2296, 0) * pmax(rd_ratio, 0))]
+  d[, bal_metric := (BAL_SW1 + BAL_HW1)]
+  d[, years_ctrl := YEARS]
+  d <- d[is.finite(sqrt_ba_rd)]
+  BASE_CTRL <- c("dbh", "dbh_sq", "cr_z", "cr_z_sq", "bal_metric", "sqrt_ba_rd", "years_ctrl")
+
 } else {
   elog(paste("component not yet parameterized:", COMPONENT)); quit(status = 1)
 }
@@ -65,7 +164,9 @@ bgi_med <- median(d$bgi[is.finite(d$bgi)], na.rm = TRUE)
 d[!is.finite(bgi), bgi := bgi_med]
 d[, bgi_b2 := pmax(bgi - bgi_med, 0)]
 d[, L1 := as.character(EPA_L1_CODE)]
-d <- d[!is.na(L1) & L1 != "" & is.finite(ln_dbh) & is.finite(ln_cr_adj) & is.finite(comp)]
+d <- d[!is.na(L1) & L1 != ""]
+# drop rows with any non-finite base control (component-specific set)
+for (cc in BASE_CTRL) d <- d[is.finite(get(cc))]
 
 # stratified subsample: oversample event pairs so the modifier signal is seen
 ev <- d[trt_active == 1 | dstrb_active == 1]
@@ -80,15 +181,18 @@ rm(d, ev, bg); gc()
 ok <- trycatch_run({ suppressPackageStartupMessages(library(brms)); TRUE }, "load brms")
 if (is.null(ok)) quit(status = 1)
 
-form <- bf(y ~ ln_dbh + ln_cr_adj + comp +          # base controls (partial out size/competition)
-             trt_decay + dstrb_decay +              # management + disturbance modifiers
-             bgi + bgi_b2 +                         # climate driver modifier
-             (1 | L1))                              # ecoregion RE
+# base controls (component-specific) + IDENTICAL modifier terms + L1 RE.
+rhs <- paste(c(BASE_CTRL,                            # base controls (partial out size/competition)
+               "trt_decay", "dstrb_decay",          # management + disturbance modifiers
+               "bgi", "bgi_b2"),                    # climate driver modifier
+             collapse = " + ")
+form <- bf(as.formula(paste0("y ~ ", rhs, " + (1 | L1)")))   # + ecoregion RE
+is_bern <- identical(FAMILY$family, "bernoulli")
 priors <- c(set_prior("normal(0,1)", class = "b"),
-            set_prior("normal(0,0.5)", class = "sd"),
-            set_prior("student_t(3,0,1)", class = "sigma"))
+            set_prior("normal(0,0.5)", class = "sd"))
+if (!is_bern) priors <- c(priors, set_prior("student_t(3,0,1)", class = "sigma"))
 fit <- trycatch_run(
-  brm(form, data = ds, family = gaussian(), prior = priors,
+  brm(form, data = ds, family = FAMILY, prior = priors,
       chains = 4, iter = 800, warmup = 400, cores = 4, seed = 20260702,
       refresh = 100, control = list(adapt_delta = 0.9)),
   "brms fit")
@@ -101,10 +205,18 @@ fwrite(as.data.table(sm), file.path(OUT_DIR, paste0(COMPONENT, "_modifier_fixed.
 
 # modifier bundle: only the modifier terms (exclude base controls + global Intercept)
 mod_terms <- c("trt_decay", "dstrb_decay", "bgi", "bgi_b2")
+# residual scale: gaussian components carry a sigma spec_par; the bernoulli
+# (mortality) fit has none, so tag sigma_resid = NA on the response (logit) scale.
+sigma_resid <- if (is_bern) NA_real_ else {
+  sp <- summary(fit)$spec_pars
+  if (!is.null(sp) && "sigma" %in% rownames(sp)) as.numeric(sp["sigma", "Estimate"]) else NA_real_
+}
 bundle <- list(
   component = COMPONENT, form = "multiplicative log-modifier",
+  family = FAMILY$family, response_scale = if (is_bern) "logit(survival)" else "component transform",
   tau_m = TAU_M, tau_d = TAU_D, bgi_knot = bgi_med,
-  sigma_resid = unname(fx["Intercept", "Est.Error"]) * 0 + as.numeric(summary(fit)$spec_pars["sigma", "Estimate"]),
+  base_controls = BASE_CTRL,
+  sigma_resid = sigma_resid,
   management = list(param = "trt_decay", coef = unname(fx["trt_decay", "Estimate"]),
                     coef_sd = unname(fx["trt_decay", "Est.Error"]),
                     decay = "exp(-years_since_trt / tau_m)"),

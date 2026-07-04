@@ -791,8 +791,8 @@
     },
     "metadata": {
       "pipeline_version": "conus Bayesian modifier layer",
-      "integration_date": "2026-07-03",
-      "components_present": ["diameter_growth", "height_growth", "height_diameter", "height_crown_base", "crown_recession"],
+      "integration_date": "2026-07-04",
+      "components_present": ["diameter_growth", "height_growth", "height_diameter", "height_crown_base", "crown_recession", "mortality"],
       "note": "Shared multiplicative modifier applied by any arm: growth = base * exp(mod_eta)."
     },
     "height_growth": {
@@ -934,6 +934,41 @@
         "mean": [-0.00778382, 0.01824031, 0.14099166, 0.03856287, 0.07422522, -0.03236751, 0.03037777, -0.05439687, -0.0066464, -0.09198287, -0.01122664]
       },
       "notes": "Multiplier = exp(mod_eta). mod_eta = coef_mgmt*trt_decay + coef_dstrb*dstrb_decay + b1*bgi + b2*(bgi-knot)_+ + z_L1. Baseline (no event) => trt/dstrb decay 0."
+    },
+    "mortality": {
+      "component": "mort",
+      "form": "multiplicative log-modifier",
+      "family": "bernoulli_cloglog",
+      "response_scale": "log-hazard (cloglog, log-years exposure offset); multiplier = exp(mod_eta) on the base hazard, consistent with survival_unified_v2_crz",
+      "tau_m": 10,
+      "tau_d": 15,
+      "bgi_knot": -0.71953259,
+      "base_controls": ["dbh", "dbh_sq", "cr_z", "cr_z_sq", "bal_metric", "sqrt_ba_rd"],
+      "sigma_resid": "NA",
+      "management": {
+        "param": "trt_decay",
+        "coef": -0.26638285,
+        "coef_sd": 0.02777502,
+        "decay": "exp(-years_since_trt / tau_m)"
+      },
+      "disturbance": {
+        "param": "dstrb_decay",
+        "coef": 0.28895562,
+        "coef_sd": 0.01658562,
+        "decay": "exp(-years_since_dstrb / tau_d)"
+      },
+      "driver_bgi": {
+        "b1": 0.15446307,
+        "b1_sd": 0.01061399,
+        "b2": 0.03077903,
+        "b2_sd": 0.01184567,
+        "knot": -0.71953259
+      },
+      "re_L1": {
+        "level": ["0", "10", "11", "12", "13", "15", "5", "6", "7", "8", "9"],
+        "mean": [0.1158602, -0.27096113, 0.00114074, 0.41713544, 0.04741971, -0.15458806, 0.01645494, 0.11576187, -0.14550406, -0.01870863, -0.02614831]
+      },
+      "notes": "Multiplier = exp(mod_eta). mod_eta = coef_mgmt*trt_decay + coef_dstrb*dstrb_decay + b1*bgi + b2*(bgi-knot)_+ + z_L1. Baseline (no event) => trt/dstrb decay 0."
     }
   },
   "categories_conus_stand": {
@@ -1017,8 +1052,8 @@
     },
     "metadata": {
       "pipeline_version": "conus stand-level constraint layer (survival / BA-growth)",
-      "integration_date": "2026-07-03",
-      "components_present": ["bagrowth", "topht", "stems"],
+      "integration_date": "2026-07-04",
+      "components_present": ["bagrowth", "topht", "stems", "survival"],
       "note": "Stand-level target that reconciles the summed tree predictions (disaggregation): survival -> M_stand for the kappa hazard solve; bagrowth -> stand BA increment for the tree-DG scale; topht -> García/GADA H2|H1 target for the tree height-growth scale; stems -> García N(t) surviving-stems target (reuses the kappa hazard solve). Applied by any arm."
     },
     "topht": {
@@ -1140,6 +1175,84 @@
       },
       "seed": 20260702,
       "notes": "N2 target feeds stand_constraint.py::stand_constrain_stems, which reuses the kappa proportional-hazard solve (N_target is the stems form of M_stand)."
+    },
+    "survival": {
+      "model": "stand-level survival (continuous-time exponential hazard)",
+      "scale": "cloglog binomial with centered log(YEARS)-3.9 exposure offset; intercept refolded to raw log(YEARS) by -3.9; linear predictor = log-hazard, consistent with survival_unified_v2_crz and the mortality modifier (70_fit_modifiers.R)",
+      "response": "deaths_i | trials(trials_i); trials = TPA-weighted live trees at t1, deaths = TPA-weighted TREESTATUS2==2",
+      "stand_key": "PLT_CN_cond1 x CONDID_cond1 x INVYR1 x INVYR2 (FIA plot-condition-remeasurement)",
+      "hazard": "H_stand = exp(linpred); S_stand(T) = exp(-H_stand * T); M_stand = 1 - S_stand(T)",
+      "covariates": {
+        "rd": "stand SDI / SDIMAX (sdi_additive1 / SDImax_brms, Bayesian SDImax)",
+        "ln_qmd": "log stand QMD (cm)",
+        "ba_metric": "stand basal area (m2/ha)",
+        "bgi": "stand mean bgi (climate/site driver); 2-piece spline knot at median",
+        "bgi_knot": -0.72824514,
+        "trt_decay": "exp(-min(years_since_trt)/tau_m) over the stand",
+        "dstrb_decay": "exp(-min(years_since_dstrb)/tau_d) over the stand"
+      },
+      "tau_m": 10,
+      "tau_d": 15,
+      "n_stand_records": 120000,
+      "fixed_effects": {
+        "Intercept": {
+          "mean": -4.03668899,
+          "sd": 0.11092562,
+          "q2.5": -4.12725151,
+          "q97.5": -3.85141914
+        },
+        "rd": {
+          "mean": -0.01487418,
+          "sd": 0.0043797,
+          "q2.5": -0.01834576,
+          "q97.5": -0.00749974
+        },
+        "ln_qmd": {
+          "mean": 0.05075572,
+          "sd": 0.01469191,
+          "q2.5": 0.02605491,
+          "q97.5": 0.06246248
+        },
+        "ba_metric": {
+          "mean": -0.00472896,
+          "sd": 0.00151924,
+          "q2.5": -0.00725773,
+          "q97.5": -0.00347683
+        },
+        "bgi": {
+          "mean": 0.12696187,
+          "sd": 0.00427821,
+          "q2.5": 0.1195752,
+          "q97.5": 0.12975268
+        },
+        "bgi_b2": {
+          "mean": 0.0769164,
+          "sd": 0.00439651,
+          "q2.5": 0.07409604,
+          "q97.5": 0.08452352
+        },
+        "trt_decay": {
+          "mean": -0.01142858,
+          "sd": 0.00468008,
+          "q2.5": -0.01438373,
+          "q97.5": -0.00333047
+        },
+        "dstrb_decay": {
+          "mean": 0.06089393,
+          "sd": 0.02065497,
+          "q2.5": 0.02524078,
+          "q97.5": 0.07447972
+        }
+      },
+      "sd_L1": 1.00392612,
+      "re_L1": {
+        "level": ["0", "10", "11", "12", "13", "15", "5", "6", "7", "8", "9"],
+        "mean": [-0.00054548, -0.00785561, -0.00032642, 0.00040018, -0.00206226, 0.00075731, -0.04675722, 0.01136862, -0.00376702, -0.08689062, 0.00012651],
+        "sd": [0.00018815, 0.00278508, 0.00017041, 0.00012088, 0.00076052, 0.00032121, 0.01461545, 0.00338326, 0.00123806, 0.02473512, 0.00029763]
+      },
+      "seed": 20260702,
+      "notes": "Stand mortality target M_stand feeds stand_constraint.py::stand_disaggregate_mortality to rescale summed tree hazards (proportional-hazard kappa).",
+      "intercept_refold_note": "71 driver omitted the -3.9 refold that 76_fit_stand_stems.R applies; Intercept mean/q2.5/q97.5 corrected here by -3.9 so it is on the raw log(YEARS) annual-hazard scale the consumer (stand_survival_eta) expects. Posterior draws unchanged; only the reported intercept constant was off."
     }
   }
 }

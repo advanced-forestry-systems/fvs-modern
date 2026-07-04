@@ -164,6 +164,11 @@ fixed_list <- setNames(
                                      q2.5 = unname(fx[nm, "Q2.5"]),
                                      q97.5= unname(fx[nm, "Q97.5"]))),
   fe_names)
+# REFOLD (fix, mirrors 76_fit_stand_stems.R line 147): the exposure offset is
+# log(YEARS)-3.9, so the raw log(YEARS) annual-hazard Intercept = fit - 3.9.
+# stand_survival_eta() consumes the Intercept as the raw log-hazard, so refold here.
+OFFSET_CENTER <- 3.9
+for (qq in c("mean","q2.5","q97.5")) fixed_list[["Intercept"]][[qq]] <- fixed_list[["Intercept"]][[qq]] - OFFSET_CENTER
 re_table <- if (!is.null(re)) list(level = rownames(re),
                                    mean  = unname(re[, "Estimate"]),
                                    sd    = unname(re[, "Est.Error"])) else NULL
@@ -171,7 +176,7 @@ sd_L1 <- trycatch_run({ vc <- summary(fit)$random$L1; unname(vc["sd(Intercept)",
 
 bundle <- list(
   model      = "stand-level survival (continuous-time exponential hazard)",
-  scale      = "cloglog binomial with log(YEARS) exposure offset; linear predictor = log-hazard, consistent with survival_unified_v2_crz and the mortality modifier (70_fit_modifiers.R)",
+  scale      = "cloglog binomial with centered log(YEARS)-3.9 exposure offset; intercept refolded to raw log(YEARS) by -3.9; linear predictor = log-hazard, consistent with survival_unified_v2_crz and the mortality modifier (70_fit_modifiers.R)",
   response   = "deaths_i | trials(trials_i); trials = TPA-weighted live trees at t1, deaths = TPA-weighted TREESTATUS2==2",
   stand_key  = "PLT_CN_cond1 x CONDID_cond1 x INVYR1 x INVYR2 (FIA plot-condition-remeasurement)",
   hazard     = "H_stand = exp(linpred); S_stand(T) = exp(-H_stand * T); M_stand = 1 - S_stand(T)",

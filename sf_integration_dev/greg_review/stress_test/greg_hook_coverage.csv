@@ -1,0 +1,4 @@
+variant,n_dg,n_hg,n_survival,dg_missing,hg_missing,mor_missing,status
+cs,84,95,92,0,0,0,OK
+ls,84,95,92,0,0,0,OK
+wc,84,95,92,0,0,0,OK

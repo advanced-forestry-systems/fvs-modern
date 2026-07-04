@@ -46,3 +46,29 @@ degenerate values, and the four constraints rescue the trajectory. Year-100 medi
    across a site gradient (calibration/R/16_+17_) is the next gate.
 
 Artifacts: constrained_vs_unconstrained_all4.png, constrained_projection_all4.json.
+
+## Bakuzis site-gradient realism pass (2026-07-04, offline, calibrated SDIMAX cap)
+Ran the constrained conus_sf projector across a bgi gradient (4/6/8) with the CALIBRATED
+NE Reineke SDIMAX cap (~480 imperial) replacing the arbitrary 600 fallback.
+Artifacts: bakuzis_site_gradient.png, bakuzis_site_gradient_verdict.json, bakuzis_gradient.py.
+
+PASS:
+- Density ceiling now BINDS: BA plateaus ~80 m2/ha (was an unbounded 92 under the 600 fallback).
+- Self-thinning TPH trajectory clean and near-identical across sites (850 -> ~465).
+
+FLAGS (top-height constraint needs review):
+- Top height is NON-MONOTONE: rises to ~year 25 then DECLINES to year 100 (e.g. low site
+  20.7 -> 22.3 -> 20.6 m; high site 20.7 -> 18.6 m). Dominant height should not shrink in an
+  even-aged stand. The Garcia/GADA H2|H1 transition (ln_h1 -0.155, ln_years +0.059, bgi -0.011)
+  regresses downward once tall rather than approaching a site asymptote. Revisit the top-height
+  transition (anchor it to the cspi/GADA asymptote; the repeated H2|H1 apply is mean-reverting).
+- Site ordering INVERTED on top height (higher bgi -> shorter), driven by the small negative
+  bgi coefficient. CAVEAT: bgi is a secondary climate covariate, NOT the primary site-index
+  anchor; a proper site-ordering test varies the site index via the engine Bakuzis harness
+  (calibration/slurm/submit_bakuzis.sh), which needs a freshly built FVSne.so.
+- SDI overshoots the 480 cap by ~5% (proxy 504-506); likely within-step rescale lag or a minor
+  proxy-formula difference. Minor.
+
+NET: the density/self-thinning constraints behave well; the top-height constraint is the one
+that needs a modeling fix before manuscript use. The full engine Bakuzis pass (site-class
+gradient) is the definitive test and is gated on an engine rebuild.

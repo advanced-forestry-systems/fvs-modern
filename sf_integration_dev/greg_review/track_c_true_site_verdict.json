@@ -1,0 +1,34 @@
+{
+  "axis": "initial stand top height (GADA H1 site anchor); bgi held fixed=6.0",
+  "bgi_fixed": 6.0,
+  "fixed_sdimax": 480.0,
+  "init_topheight": {
+    "low_site": 15.525,
+    "mid_site": 20.7,
+    "high_site": 26.91
+  },
+  "year100": {
+    "low_site": {
+      "BA": 77.199168141673,
+      "TOPHT": 17.102454097581496,
+      "TPH": 449.028295955512,
+      "QMD": 46.814007901277755
+    },
+    "mid_site": {
+      "BA": 77.27852538912899,
+      "TOPHT": 18.801760548661004,
+      "TPH": 447.76464843556334,
+      "QMD": 46.94041056745846
+    },
+    "high_site": {
+      "BA": 77.42889770250518,
+      "TOPHT": 23.7791942693498,
+      "TPH": 446.05949852034627,
+      "QMD": 47.085424922231184
+    }
+  },
+  "flags": [],
+  "site_ordering_topheight_ok": true,
+  "site_ordering_ba_ok": true,
+  "pass": true
+}

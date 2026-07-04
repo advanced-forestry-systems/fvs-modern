@@ -1,0 +1,7 @@
+metric,GOMPIT (S=1-exp(-exp(eta))),EXP-HAZARD (HZ=exp(eta); S=exp(-HZ*t)),note
+eta range (92 spp x CR x CCH),0.056 to 2.035,same eta driver,identical linear predictor
+median 5-yr period survival S,0.928,7.0e-10,exp-haz kills whole cohort in one 5-yr cycle
+median annual mortality rate,1.48%,98.52%,~67x higher under exp-hazard
+100-yr cohort survivorship at median eta,22.6%,8.3e-182,exp-hazard annihilates the stand
+frac of tree-conditions with S_period<0.01,0.0%,100.0%,exp-hazard is degenerate for all conditions
+biological plausibility,realistic (1-2%/yr background),non-physical,GOMPIT is the correct match to Greg's cloglog fit

@@ -70,7 +70,8 @@ CFLAGS="-fPIC -DANSI -DCMPgcc -DSQLITE_THREADSAFE=0 -DSQLITE_OMIT_LOAD_EXTENSION
 CXXFLAGS="-fPIC -DANSI -DCMPgcc -w"
 
 BUILD_DIR=$(mktemp -d /tmp/fvs-build-XXXXXX)
-trap "rm -rf $BUILD_DIR" EXIT
+_cleanup_all() { rm -rf "$BUILD_DIR"; }
+trap "_cleanup_all" EXIT
 
 mkdir -p "$OUTPUT_DIR"
 
@@ -159,6 +160,45 @@ for var in "${VARIANTS[@]}"; do
     echo -n "[$var] Building FVS${var}.so ... "
     VARDIR="$BUILD_DIR/$var"
     mkdir -p "$VARDIR"
+
+    # -------------------------------------------------------------------------
+    # PRGPRM variant-header shadow (fixes zero-trees / corrupt COMMON /CONCHR/).
+    #
+    # Root cause: base/*.f90 sources (e.g. base/intree.f90) carry a bare
+    #   INCLUDE 'PRGPRM.f90'
+    # which gfortran resolves relative to the SOURCE FILE's own directory FIRST,
+    # i.e. base/PRGPRM.f90 (MAXSP=23), REGARDLESS of the -I include order below.
+    # The variant-dir sources instead see <var>/common/PRGPRM.f90 (e.g. ne=108).
+    # The two MAXSP values size COMMON /CONCHR/ (defined via base/CONTRL.f90)
+    # differently, so intree.o and blkdat.o disagree on the CONCHR layout, the
+    # character COMMON is corrupted, and zero trees load at runtime.
+    #
+    # Fix: for the duration of this variant's build, back up base/PRGPRM.f90 and
+    # shadow it with the VARIANT's PRGPRM.f90 so base-dir INCLUDE 'PRGPRM.f90'
+    # resolves to the variant MAXSP. Restored at the end of the iteration (and by
+    # the EXIT trap on any error) so the source tree is never left modified.
+    BASE_PRGPRM="$SOURCE_DIR/base/PRGPRM.f90"
+    VAR_PRGPRM=""
+    for cand in "$SOURCE_DIR/$var/common/PRGPRM.f90" "$SOURCE_DIR/$var/PRGPRM.f90" "$SOURCE_DIR/canada/$var/common/PRGPRM.f90" "$SOURCE_DIR/canada/$var/PRGPRM.f90"; do
+        [ -f "$cand" ] && { VAR_PRGPRM="$cand"; break; }
+    done
+    PRGPRM_SHADOWED=0
+    if [ -n "$VAR_PRGPRM" ] && [ -f "$BASE_PRGPRM" ] && ! cmp -s "$VAR_PRGPRM" "$BASE_PRGPRM"; then
+        cp -f "$BASE_PRGPRM" "$BASE_PRGPRM.prgprm_bak"
+        cp -f "$VAR_PRGPRM" "$BASE_PRGPRM"
+        PRGPRM_SHADOWED=1
+        _bmx=$(grep -m1 -oE 'MAXSP *= *[0-9]+' "$BASE_PRGPRM" | grep -oE '[0-9]+')
+        echo "" ; echo "  [prgprm] shadowed base/PRGPRM.f90 with $var (MAXSP=${_bmx:-?}) for this build"
+    fi
+    # Restore the original base/PRGPRM.f90 no matter how this iteration ends.
+    restore_prgprm() {
+        if [ "${PRGPRM_SHADOWED:-0}" = "1" ] && [ -f "$BASE_PRGPRM.prgprm_bak" ]; then
+            cp -f "$BASE_PRGPRM.prgprm_bak" "$BASE_PRGPRM"
+            rm -f "$BASE_PRGPRM.prgprm_bak"
+            PRGPRM_SHADOWED=0
+        fi
+    }
+    trap 'restore_prgprm; _cleanup_all' EXIT
 
     # Parse source list and collect include directories
     OBJECTS=()
@@ -337,6 +377,40 @@ for var in "${VARIANTS[@]}"; do
             echo "DONE ($NOBJ objects, $COMPILE_ERRORS skipped, $SIZE)"
             BUILT=$((BUILT + 1))
 
+            # --- post-build CONCHR layout assertion (zero-trees guard) ---------
+            # Confirm the character COMMON /CONCHR/ has the SAME size in the base
+            # intree object and the variant blkdat object. A mismatch means a
+            # base-dir source compiled against the wrong MAXSP (the bug the PRGPRM
+            # shadow above prevents); the library would load zero trees. Compare
+            # the emitted size of the `conchr_` symbol (2nd nm --print-size col).
+            INTREE_O=""; BLKDAT_O=""
+            for _o in "${OBJECTS[@]}"; do
+                case "$(basename "$_o")" in
+                    intree.o|*_intree.o) [ -z "$INTREE_O" ] && INTREE_O="$_o" ;;
+                    blkdat.o|*_blkdat.o) [ -z "$BLKDAT_O" ] && BLKDAT_O="$_o" ;;
+                esac
+            done
+            if [ -n "$INTREE_O" ] && [ -n "$BLKDAT_O" ]; then
+                _sz() { nm --defined-only --print-size "$1" 2>/dev/null                         | awk 'tolower($NF) ~ /^conchr_$/ {print $2; exit}'; }
+                CONCHR_INTREE=$(_sz "$INTREE_O")
+                CONCHR_BLKDAT=$(_sz "$BLKDAT_O")
+                if [ -n "$CONCHR_INTREE" ] && [ -n "$CONCHR_BLKDAT" ]; then
+                    if [ "$CONCHR_INTREE" != "$CONCHR_BLKDAT" ]; then
+                        echo "  [CONCHR] ASSERTION FAILED for $var:"
+                        echo "          sizeof(COMMON /CONCHR/) differs between objects"
+                        echo "          intree.o = 0x$CONCHR_INTREE   blkdat.o = 0x$CONCHR_BLKDAT"
+                        echo "          -> base-dir sources built against wrong MAXSP; the .so"
+                        echo "             would load ZERO trees. Failing the build."
+                        rm -f "$OUTPUT_DIR/FVS${var}.so"
+                        restore_prgprm
+                        FAILED=$((FAILED + 1)); BUILT=$((BUILT - 1))
+                        continue
+                    else
+                        echo "  [CONCHR] OK: sizeof(COMMON /CONCHR/) matches (0x$CONCHR_INTREE) in intree.o and blkdat.o"
+                    fi
+                fi
+            fi
+
             # --- self-contained pass (#72): stub any remaining UNDEFINED FVS-internal Fortran
             # symbols and re-link them in, so the library also loads on macOS/Windows (whose
             # dlopen cannot defer unresolved symbols like Linux lazy binding does). Only undefined
@@ -367,6 +441,9 @@ for var in "${VARIANTS[@]}"; do
         echo "NO OBJECTS"
         FAILED=$((FAILED + 1))
     fi
+
+    # Restore base/PRGPRM.f90 for the next variant (shadow was per-variant).
+    restore_prgprm
 done
 
 echo ""

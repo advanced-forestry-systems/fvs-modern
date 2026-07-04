@@ -1,0 +1,233 @@
+============================================
+Step 1: Revert CR and UT DG to 5K obs
+============================================
+--- CR at 5K ---
+Start: Fri Apr  3 12:21:38 PM EDT 2026
+Finish: Fri Apr  3 12:21:46 PM EDT 2026
+--- UT at 5K ---
+Start: Fri Apr  3 12:21:46 PM EDT 2026
+Finish: Fri Apr  3 12:21:49 PM EDT 2026
+============================================
+Step 2: Compute mortality v2 AUC on full data
+============================================
+Start: Fri Apr  3 12:21:49 PM EDT 2026
+Processing variant: ca 
+  Full dataset: 38031 obs, 4654 dead
+  Prediction failed or dimension mismatch
+Processing variant: ie 
+  Full dataset: 82102 obs, 10711 dead
+  Prediction failed or dimension mismatch
+Processing variant: nc 
+  Full dataset: 13229 obs, 1294 dead
+  Prediction failed or dimension mismatch
+Processing variant: oc 
+  Full dataset: 146943 obs, 16291 dead
+  Prediction failed or dimension mismatch
+Processing variant: op 
+  Full dataset: 258403 obs, 21841 dead
+  Prediction failed or dimension mismatch
+Processing variant: sn 
+  Full dataset: 3454635 obs, 677685 dead
+  Prediction failed or dimension mismatch
+Processing variant: so 
+  Full dataset: 70959 obs, 5866 dead
+  Prediction failed or dimension mismatch
+Processing variant: tt 
+  Full dataset: 541 obs, 23 dead
+  Prediction failed or dimension mismatch
+Processing variant: ws 
+  Full dataset: 57416 obs, 7272 dead
+  Prediction failed or dimension mismatch
+
+Results saved to: /users/PUOM0008/crsfaaron/fvs-modern/calibration/output/comparisons/mortality_v2_auc_full.csv 
+# A tibble: 9 × 5
+  variant auc_v2   n_obs n_dead note             
+  <chr>    <dbl>   <int>  <int> <chr>            
+1 ca          NA   38031   4654 prediction_failed
+2 ie          NA   82102  10711 prediction_failed
+3 nc          NA   13229   1294 prediction_failed
+4 oc          NA  146943  16291 prediction_failed
+5 op          NA  258403  21841 prediction_failed
+6 sn          NA 3454635 677685 prediction_failed
+7 so          NA   70959   5866 prediction_failed
+8 tt          NA     541     23 prediction_failed
+9 ws          NA   57416   7272 prediction_failed
+Finish: Fri Apr  3 12:22:15 PM EDT 2026
+============================================
+Step 3: Rerun full comparison with fixed results
+============================================
+Start: Fri Apr  3 12:22:15 PM EDT 2026
+=============================================================
+FVS Comprehensive Default vs Calibrated Comparison
+=============================================================
+Project root: /users/PUOM0008/crsfaaron/fvs-modern 
+Variants: 25 
+
+=== Component 1: Height-Diameter ===
+  HD: acd ... R2_cal = 0.825 
+  HD: ak ... R2_cal = 0.795 
+  HD: bc ... R2_cal = 0.848 
+  HD: bm ... R2_cal = 0.871 
+  HD: ca ... R2_cal = 0.898 
+  HD: ci ... R2_cal = 0.794 
+  HD: cr ... R2_cal = 0.863 
+  HD: cs ... R2_cal = 0.802 
+  HD: ec ... R2_cal = 0.842 
+  HD: em ... R2_cal = 0.75 
+  HD: ie ... R2_cal = 0.824 
+  HD: kt ... R2_cal = 0.774 
+  HD: ls ... R2_cal = 0.806 
+  HD: nc ... R2_cal = 0.89 
+  HD: ne ... R2_cal = 0.805 
+  HD: oc ... R2_cal = 0.879 
+  HD: on ... R2_cal = 0.799 
+  HD: op ... R2_cal = 0.879 
+  HD: pn ... R2_cal = 0.862 
+  HD: sn ... R2_cal = 0.806 
+  HD: so ... R2_cal = 0.87 
+  HD: tt ... R2_cal = 0.802 
+  HD: ut ... R2_cal = 0.863 
+  HD: wc ... R2_cal = 0.892 
+  HD: ws ... R2_cal = 0.879 
+
+=== Component 2: Mortality ===
+  MORT: acd ... AUC = 0.934 
+  MORT: ak ... AUC = 0.883 
+  MORT: bc ... AUC = 0.707 
+  MORT: bm ... AUC = 0.741 
+  MORT: ca ... AUC = 0.66 
+  MORT: ci ... AUC = 0.728 
+  MORT: cr ... AUC = 0.76 
+  MORT: cs ... AUC = 0.929 
+  MORT: ec ... AUC = 0.727 
+  MORT: em ... AUC = 0.713 
+  MORT: ie ... AUC = 0.693 
+  MORT: kt ... AUC = 0.7 
+  MORT: ls ... AUC = 0.921 
+  MORT: nc ... AUC = 0.719 
+  MORT: ne ... AUC = 0.924 
+  MORT: oc ... AUC = 0.671 
+  MORT: on ... AUC = 0.92 
+  MORT: op ... AUC = 0.682 
+  MORT: pn ... AUC = 0.895 
+  MORT: sn ... AUC = 0.69 
+  MORT: so ... AUC = 0.679 
+  MORT: tt ... AUC = 0.686 
+  MORT: ut ... AUC = 0.78 
+  MORT: wc ... AUC = 0.733 
+  MORT: ws ... AUC = 0.676 
+
+=== Component 3: Crown Ratio Change ===
+  CR: acd ... R2 = 0.294 
+  CR: ak ... R2 = 0.135 
+  CR: bc ... R2 = 0.24 
+  CR: bm ... R2 = 0.217 
+  CR: ca ... R2 = 0.184 
+  CR: ci ... R2 = 0.218 
+  CR: cr ... R2 = 0.24 
+  CR: cs ... R2 = 0.261 
+  CR: ec ... R2 = 0.2 
+  CR: em ... R2 = 0.157 
+  CR: ie ... R2 = 0.222 
+  CR: kt ... R2 = 0.182 
+  CR: ls ... R2 = 0.266 
+  CR: nc ... R2 = 0.374 
+  CR: ne ... R2 = 0.274 
+  CR: oc ... R2 = 0.172 
+  CR: on ... R2 = 0.258 
+  CR: op ... R2 = 0.229 
+  CR: pn ... R2 = 0.376 
+  CR: sn ... R2 = 0.262 
+  CR: so ... R2 = 0.202 
+  CR: tt ... R2 = 0.298 
+  CR: ut ... R2 = 0.23 
+  CR: wc ... R2 = 0.283 
+  CR: ws ... R2 = 0.144 
+
+=== Component 4: Diameter Growth ===
+  DG: acd ... R2_log = 0.686 
+  DG: ak ... R2_log = 0.599 
+  DG: bc ... R2_log = 0.305 
+  DG: bm ... R2_log = 0.452 
+  DG: ca ... R2_log = 0.605 
+  DG: ci ... R2_log = 0.61 
+  DG: cr ... R2_log = 0.124 
+  DG: cs ... R2_log = 0.607 
+  DG: ec ... R2_log = 0.633 
+  DG: em ... R2_log = 0.566 
+  DG: ie ... R2_log = 0.538 
+  DG: kt ... R2_log = 0.575 
+  DG: ls ... R2_log = 0.611 
+  DG: nc ... R2_log = 0.682 
+  DG: ne ... R2_log = 0.652 
+  DG: oc ... R2_log = 0.611 
+  DG: on ... R2_log = 0.552 
+  DG: op ... R2_log = 0.663 
+  DG: pn ... R2_log = 0.345 
+  DG: sn ... R2_log = 0.532 
+  DG: so ... R2_log = 0.627 
+  DG: tt ... R2_log = 0.547 
+  DG: ut ... R2_log = 0.091 
+  DG: wc ... R2_log = 0.679 
+  DG: ws ... R2_log = 0.563 
+
+=== Component 5: SDIMAX ===
+  SDI: acd ... no SDICON in config
+  SDI: ak ... 12 species matched, pct_change = -26.8 %
+  SDI: bc ... no SDICON in config
+  SDI: bm ... no SDICON in config
+  SDI: ca ... 26 species matched, pct_change = -22.1 %
+  SDI: ci ... 16 species matched, pct_change = -28.8 %
+  SDI: cr ... 22 species matched, pct_change = -22.4 %
+  SDI: cs ... 41 species matched, pct_change = -22.3 %
+  SDI: ec ... 26 species matched, pct_change = -12.6 %
+  SDI: em ... 8 species matched, pct_change = -18.5 %
+  SDI: ie ... no SDICON in config
+  SDI: kt ... no SDICON in config
+  SDI: ls ... 46 species matched, pct_change = -26.1 %
+  SDI: nc ... no SDICON in config
+  SDI: ne ... 66 species matched, pct_change = -18.3 %
+  SDI: oc ... 25 species matched, pct_change = -27 %
+  SDI: on ... no SDICON in config
+  SDI: op ... no SDICON in config
+  SDI: pn ... no SDICON in config
+  SDI: sn ... 75 species matched, pct_change = -11.4 %
+  SDI: so ... no SDICON in config
+  SDI: tt ... 12 species matched, pct_change = -25.9 %
+  SDI: ut ... 15 species matched, pct_change = -24.9 %
+  SDI: wc ... 8 species matched, pct_change = -39.6 %
+  SDI: ws ... 29 species matched, pct_change = -22.3 %
+
+=== Component 6: Height Increment ===
+  HI: bc ... 0 params, map_only 
+  HI: ci ... 0 params, map_only 
+  HI: em ... 0 params, map_only 
+  HI: ie ... 0 params, map_only 
+  HI: kt ... 0 params, map_only 
+  HI: ws ... 0 params, map_only 
+
+=== Generating Master Summary ===
+
+=============================================================
+Comparison complete.
+Output directory: /users/PUOM0008/crsfaaron/fvs-modern/calibration/output/comparisons 
+Master table: 405 rows
+Components covered: Height_Diameter, Mortality, Crown_Ratio, Diameter_Growth, SDIMAX 
+=============================================================
+Finish: Fri Apr  3 12:24:34 PM EDT 2026
+============================================
+Step 4: Comprehensive assessment (Part A + B)
+============================================
+Start: Fri Apr  3 12:24:34 PM EDT 2026
+=============================================================
+FVS Comprehensive Model Assessment
+Weiskittel et al. (2011) evaluation framework
+=============================================================
+
+=== PART A: Tree-Level Residual Diagnostics ===
+
+  A1: H-D residual diagnostics...
+    Saved H-D residual diagnostics for 25 variants
+  A2: Mortality residual diagnostics...
+    Saved mortality diagnostics for 25 variants
+  A3: Diameter growth residual diagnostics...

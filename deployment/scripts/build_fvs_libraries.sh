@@ -274,6 +274,28 @@ for var in "${VARIANTS[@]}"; do
 
     done < "$SRCLIST"
 
+    # Windows pre-link self-containment (#72): PE DLLs cannot contain unresolved symbols and the
+    # post-link auto-stub cannot help (the link must succeed first). Derive symbols referenced (U)
+    # but defined by no object, stub them, and add to the link so it has zero unresolved symbols.
+    case "$(uname -s)" in
+        MINGW*|MSYS*|CYGWIN*)
+            if [ ${#OBJECTS[@]} -gt 0 ]; then
+                DEFD=$(nm "${OBJECTS[@]}" 2>/dev/null | awk 'NF>=3 && $2 ~ /^[TtDdBbRr]$/ {print $3}' | sort -u)
+                REFD=$(nm "${OBJECTS[@]}" 2>/dev/null | awk '$1=="U"{print $2} NF==2 && $1 ~ /^[Uu]$/{print $2}' | sort -u)
+                TOSTUB=$(comm -23 <(printf '%s\n' "$REFD") <(printf '%s\n' "$DEFD") 2>/dev/null \
+                        | grep -E '^[a-z][a-z0-9_]+_$' | grep -vE '^(gfortran|_gfortran|__|gomp|omp_|gcov|main)' || true)
+                if [ -n "$TOSTUB" ]; then
+                    PSF="$VARDIR/prelinkstub_${var}.f90"; : > "$PSF"
+                    for sym in $TOSTUB; do nm0="${sym%_}"; printf 'subroutine %s\nend subroutine %s\n' "$nm0" "$nm0" >> "$PSF"; done
+                    PSO="$VARDIR/prelinkstub_${var}.o"
+                    if compile_file "$PSF" "$PSO" "$INCDIRS" 2>/dev/null && [ -f "$PSO" ]; then
+                        OBJECTS+=("$PSO")
+                        echo "  [win pre-link] stubbed $(printf '%s\n' $TOSTUB | wc -l | tr -d ' ') undefined symbol(s) for PE link"
+                    fi
+                fi
+            fi ;;
+    esac
+
     # Filter out main.o (the executable entry point; not needed for shared library)
     SHLIB_OBJECTS=()
     for obj in "${OBJECTS[@]}"; do
@@ -285,16 +307,60 @@ for var in "${VARIANTS[@]}"; do
 
     # Link shared library
     if [ ${#SHLIB_OBJECTS[@]} -gt 0 ]; then
-        if $FC -shared -o "$OUTPUT_DIR/FVS${var}.so" "${SHLIB_OBJECTS[@]}" 2>"$VARDIR/link.err"; then
+        # Link against the project stub libraries (libfvs_stubs*.so in OUTPUT_DIR) as a
+        # fallback so symbols a variant references but does not itself define (e.g. volinitnvb_,
+        # varver_) resolve from the stubs. Using -l (not direct object add) pulls a stub ONLY for
+        # an otherwise-undefined symbol, so it never duplicates a real definition. $ORIGIN rpath
+        # lets the loaded .so find the stub libs sitting beside it.
+        # OS-aware shared-library link. Linux -shared tolerates undefined symbols by default
+        # and uses the stub-library fallback + rpath; macOS ld64 and Windows/MinGW PE linking
+        # reject undefined symbols at link time, so they need an explicit allow flag (the FVS .so
+        # carry harmless unresolved internal NVEL symbols resolved lazily at load).
+        STUBLINK=(); RPATHFLAG=(); EXTRALINK=()
+        case "$(uname -s)" in
+            Linux)
+                RPATHFLAG=(-Wl,-rpath,\$ORIGIN)
+                for sl in "$OUTPUT_DIR"/libfvs_stubs*.so; do [ -f "$sl" ] && STUBLINK+=("-l:$(basename "$sl")"); done ;;
+            Darwin)
+                EXTRALINK=(-Wl,-undefined,dynamic_lookup) ;;
+            MINGW*|MSYS*|CYGWIN*)
+                for sl in "$OUTPUT_DIR"/libfvs_stubs*.so; do [ -f "$sl" ] && STUBLINK+=("-l:$(basename "$sl")"); done
+                # Statically bundle the gfortran/gcc runtime so the PE DLL is self-contained
+                # (no libgfortran-5.dll/libgcc/libquadmath dependency at load time).
+                EXTRALINK=(-static-libgfortran -static-libgcc -static-libquadmath -Wl,--enable-auto-import -Wl,--unresolved-symbols=ignore-all) ;;
+            *)
+                EXTRALINK=(-Wl,--unresolved-symbols=ignore-all) ;;
+        esac
+        if $FC -shared -o "$OUTPUT_DIR/FVS${var}.so" "${SHLIB_OBJECTS[@]}" -L"$OUTPUT_DIR" ${RPATHFLAG[@]+"${RPATHFLAG[@]}"} ${STUBLINK[@]+"${STUBLINK[@]}"} ${EXTRALINK[@]+"${EXTRALINK[@]}"} 2>"$VARDIR/link.err"; then
             NOBJ=${#SHLIB_OBJECTS[@]}
             SIZE=$(ls -lh "$OUTPUT_DIR/FVS${var}.so" | awk '{print $5}')
             echo "DONE ($NOBJ objects, $COMPILE_ERRORS skipped, $SIZE)"
             BUILT=$((BUILT + 1))
+
+            # --- self-contained pass (#72): stub any remaining UNDEFINED FVS-internal Fortran
+            # symbols and re-link them in, so the library also loads on macOS/Windows (whose
+            # dlopen cannot defer unresolved symbols like Linux lazy binding does). Only undefined
+            # symbols are stubbed, so this never duplicates a real definition. Stubbed routines are
+            # ones this variant does not link or call; behavior matches the prior lazy-load.
+            SOF="$OUTPUT_DIR/FVS${var}.so"
+            UND=$( { nm -u "$SOF" 2>/dev/null || nm -D -u "$SOF" 2>/dev/null; } \
+                   | awk "{print \$NF}" | sed "s/^_//" \
+                   | grep -E "^[a-z][a-z0-9_]+_$" \
+                   | grep -vE "^(gfortran|_gfortran|gomp|omp_|gcov)" | sort -u )
+            if [ -n "$UND" ]; then
+                ASF="$VARDIR/autostub_${var}.f90"; : > "$ASF"
+                for sym in $UND; do nm0="${sym%_}"; printf "subroutine %s\nend subroutine %s\n" "$nm0" "$nm0" >> "$ASF"; done
+                ASO="$VARDIR/autostub_${var}.o"
+                if compile_file "$ASF" "$ASO" "$INCDIRS" 2>/dev/null && [ -f "$ASO" ]; then
+                    if $FC -shared -o "$SOF" "${SHLIB_OBJECTS[@]}" "$ASO" -L"$OUTPUT_DIR" ${RPATHFLAG[@]+"${RPATHFLAG[@]}"} ${STUBLINK[@]+"${STUBLINK[@]}"} ${EXTRALINK[@]+"${EXTRALINK[@]}"} 2>"$VARDIR/relink.err"; then
+                        echo "  [self-contained] stubbed $(printf "%s\n" $UND | wc -l | tr -d " ") undefined symbol(s) for portable load"
+                    fi
+                fi
+            fi
         else
             echo "LINK FAILED"
-            if [ "$VERBOSE" -eq 1 ]; then
-                tail -5 "$VARDIR/link.err" 2>/dev/null | sed 's/^/    /'
-            fi
+            echo "  --- link.err (tail) ---"
+            tail -40 "$VARDIR/link.err" 2>/dev/null | sed 's/^/    /'
             FAILED=$((FAILED + 1))
         fi
     else

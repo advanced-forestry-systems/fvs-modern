@@ -62,6 +62,12 @@ if [ -z "$FVS_BIN" ] || [ -z "$TEST_DIR" ]; then
     exit 1
 fi
 
+# Resolve to absolute paths. Part 2 cd's into each per-test working directory, so a
+# relative FVS_BIN or TEST_DIR would resolve against the wrong directory on every test
+# after the first, producing spurious "no executable" skips. (Fixed 2026-06-18.)
+FVS_BIN="$(cd "$FVS_BIN" 2>/dev/null && pwd)"
+TEST_DIR="$(cd "$TEST_DIR" 2>/dev/null && pwd)"
+
 echo ""
 echo "================================================================"
 echo "  FVS Regression Test Suite"

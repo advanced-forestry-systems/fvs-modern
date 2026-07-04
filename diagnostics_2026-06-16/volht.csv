@@ -1,0 +1,5 @@
+variant,n,vol_measured_ht,vol_imputed_ht,imputed_vs_measured%
+ne,104,137.9,145.7,5.6
+sn,80,136.7,135.7,-0.7
+kt,37,147.3,159.5,8.3
+pn,75,303.4,335.3,10.5

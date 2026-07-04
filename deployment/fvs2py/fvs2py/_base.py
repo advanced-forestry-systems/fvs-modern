@@ -1,3 +1,4 @@
+from __future__ import annotations
 import ctypes as ct
 import logging
 import os
@@ -514,6 +515,129 @@ class FVS(FvsCore):
 
         """
         return self._species_attr(attr, FvsAttributeAccessor.SET, arr)
+
+    def get_tree_attr(self, attr: str) -> npt.NDArray[np.float64]:
+        """Get a single attribute for all live tree records, in process.
+
+        Reads per-tree state directly from the engine's memory. Valid names
+        include 'id', 'species', 'dbh', 'dg', 'ht', 'htg', 'crwdth', 'cratio',
+        'tpa', 'mort', 'plot', 'age'. The returned length follows the current
+        live tree count (dims['ntrees']), which changes cycle to cycle.
+
+        Args:
+            attr (str): name of the tree attribute to fetch.
+
+        Returns:
+            array of length ntrees with the requested attribute.
+        """
+        return self._tree_attr(attr, FvsAttributeAccessor.GET)
+
+    def set_tree_attr(self, attr: str, arr: npt.NDArray[np.float64]) -> None:
+        """Set a single attribute for all live tree records, in process.
+
+        This is the write side that enables injecting external growth
+        predictions. Stop FVS at restart code 5 (after diameter growth and
+        mortality are computed but before they are applied), overwrite 'dg'
+        (and 'htg' for height growth) with predictions from another model such
+        as the fvs-conus equations, then resume so the engine applies them.
+
+        Args:
+            attr (str): name of the tree attribute to set.
+            arr (npt.NDArray[np.float64]): values to set, length ntrees.
+        """
+        self._tree_attr(attr, FvsAttributeAccessor.SET, arr)
+        return
+
+    def _tree_attr(
+        self,
+        attr: str,
+        action: FvsAttributeAccessor,
+        arr: npt.NDArray[np.float64] | None = None,
+    ) -> npt.NDArray[np.float64] | None:
+        """Get or set a single per-tree attribute via the FVS fvsTreeAttr API.
+
+        Mirrors `_species_attr` but the array is sized to the live tree count,
+        which is dynamic, so dims are read fresh on every call.
+        """
+        dims = self.dims
+        ntrees = dims[STR_NTREES]
+        maxtrees = dims[STR_MAXTREES]
+        # Allocate to the maximum tree capacity (mirrors the species accessor, which
+        # allocates to maxspecies): the engine may index the full array, so a buffer
+        # sized only to the current live count can be written past, segfaulting.
+        buf = np.zeros(dtype=np.float64, shape=(maxtrees,))
+        if action == FvsAttributeAccessor.SET:
+            if arr is None:
+                msg = "Must provide `arr` if `action` is 'set'"
+                raise TypeError(msg)
+            src = np.ascontiguousarray(arr, dtype=np.float64)
+            if src.shape != (ntrees,):
+                msg = f"`arr` must have shape (ntrees,)=({ntrees},), got {src.shape}"
+                raise ValueError(msg)
+            buf[:ntrees] = src
+
+        self._fvsTreeAttr.argtypes = [
+            ct.POINTER(ct.c_char),  # attr name
+            ct.POINTER(ct.c_int),  # number of characters in attr name
+            ct.POINTER(ct.c_char),  # action ('get' or 'set')
+            np.ctypeslib.ndpointer(
+                np.float64, ndim=1, flags=STR_C_CONTIGUOUS
+            ),  # per-tree array
+            ct.POINTER(ct.c_int),  # return code
+        ]
+        self._fvsTreeAttr.restype = None
+
+        rtncode = ct.c_int(0)
+        self._fvsTreeAttr(
+            ct.c_char_p(attr.encode()),
+            ct.c_int(len(attr)),
+            ct.c_char_p(action.encode()),
+            buf,
+            rtncode,
+        )
+        if rtncode.value != 0:
+            if rtncode.value == 1:
+                msg = f"{attr} not found among tree attributes"
+                raise NameError(msg)
+            raise RuntimeError(f"fvsTreeAttr returned code {rtncode.value} for '{attr}'")
+
+        return buf[:ntrees].copy() if action == FvsAttributeAccessor.GET else None
+
+    def tree_table(
+        self, attrs: tuple[str, ...] = ("id", "species", "dbh", "ht", "dg", "htg", "crwdth")
+    ) -> pd.DataFrame:
+        """Read several per-tree attributes into a DataFrame (one row per live tree)."""
+        return pd.DataFrame({a: self.get_tree_attr(a) for a in attrs}, copy=False)
+
+    def add_trees(self, dbh, species, ht, cratio, plot, tpa) -> int:
+        """Add tree records to the engine in memory, via the fvsAddTrees API.
+
+        Loads a stand without a keyword-file database, which avoids the in-process DBS SQLite read
+        that otherwise leaves the example-tree arrays unpopulated and segfaults extree. Call after the
+        engine has read its (database-free) keyword file, then project. All six inputs are equal-length;
+        species and plot are stored as doubles per the API but hold integer indices.
+
+        Args:
+            dbh: DBH per tree (inches). species: FVS species index. ht: total height (ft).
+            cratio: crown ratio (0-100). plot: plot/point number. tpa: trees per acre (expansion).
+        Returns:
+            number of trees added.
+        """
+        n = len(dbh)
+        a_dbh, a_sp, a_ht, a_cr, a_plot, a_tpa = (
+            np.ascontiguousarray(x, dtype=np.float64) for x in (dbh, species, ht, cratio, plot, tpa)
+        )
+        nd = np.ctypeslib.ndpointer(np.float64, ndim=1, flags=STR_C_CONTIGUOUS)
+        self._fvsAddTrees.argtypes = [nd, nd, nd, nd, nd, nd, ct.POINTER(ct.c_int), ct.POINTER(ct.c_int)]
+        self._fvsAddTrees.restype = None
+        ntrees = ct.c_int(n)
+        rtncode = ct.c_int(0)
+        self._fvsAddTrees(a_dbh, a_sp, a_ht, a_cr, a_plot, a_tpa, ct.byref(ntrees), ct.byref(rtncode))
+        if rtncode.value != 0:
+            raise RuntimeError(
+                f"fvsAddTrees returned {rtncode.value} (1 = no room for the trees, or ntrees is zero)"
+            )
+        return n
 
     def apply_calibrated_config(self) -> dict[str, bool]:
         """Apply calibrated parameters from a JSON config file.

@@ -24,7 +24,20 @@
     "refuted": [
       "sn"
     ],
-    "hook_coefficient_file": "config/greg_dg_coefficients_refit_decel.csv"
+    "hook_coefficient_file": "config/greg_dg_coefficients_refit_decel.csv",
+    "confirmed_hook_variants": [
+      "ne",
+      "cs",
+      "ls",
+      "wc",
+      "ie",
+      "ak"
+    ],
+    "refuted_candidates": [
+      "sn",
+      "op"
+    ],
+    "mortality_status": "gompit crown-only beats native NE (log-loss 0.451 vs 0.755); adding a log(DBH) size term improves further (0.434, AUC 0.615) via the extended GOMPSURV (artifact greg_mortality_coefficients_size.csv + gompsurv_size.gitdiff). NOT yet merged to the engine branch: the 6-arg GOMPSURV signature needs all ~19 variant morts.f90 callers updated to pass DBH first (only vls/adk done). The offline-best BGI mortality driver (DBH+climate) is the next extension."
   },
   "variants": {
     "ne": {

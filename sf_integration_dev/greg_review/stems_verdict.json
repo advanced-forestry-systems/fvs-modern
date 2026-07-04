@@ -1,0 +1,48 @@
+{
+  "track": "stems N2|N1 transition contraction/pathology check",
+  "verdict": "NO PATHOLOGY (fitted hazard form)",
+  "fitted_form": "N2=N1*exp(-H*T), H=exp(-5.7877 + 0.2108 lnN1 + 0.0130 topht - 0.2466 rd + 0.1097 lnQMD)",
+  "analytic": {
+    "map": "g(N)=N*exp(-K*N^0.2108*T), K=exp(b0+covars)",
+    "fixed_point": "g(N)<N for all N>0 (survival<1); only equilibrium N*=0 => monotone decline, NO spurious positive floor, NO mean-reversion",
+    "order_preservation": "g increasing for N < 9.8e10 stems/ha => bigger N1 -> bigger N2 across all realistic densities; no order inversion",
+    "density_response": "per-step survival exp(-K N^0.2108 T) strictly DECREASING in N => denser stands thin FASTER (correct self-thinning), driven by POSITIVE lnN1 slope",
+    "contrast_topheight": "top-height log-ratio map had NEGATIVE lnH1 slope -> contraction to a step-dependent positive fixed point (pathology). Stems map has no such fixed point because the *T inside exp() forces survival<1; positive lnN1 slope only steepens decline."
+  },
+  "empirical_frozen_100yr": {
+    "hazard_N400": 98.6,
+    "hazard_N800": 163.4,
+    "hazard_N1500": 253.7,
+    "all_monotone_decline": true
+  },
+  "empirical_coupled_100yr_highsite": {
+    "hazard_N400": 126.0,
+    "hazard_N800": 224.7,
+    "hazard_N1500": 358.4,
+    "all_monotone_decline": true,
+    "denser_thins_faster": true
+  },
+  "annual_mortality_pct": {
+    "N400": 1.6,
+    "N800": 1.85,
+    "N1500": 2.11
+  },
+  "CODE_MISMATCH_BUG": {
+    "severity": "HIGH - separate from contraction question, but a real production defect",
+    "issue": "stand_constraint.py::stand_stems_target implements a SOFTPLUS LOG-RATIO form (N2=N1*exp(-softplus(eta))) that does NOT match the fitted cloglog HAZARD bundle (N2=N1*exp(-exp(eta)*T)).",
+    "consequences": [
+      "No multiplication by T: the per-step mortality intensity is applied identically regardless of step length (5yr vs 10yr vs 20yr steps give same survival fraction). Breaks Garc\u00eda time-scaling / exposure.",
+      "Reads a nonexistent 'ln_years' coefficient from the bundle (bundle folds years into intercept + *T), so it silently contributes 0 and the years signal is dropped entirely.",
+      "softplus(eta) != exp(eta): near the fitted operating point eta~ -3.8, softplus(eta)~0.022 vs exp(eta)~0.022 are close, but they diverge for large |eta|; more importantly the missing *T is the dominant error.",
+      "Empirically the CODE form retains far more stems (N100=293 vs 99 for N0=400 frozen; ~3x too many survivors over 100yr) because it applies one weak per-step reduction with no exposure scaling."
+    ],
+    "recommended_fix": "Replace stand_stems_target body with the bundle's hazard form: H=exp(eta); return N1*exp(-H*years). Drop the ln_years term and the softplus. This matches 76_fit_stand_stems.R exactly and restores correct time-scaling."
+  },
+  "artifacts": [
+    "stems_Nt_trajectories.png",
+    "stems_iter_raw.json",
+    "stems_iter.py",
+    "stems_analytic.py",
+    "stems_verdict.json"
+  ]
+}

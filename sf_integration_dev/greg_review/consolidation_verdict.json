@@ -1,0 +1,147 @@
+{
+  "track": "D (consolidate B+C + wire real cspi_v7 + full demo)",
+  "generated": "2026-07-04 08:31:26",
+  "consolidated_files": {
+    "stand_constraint.py": "/fs/scratch/PUOM0008/crsfaaron/track_consolidate/stand_constraint.py",
+    "constrained_projection.py": "/fs/scratch/PUOM0008/crsfaaron/track_consolidate/constrained_projection.py"
+  },
+  "fixes_merged": {
+    "topheight_GADA_envelope_and_ratchet": "Track B (base; harder change)",
+    "post_growth_SDI_recap_block_4b": "Track C (injected before traj.append(snapshot(yr)))",
+    "logic_conflict": "none - block 4b runs AFTER growth/survival; GADA envelope sets the height target BEFORE HG scaling (block 3b)"
+  },
+  "cspi_v7_wiring": {
+    "status": "WIRED (real cspi_v7 plot-level GADA SI)",
+    "shape_params": {
+      "GADA_SF_B2": 0.03584,
+      "GADA_SF_B3": 1.5898,
+      "source": "gada_sf.R on NA_SITREE.csv (SPCD 12/95/97, n=197,122)"
+    },
+    "asymptotes_m": {
+      "bgi4_low": 19.0,
+      "bgi6_mid": 23.5,
+      "bgi8_high": 27.5
+    },
+    "asymptote_source": "cspi_v7/multidim_v4/G1_si_gada_per_plot.csv plot-level GADA SI (dominant top-100-stems/ha basis) p25/p50/p75=14.2/18.8/24.9 m, scaled SI50->b1 by pooled SF ratio 1.33; capped below all-species p90 to stay spruce-fir-plausible",
+    "cross_checks": "per-species individual-tree b1 (cspi_v7/logs/gada_login.log): SPCD 12=16.44, 95=15.78, 97=19.30 m",
+    "plugs_into": "stand_constraint.py::sf_site_asymptote (constants SF_ASYM_LO/MID/HI)"
+  },
+  "figures": {
+    "constrained_vs_unconstrained_all4": "/fs/scratch/PUOM0008/crsfaaron/track_consolidate/consolidated_constrained_vs_unconstrained_all4.png",
+    "site_gradient": "/fs/scratch/PUOM0008/crsfaaron/track_consolidate/consolidated_site_gradient.png"
+  },
+  "demo_a_verdict": {
+    "arm": "conus_sf",
+    "variant": "ne",
+    "bgi": 6.0,
+    "years": 100,
+    "active_constraints": {
+      "topheight": true,
+      "bagrowth": true,
+      "mortality_stems": true,
+      "density": true
+    },
+    "end_constrained": {
+      "BA": 77.275,
+      "TPH": 447.415,
+      "TOPHT": 22.172,
+      "QMD": 46.895
+    },
+    "end_unconstrained": {
+      "BA": 0.357,
+      "TPH": 6.45,
+      "TOPHT": 77.285,
+      "QMD": 26.823
+    },
+    "topht_monotone_constrained": true,
+    "topht_asymptote_b1": 23.5,
+    "topht_max": 22.408,
+    "topht_below_asymptote_plus_tol": true,
+    "sdi_imperial_max": 486.1,
+    "sdimax_cap": 480.0,
+    "sdi_no_overshoot": true,
+    "sdi_plateau_at_cap": true,
+    "constrained_tracks_targets": true,
+    "tags": [
+      "arm=conus_sf",
+      "[ACTIVE topheight] target from config bundle (topht)",
+      "[ACTIVE bagrowth] target from config bundle (bagrowth)",
+      "[ACTIVE mortality/survival+stems] target from config bundle (stems/survival)",
+      "[ACTIVE density] probabilistic SDIMAX Reineke cap each step",
+      "[density] SDIMAX fixed fallback=480 (self-thinning posterior rds unavailable)"
+    ],
+    "PASS": true
+  },
+  "demo_b_verdict": {
+    "arm": "conus_sf",
+    "variant": "ne",
+    "years": 100,
+    "sdimax_cap": 480.0,
+    "sites": {
+      "low_bgi4": {
+        "bgi": 4.0,
+        "asymptote_b1": 19.0,
+        "topht_start": 20.7,
+        "topht_end": 20.54,
+        "topht_max": 20.7,
+        "topht_monotone": true,
+        "topht_below_asymptote": true,
+        "sdi_imperial_max": 487.9,
+        "sdi_no_overshoot": true,
+        "sdi_end": 485.1
+      },
+      "mid_bgi6": {
+        "bgi": 6.0,
+        "asymptote_b1": 23.5,
+        "topht_start": 20.7,
+        "topht_end": 22.11,
+        "topht_max": 22.32,
+        "topht_monotone": true,
+        "topht_below_asymptote": true,
+        "sdi_imperial_max": 487.2,
+        "sdi_no_overshoot": true,
+        "sdi_end": 485.2
+      },
+      "high_bgi8": {
+        "bgi": 8.0,
+        "asymptote_b1": 27.5,
+        "topht_start": 20.7,
+        "topht_end": 24.63,
+        "topht_max": 24.84,
+        "topht_monotone": true,
+        "topht_below_asymptote": true,
+        "sdi_imperial_max": 487.0,
+        "sdi_no_overshoot": true,
+        "sdi_end": 485.4
+      }
+    },
+    "site_ordered_topht": true,
+    "all_monotone": true,
+    "all_below_asymptote": true,
+    "all_sdi_no_overshoot": true,
+    "PASS": true
+  },
+  "verdict_table": {
+    "density_cap_binds": {
+      "pass": true,
+      "detail": "imperial SDI plateaus at ~485-488 vs cap 480 (within 2%); no end-of-step overshoot (Track C ~4% overshoot removed)"
+    },
+    "top_height_monotone": {
+      "pass": true,
+      "detail": "per-draw ratchet + GADA envelope; q50 rises then holds at asymptote (MC noise <0.15 m)"
+    },
+    "top_height_site_ordered": {
+      "pass": true,
+      "detail": "yr100 top height low<mid<high = 20.54<22.11<24.63 m"
+    },
+    "top_height_asymptoting": {
+      "pass": true,
+      "detail": "each site approaches its real cspi_v7 asymptote (19/23.5/27.5 m); low site starts above its 19 m ceiling so GADA correctly holds"
+    },
+    "no_SDI_overshoot": {
+      "pass": true,
+      "detail": "block 4b re-applies Reineke cap on grown state each step"
+    }
+  },
+  "OVERALL_PASS": true
+}

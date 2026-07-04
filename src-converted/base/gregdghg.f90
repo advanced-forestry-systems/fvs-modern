@@ -10,9 +10,21 @@
 !  Activation (no recompile to toggle): env vars read once in GREGLOADDG:
 !     FVS_GREGDG        1/on/true to enable Greg DG substitution.
 !     FVS_GREGDG_COEF   path to greg_dg_coefficients.csv (header + SPCD,n,B0..B6).
+!     FVS_GREG_CONFDIR  dir holding the config CSVs; used to resolve DGDRIVER-selected
+!                       files. Default '/users/PUOM0008/crsfaaron/wt-dgdriver/config'.
 !     FVS_GREG_EMT      per-stand extreme min temperature (deg C).
 !     FVS_GREG_TD       per-stand temperature difference MWMT-MCMT (deg C).
 !     FVS_GREG_ELEV     stand elevation (feet); if unset, 0.
+!
+!  DGDRIVER keyword (common /GREGKW/ IDGDRV, GREGKW.f90) selects the coefficient
+!  file directly, so a keyword-only run needs no FVS_GREGDG / FVS_GREGDG_COEF:
+!     DGDRIVER 1 -> <confdir>/greg_dg_coefficients.csv       (deployed)
+!     DGDRIVER 2 -> <confdir>/greg_dg_coefficients_refit.csv (refit on our data)
+!  A mapped IDGDRV both turns the hook on (LGREGDG) and picks the file; it takes
+!  precedence over FVS_GREGDG_COEF. Unmapped/unset IDGDRV falls back to the env
+!  var behaviour. NOTE: the 8-column driver-family files (cspi/bgi/esi/elev/emt)
+!  are NOT loadable by this 9-column reader, so codes other than 1/2 are not yet
+!  wired here (downstream / out of scope).
 !==============================================================================
 SUBROUTINE GREGLOADDG
 IMPLICIT NONE
@@ -25,16 +37,24 @@ INCLUDE 'GREGKW.f90'
 INTEGER, PARAMETER :: MXG = 600
 INTEGER GSPCD(MXG)
 REAL    TB(MXG,7)
-CHARACTER(LEN=256) CVAL, CPATH
+CHARACTER(LEN=256) CVAL, CPATH, CDIR
+LOGICAL LKWSEL
 CHARACTER(LEN=512) LINE
 INTEGER J, NG, IOS, U, IFIA, NN, ISPC
 REAL B0,B1,B2,B3,B4,B5,B6
 LOGICAL, SAVE :: LDONE = .FALSE.
 !
 IF (LDONE) RETURN
+!  LKWSEL: did the DGDRIVER keyword set a code we map to a loadable coef file?
+!  Codes 1 (deployed) and 2 (refit) are the two engine-loadable 9-col files.
+LKWSEL = (IDGDRV.EQ.1 .OR. IDGDRV.EQ.2)
 CALL GETENV('FVS_GREGDG', CVAL)
-IF (CVAL.EQ.' ' .OR. CVAL(1:1).EQ.'0' .OR. CVAL(1:1).EQ.'n' .OR. CVAL(1:1).EQ.'N') THEN
-  LGREGDG = .FALSE.; RETURN
+!  Enable if either the env toggle is on OR a mapped DGDRIVER code was given.
+!  This makes DGDRIVER self-contained: a keyword-only run needs no env var.
+IF (.NOT.LKWSEL) THEN
+  IF (CVAL.EQ.' ' .OR. CVAL(1:1).EQ.'0' .OR. CVAL(1:1).EQ.'n' .OR. CVAL(1:1).EQ.'N') THEN
+    LGREGDG = .FALSE.; RETURN
+  ENDIF
 ENDIF
 LGREGDG = .TRUE.
 LDONE = .TRUE.
@@ -44,9 +64,27 @@ CALL GETENV('FVS_GREG_EMT', CVAL); IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GEMT
 CALL GETENV('FVS_GREG_TD',  CVAL); IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GTD
 CALL GETENV('FVS_GREG_ELEV',CVAL); IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GELEV
 !
-CALL GETENV('FVS_GREGDG_COEF', CPATH)
+!  ---- Coefficient-file resolution ------------------------------------------
+!  Precedence: a mapped DGDRIVER code selects the file (keyword self-contained);
+!  otherwise fall back to FVS_GREGDG_COEF (the original env-var behaviour).
+CPATH = ' '
+IF (LKWSEL) THEN
+  !  Resolve config dir robustly: FVS_GREG_CONFDIR if set, else a known abs dir.
+  CALL GETENV('FVS_GREG_CONFDIR', CDIR)
+  IF (CDIR.EQ.' ') CDIR = '/users/PUOM0008/crsfaaron/wt-dgdriver/config'
+  !  DGDRIVER code -> coefficient filename mapping.
+  IF (IDGDRV.EQ.1) THEN
+    CPATH = TRIM(CDIR)//'/greg_dg_coefficients.csv'        ! deployed
+  ELSE IF (IDGDRV.EQ.2) THEN
+    CPATH = TRIM(CDIR)//'/greg_dg_coefficients_refit.csv'  ! refit on our data
+  ENDIF
+  WRITE(JOSTND,*) 'GREGDG: DGDRIVER code ', IDGDRV, ' selected ', TRIM(CPATH)
+ELSE
+  CALL GETENV('FVS_GREGDG_COEF', CPATH)
+ENDIF
 IF (CPATH.EQ.' ') THEN
-  WRITE(JOSTND,*) 'GREGDG: FVS_GREGDG set but FVS_GREGDG_COEF empty; NOT enabled.'
+  WRITE(JOSTND,*) 'GREGDG: no coefficient file (DGDRIVER unset/unmapped and ', &
+       'FVS_GREGDG_COEF empty); NOT enabled.'
   LGREGDG = .FALSE.; RETURN
 ENDIF
 U = 68

@@ -761,12 +761,17 @@ def stand_stems_target(bundle, n1, years, top_ht=None, rd=None, ln_qmd=None,
                        L1=None):
     """
     Surviving-stems N2 target from the fitted state-space stem-transition bundle
-    (76_fit_stand_stems.R): log-ratio model s = ln(N2/N1) (<= 0, a survival
-    fraction) on ln(N1), ln(years), top height, relative density:
-        N2 = N1 * exp(-softplus(eta_s)),  eta_s = b0 + b_lnN1*ln(N1)
-             + b_lnyr*ln(years) + b_topht*top_ht + b_rd*rd + b_lnqmd*ln_qmd + z_L1
-    The softplus keeps N2 <= N1 (stems only decline absent ingrowth, which is the
-    survival channel this constraint governs). Missing terms contribute 0.
+    (76_fit_stand_stems.R). The fitted model is a CLOGLOG EXPOSURE HAZARD, identical
+    in scale to 71_fit_stand_survival.R:
+
+        eta_h  = b0 + b_lnN1*ln(N1) + b_topht*top_ht + b_rd*rd + b_lnqmd*ln_qmd + z_L1
+        H_stand = exp(eta_h)                 # stand log-hazard, intercept already on raw log(YEARS)
+        S(T)    = exp(-H_stand * years)      # survival over the interval (exposure)
+        N2      = N1 * S(T)                   # 0 < N2 <= N1 (survivors only; ingrowth separate)
+
+    Time enters ONLY through the *years multiplication inside S(T); the fit folded
+    the centered log(YEARS)-3.9 offset back into the intercept, so there is NO
+    ln_years fixed effect. Missing covariate terms contribute 0.
     """
     if not bundle or float(years) <= 0 or float(n1) <= 0:
         return float(n1)
@@ -781,8 +786,7 @@ def stand_stems_target(bundle, n1, years, top_ht=None, rd=None, ln_qmd=None,
         except (TypeError, ValueError):
             return 0.0
 
-    eta = (_m("Intercept") + _m("ln_n1") * math.log(float(n1))
-           + _m("ln_years") * math.log(float(years)))
+    eta = _m("Intercept") + _m("ln_n1") * math.log(float(n1))
     if top_ht is not None:
         eta += _m("top_ht") * float(top_ht)
     if rd is not None:
@@ -794,10 +798,9 @@ def stand_stems_target(bundle, n1, years, top_ht=None, rd=None, ln_qmd=None,
         lut = {str(lv): float(m) for lv, m in zip(re.get("level", []),
                                                   re.get("mean", []))}
         eta += lut.get(str(L1), 0.0)
-    # softplus mortality intensity -> guarantees 0 < N2 <= N1
-    mort_int = math.log1p(math.exp(min(eta, 30.0)))
-    return float(n1) * math.exp(-mort_int)
-
+    # cloglog exposure hazard -> survival over the interval; guarantees 0 < N2 <= N1
+    H = math.exp(min(eta, 30.0))
+    return float(n1) * math.exp(-H * float(years))
 
 # =============================================================================
 # self-test

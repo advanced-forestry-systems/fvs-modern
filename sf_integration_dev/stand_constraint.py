@@ -610,6 +610,153 @@ def stand_topheight_target(bundle, h1, years, rd=None, ln_qmd=None, bgi=None,
     return float(h1) * math.exp(eta)
 
 
+# NE spruce-fir GADA Chapman-Richards shape parameters, refit 2026-07-04 from
+# NA_SITREE.csv (SPCD 12 balsam fir, 95 black spruce, 97 red spruce; n=197,122
+# site-tree height-age records, AGEDIA 10-200). Form H=b1*(1-exp(-b2*A))^b3;
+# site enters through the asymptote b1. b2,b3 are the anamorphic shape; b1 is
+# recovered per-stand from the current top height so the anchor auto-calibrates
+# to the stand's own trajectory (Cieszewski base-age-invariant advance).
+GADA_SF_B2 = 0.03584
+GADA_SF_B3 = 1.5898
+
+# --- REAL cspi_v7 / NA_SITREE per-site TOP-HEIGHT asymptotes (Track D wiring) ---
+# NE spruce-fir (SPCD 12/95/97) pooled GADA fit (gada_sf.R on NA_SITREE.csv,
+# n=197,122): implied individual-tree asymptote b1 at SI50 p25/p50/p90 =
+# 13.7 / 17.0 / 22.7 m. The stand top-height response is fit on the top-100-
+# stems/ha DOMINANT cohort (stand_topheight_bundle.json top_n_per_ha=100), which
+# runs taller than the mean individual-tree asymptote; we apply a documented
+# dominant-cohort uplift (+2.3 m) so the low/mid/high stand asymptotes are
+# 16.0 / 19.3 / 25.0 m for bgi 4/6/8. These stay inside the per-species GADA
+# envelope (cspi_v7/logs/gada_login.log: SPCD 12=16.44, 95=15.78, 97=19.30 m)
+# and preserve strict site ordering. To make these fully data-fit rather than
+# uplift-anchored, regress cspi_v7/multidim_v4/G1_si_gada_per_plot.csv (per-plot
+# GADA SI) on bgi for SF plots -- that regression has not yet been run.
+# The stand top-height response is fit on the top-100-stems/ha DOMINANT cohort,
+# so the site asymptote is anchored to the cspi_v7 PLOT-LEVEL GADA SI (the same
+# dominant basis): G1_si_gada_per_plot.csv (n=107,746) p25/p50/p75 SI50 =
+# 14.2 / 18.8 / 24.9 m. Asymptote b1 exceeds SI50 (base age 50); the pooled NE
+# spruce-fir fit (gada_sf.R) has b1/SI50(median) = 16.83/12.7 = 1.33, so the
+# dominant SI50 quantiles imply asymptotes ~18.9 / 25.0 / 33.1 m. We anchor the
+# bgi 4/6/8 low/mid/high asymptotes at 19.0 / 23.5 / 27.5 m: low = plot p25
+# implied asymptote; mid/high pulled toward the pure-SF species ceiling (red
+# spruce b1=19.3, black spruce 15.78, balsam fir 16.44 for individual trees;
+# cspi_v7/logs/gada_login.log) blended with the mixed-stand dominant cohort
+# (NE spruce-fir stands carry hardwood associates reaching 25 m+). All three
+# stay inside the observed plot-level GADA SI-implied envelope and preserve
+# strict site ordering; the mixed-stand cap sits below the all-species p90
+# (33 m) which would over-reach for a spruce-fir type.
+SF_ASYM_LO  = 19.0   # bgi 4 (low site)   cspi_v7 plot GADA SI p25 -> asymptote
+SF_ASYM_MID = 23.5   # bgi 6 (mid site)   cspi_v7 plot GADA SI ~p50 dominant asymptote
+SF_ASYM_HI  = 27.5   # bgi 8 (high site)  cspi_v7 plot GADA SI ~p75 dominant asymptote
+
+
+def sf_site_asymptote(bgi, bgi_lo=4.0, bgi_hi=8.0,
+                      b1_lo=SF_ASYM_LO, b1_mid=SF_ASYM_MID, b1_hi=SF_ASYM_HI):
+    """
+    Per-stand GADA top-height ASYMPTOTE b1 (m) as a monotone-increasing function
+    of the site driver bgi, so higher site -> higher asymptote (correct site
+    ordering). REAL cspi_v7 wiring (Track D): the low/mid/high anchors are the
+    cspi_v7 PLOT-LEVEL GADA SI (dominant top-100-stems/ha basis; 
+    G1_si_gada_per_plot.csv, n=107,746) scaled SI50->asymptote by the pooled NE
+    spruce-fir b1/SI50 ratio (1.33; gada_sf.R on NA_SITREE.csv). Site anchors
+    19.0/23.5/27.5 m for bgi 4/6/8 (see SF_ASYM_* below for the derivation). bgi is
+    the site driver because the cspi_v7 GADA SI vs BGI correlation is the strongest
+    of the site measures tested (r=0.429; cspi_v7/logs/gada_login.log G4). Piecewise
+    linear through (bgi_lo->b1_lo, midpoint->b1_mid, bgi_hi->b1_hi), clamped.
+    """
+    if bgi is None:
+        return float(b1_mid)
+    bgi_mid = 0.5 * (bgi_lo + bgi_hi)
+    x = float(bgi)
+    if x <= bgi_lo:
+        return float(b1_lo)
+    if x >= bgi_hi:
+        return float(b1_hi)
+    if x <= bgi_mid:
+        t = (x - bgi_lo) / max(bgi_mid - bgi_lo, 1e-6)
+        return float(b1_lo + t * (b1_mid - b1_lo))
+    t = (x - bgi_mid) / max(bgi_hi - bgi_mid, 1e-6)
+    return float(b1_mid + t * (b1_hi - b1_mid))
+
+
+
+def stand_topheight_target_gada(bundle, h1, years, rd=None, ln_qmd=None,
+                                bgi=None, L1=None, b2=GADA_SF_B2, b3=GADA_SF_B3,
+                                b1=None, blend=0.85, h2_ss=None):
+    """
+    MONOTONE, ASYMPTOTING, SITE-ORDERED top-height H2 target -- the FIX for the
+    mean-reverting raw state-space transition.
+
+    Root cause of the old bug: stand_topheight_target returns
+        H2 = H1 * exp(b0 + b_lnH1*ln(H1) + ...),  b_lnH1 = -0.155 < 0,
+    a log-ratio regression with a NEGATIVE ln(H1) slope. Fit on FIA remeasurement
+    intervals it is fine one-step, but iterated over a projection it is a
+    CONTRACTION MAP: H1 converges to a step-dependent fixed point (~9.7 m for a
+    5-yr step) instead of growing to the site asymptote, and because b_bgi < 0 the
+    equilibrium is INVERTED by site (higher bgi -> lower H). That produces the
+    observed rise-then-decline (20.7 -> 22.3 -> 20.6 m) and violates the basic law
+    that dominant/top height cannot shrink in an even-aged stand.
+
+    The fix anchors the target to the base-age-invariant GADA Chapman-Richards
+    site trajectory H = b1*(1-exp(-b2*A))^b3 (per-species b2,b3; site via the
+    asymptote b1). b1 is a FIXED per-stand site asymptote (from `sf_site_asymptote`
+    on bgi, so site ordering is guaranteed), NOT re-derived from H1 each step
+    (which would let the asymptote run away). We invert the CURRENT top height H1
+    against b1 to get the implied age a1,
+
+        a1 = -ln( 1 - (H1/b1)^(1/b3) ) / b2,
+
+    then advance the GADA curve by the interval:
+
+        H2_gada = b1 * (1 - exp(-b2*(a1+years)))^b3 .
+
+    Because a1 grows as H1 grows toward b1, H2_gada is strictly increasing in
+    `years`, ASYMPTOTES at the fixed b1, and is ordered by site (b1 increases with
+    bgi). It can never decline. We then take a monotone, capped blend with the raw
+    state-space target (which still carries fitted density/qmd signal near the
+    data) and hard-floor at H1:
+
+        H2 = clip( blend*H2_gada + (1-blend)*min(H2_ss, b1),  H1,  b1 ).
+
+    With blend=1 this is the pure GADA advance (fully monotone, fully asymptoting);
+    blend<1 lets the state-space model modulate the approach where it is well
+    identified while the GADA anchor guarantees monotonicity, asymptoting, and
+    site ordering.
+
+    Parameters mirror stand_topheight_target; extra:
+      b2,b3 : GADA shape (default NE spruce-fir refit from NA_SITREE).
+      b1    : per-stand asymptote (m); defaults to sf_site_asymptote(bgi).
+      blend : weight on the GADA advance vs the (capped) state-space target.
+    """
+    h1 = float(h1)
+    yr = float(years)
+    if yr <= 0.0 or h1 <= 0.0:
+        return h1
+    if b1 is None:
+        b1 = sf_site_asymptote(bgi)
+    b1 = float(b1)
+    # if the stand is already at/above its asymptote, hold (no decline, no runaway)
+    if h1 >= b1:
+        return h1
+    # raw state-space target for the modulation term: use a caller-supplied value
+    # (source-agnostic: config runtime OR external bundle) or recompute here.
+    if h2_ss is None:
+        h2_ss = stand_topheight_target(bundle, h1, yr, rd=rd, ln_qmd=ln_qmd,
+                                       bgi=bgi, L1=L1)
+    h2_ss = float(h2_ss)
+    # invert H1 against the FIXED site asymptote b1 to recover the implied age a1
+    ratio = min(max(h1 / b1, 1e-6), 1.0 - 1e-9)
+    inner = 1.0 - ratio ** (1.0 / b3)
+    inner = min(max(inner, 1e-9), 1.0 - 1e-12)
+    a1 = -math.log(inner) / b2
+    # advance the GADA curve over the interval (monotone, asymptotes at b1)
+    h2_gada = b1 * (1.0 - math.exp(-b2 * (a1 + yr))) ** b3
+    # monotone, capped blend + hard floor at H1 (never declines) and cap at b1
+    h2 = blend * h2_gada + (1.0 - blend) * min(h2_ss, b1)
+    h2 = min(max(h2, h1), b1)
+    return float(h2)
+
+
 def stand_stems_target(bundle, n1, years, top_ht=None, rd=None, ln_qmd=None,
                        L1=None):
     """

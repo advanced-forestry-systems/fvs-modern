@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
 constrained_projection.py -- CAPSTONE constrained end-to-end projection harness.
+  [Track D consolidated: GADA top-height envelope + monotone ratchet (Track B)
+   AND post-growth SDI re-cap block 4b (Track C) both active.]
 
 Ties the whole three-arm CONUS design together: a chosen arm's tree-level
 increments + the shared Bayesian modifier layer + all four Garcia-style
@@ -359,6 +361,15 @@ def project(L, arm, trees0, eco, drivers=None, years=100, step=5, n_draws=400,
     traj = [snapshot(0)]
     T = float(step)
 
+    # Track B: per-draw monotone RATCHET on top height. The top-height target is
+    # now monotone (GADA anchor), but the top-100-stems/ha COHORT COMPOSITION can
+    # still drift down slightly as the SDIMAX cap / mortality reshuffle which
+    # stems fall in the top cohort. Flooring the target at the running max top
+    # height per draw guarantees dominant/top height never declines (an even-aged
+    # even-aged stand cannot lose top height). Only engaged with the GADA anchor.
+    topht_ratchet = np.array([SC.stand_top_height(ht[d], tpa[d], 100.0)[0]
+                              for d in range(n_draws)])
+
     n_steps = int(round(years / step))
     for s in range(n_steps):
         yr = (s + 1) * step
@@ -450,7 +461,10 @@ def project(L, arm, trees0, eco, drivers=None, years=100, step=5, n_draws=400,
 
             # (3b) TOP HEIGHT: scale tree HG so stand top height tracks H2|H1 target
             if active["topheight"]:
+                _gada_on = os.environ.get("TOPHT_GADA_ANCHOR", "1") == "1"
                 for d in range(n_draws):
+                    # raw H2|H1 state-space target (from config runtime OR external
+                    # bundle -- both carry the SAME mean-reverting coefficients)
                     if src_th == "config":
                         tgt = L.stand_topheight_target(topht_now[d], T, rd=float(rd[d]),
                                                        ln_qmd=math.log(max(qmd[d], 0.1)),
@@ -462,10 +476,28 @@ def project(L, arm, trees0, eco, drivers=None, years=100, step=5, n_draws=400,
                                                         bgi=bgi, L1=L1)
                     if tgt is None:
                         continue
+                    # FIX (Track B): wrap the raw target in the GADA monotone,
+                    # asymptoting, site-ordered envelope. The raw H2|H1 apply is a
+                    # contraction map (b_lnH1=-0.155<0) that mean-reverts top height
+                    # to a low step-dependent fixed point and inverts site order
+                    # (b_bgi<0). The envelope anchors to the base-age-invariant
+                    # Chapman-Richards site curve so top height can never decline
+                    # and asymptotes at the per-site b1. TOPHT_GADA_ANCHOR=0 -> off
+                    # (reproduces the old declining behaviour).
+                    if _gada_on:
+                        tgt = SC.stand_topheight_target_gada(
+                            th, topht_now[d], T, bgi=bgi, h2_ss=float(tgt))
                     tgt = tgt * math.exp(th_eps[d])   # stand-target posterior uncertainty
+                    if _gada_on:
+                        # monotone ratchet: never target below the running max top
+                        # height (cohort-composition drift guard, see above)
+                        tgt = max(float(tgt), float(topht_ratchet[d]))
                     r = SC.stand_constrain_topheight(ht[d], htg[:, d] / T, tgt,
                                                      top_n_per_ha=100.0, tpa=tpa[d], T_years=T)
                     htg[:, d] = r["htg_prime"] * T
+                    if _gada_on:
+                        topht_ratchet[d] = max(float(topht_ratchet[d]),
+                                               float(r["top_ht_end"]))
 
             # (3c) BA GROWTH: scale tree dg so summed BA increment matches target
             if active["bagrowth"]:
@@ -525,6 +557,22 @@ def project(L, arm, trees0, eco, drivers=None, years=100, step=5, n_draws=400,
         ht = ht + htg.T                                # (D,n)
         # crown recession (mild, keeps CR realistic as stand closes)
         cr = np.clip(cr - 0.01 * (step / 5.0), 0.05, 0.95)
+
+        # ---- (4b) FIX (Track C): POST-GROWTH density-cap re-application ----
+        # After DBH growth + survival, QMD has risen so the stand SDI can drift
+        # back above SDIMAX within the step. Re-apply the Reineke cap on the
+        # GROWN state so END-OF-STEP SDI <= SDIMAX (removes the ~4% within-step
+        # rescale slack found in Track C). One pass suffices: re-scaling TPA does
+        # not change QMD, so SDI is linear in TPA and the single ratio pins it to
+        # the cap exactly. Runs AFTER growth/survival; the GADA top-height
+        # envelope (block 3b) already set the height target before HG scaling, so
+        # there is no ordering conflict between the two fixes.
+        if constrained and active.get("density", False):
+            sdi_post = _imperial_sdi(dbh, tpa)          # (D,) grown-state imperial SDI
+            for d in range(n_draws):
+                s_d = float(sdi_post[d])
+                if s_d > sdimax[d] and s_d > 0:
+                    tpa[d] *= sdimax[d] / s_d
 
         traj.append(snapshot(yr))
 

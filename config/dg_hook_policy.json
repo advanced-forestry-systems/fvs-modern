@@ -12,20 +12,19 @@
     "basis": "in-engine per-variant native-bias screen (groups 1-3, 2026-06 to 2026-07)",
     "native_bias_note": "native_bias is the direction/magnitude of native FVS DG bias from the screen. Where the screen recorded a signed under-prediction that drove a HOOK decision it is summarized qualitatively as 'under-predicts'; a specific reconciled numeric value was not preserved in a single committed table, so the numeric field is left null and the qualitative basis is authoritative.",
     "backward_compatible": "Emitting these keywords is opt-in. generate_keywords(apply_dg_hook_policy=True) or dgdriver_keyword() must be called explicitly; default generate_keywords() behavior and the v2026.07-calibrated tag are unaffected.",
-    "bakuzis_caveat": "Bakuzis realism gate FLAG (2026-07-04): the DG hook runs away in DBH over long-term projection (QMD 1.6-2.4x native at 200yr, 28-50 in) because the annual increment lacks a max-size/age asymptote; native DG carries the COR calibration that plateaus. VALIDATED for short remeasurement-interval prediction ONLY. Add a DG size/age deceleration (or cumulative DG cap) before enabling the hook for long-term/multi-century projection.",
+    "bakuzis_caveat": "RESOLVED 2026-07-04: a logistic size-deceleration was added to GREGDGV (onset at 85% of a per-species DBHMAX from FIA p99). Long-term QMD now plateaus inside the native-plausible band (19-31 in at 200yr, was 28-50) with site ordering/monotonicity intact, and short-interval accuracy is preserved (NE RMSE 0.2135 vs 0.2123). Use the decel coefficient set config/greg_dg_coefficients_refit_decel.csv for the hook. Both the short and long horizon are now validated.",
     "hook_variants_confirmed": [
       "ne",
       "cs",
       "ls",
       "wc",
-      "ie"
-    ],
-    "hook_variants_provisional": [
+      "ie",
       "ak"
     ],
     "refuted": [
       "sn"
-    ]
+    ],
+    "hook_coefficient_file": "config/greg_dg_coefficients_refit_decel.csv"
   },
   "variants": {
     "ne": {

@@ -42,6 +42,9 @@ INCLUDE 'PDEN.f90'
 !
 !
 INCLUDE 'VARCOM.f90'
+INCLUDE 'GREGMC.f90'
+REAL DGGD,GGINC,GGBARK,GGDIAGR,GGDDS
+INTEGER IGYR
 !
 !
 !OMMONS
@@ -242,6 +245,9 @@ ENDIF
 
 DG5 = 0
 !----------
+!  Greg DG: lazy-load coefficients/climate once (no-op unless FVS_GREGDG set)
+CALL GREGLOADDG
+!----------
 !  BEGIN SPECIES LOOP.  ASSIGN VARIABLES WHICH ARE SPECIES
 !  DEPENDENT
 !----------
@@ -368,6 +374,19 @@ ENDIF
 IF(DDS.LT.-9.21) DDS=-9.21
 !
 WK2(I)=DDS
+!  --- Greg DG substitution: override native WK2 for covered species ---
+IF (LGREGDG .AND. GHAVE_DG(ISPC)) THEN
+  DGGD = DIAM(I)
+  DO IGYR = 1, 10
+    CALL GREGDGV(ISPC, DGGD, FLOAT(ICR(I))/100.0, HT(I), BAL, GELEV, GEMT, GGINC)
+    DGGD = DGGD + GGINC
+  END DO
+  GGBARK = BRATIO(ISPC, DGGD, HT(I))
+  GGDIAGR = (DGGD - DIAM(I)) * GGBARK
+  GGDDS = GGDIAGR * (2.0*DIAM(I)*GGBARK + GGDIAGR)
+  IF (GGDDS .LT. 1.0E-6) GGDDS = 1.0E-6
+  WK2(I) = ALOG(GGDDS)
+ENDIF
 !----------
 !  END OF TREE LOOP.  PRINT DEBUG INFO IF DESIRED.
 !----------

@@ -414,6 +414,84 @@ class FvsConfigLoader:
             )
         return cmap[drv]
 
+    # =========================================================================
+    # Per-variant DG native-hook policy (DGDRIVER)
+    # =========================================================================
+    # Source of truth: config/dg_hook_policy.json. Decided from an in-engine
+    # per-variant native-bias screen. Enable the Greg diameter-growth hook (with
+    # the REFIT coefficient set, DGDRIVER code 2) only where native FVS DG
+    # under-predicts; keep native FVS DG (no DGDRIVER keyword) elsewhere. The
+    # keyword is parsed engine-side (initre.f90 option 149 -> IDGDRV; gregdghg.f90
+    # maps code 2 -> config/greg_dg_coefficients_refit.csv). This is opt-in and
+    # backward compatible: nothing here changes runtime DG behavior unless a run
+    # explicitly emits the keyword via generate_keywords(apply_dg_hook_policy=True)
+    # or the dgdriver_keyword() helper.
+
+    _DG_HOOK_POLICY_FILE = "dg_hook_policy.json"
+    _dg_hook_policy_cache: dict | None = None
+
+    @classmethod
+    def load_dg_hook_policy_table(cls, config_dir=None) -> dict:
+        """Load and cache the full per-variant DG hook policy table.
+
+        Returns the parsed dg_hook_policy.json (keys: '_meta', 'variants').
+        """
+        cdir = Path(config_dir) if config_dir is not None else cls._CONFIG_DIR
+        path = cdir / cls._DG_HOOK_POLICY_FILE
+        if cls._dg_hook_policy_cache is None or config_dir is not None:
+            with open(path) as f:
+                table = json.load(f)
+            if config_dir is None:
+                cls._dg_hook_policy_cache = table
+            return table
+        return cls._dg_hook_policy_cache
+
+    def dg_hook_policy(self, variant: str | None = None) -> dict:
+        """Return the DG hook policy dict for a variant.
+
+        Args:
+            variant: FVS variant code (e.g. 'ne'). Defaults to this loader's
+                own variant.
+
+        Returns:
+            Dict with keys: hook (bool), dgdriver_code (2 for hook / None for
+            native), classification ('HOOK'/'NATIVE'/'DEFER'), basis (str),
+            native_bias (value or None), note (str).
+
+        Raises:
+            KeyError if the variant is not in the policy table.
+        """
+        v = (variant or self.variant).lower()
+        table = self.load_dg_hook_policy_table(self._config_dir)
+        variants = table.get("variants", {})
+        if v not in variants:
+            raise KeyError(
+                f"variant '{v}' not in DG hook policy table; "
+                f"have: {sorted(variants.keys())}"
+            )
+        return variants[v]
+
+    def dgdriver_keyword(self, variant: str | None = None) -> str | None:
+        """Return the FVS DGDRIVER keyword line for a variant per policy.
+
+        HOOK variants -> the keyword string that enables the refit Greg DG hook
+        (DGDRIVER code 2). NATIVE and DEFER variants -> None (emit nothing;
+        native FVS DG is used).
+
+        The keyword is fixed-format: keyword left-justified to 10 columns, the
+        numeric field in the next 10-column field. A keyword-file builder
+        appends the returned string (when not None) to the .key file.
+        """
+        pol = self.dg_hook_policy(variant)
+        if not pol.get("hook"):
+            return None
+        code = pol.get("dgdriver_code")
+        if code is None:
+            return None
+        # Fixed 10-col keyword + 10-col integer field (matches FVS keyword parser,
+        # e.g. initre.f90 option 149 reads ARRAY(1) from the first field).
+        return "%-10s%10d" % ("DGDRIVER", int(code))
+
     def get_conus_sf_block(self, component: str) -> dict:
         """Raw categories_conus_sf.{component} block, or raise KeyError."""
         sf = self.config.get("categories_conus_sf", {})
@@ -678,7 +756,8 @@ class FvsConfigLoader:
     # Keyfile Keyword Generation (for microfvs or standalone FVS)
     # =========================================================================
 
-    def generate_keywords(self, include_comments: bool = True) -> str:
+    def generate_keywords(self, include_comments: bool = True,
+                          apply_dg_hook_policy: bool = False) -> str:
         """Generate FVS keyword block from the calibrated configuration.
 
         These keywords can be appended to any FVS keyfile to apply the
@@ -686,6 +765,11 @@ class FvsConfigLoader:
 
         Args:
             include_comments: Whether to include explanatory comments
+            apply_dg_hook_policy: Opt-in. When True, emit the per-variant
+                DGDRIVER keyword from config/dg_hook_policy.json (DGDRIVER 2
+                for HOOK variants; nothing for NATIVE/DEFER). Default False
+                keeps existing behavior and the v2026.07-calibrated tag
+                unaffected.
 
         Returns:
             String of FVS keywords ready to insert into a .key file
@@ -757,6 +841,20 @@ class FvsConfigLoader:
             hg_mult = self._compute_height_multipliers(cats)
         if hg_mult is not None:
             lines.append(self._format_htgmult_keywords(hg_mult, include_comments))
+
+        # Per-variant DG native-hook policy (opt-in, backward compatible).
+        # HOOK variants get 'DGDRIVER 2' (refit Greg DG coefficients);
+        # NATIVE/DEFER variants emit nothing and use native FVS DG.
+        if apply_dg_hook_policy:
+            dg_kw = self.dgdriver_keyword()
+            if dg_kw is not None:
+                if include_comments:
+                    pol = self.dg_hook_policy()
+                    lines.append(
+                        f"!! DG hook policy: {pol.get('basis','')} "
+                        f"(class {pol.get('classification','')})"
+                    )
+                lines.append(dg_kw)
 
         return "\n".join(lines)
 

@@ -44,11 +44,11 @@ INCLUDE 'GOMPMC.f90'
 !
 INTEGER, PARAMETER :: MXG = 600
 INTEGER GSPCD(MXG)
-REAL    TB(MXG,5)
+REAL    TB(MXG,7)
 CHARACTER(LEN=256) CVAL, CPATH
 CHARACTER(LEN=512) LINE
 INTEGER I, J, NG, IOS, U, IFIA, NN, ISPC
-REAL B0,B1,B2,B3,B4
+REAL B0,B1,B2,B3,B4,B5,B6
 LOGICAL, SAVE :: LDONE = .FALSE.
 LOGICAL LENABLE
 !
@@ -65,12 +65,19 @@ IF (CVAL(1:1).EQ.'0' .OR. CVAL(1:1).EQ.'n' .OR. CVAL(1:1).EQ.'N' &
 IF (.NOT.(LENABLE .OR. LGOMPKW)) RETURN
 LDONE = .TRUE.
 !
+! per-stand standardized productivity/climate driver (BGI). Read once per run;
+! for the A/B each stand is a separate FVS invocation so FVS_GOMP_BGI is set per
+! stand. Absent -> 0.0 and the b6*BGI term is inert (backward compatible).
+GBGI = 0.0
+CALL GETENV('FVS_GOMP_BGI', CVAL)
+IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GBGI
+!
 LGOMP = .FALSE.
 NGOMP = 0
 DO ISPC=1,MAXSP
   GHAVE(ISPC) = .FALSE.
   GGRP(ISPC)  = 16
-  DO J=1,5
+  DO J=1,7
     GB(ISPC,J) = 0.0
   ENDDO
 ENDDO
@@ -92,12 +99,29 @@ ENDIF
 READ(U,'(A)',IOSTAT=IOS) LINE          ! header
 NG = 0
 10 CONTINUE
-  READ(U,*,IOSTAT=IOS) IFIA, NN, B0, B1, B2, B3, B4
+  READ(U,'(A)',IOSTAT=IOS) LINE
+  IF (IOS.NE.0) GO TO 20
+  ! backward compatible: try to read a 6th coefficient (b5, log-DBH size
+  ! slope). If the column is absent, list-directed READ leaves B5 at its
+  ! prior value, so pre-set B5=0.0 each record -> crown-only behavior.
+  B5 = 0.0
+  B6 = 0.0
+  READ(LINE,*,IOSTAT=IOS) IFIA, NN, B0, B1, B2, B3, B4, B5, B6
+  IF (IOS.NE.0) THEN
+    B5 = 0.0
+    B6 = 0.0
+    READ(LINE,*,IOSTAT=IOS) IFIA, NN, B0, B1, B2, B3, B4, B5
+  ENDIF
+  IF (IOS.NE.0) THEN
+    B5 = 0.0
+    B6 = 0.0
+    READ(LINE,*,IOSTAT=IOS) IFIA, NN, B0, B1, B2, B3, B4
+  ENDIF
   IF (IOS.NE.0) GO TO 20
   IF (NG.GE.MXG) GO TO 20
   NG = NG + 1
   GSPCD(NG) = IFIA
-  TB(NG,1)=B0; TB(NG,2)=B1; TB(NG,3)=B2; TB(NG,4)=B3; TB(NG,5)=B4
+  TB(NG,1)=B0; TB(NG,2)=B1; TB(NG,3)=B2; TB(NG,4)=B3; TB(NG,5)=B4; TB(NG,6)=B5; TB(NG,7)=B6
   GO TO 10
 20 CONTINUE
 CLOSE(U)
@@ -118,7 +142,8 @@ DO ISPC=1,MAXSP
     DO J=1,NG
       IF (GSPCD(J).EQ.IFIA) THEN
         GB(ISPC,1)=TB(J,1); GB(ISPC,2)=TB(J,2); GB(ISPC,3)=TB(J,3)
-        GB(ISPC,4)=TB(J,4); GB(ISPC,5)=TB(J,5)
+        GB(ISPC,4)=TB(J,4); GB(ISPC,5)=TB(J,5); GB(ISPC,6)=TB(J,6)
+        GB(ISPC,7)=TB(J,7)
         GHAVE(ISPC) = .TRUE.
         NGOMP = NGOMP + 1
         GO TO 30
@@ -130,21 +155,22 @@ ENDDO
 !
 LGOMP = .TRUE.
 WRITE(JOSTND,*) 'GOMPMORT enabled: ', NG, ' fitted species read, ', &
-     NGOMP, ' matched to this variant.'
+     NGOMP, ' matched to this variant. BGI=', GBGI
 RETURN
 END
 
 
-SUBROUTINE GOMPSURV(ISPC, CR, CCHV, FINTL, SURV)
+SUBROUTINE GOMPSURV(ISPC, DBHV, CR, CCHV, FINTL, SURV)
 !  Period survival for one tree of FVS species ISPC. Caller guarantees
 !  GHAVE(ISPC). Returns SURV in (0,1].
 IMPLICIT NONE
 INCLUDE 'PRGPRM.f90'
 INCLUDE 'GOMPMC.f90'
 INTEGER ISPC
-REAL CR, CCHV, FINTL, SURV
-REAL B0,B1,B2,B3,B4,CRC,CCHC,ETA,HZ,CTERM
+REAL DBHV, CR, CCHV, FINTL, SURV
+REAL B0,B1,B2,B3,B4,B5,B6,CRC,CCHC,ETA,HZ,CTERM,DBHC
 B0=GB(ISPC,1); B1=GB(ISPC,2); B2=GB(ISPC,3); B3=GB(ISPC,4); B4=GB(ISPC,5)
+B5=GB(ISPC,6); B6=GB(ISPC,7)
 CRC = CR
 IF (CRC.LT.1.0E-4) CRC = 1.0E-4
 IF (CRC.GT.1.0)    CRC = 1.0
@@ -155,7 +181,9 @@ IF (CCHC.GT.0.0) THEN
 ELSE
   CTERM = 0.0
 ENDIF
-ETA = B0 + B1*(CRC+0.01)**B2 + B3*CTERM
+DBHC = DBHV
+IF (DBHC.LT.1.0) DBHC = 1.0
+ETA = B0 + B1*(CRC+0.01)**B2 + B3*CTERM + B5*LOG(DBHC) + B6*GBGI
 IF (ETA.GT.30.0)  ETA = 30.0
 IF (ETA.LT.-30.0) ETA = -30.0
 HZ = 1.0 - EXP(-EXP(ETA))   ! Greg gompit: annual SURVIVAL (high eta -> high survival)

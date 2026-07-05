@@ -354,9 +354,19 @@ def stand_top_height(tree_heights, tpa, top_n_per_ha=100.0):
 
     If total TPA < top_n_per_ha, the top height is the TPA-weighted mean of all
     trees (best available), and w_top == tpa.
+
+    Empty cohort (n==0) or all-zero TPA (denom==0) is not an error: it has no
+    well-defined top height. Return 0.0 with an all-False cohort mask, which
+    matches how the sibling stand-state fields (BA/QMD/SDI in _stand_state,
+    constrained_projection.py) already reduce to 0.0 for the same degenerate
+    stand. Callers that ratchet the top-height target (constrained_projection.py)
+    take max() against the running max, so a transient degenerate draw cannot
+    regress the target.
     """
     h = np.asarray(tree_heights, dtype=float)
     w = np.asarray(tpa, dtype=float)
+    if h.size == 0 or float(np.sum(w)) <= 0.0:
+        return 0.0, np.zeros_like(w, dtype=bool), np.zeros_like(w)
     order = np.argsort(-h)                       # tallest first
     w_ord = w[order]
     cum = np.cumsum(w_ord)

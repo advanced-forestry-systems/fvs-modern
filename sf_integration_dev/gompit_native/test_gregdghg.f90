@@ -2,16 +2,19 @@
 ! increments, transcribed verbatim from conus_eq_projector_greg.R (dg_annual,
 ! hg_annual). Reads the emitted coefficient CSVs and writes per-species increments
 ! at one representative tree state, to cross-check against the R projector forms.
+! NOTE: recompiled real(kind=8) (double precision) to clear the 1e-6 validation
+! gate; kind=8 chosen for consistency with existing double-precision declarations
+! elsewhere in the engine (e.g. src-converted/base/apisubs.f90).
 program test_gregdghg
   implicit none
   integer, parameter :: MX = 600
   integer :: dgsp(MX), hgsp(MX), ndg, nhg, nn, ios, i
-  real :: d0(MX),d1(MX),d2(MX),d3(MX),d4(MX),d5(MX),d6(MX)
-  real :: h0(MX),h1(MX),h2(MX),h3(MX),h4(MX),h5(MX),h6(MX),h7(MX),h8(MX)
-  real :: dbh,cr,ht,bal,ccfl,cch,elev,td,emt, dg, hg
+  real(kind=8) :: d0(MX),d1(MX),d2(MX),d3(MX),d4(MX),d5(MX),d6(MX)
+  real(kind=8) :: h0(MX),h1(MX),h2(MX),h3(MX),h4(MX),h5(MX),h6(MX),h7(MX),h8(MX)
+  real(kind=8) :: dbh,cr,ht,bal,ccfl,cch,elev,td,emt, dg, hg
   character(len=800) :: hdr
   ! representative mid-size tree state
-  dbh=8.0; cr=0.5; ht=50.0; bal=80.0; ccfl=120.0; cch=0.4; elev=1500.0; td=25.0; emt=-15.0
+  dbh=8.0d0; cr=0.5d0; ht=50.0d0; bal=80.0d0; ccfl=120.0d0; cch=0.4d0; elev=1500.0d0; td=25.0d0; emt=-15.0d0
   open(10,file='greg_dg_coefficients.csv',status='old'); read(10,'(A)') hdr; ndg=0
   do
     read(10,*,iostat=ios) dgsp(ndg+1),nn,d0(ndg+1),d1(ndg+1),d2(ndg+1),d3(ndg+1),d4(ndg+1),d5(ndg+1),d6(ndg+1)
@@ -41,20 +44,20 @@ end program test_gregdghg
 
 subroutine dgcalc(B0,B1,B2,B3,B4,B5,B6, dbh,cr,ht,bal,elev,emt, dg)
   implicit none
-  real B0,B1,B2,B3,B4,B5,B6, dbh,cr,ht,bal,elev,emt, dg, z
-  z = B0 + B1*log((dbh+1.0)**2/(cr*ht+1.0)**B3) + B2*bal**B4/log(dbh+2.7) + B5*elev + B6*emt
-  if (z .gt. 5.0)   z = 5.0
-  if (z .lt. -30.0) z = -30.0
-  dg = exp(z); if (dg .lt. 0.0) dg = 0.0
+  real(kind=8) :: B0,B1,B2,B3,B4,B5,B6, dbh,cr,ht,bal,elev,emt, dg, z
+  z = B0 + B1*log((dbh+1.0d0)**2/(cr*ht+1.0d0)**B3) + B2*bal**B4/log(dbh+2.7d0) + B5*elev + B6*emt
+  if (z .gt. 5.0d0)   z = 5.0d0
+  if (z .lt. -30.0d0) z = -30.0d0
+  dg = exp(z); if (dg .lt. 0.0d0) dg = 0.0d0
 end subroutine dgcalc
 
 subroutine hgcalc(mx,b1,b2,b3,b4,b5,b6,b7,b8, ht,cr,ccfl,cch,elev,td,emt, hg)
   implicit none
-  real mx,b1,b2,b3,b4,b5,b6,b7,b8, ht,cr,ccfl,cch,elev,td,emt, hg, crp,cchp,tdp,arg
-  crp = cr;  if (crp .lt. 1.0e-4) crp = 1.0e-4
-  cchp = cch; if (cchp .lt. 0.0) cchp = 0.0
-  tdp = td;  if (tdp .lt. 0.0) tdp = 0.0
-  arg = -b1*ht - b4*ccfl - b8*cchp**0.5 - b5*elev + b6*sqrt(tdp) + b7*emt
-  hg = mx*b1*b2*crp**b3*exp(arg)*(1.0-exp(-b1*ht))**(b2-1.0)
-  if (hg .lt. 0.0) hg = 0.0
+  real(kind=8) :: mx,b1,b2,b3,b4,b5,b6,b7,b8, ht,cr,ccfl,cch,elev,td,emt, hg, crp,cchp,tdp,arg
+  crp = cr;  if (crp .lt. 1.0d-4) crp = 1.0d-4
+  cchp = cch; if (cchp .lt. 0.0d0) cchp = 0.0d0
+  tdp = td;  if (tdp .lt. 0.0d0) tdp = 0.0d0
+  arg = -b1*ht - b4*ccfl - b8*cchp**0.5d0 - b5*elev + b6*sqrt(tdp) + b7*emt
+  hg = mx*b1*b2*crp**b3*exp(arg)*(1.0d0-exp(-b1*ht))**(b2-1.0d0)
+  if (hg .lt. 0.0d0) hg = 0.0d0
 end subroutine hgcalc

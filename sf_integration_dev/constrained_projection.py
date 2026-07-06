@@ -574,6 +574,31 @@ def project(L, arm, trees0, eco, drivers=None, years=100, step=5, n_draws=400,
                 if s_d > sdimax[d] and s_d > 0:
                     tpa[d] *= sdimax[d] / s_d
 
+        # ---- (4c) FIX (Track D): REALIZED-SNAPSHOT top-height ratchet ----
+        # Block (3b) floors the H2|H1 TARGET fed to stand_constrain_topheight,
+        # but the mortality/stems reconciler (3d) and the post-growth density
+        # re-cap (4b) both reshuffle TPA AFTER that phi was solved, so the
+        # dominant cohort composition can drift and the REALIZED top height
+        # from the final (ht, tpa) can land slightly below topht_ratchet
+        # (observed as a ~0.5-1.2m dip under aggressive caps: the target-only
+        # guarantee doesn't bind the recomposed snapshot). Hard-floor the
+        # realized value: if the recomposed dominant cohort's top height sits
+        # below the running ratchet, bump the cohort's heights up by the
+        # shortfall (a uniform additive shift moves the cohort's TPA-weighted
+        # mean by exactly that amount, so this always hits the floor exactly
+        # -- unlike rescaling this step's growth, which can be infeasible
+        # once (3b) has already throttled growth to ~0 near the GADA
+        # asymptote). Guarded by the same empty-cohort/zero-TPA sentinel as
+        # stand_top_height (PR #94): a degenerate draw with no cohort is
+        # skipped rather than bumped.
+        if constrained and active["topheight"] and _gada_on:
+            for d in range(n_draws):
+                top_ht, cohort_mask, _ = SC.stand_top_height(ht[d], tpa[d], 100.0)
+                if cohort_mask.any() and top_ht + 1e-9 < topht_ratchet[d]:
+                    ht[d][cohort_mask] += (topht_ratchet[d] - top_ht)
+                    top_ht = topht_ratchet[d]
+                topht_ratchet[d] = max(float(topht_ratchet[d]), float(top_ht))
+
         traj.append(snapshot(yr))
 
     return {"arm": arm, "constrained": constrained, "trajectory": traj,

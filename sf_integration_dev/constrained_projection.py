@@ -61,6 +61,38 @@ import stand_constraint as SC  # noqa: E402
 RNG = np.random.default_rng(20260703)
 CM_PER_IN = 2.54
 
+# ---------------------------------------------------------------------------
+# BA-growth increment ceiling: density-dependent decay (stress-test fix,
+# 2026-07-06). A flat 1.2 m2/ha/yr ceiling alone permits ~90-130 m2/ha at
+# 100-300 yr horizons regardless of stocking (stress_offline/STRESS_FINDINGS.md
+# item 4): it bounds the RATE but not the density state, and the separate
+# Reineke SDI cap below only throttles TPA, not BA directly, so BA keeps
+# climbing via diameter growth even after stems are capped. Decay the
+# ceiling toward 0 as relative density rd = SDI/SDIMAX approaches full
+# stocking, mirroring the logistic size-deceleration in the Greg DG hook
+# (src-converted/base/gregdghg.f90: DECEL = 1/(1+exp((DBH-0.85*DBHMX)/
+# (0.04*DBHMX)))). Onset=0.80 (middle of the recommended 0.70-0.85 band) and
+# half-width=0.04 in rd units (same ratio to onset as the DG hook's 0.04/0.85)
+# keep the ceiling essentially full below ~65% relative density and taper it
+# smoothly to near-zero by full stocking (rd -> 1), closing the BA/TPA
+# decoupling without a hard cliff. Toggle/tune via env vars, mirroring the
+# existing TOPHT_GADA_ANCHOR pattern.
+BA_CAP_MAX_M2HA_YR = float(os.environ.get("BA_CAP_MAX_M2HA_YR", "1.2"))
+BA_CAP_DENSITY_DECAY = os.environ.get("BA_CAP_DENSITY_DECAY", "1") == "1"
+BA_CAP_DECAY_ONSET = float(os.environ.get("BA_CAP_DECAY_ONSET", "0.80"))
+BA_CAP_DECAY_HALFWIDTH = float(os.environ.get("BA_CAP_DECAY_HALFWIDTH", "0.04"))
+
+# SDIMAX fixed fallback (only used when no self-thinning posterior is
+# supplied). Previously max(sdi0*1.6, 600.0): permissive enough that a stand
+# could grow SDI to 1.6x its OWN current value (or an absolute 600 floor)
+# before the Reineke cap engaged at all -- gating stems only, while BA kept
+# climbing via diameter growth in the meantime. Tightened to
+# max(sdi0*1.2, 450.0): 450 sits near published SDIMAX for NE spruce-fir
+# (~450-500 imperial), and a stand already above that keeps a tighter 1.2x
+# margin instead of jumping to a flat 600 ceiling.
+SDIMAX_FALLBACK_MULT = float(os.environ.get("SDIMAX_FALLBACK_MULT", "1.2"))
+SDIMAX_FALLBACK_FLOOR = float(os.environ.get("SDIMAX_FALLBACK_FLOOR", "450.0"))
+
 
 # ---------------------------------------------------------------------------
 # arm dispatch: which DG uncertainty function + covariate builder per arm
@@ -339,7 +371,8 @@ def project(L, arm, trees0, eco, drivers=None, years=100, step=5, n_draws=400,
                 sdimax = sdimax * float(sdimax_unit_scale)   # imperial->metric
         if sdimax is None:
             sdi0 = float(_imperial_sdi(dbh[0], tpa[0]))   # imperial basis
-            fx = fixed_sdimax if fixed_sdimax is not None else max(sdi0 * 1.6, 600.0)
+            fx = (fixed_sdimax if fixed_sdimax is not None
+                  else max(sdi0 * SDIMAX_FALLBACK_MULT, SDIMAX_FALLBACK_FLOOR))
             sdimax = np.full(n_draws, float(fx))
             tags.append(f"[density] SDIMAX fixed fallback={float(fx):.0f} (self-thinning posterior rds unavailable)")
         else:
@@ -641,7 +674,25 @@ def _bagrowth_target(bundle, L, T, rd, ln_qmd, ba_metric, bgi, L1=None):
     # ceiling (~1.2 m2/ha/yr for NE mixed stands) so the additive disaggregation
     # cannot compound into a runaway when extrapolated far beyond the fitted
     # covariate range. Keeps the constrained trajectory realistic.
-    bai_annual_m2ha = min(bai_annual_m2ha, 1.2)
+    # Density-dependent decay: the flat ceiling alone still lets BA climb via
+    # diameter growth even once the Reineke SDI cap has throttled TPA (see
+    # module docstring above / STRESS_FINDINGS.md item 4), so taper the
+    # ceiling toward 0 with a logistic in relative density (rd = SDI/SDIMAX),
+    # onset 0.80, half-width 0.04, mirroring the Greg DG hook's size
+    # deceleration. `rd` is the same per-draw relative density already
+    # computed by the caller for the topheight/mortality targets.
+    ba_cap = BA_CAP_MAX_M2HA_YR
+    if BA_CAP_DENSITY_DECAY:
+        xr = (float(rd) - BA_CAP_DECAY_ONSET) / max(BA_CAP_DECAY_HALFWIDTH, 1e-9)
+        if xr > 30.0:
+            decel = 0.0
+        elif xr < -30.0:
+            decel = 1.0
+        else:
+            decel = 1.0 / (1.0 + math.exp(xr))
+        decel = min(max(decel, 0.0), 1.0)
+        ba_cap = ba_cap * decel
+    bai_annual_m2ha = min(bai_annual_m2ha, ba_cap)
     ba_incr_m2ha = bai_annual_m2ha * float(T)          # m2/ha over the interval
     # stand_disaggregate_bagrowth computes BA in (pi/4)*dbh^2 with dbh in cm,
     # i.e. cm^2 per stem, summed with TPA -> cm^2/ha. Convert m2/ha -> cm^2/ha.

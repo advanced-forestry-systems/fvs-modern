@@ -33,6 +33,16 @@
 !                       (columns: SPCD,n,b0,b1,b2,b3,b4,...).
 !  A GOMPMORT keyword can be layered on later; the env switch keeps the first
 !  integration testable and gives a clean default-vs-gompit A/B.
+!
+!  MORTDRVR keyword (common /GREGKW/ IMORTDRV, GREGKW.f90) selects the Greg
+!  mortality coefficient TIER for reproducibility logging: 0=crown-only (5-coef
+!  GOMPSURV, default), 1=size (+log(DBH)), 2=size+BGI (recommended opt-in
+!  upgrade; both extensions require the DBH-aware GOMPSURV all 21 variant
+!  morts.f90 callers now pass). What is deliberately downstream: MORTDRVR is
+!  log-only right now, matching the DGDRIVER precedent -- GOMPLOAD still loads
+!  whichever file FVS_GOMPIT_COEF points at (greg_mortality_coefficients.csv =
+!  crown-only, _size.csv = size, _size_bgi.csv = size+BGI); mapping IMORTDRV
+!  directly to a coefficient file path is a future wiring step, not done here.
 !==============================================================================
 
 SUBROUTINE GOMPLOAD
@@ -41,6 +51,7 @@ INCLUDE 'PRGPRM.f90'
 INCLUDE 'PLOT.f90'
 INCLUDE 'CONTRL.f90'
 INCLUDE 'GOMPMC.f90'
+INCLUDE 'GREGKW.f90'
 !
 INTEGER, PARAMETER :: MXG = 600
 INTEGER GSPCD(MXG)
@@ -156,6 +167,10 @@ ENDDO
 LGOMP = .TRUE.
 WRITE(JOSTND,*) 'GOMPMORT enabled: ', NG, ' fitted species read, ', &
      NGOMP, ' matched to this variant. BGI=', GBGI
+IF (IMORTDRV.GE.0) WRITE(JOSTND,*) &
+     'GOMPMORT keyword MORTDRVR tier=', IMORTDRV, &
+     ' (0=crown-only,1=size,2=size+BGI; logging only -- coefficient tier', &
+     ' is selected by the file path in FVS_GOMPIT_COEF)'
 RETURN
 END
 

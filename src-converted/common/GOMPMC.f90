@@ -17,10 +17,20 @@
 !              owns their mortality. Unfit species keep native background.
 !    CCHT   -- per-tree crown closure at tip for the current cycle, on the
 !              gompit cch scale (affine-mapped). Filled by GOMPCCH each cycle.
+!    GDBHMIN-- small-DBH guard threshold (inches). Trees with 0<=DBH<GDBHMIN
+!              get the young-cohort survival floor instead of raw gompit, so
+!              seedling cohorts do not collapse. Trees with DBH>=GDBHMIN are
+!              BYTE-IDENTICAL to prior gompit. Default 1.0; override with the
+!              FVS_GOMP_DBHMIN env var. Set <=0 to disable the guard entirely.
+!    GSFLOOR-- annual-survival floor applied below GDBHMIN (fraction, 0..1).
+!              Default 0.95 (~5%/yr, ~40%/decade max mortality). Override with
+!              the FVS_GOMP_SFLOOR env var. The floor is a MAX on annual
+!              survival, so gompit still governs where it predicts survival
+!              above the floor.
 !----------
 INTEGER NGOMP, GGRP(MAXSP)
-REAL GB(MAXSP,5), CCHT(MAXTRE)
+REAL GB(MAXSP,5), CCHT(MAXTRE), GDBHMIN, GSFLOOR
 LOGICAL LGOMP, LGOMPKW, GHAVE(MAXSP)
-COMMON /GOMPMR/ GB, CCHT
+COMMON /GOMPMR/ GB, CCHT, GDBHMIN, GSFLOOR
 COMMON /GOMPMI/ NGOMP, GGRP
 COMMON /GOMPML/ LGOMP, LGOMPKW, GHAVE

@@ -144,6 +144,34 @@ ENDDO
 LGOMP = .TRUE.
 WRITE(JOSTND,*) 'GOMPMORT enabled: ', NG, ' fitted species read, ', &
      NGOMP, ' matched to this variant.'
+IF (GDBHMIN.GT.0.0) THEN
+  WRITE(JOSTND,*) 'GOMPMORT small-DBH guard ON: DBHMIN=', GDBHMIN, &
+       ' in, annual-survival floor=', GSFLOOR, &
+       ' from FVS_GOMP_DBHMIN and FVS_GOMP_SFLOOR.'
+ELSE
+  WRITE(JOSTND,*) 'GOMPMORT small-DBH guard OFF (FVS_GOMP_DBHMIN<=0).'
+ENDIF
+IF (GDBHMIN.GT.0.0) THEN
+  WRITE(JOSTND,*) 'GOMPMORT small-DBH guard ON: DBHMIN=', GDBHMIN, &
+       ' in, annual-survival floor=', GSFLOOR, &
+       ' from FVS_GOMP_DBHMIN and FVS_GOMP_SFLOOR.'
+ELSE
+  WRITE(JOSTND,*) 'GOMPMORT small-DBH guard OFF (FVS_GOMP_DBHMIN<=0).'
+ENDIF
+IF (GDBHMIN.GT.0.0) THEN
+  WRITE(JOSTND,*) 'GOMPMORT small-DBH guard ON: DBHMIN=', GDBHMIN, &
+       ' in, annual-survival floor=', GSFLOOR, &
+       ' from FVS_GOMP_DBHMIN and FVS_GOMP_SFLOOR.'
+ELSE
+  WRITE(JOSTND,*) 'GOMPMORT small-DBH guard OFF (FVS_GOMP_DBHMIN<=0).'
+ENDIF
+IF (GDBHMIN.GT.0.0) THEN
+  WRITE(JOSTND,*) 'GOMPMORT small-DBH guard ON: DBHMIN=', GDBHMIN, &
+       ' in, annual-survival floor=', GSFLOOR, &
+       ' from FVS_GOMP_DBHMIN and FVS_GOMP_SFLOOR.'
+ELSE
+  WRITE(JOSTND,*) 'GOMPMORT small-DBH guard OFF (FVS_GOMP_DBHMIN<=0).'
+ENDIF
 RETURN
 END
 

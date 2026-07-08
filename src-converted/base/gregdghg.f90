@@ -190,6 +190,47 @@ DO ISPC=1,MAXSP
     ENDDO
   ENDIF
 ENDDO
+! optional per-species MCW (A + B*DBH + C*DBH**2) for Greg ccfl; generic fallback if absent
+DO ISPC=1,MAXSP
+  GHAVE_MCW(ISPC) = .FALSE.
+  GMCW(ISPC,1)=0.0; GMCW(ISPC,2)=0.0; GMCW(ISPC,3)=0.0
+ENDDO
+CALL GETENV('FVS_GREG_MCW_COEF', CPATH)
+IF (CPATH.NE.' ') THEN
+  U = 70
+  OPEN(UNIT=U, FILE=CPATH, STATUS='OLD', IOSTAT=IOS)
+  IF (IOS.EQ.0) THEN
+    READ(U,'(A)',IOSTAT=IOS) LINE
+    NG = 0
+130 CONTINUE
+      READ(U,*,IOSTAT=IOS) IFIA, C0, C1, C2
+      IF (IOS.NE.0) GO TO 140
+      IF (NG.GE.MXG) GO TO 140
+      NG = NG + 1
+      GSPCD(NG) = IFIA
+      TB(NG,1)=C0; TB(NG,2)=C1; TB(NG,3)=C2
+      GO TO 130
+140 CONTINUE
+    CLOSE(U)
+    DO ISPC=1,MAXSP
+      IFIA = -1
+      IF (FIAJSP(ISPC).NE.' ') THEN
+        READ(FIAJSP(ISPC),*,IOSTAT=IOS) IFIA
+        IF (IOS.NE.0) IFIA = -1
+      ENDIF
+      IF (IFIA.GT.0) THEN
+        DO J=1,NG
+          IF (GSPCD(J).EQ.IFIA) THEN
+            GMCW(ISPC,1)=TB(J,1); GMCW(ISPC,2)=TB(J,2); GMCW(ISPC,3)=TB(J,3)
+            GHAVE_MCW(ISPC) = .TRUE.
+            EXIT
+          ENDIF
+        ENDDO
+      ENDIF
+    ENDDO
+    WRITE(JOSTND,*) 'GREGHG: loaded MCW for ', NG, ' species.'
+  ENDIF
+ENDIF
 WRITE(JOSTND,*) 'GREGHG enabled: ', NG, ' species; EMT=', GEMT, ' TD=', GTD, ' ELEV=', GELEV
 RETURN
 END

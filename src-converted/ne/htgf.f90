@@ -49,6 +49,8 @@ INTEGER ISPC,I1,I2,I3,I,MODE0,IVAR,ITFN
 REAL SCALE,XHT,YRS,H,HTG1,HTMAX,AGET,GMOD,RELHTA,TEMHTG
 INTEGER IGYR
 REAL HTCUR,HGINC,CCFLV,CCHV,HGDEC
+REAL OGCA(MAXTRE), MCWX, MCWA, MCWB, MCWC
+INTEGER JJ
 !
 !----------
 !  SEE IF WE NEED TO DO SOME DEBUG.
@@ -63,6 +65,20 @@ SCALE=FINT/YR
 CALL MULTS (2,IY(ICYC),XHMULT)
 ! Greg HG: lazy-load coefficients/climate once (no-op unless FVS_GREGHG set)
 CALL GREGLOADHG
+IF (LGREGHG) THEN
+  DO JJ=1,ITRN
+    OGCA(JJ) = 0.0
+    IF (DBH(JJ).LE.0.0) CYCLE
+    IF (GHAVE_MCW(ISP(JJ))) THEN
+      MCWA=GMCW(ISP(JJ),1); MCWB=GMCW(ISP(JJ),2); MCWC=GMCW(ISP(JJ),3)
+    ELSE
+      MCWA=8.0; MCWB=1.5; MCWC=0.0
+    ENDIF
+    MCWX = MCWA + MCWB*DBH(JJ) + MCWC*DBH(JJ)*DBH(JJ)
+    IF (MCWX.LT.0.0) MCWX = 0.0
+    OGCA(JJ) = 0.7853981634*MCWX*MCWX*PROB(JJ)
+  ENDDO
+ENDIF
 !----------
 !  BEGIN SPECIES LOOP.
 !----------
@@ -125,7 +141,11 @@ TEMHTG=HTG(I)
 ! --- Greg HG substitution (behind FVS_GREGHG): override native HTG for covered species ---
 IF (LGREGHG .AND. GHAVE_HG(ISPC)) THEN
   CCHV = CCHT(I)                       ! crown closure at tip from gompit GOMPCCH (0 if gompit off)
-  CCFLV = PTBALT(I)                    ! PROVISIONAL CCFL proxy = BA of larger trees; pending Greg
+  CCFLV = 0.0
+  DO JJ = 1, ITRN
+    IF (DBH(JJ) .GT. DBH(I)) CCFLV = CCFLV + OGCA(JJ)
+  END DO
+  CCFLV = 100.0/43560.0 * CCFLV        ! Greg ccfl: CCF of larger trees from MCW
   HTCUR = HT(I)
   DO IGYR = 1, 10
     CALL GREGHGV(ISPC, HTCUR, FLOAT(ICR(I))/100.0, CCFLV, CCHV, GELEV, GTD, GEMT, HGINC)

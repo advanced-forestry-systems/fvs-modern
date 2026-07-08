@@ -1,0 +1,2 @@
+n,obs_surv,pred_surv_new,pred_surv_base,auc_new,auc_base,logloss_new,logloss_base
+7606496,0.8193,0.8198,0.8213,0.7398,0.6729,0.4205,0.4433

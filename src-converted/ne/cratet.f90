@@ -74,6 +74,12 @@ DATA UNDER/'----'/
 !  SEE IF WE NEED TO DO SOME DEBUG.
 !-----------
 CALL DBCHK (DEBUG,'CRATET',6,ICYC)
+!----------
+!  Load the CONUS native HT-DBH substitution state once (env-gated, silent when
+!  FVS_GREGHTDBH unset). Must run before HTDBH dubs missing heights so LGREGHTDBH
+!  and the per-species coverage flags are defined.
+!----------
+CALL GREGLOADHD
 !-------
 !  IF THERE ARE TREE RECORDS, BRANCH TO PREFORM CALIBRATION.
 !-------

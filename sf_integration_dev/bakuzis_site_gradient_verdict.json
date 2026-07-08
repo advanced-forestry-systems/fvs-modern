@@ -1,0 +1,36 @@
+{
+  "fixed_sdimax_imperial": 480.0,
+  "sites": {
+    "low_bgi4": {
+      "BA": 79.89513942279943,
+      "TOPHT": 20.59237762785022,
+      "TPH": 462.2287011741396,
+      "QMD": 46.96341355110811,
+      "SDImax_reached": 505.8345209258074
+    },
+    "mid_bgi6": {
+      "BA": 79.81808658414798,
+      "TOPHT": 18.90938979165123,
+      "TPH": 471.09798576317985,
+      "QMD": 46.44149853264132,
+      "SDImax_reached": 504.1411358915624
+    },
+    "high_bgi8": {
+      "BA": 79.61956025568668,
+      "TOPHT": 18.58998709863504,
+      "TPH": 472.69855784626,
+      "QMD": 46.254999949197256,
+      "SDImax_reached": 503.6907482566335
+    }
+  },
+  "flags": [
+    "low_bgi4: SDI 506 exceeds SDIMAX 480 (self-thinning breach)",
+    "mid_bgi6: SDI 504 exceeds SDIMAX 480 (self-thinning breach)",
+    "high_bgi8: SDI 504 exceeds SDIMAX 480 (self-thinning breach)",
+    "site ordering VIOLATED on top height (higher site not taller)",
+    "site ordering VIOLATED on BA (higher site not more productive)"
+  ],
+  "site_ordering_topheight_ok": false,
+  "site_ordering_ba_ok": false,
+  "pass": false
+}

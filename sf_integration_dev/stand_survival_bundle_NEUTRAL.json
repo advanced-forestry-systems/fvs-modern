@@ -1,0 +1,16 @@
+{
+  "model": "NEUTRAL stand-level survival scaffold (all-zero fixed effects) -- placeholder until 71_fit_stand_survival.R lands",
+  "NEUTRAL_SCAFFOLD": true,
+  "scale": "cloglog binomial with log(YEARS) exposure offset; linear predictor = log-hazard",
+  "hazard": "H_stand = exp(linpred); S(T)=exp(-H*T); M_stand=1-S(T)",
+  "covariates": {"bgi_knot": 6.0},
+  "bgi_knot": 6.0, "tau_m": 10, "tau_d": 15,
+  "fixed_effects": {
+    "Intercept": {"mean": 0.0, "sd": 0.0}, "rd": {"mean": 0.0, "sd": 0.0},
+    "ln_qmd": {"mean": 0.0, "sd": 0.0}, "ba_metric": {"mean": 0.0, "sd": 0.0},
+    "bgi": {"mean": 0.0, "sd": 0.0}, "bgi_b2": {"mean": 0.0, "sd": 0.0},
+    "trt_decay": {"mean": 0.0, "sd": 0.0}, "dstrb_decay": {"mean": 0.0, "sd": 0.0}
+  },
+  "re_L1": {"level": [], "mean": [], "sd": []}, "sd_L1": 0.0,
+  "notes": "Neutral scaffold: zero coefficients so it lands validly but imposes no constraint. Replace with the real 71_fit_stand_survival.R bundle."
+}

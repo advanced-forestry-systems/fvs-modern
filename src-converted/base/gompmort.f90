@@ -3,36 +3,27 @@
 !
 !  Substitutes Greg Johnson's CONUS gompit survival for FVS native mortality,
 !  per tree, per cycle, INSIDE TREGRO->MORTS so growth and density interact with
-!  the substituted mortality each cycle (unlike a post-hoc TPA overlay, which
-!  cannot regulate density). Gompit owns mortality for species that carry a
-!  fitted row; unfit species keep FVS native background mortality.
+!  the substituted mortality each cycle. Gompit owns mortality for species that
+!  carry a fitted row; unfit species keep FVS native background mortality.
 !
 !  Model (per species), annual hazard with a cycle-length exposure:
 !      eta = b0 + b1*(cr+0.01)^b2 + b3*cch^b4
-!      H   = exp(eta)                       (annual hazard)
-!      S   = exp(-H * FINT)                 (period survival, FINT = cycle yrs)
-!      trees killed = PROB * (1 - S)
+!      S   = 1 - exp(-exp(eta))             (annual survival, gompit)
+!      S_period = S ** FINT                 (compound over the cycle)
 !
-!  cch is crown closure at the subject tree's tip, recomputed each cycle from
-!  the live treelist by an ORGANON crown-closure port (GOMPCCH), then mapped
-!  onto the gompit cch scale by the validated affine fit
-!      cch = CCH_A + CCH_B * cch_hat        (35d_validate_cch.R, Spearman 0.93).
-!
-!  AARON'S VALIDATED ASSUMPTIONS (science owned by Aaron Weiskittel; this is the
-!  Fortran wiring of his model):
-!    * gompit coefficients (greg_mortality_coefficients.csv).
-!    * ORGANON SWO crown geometry as the cch proxy (CAL_CCH.for lineage).
-!    * coarse FIA-species -> ORGANON group map: softwood (FIA<300) -> 1 (DF),
-!      hardwood -> 16 (RA). Refine GGRP for a tighter fit.
-!    * affine map CCH_A=0.062, CCH_B=0.0036.
+!  cch is crown closure at the subject tree's tip. CHANGED 2026-07-08: this is
+!  now a DIRECT port of Greg Johnson's authoritative biometrics.utilities
+!  compute_cch (github.com/gregjohnsonbiometrics/biometrics.utilities src/cch.cpp).
+!  cch is crown area as a FRACTION of an acre (AREACON = 0.25*PI/43560, NO x100)
+!  in the horizontal plane tangent to each subject tree's tip, summed over all
+!  TALLER trees. The prior implementation used a CCF-scale (x100) 40-layer
+!  interpolation table plus an affine map (cch = 0.062 + 0.0036*cch_hat); that
+!  extrapolated past the fitted 0.3-1.1 range on dense even-aged cohorts and
+!  drove b3*cch^b4 to total mortality (the collapse). This port removes the x100,
+!  the table, and the affine map so CCHT(I) is on Greg's fitted scale directly.
 !
 !  Activation (no recompile to toggle): environment variables read once in
-!  GOMPLOAD (called from MORCON):
-!      FVS_GOMPIT       set to 1/on/true to enable.
-!      FVS_GOMPIT_COEF  path to greg_mortality_coefficients.csv
-!                       (columns: SPCD,n,b0,b1,b2,b3,b4,...).
-!  A GOMPMORT keyword can be layered on later; the env switch keeps the first
-!  integration testable and gives a clean default-vs-gompit A/B.
+!  GOMPLOAD: FVS_GOMPIT (1/on/true) and FVS_GOMPIT_COEF (coefficient csv path).
 !==============================================================================
 
 SUBROUTINE GOMPLOAD
@@ -52,10 +43,6 @@ REAL B0,B1,B2,B3,B4
 LOGICAL, SAVE :: LDONE = .FALSE.
 LOGICAL LENABLE
 !
-! resolve once per run (COMMON state persists across the per-stand MORCON calls).
-! Activation comes from the FVS_GOMPIT env var OR the GOMPMORT keyword (LGOMPKW,
-! set by GOMPON in initre, which runs before MORCON). Do not lock LDONE until
-! actually activated, so a keyword seen on a later stand can still turn it on.
 IF (LDONE) RETURN
 LENABLE = .TRUE.
 CALL GETENV('FVS_GOMPIT', CVAL)
@@ -137,7 +124,8 @@ END
 
 SUBROUTINE GOMPSURV(ISPC, CR, CCHV, FINTL, SURV)
 !  Period survival for one tree of FVS species ISPC. Caller guarantees
-!  GHAVE(ISPC). Returns SURV in (0,1].
+!  GHAVE(ISPC). Returns SURV in (0,1]. CCHV is now Greg-scale cch (fraction
+!  of an acre) from the compute_cch port in GOMPCCH.
 IMPLICIT NONE
 INCLUDE 'PRGPRM.f90'
 INCLUDE 'GOMPMC.f90'
@@ -158,32 +146,41 @@ ENDIF
 ETA = B0 + B1*(CRC+0.01)**B2 + B3*CTERM
 IF (ETA.GT.30.0)  ETA = 30.0
 IF (ETA.LT.-30.0) ETA = -30.0
-HZ = 1.0 - EXP(-EXP(ETA))   ! Greg gompit: annual SURVIVAL (high eta -> high survival)
+HZ = 1.0 - EXP(-EXP(ETA))   ! Greg gompit: annual SURVIVAL
 SURV = MAX(0.0,MIN(1.0,HZ)) ** FINTL   ! compound annual survival over the cycle
 RETURN
 END
 
 
 SUBROUTINE GOMPCCH
-!  Recompute per-tree crown closure at tip (CCHT) for the current cycle, an
-!  ORGANON-crown port (faithful to cch_organon.py so the validated affine map
-!  applies). Fills CCHT(I) = CCH_A + CCH_B * cch_hat for every live tree.
+!  Recompute per-tree crown closure at tip (CCHT) for the current cycle.
+!  DIRECT port of Greg Johnson's biometrics.utilities compute_cch (src/cch.cpp):
+!  for each subject tree, cch = sum over all TALLER trees of the crown area at
+!  the plane of the subject's tip, expressed as a FRACTION of an acre
+!  (AREACON = 0.25*PI/43560, NO x100). No 40-layer interpolation table and no
+!  affine map: CCHT(I) is Greg-scale and feeds GOMPSURV directly. Crown geometry
+!  (MCW -> LCW, height-to-largest-crown-width HL, crown width above) is the same
+!  ORGANON SWO port used previously; only the accumulation scale and method
+!  changed. O(n^2) over the treelist, fine for per-plot n.
 IMPLICIT NONE
 INCLUDE 'PRGPRM.f90'
 INCLUDE 'ARRAYS.f90'
 INCLUDE 'CONTRL.f90'
 INCLUDE 'GOMPMC.f90'
 !
-REAL, PARAMETER :: CCH_A = 0.062, CCH_B = 0.0036
+REAL, PARAMETER :: PIC = 3.14159265358979
+REAL, PARAMETER :: AREACON = 0.25*PIC/43560.0   ! crown area -> fraction of an acre
 ! ORGANON SWO (version 1) crown-width parameters, groups 1..18
 REAL MCWB0(18),MCWB1(18),MCWB2(18),MCWPK(18)
 REAL LCWB1(18),LCWB2(18),LCWB3(18)
 REAL CWAB1(18),CWAB2(18),CWAB3(18),DACB(18)
-REAL CCH(0:40)
-INTEGER I, G, II
-REAL DBHV, HTV, CRV, EXPN, MAXHT, CL, HCB, MCWV, LCWV, HL
-REAL XL, BND, CW, TOP, XI, XXI, CCHHAT, DD, RP, HtoD
-INTEGER IDX
+! per-tree cached crown geometry
+REAL    VLCW(MAXTRE), VHL(MAXTRE), VHT(MAXTRE), VH2D(MAXTRE)
+INTEGER VG(MAXTRE)
+LOGICAL VOK(MAXTRE)
+INTEGER I, J, G
+REAL DBHV, HTV, CRV, CL, HCB, MCWV, LCWV, HL, DD
+REAL H, RP, CW, ALPHA, CCHI
 !
 DATA MCWB0/4.6366,6.1880,3.4835,4.6600546,3.2837,4.5652,4.0,4.5652, &
   3.4298629,2.9793895,4.4443,4.4443,4.0953,3.0785639,3.3625,8.0, &
@@ -212,34 +209,19 @@ DATA CWAB3/-0.0157579,-0.0314603,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0, &
 DATA DACB/0.062,0.028454,0.05,0.05,0.20,0.209806,0.20,0.209806, &
   0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0/
 !
+! Phase 1: cache per-tree crown geometry (LCW, height-to-largest-crown-width HL)
 DO I=1,ITRN
   CCHT(I) = 0.0
-ENDDO
-!
-! tallest valid tree
-MAXHT = 0.0
-DO I=1,ITRN
-  IF (HT(I).GT.MAXHT .AND. DBH(I).GT.0.0 .AND. ICR(I).GT.0) MAXHT=HT(I)
-ENDDO
-IF (MAXHT.LE.0.0) RETURN
-!
-DO II=0,40
-  CCH(II) = 0.0
-ENDDO
-CCH(40) = MAXHT
-!
-DO I=1,ITRN
+  VOK(I)  = .FALSE.
   DBHV = DBH(I)
   HTV  = HT(I)
   CRV  = REAL(ICR(I))/100.0
-  EXPN = PROB(I)
   IF (HTV.LE.0.0 .OR. DBHV.LE.0.0) CYCLE
   IF (CRV.LE.0.0 .OR. CRV.GT.1.0)  CYCLE
   G = GGRP(ISP(I))
   IF (G.LT.1 .OR. G.GT.18) G = 16
   CL  = CRV*HTV
   HCB = HTV - CL
-  ! MCW
   DD = DBHV
   IF (DD.GT.MCWPK(G)) DD = MCWPK(G)
   IF (HTV.LT.4.501) THEN
@@ -247,63 +229,45 @@ DO I=1,ITRN
   ELSE
     MCWV = MCWB0(G) + MCWB1(G)*DD + MCWB2(G)*DD*DD
   ENDIF
-  ! LCW
   LCWV = MCWV * CRV**(LCWB1(G) + LCWB2(G)*CL + LCWB3(G)*(DBHV/HTV))
-  ! height to largest crown width
-  HL = HTV - (1.0-DACB(G))*CRV*HTV
-  HtoD = HTV/DBHV
-  DO II=40,1,-1
-    XL = REAL(II-1)*(CCH(40)/40.0)
-    BND = HCB
-    IF (HL.GT.HCB) BND = HL
-    IF (XL.LE.BND) THEN
-      IF (HCB.LE.HL) THEN
-        CW = LCWV
-      ELSE
-        ! cw_above at max(XL,HCB)
-        RP = (HTV - MAX(XL,HCB))/(HTV - HL)
-        IF (RP.LE.0.0) THEN
-          CW = 0.0
-        ELSE
-          CW = LCWV * RP**(CWAB1(G)+CWAB2(G)*SQRT(RP)+CWAB3(G)*HtoD)
-        ENDIF
-      ENDIF
-    ELSEIF (XL.LT.HTV) THEN
-      RP = (HTV - XL)/(HTV - HL)
+  HL = HTV - (1.0-DACB(G))*CRV*HTV        ! height to largest crown width (hlcw)
+  VLCW(I) = LCWV
+  VHL(I)  = HL
+  VHT(I)  = HTV
+  VH2D(I) = HTV/DBHV
+  VG(I)   = G
+  VOK(I)  = .TRUE.
+ENDDO
+!
+! Phase 2: for each subject tree, sum crown area of all TALLER trees at its tip
+DO I=1,ITRN
+  IF (.NOT.VOK(I)) THEN
+    CCHT(I) = 0.0
+    CYCLE
+  ENDIF
+  H    = VHT(I)          ! subject tip height
+  CCHI = 0.0
+  DO J=1,ITRN
+    IF (.NOT.VOK(J)) CYCLE
+    IF (VHT(J).LE.H) CYCLE            ! only trees strictly taller than the tip
+    IF (H.LE.VHL(J)) THEN
+      CW = VLCW(J)                    ! plane is at or below largest crown width
+    ELSE
+      RP = (VHT(J) - H)/(VHT(J) - VHL(J))   ! relative position above lcw
       IF (RP.LE.0.0) THEN
         CW = 0.0
       ELSE
-        CW = LCWV * RP**(CWAB1(G)+CWAB2(G)*SQRT(RP)+CWAB3(G)*HtoD)
+        ALPHA = CWAB1(VG(J)) + CWAB2(VG(J))*SQRT(RP) + CWAB3(VG(J))*VH2D(J)
+        IF (ALPHA.GT.0.0) THEN
+          CW = VLCW(J) * RP**ALPHA
+        ELSE
+          CW = 1.0                    ! matches Greg's _cwa alpha<=0 guard
+        ENDIF
       ENDIF
-    ELSE
-      CW = 0.0
     ENDIF
-    CCH(II) = CCH(II) + (CW*CW)*(0.001803*EXPN)
+    CCHI = CCHI + (CW*CW)*(AREACON*PROB(J))
   ENDDO
-ENDDO
-!
-! interpolate each tree's tip cch_hat, apply affine map
-TOP = CCH(40)
-DO I=1,ITRN
-  HTV = HT(I)
-  IF (DBH(I).LE.0.0 .OR. ICR(I).LE.0 .OR. HTV.LE.0.0) THEN
-    CCHT(I) = CCH_A
-    CYCLE
-  ENDIF
-  IF (HTV.GE.TOP .OR. TOP.LE.0.0) THEN
-    CCHHAT = 0.0
-  ELSE
-    XI = 40.0*(HTV/TOP)
-    IDX = INT(XI) + 1
-    IF (IDX.GE.40) THEN
-      CCHHAT = CCH(39)*(40.0 - XI)
-    ELSE
-      XXI = REAL(IDX)
-      CCHHAT = CCH(IDX) + (CCH(IDX-1)-CCH(IDX))*(XXI - XI)
-    ENDIF
-  ENDIF
-  IF (CCHHAT.LT.0.0) CCHHAT = 0.0
-  CCHT(I) = CCH_A + CCH_B*CCHHAT
+  CCHT(I) = CCHI
 ENDDO
 RETURN
 END
@@ -311,10 +275,7 @@ END
 
 SUBROUTINE GOMPON
 !  GOMPMORT keyword hook (called from vbase/initre.f90 when the GOMPMORT keyword
-!  is read). Flags keyword activation; GOMPLOAD (called from MORCON, which runs
-!  after the keyword reader) then loads coefficients and sets LGOMP. The coeff
-!  file path still comes from FVS_GOMPIT_COEF (a deployment detail); the keyword
-!  records the on/off choice reproducibly in the keyfile.
+!  is read). Flags keyword activation; GOMPLOAD then loads coefficients.
 IMPLICIT NONE
 INCLUDE 'PRGPRM.f90'
 INCLUDE 'GOMPMC.f90'
@@ -325,8 +286,7 @@ END
 
 BLOCK DATA GOMPBD
 !  Initialise the gompit COMMON flags so LGOMP / LGOMPKW / GHAVE are defined
-!  before any activation. Required because the morts hook tests
-!  IF(LGOMP.AND.GHAVE(ISPC)) and Fortran does not guarantee short-circuit .AND.
+!  before any activation.
 IMPLICIT NONE
 INCLUDE 'PRGPRM.f90'
 INCLUDE 'GOMPMC.f90'

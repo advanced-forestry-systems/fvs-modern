@@ -36,6 +36,9 @@ INCLUDE 'PDEN.f90'
 !
 !
 INCLUDE 'HTCAL.f90'
+INCLUDE 'VARCOM.f90'
+INCLUDE 'GREGMC.f90'
+INCLUDE 'GOMPMC.f90'
 !
 !
 !OMMONS
@@ -44,6 +47,8 @@ LOGICAL DEBUG
 !
 INTEGER ISPC,I1,I2,I3,I,MODE0,IVAR,ITFN
 REAL SCALE,XHT,YRS,H,HTG1,HTMAX,AGET,GMOD,RELHTA,TEMHTG
+INTEGER IGYR
+REAL HTCUR,HGINC,CCFLV,CCHV,HGDEC
 !
 !----------
 !  SEE IF WE NEED TO DO SOME DEBUG.
@@ -56,6 +61,8 @@ SCALE=FINT/YR
 !  GET THE HEIGHT GROWTH MULTIPLIERS.
 !----------
 CALL MULTS (2,IY(ICYC),XHMULT)
+! Greg HG: lazy-load coefficients/climate once (no-op unless FVS_GREGHG set)
+CALL GREGLOADHG
 !----------
 !  BEGIN SPECIES LOOP.
 !----------
@@ -115,6 +122,20 @@ HTG(I)=SCALE*XHT*HTG(I)*EXP(HTCON(ISPC))
 IF(DEBUG) WRITE(JOSTND,*) 'I= ',I,'  SCALE= ',SCALE,'  XHT= ', &
      XHT, '  HTG(I)= ',HTG(I),' HTCON= ',HTCON(ISPC)
 TEMHTG=HTG(I)
+! --- Greg HG substitution (behind FVS_GREGHG): override native HTG for covered species ---
+IF (LGREGHG .AND. GHAVE_HG(ISPC)) THEN
+  CCHV = CCHT(I)                       ! crown closure at tip from gompit GOMPCCH (0 if gompit off)
+  CCFLV = PTBALT(I)                    ! PROVISIONAL CCFL proxy = BA of larger trees; pending Greg
+  HTCUR = HT(I)
+  DO IGYR = 1, 10
+    CALL GREGHGV(ISPC, HTCUR, FLOAT(ICR(I))/100.0, CCFLV, CCHV, GELEV, GTD, GEMT, HGINC)
+    HTCUR = HTCUR + HGINC
+  END DO
+  HGDEC = HTCUR - HT(I)                ! 10-yr Greg height increment
+  HTG(I) = SCALE * XHT * HGDEC         ! scale to cycle, keep user multiplier; bypass native GMOD/HTCON
+  IF (HTG(I) .LT. 0.1) HTG(I) = 0.1
+  TEMHTG = HTG(I)
+ENDIF
 !----------
 ! CHECK FOR SIZE CAP COMPLIANCE.
 !----------

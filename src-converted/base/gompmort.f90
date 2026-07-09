@@ -184,6 +184,9 @@ INTEGER I, G, II
 REAL DBHV, HTV, CRV, EXPN, MAXHT, CL, HCB, MCWV, LCWV, HL
 REAL XL, BND, CW, TOP, XI, XXI, CCHHAT, DD, RP, HtoD
 INTEGER IDX
+INTEGER, SAVE :: CCHDBG_CYC = 0
+REAL CCHSUM, CCHMAXV, CCHMNV
+INTEGER NLV
 !
 DATA MCWB0/4.6366,6.1880,3.4835,4.6600546,3.2837,4.5652,4.0,4.5652, &
   3.4298629,2.9793895,4.4443,4.4443,4.0953,3.0785639,3.3625,8.0, &
@@ -305,6 +308,32 @@ DO I=1,ITRN
   IF (CCHHAT.LT.0.0) CCHHAT = 0.0
   CCHT(I) = CCH_A + CCH_B*CCHHAT
 ENDDO
+!
+! --- CCHDIAG: temporary diagnostic instrumentation (observability only, no
+!     effect on any computed value) added in wt-cchdiag for the first-cycle
+!     hardwood mortality investigation. Appends per-call CCHT summary stats.
+CCHDBG_CYC = CCHDBG_CYC + 1
+CCHSUM = 0.0
+CCHMAXV = -1.0
+CCHMNV = 1.0E30
+NLV = 0
+DO I=1,ITRN
+  IF (DBH(I).GT.0.0) THEN
+    NLV = NLV + 1
+    CCHSUM = CCHSUM + CCHT(I)
+    IF (CCHT(I).GT.CCHMAXV) CCHMAXV = CCHT(I)
+    IF (CCHT(I).LT.CCHMNV) CCHMNV = CCHT(I)
+  ENDIF
+ENDDO
+OPEN(UNIT=887,FILE='/fs/scratch/PUOM0008/crsfaaron/cchdiag.log',STATUS='UNKNOWN', &
+     POSITION='APPEND')
+IF (NLV.GT.0) THEN
+  WRITE(887,'(A,I6,A,I6,A,F12.6,A,F12.6,A,F12.6)') 'CCHDIAG call=',CCHDBG_CYC, &
+    ' nlive=',NLV,' mean=',CCHSUM/REAL(NLV),' max=',CCHMAXV,' min=',CCHMNV
+ELSE
+  WRITE(887,'(A,I6,A)') 'CCHDIAG call=',CCHDBG_CYC,' nlive=0'
+ENDIF
+CLOSE(887)
 RETURN
 END
 

@@ -65,6 +65,19 @@ IF (CVAL(1:1).EQ.'0' .OR. CVAL(1:1).EQ.'n' .OR. CVAL(1:1).EQ.'N' &
 IF (.NOT.(LENABLE .OR. LGOMPKW)) RETURN
 LDONE = .TRUE.
 !
+! -- Small-DBH mortality guard (young-cohort collapse fix). Read once here so
+! -- the threshold/floor are tunable without a recompile. Defaults keep the
+! -- guard ON but leave every tree with DBH>=GDBHMIN byte-identical to prior
+! -- gompit. FVS_GOMP_DBHMIN<=0 disables the guard entirely.
+GDBHMIN = 1.0
+GSFLOOR = 0.95
+CALL GETENV('FVS_GOMP_DBHMIN', CVAL)
+IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GDBHMIN
+CALL GETENV('FVS_GOMP_SFLOOR', CVAL)
+IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GSFLOOR
+IF (GSFLOOR.LT.0.0) GSFLOOR = 0.0
+IF (GSFLOOR.GT.1.0) GSFLOOR = 1.0
+!
 LGOMP = .FALSE.
 NGOMP = 0
 DO ISPC=1,MAXSP
@@ -131,19 +144,60 @@ ENDDO
 LGOMP = .TRUE.
 WRITE(JOSTND,*) 'GOMPMORT enabled: ', NG, ' fitted species read, ', &
      NGOMP, ' matched to this variant.'
+IF (GDBHMIN.GT.0.0) THEN
+  WRITE(JOSTND,*) 'GOMPMORT small-DBH guard ON: DBHMIN=', GDBHMIN, &
+       ' in, annual-survival floor=', GSFLOOR, &
+       ' from FVS_GOMP_DBHMIN and FVS_GOMP_SFLOOR.'
+ELSE
+  WRITE(JOSTND,*) 'GOMPMORT small-DBH guard OFF (FVS_GOMP_DBHMIN<=0).'
+ENDIF
+IF (GDBHMIN.GT.0.0) THEN
+  WRITE(JOSTND,*) 'GOMPMORT small-DBH guard ON: DBHMIN=', GDBHMIN, &
+       ' in, annual-survival floor=', GSFLOOR, &
+       ' from FVS_GOMP_DBHMIN and FVS_GOMP_SFLOOR.'
+ELSE
+  WRITE(JOSTND,*) 'GOMPMORT small-DBH guard OFF (FVS_GOMP_DBHMIN<=0).'
+ENDIF
+IF (GDBHMIN.GT.0.0) THEN
+  WRITE(JOSTND,*) 'GOMPMORT small-DBH guard ON: DBHMIN=', GDBHMIN, &
+       ' in, annual-survival floor=', GSFLOOR, &
+       ' from FVS_GOMP_DBHMIN and FVS_GOMP_SFLOOR.'
+ELSE
+  WRITE(JOSTND,*) 'GOMPMORT small-DBH guard OFF (FVS_GOMP_DBHMIN<=0).'
+ENDIF
+IF (GDBHMIN.GT.0.0) THEN
+  WRITE(JOSTND,*) 'GOMPMORT small-DBH guard ON: DBHMIN=', GDBHMIN, &
+       ' in, annual-survival floor=', GSFLOOR, &
+       ' from FVS_GOMP_DBHMIN and FVS_GOMP_SFLOOR.'
+ELSE
+  WRITE(JOSTND,*) 'GOMPMORT small-DBH guard OFF (FVS_GOMP_DBHMIN<=0).'
+ENDIF
 RETURN
 END
 
 
-SUBROUTINE GOMPSURV(ISPC, CR, CCHV, FINTL, SURV)
+SUBROUTINE GOMPSURV(ISPC, DBHV, CR, CCHV, FINTL, SURV)
 !  Period survival for one tree of FVS species ISPC. Caller guarantees
 !  GHAVE(ISPC). Returns SURV in (0,1].
+!
+!  SMALL-DBH GUARD (young-cohort collapse fix): the raw gompit annual survival
+!  1-exp(-exp(eta)) can drop toward 0 for some conifers at the crown ratio and
+!  crown closure of a young dense seedling cohort, killing ~100% of the stand
+!  in the first cycle (falsified by the Bakuzis assessment on NE/SN conifers).
+!  For trees with 0 <= DBHV < GDBHMIN the per-cycle survival is FLOORED at
+!  GSFLOOR**FINTL (annual survival GSFLOOR), so a seedling cohort self-thins at
+!  a bounded plausible rate instead of collapsing. The floor is a MAX, so where
+!  gompit already predicts survival above the floor it is left untouched. Trees
+!  with DBHV >= GDBHMIN, and any caller passing DBHV < 0 (unknown DBH), take the
+!  identical eta/hazard path as before: established-stand behavior is
+!  BYTE-IDENTICAL. GDBHMIN and GSFLOOR come from FVS_GOMP_DBHMIN and
+!  FVS_GOMP_SFLOOR (defaults 1.0 in and 0.95 per yr); GDBHMIN<=0 disables.
 IMPLICIT NONE
 INCLUDE 'PRGPRM.f90'
 INCLUDE 'GOMPMC.f90'
 INTEGER ISPC
-REAL CR, CCHV, FINTL, SURV
-REAL B0,B1,B2,B3,B4,CRC,CCHC,ETA,HZ,CTERM
+REAL DBHV, CR, CCHV, FINTL, SURV
+REAL B0,B1,B2,B3,B4,CRC,CCHC,ETA,HZ,CTERM,SFLR
 B0=GB(ISPC,1); B1=GB(ISPC,2); B2=GB(ISPC,3); B3=GB(ISPC,4); B4=GB(ISPC,5)
 CRC = CR
 IF (CRC.LT.1.0E-4) CRC = 1.0E-4
@@ -160,6 +214,14 @@ IF (ETA.GT.30.0)  ETA = 30.0
 IF (ETA.LT.-30.0) ETA = -30.0
 HZ = 1.0 - EXP(-EXP(ETA))   ! Greg gompit: annual SURVIVAL (high eta -> high survival)
 SURV = MAX(0.0,MIN(1.0,HZ)) ** FINTL   ! compound annual survival over the cycle
+!
+! Small-DBH guard: floor per-cycle survival for sub-threshold trees only.
+! GDBHMIN<=0 disables. DBHV<0 (caller signals no DBH) bypasses the guard so
+! behavior is identical to the pre-guard code path.
+IF (GDBHMIN.GT.0.0 .AND. DBHV.GE.0.0 .AND. DBHV.LT.GDBHMIN) THEN
+  SFLR = GSFLOOR ** FINTL
+  IF (SURV.LT.SFLR) SURV = SFLR
+ENDIF
 RETURN
 END
 
@@ -332,4 +394,5 @@ INCLUDE 'PRGPRM.f90'
 INCLUDE 'GOMPMC.f90'
 DATA LGOMP /.FALSE./, LGOMPKW /.FALSE./, GHAVE /MAXSP*.FALSE./
 DATA NGOMP /0/, GGRP /MAXSP*16/
+DATA GDBHMIN /1.0/, GSFLOOR /0.95/
 END

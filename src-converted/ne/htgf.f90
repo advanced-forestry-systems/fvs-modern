@@ -65,6 +65,8 @@ SCALE=FINT/YR
 CALL MULTS (2,IY(ICYC),XHMULT)
 ! Greg HG: lazy-load coefficients/climate once (no-op unless FVS_GREGHG set)
 CALL GREGLOADHG
+! Greg crown recession: lazy-load coefficients once (no-op unless CROWNDRIVER or FVS_GREGCRW set)
+  CALL GREGLOADCRW
 IF (LGREGHG) THEN
   DO JJ=1,ITRN
     OGCA(JJ) = 0.0
@@ -152,7 +154,7 @@ IF (LGREGHG .AND. GHAVE_HG(ISPC)) THEN
   CCFLV = 100.0/43560.0 * CCFLV        ! Greg ccfl: CCF of larger trees from MCW
   HTCUR = HT(I)
   DO IGYR = 1, 10
-    CALL GREGHGV(ISPC, HTCUR, FLOAT(ICR(I))/100.0, CCFLV, CCHV, GELEV, GTD, GEMT, HGINC)
+    CALL GREGHGV(ISPC, HTCUR, FLOAT(ICR(I))/100.0, CCFLV, CCHV, HGINC)
     HTCUR = HTCUR + HGINC
   END DO
   HGDEC = HTCUR - HT(I)                ! 10-yr Greg height increment

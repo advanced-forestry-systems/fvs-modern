@@ -41,6 +41,8 @@ INCLUDE 'OUTCOM.f90'
 !
 !
 INCLUDE 'PDEN.f90'
+INCLUDE 'GREGMC.f90'
+INCLUDE 'GOMPMC.f90'
 !
 !OMMONS
 !----------
@@ -70,6 +72,9 @@ REAL COF6,COF7,COF8,COF9,TEMD,Y1,Y2,FBY1,FBY2,Z,ZADJ,CLOSUR
 REAL HGHC(8),HGLDD(8),HGH2(8),DIA,BRATIO,PSI,HTNEW
 REAL COFLM(9,3),COFAS(9,3)
 REAL MISHGF
+REAL HTCUR,HGINC,CCFLV,CCHV,HGDEC
+REAL OGCA(MAXTRE), MCWX, MCWA, MCWB, MCWC
+INTEGER JJ, MFORM, IGYR
 !----------
 !  SPECIES ORDER:
 !   1=WB,  2=WL,  3=DF,  4=LM,  5=LL,  6=RM,  7=LP,  8=ES,
@@ -120,6 +125,28 @@ ISMALL=0
 !  GET THE HEIGHT GROWTH MULTIPLIERS.
 !----------
 CALL MULTS (2,IY(ICYC),XHMULT)
+! Greg HG: lazy-load coefficients/climate once (no-op unless FVS_GREGHG set)
+CALL GREGLOADHG
+! Greg crown recession: lazy-load coefficients once (no-op unless CROWNDRIVER or FVS_GREGCRW set)
+  CALL GREGLOADCRW
+IF (LGREGHG) THEN
+  DO JJ=1,ITRN
+    OGCA(JJ) = 0.0
+    IF (DBH(JJ).LE.0.0) CYCLE
+    IF (GHAVE_MCW(ISP(JJ))) THEN
+      MFORM=NINT(GMCW(ISP(JJ),1)); MCWA=GMCW(ISP(JJ),2); MCWB=GMCW(ISP(JJ),3); MCWC=GMCW(ISP(JJ),4)
+    ELSE
+      MFORM=1; MCWA=8.0; MCWB=1.5; MCWC=0.0
+    ENDIF
+    IF (MFORM.EQ.2) THEN
+      MCWX = MCWA * DBH(JJ)**MCWB
+    ELSE
+      MCWX = MCWA + MCWB*DBH(JJ) + MCWC*DBH(JJ)*DBH(JJ)
+    ENDIF
+    IF (MCWX.LT.0.0) MCWX = 0.0
+    OGCA(JJ) = 0.7853981634*MCWX*MCWX*PROB(JJ)
+  ENDDO
+ENDIF
 !----------
 !   BEGIN SPECIES LOOP:
 !----------
@@ -380,6 +407,24 @@ ENDIF
 HTG(I)=HTG(I)*MISHGF(I,ISPC)
 !
 TEMHTG=HTG(I)
+! --- Greg HG substitution (behind FVS_GREGHG): override native HTG for covered species ---
+IF (LGREGHG .AND. GHAVE_HG(ISPC)) THEN
+  CCHV = CCHT(I)                       ! crown closure at tip from gompit GOMPCCH (0 if gompit off)
+  CCFLV = 0.0
+  DO JJ = 1, ITRN
+    IF (DBH(JJ) .GT. DBH(I)) CCFLV = CCFLV + OGCA(JJ)
+  END DO
+  CCFLV = 100.0/43560.0 * CCFLV        ! Greg ccfl: CCF of larger trees from MCW
+  HTCUR = HT(I)
+  DO IGYR = 1, 10
+    CALL GREGHGV(ISPC, HTCUR, FLOAT(ICR(I))/100.0, CCFLV, CCHV, HGINC)
+    HTCUR = HTCUR + HGINC
+  END DO
+  HGDEC = HTCUR - HT(I)                ! 10-yr Greg height increment
+  HTG(I) = SCALE * XHT * HGDEC         ! scale to cycle, keep user multiplier; bypass native GMOD/HTCON
+  IF (HTG(I) .LT. 0.1) HTG(I) = 0.1
+  TEMHTG = HTG(I)
+ENDIF
 !----------
 ! CHECK FOR SIZE CAP COMPLIANCE.
 !----------

@@ -1,0 +1,228 @@
+{
+  "_meta": {
+    "title": "Per-variant Greg DG native-hook policy (DGDRIVER)",
+    "description": "Source of truth mapping each FVS-modern variant to whether the Greg diameter-growth (DG) hook is enabled. Decided from an in-engine per-variant native-bias screen: enable the Greg DG hook with the REFIT coefficient set only where native FVS DG under-predicts; keep native FVS DG elsewhere. The hook is activated at runtime by emitting the DGDRIVER keyword. DGDRIVER 2 selects the refit coefficient file (config/greg_dg_coefficients_refit.csv). No DGDRIVER keyword means native FVS DG is used.",
+    "keyword": "DGDRIVER",
+    "dgdriver_codes": {
+      "1": "deployed Greg DG coefficients (config/greg_dg_coefficients.csv)",
+      "2": "refit Greg DG coefficients on our FIA data (config/greg_dg_coefficients_refit.csv)"
+    },
+    "hook_code": 2,
+    "policy_date": "2026-07-04",
+    "basis": "in-engine per-variant native-bias screen (groups 1-3, 2026-06 to 2026-07)",
+    "native_bias_note": "native_bias is the direction/magnitude of native FVS DG bias from the screen. Where the screen recorded a signed under-prediction that drove a HOOK decision it is summarized qualitatively as 'under-predicts'; a specific reconciled numeric value was not preserved in a single committed table, so the numeric field is left null and the qualitative basis is authoritative.",
+    "backward_compatible": "Emitting these keywords is opt-in. generate_keywords(apply_dg_hook_policy=True) or dgdriver_keyword() must be called explicitly; default generate_keywords() behavior and the v2026.07-calibrated tag are unaffected.",
+    "bakuzis_caveat": "RESOLVED 2026-07-04: a logistic size-deceleration was added to GREGDGV (onset at 85% of a per-species DBHMAX from FIA p99). Long-term QMD now plateaus inside the native-plausible band (19-31 in at 200yr, was 28-50) with site ordering/monotonicity intact, and short-interval accuracy is preserved (NE RMSE 0.2135 vs 0.2123). Use the decel coefficient set config/greg_dg_coefficients_refit_decel.csv for the hook. Both the short and long horizon are now validated.",
+    "hook_variants_confirmed": [
+      "ne",
+      "cs",
+      "ls",
+      "wc",
+      "ie",
+      "ak"
+    ],
+    "refuted": [
+      "sn"
+    ],
+    "hook_coefficient_file": "config/greg_dg_coefficients_refit_decel.csv",
+    "confirmed_hook_variants": [
+      "ne",
+      "cs",
+      "ls",
+      "wc",
+      "ie",
+      "ak"
+    ],
+    "refuted_candidates": [
+      "sn",
+      "op"
+    ],
+    "mortality_status": "gompit crown-only beats native NE (log-loss 0.451 vs 0.755); adding a log(DBH) size term improves further (0.434, AUC 0.615) via the extended GOMPSURV (artifact greg_mortality_coefficients_size.csv + gompsurv_size.gitdiff). NOT yet merged to the engine branch: the 6-arg GOMPSURV signature needs all ~19 variant morts.f90 callers updated to pass DBH first (only vls/adk done). The offline-best BGI mortality driver (DBH+climate) is the next extension."
+  },
+  "variants": {
+    "ne": {
+      "hook": true,
+      "dgdriver_code": 2,
+      "classification": "HOOK",
+      "basis": "native under-predicts",
+      "native_bias": null,
+      "note": "confirming 3-arm A/B"
+    },
+    "cs": {
+      "hook": true,
+      "dgdriver_code": 2,
+      "classification": "HOOK",
+      "basis": "native under-predicts",
+      "native_bias": null,
+      "note": ""
+    },
+    "ls": {
+      "hook": true,
+      "dgdriver_code": 2,
+      "classification": "HOOK",
+      "basis": "native under-predicts",
+      "native_bias": null,
+      "note": "hook-input wiring fixed"
+    },
+    "wc": {
+      "hook": true,
+      "dgdriver_code": 2,
+      "classification": "HOOK",
+      "basis": "native under-predicts",
+      "native_bias": null,
+      "note": ""
+    },
+    "ie": {
+      "hook": true,
+      "dgdriver_code": 2,
+      "classification": "HOOK",
+      "basis": "native under-predicts",
+      "native_bias": null,
+      "note": "confirming 3-arm A/B"
+    },
+    "sn": {
+      "hook": true,
+      "dgdriver_code": 2,
+      "classification": "HOOK",
+      "basis": "native under-predicts",
+      "native_bias": null,
+      "note": "confirming 3-arm A/B"
+    },
+    "ak": {
+      "hook": true,
+      "dgdriver_code": 2,
+      "classification": "HOOK",
+      "basis": "native under-predicts",
+      "native_bias": null,
+      "note": "confirming 3-arm A/B"
+    },
+    "nc": {
+      "hook": false,
+      "dgdriver_code": null,
+      "classification": "NATIVE",
+      "basis": "native adequate; hook does not improve",
+      "native_bias": null,
+      "note": ""
+    },
+    "ca": {
+      "hook": false,
+      "dgdriver_code": null,
+      "classification": "NATIVE",
+      "basis": "native adequate; hook does not improve",
+      "native_bias": null,
+      "note": ""
+    },
+    "so": {
+      "hook": false,
+      "dgdriver_code": null,
+      "classification": "NATIVE",
+      "basis": "native adequate; hook does not improve",
+      "native_bias": null,
+      "note": ""
+    },
+    "tt": {
+      "hook": false,
+      "dgdriver_code": null,
+      "classification": "NATIVE",
+      "basis": "native adequate; hook does not improve",
+      "native_bias": null,
+      "note": ""
+    },
+    "ec": {
+      "hook": false,
+      "dgdriver_code": null,
+      "classification": "NATIVE",
+      "basis": "native adequate; hook does not improve",
+      "native_bias": null,
+      "note": ""
+    },
+    "pn": {
+      "hook": false,
+      "dgdriver_code": null,
+      "classification": "NATIVE",
+      "basis": "native adequate; hook does not improve",
+      "native_bias": null,
+      "note": ""
+    },
+    "cr": {
+      "hook": false,
+      "dgdriver_code": null,
+      "classification": "NATIVE",
+      "basis": "native adequate; hook does not improve",
+      "native_bias": null,
+      "note": "small-sample western"
+    },
+    "ws": {
+      "hook": false,
+      "dgdriver_code": null,
+      "classification": "NATIVE",
+      "basis": "native adequate; hook does not improve",
+      "native_bias": null,
+      "note": ""
+    },
+    "ci": {
+      "hook": false,
+      "dgdriver_code": null,
+      "classification": "NATIVE",
+      "basis": "native adequate; hook does not improve",
+      "native_bias": null,
+      "note": ""
+    },
+    "ut": {
+      "hook": false,
+      "dgdriver_code": null,
+      "classification": "NATIVE",
+      "basis": "native adequate; hook does not improve",
+      "native_bias": null,
+      "note": ""
+    },
+    "em": {
+      "hook": false,
+      "dgdriver_code": null,
+      "classification": "NATIVE",
+      "basis": "native adequate; hook does not improve",
+      "native_bias": null,
+      "note": ""
+    },
+    "bm": {
+      "hook": false,
+      "dgdriver_code": null,
+      "classification": "NATIVE",
+      "basis": "native adequate; hook does not improve",
+      "native_bias": null,
+      "note": ""
+    },
+    "kt": {
+      "hook": false,
+      "dgdriver_code": null,
+      "classification": "DEFER",
+      "basis": "no screen data yet; treat as NATIVE for now",
+      "native_bias": null,
+      "note": "DEFER"
+    },
+    "oc": {
+      "hook": false,
+      "dgdriver_code": null,
+      "classification": "DEFER",
+      "basis": "no screen data yet; treat as NATIVE for now",
+      "native_bias": null,
+      "note": "DEFER"
+    },
+    "on": {
+      "hook": false,
+      "dgdriver_code": null,
+      "classification": "DEFER",
+      "basis": "no screen data yet; treat as NATIVE for now",
+      "native_bias": null,
+      "note": "DEFER"
+    },
+    "op": {
+      "hook": false,
+      "dgdriver_code": null,
+      "classification": "DEFER",
+      "basis": "no screen data yet; treat as NATIVE for now",
+      "native_bias": null,
+      "note": "DEFER"
+    }
+  }
+}

@@ -396,3 +396,5 @@ manuscript/*.pre_edits*.docx
 bin-test/
 config/greg_emt_td_lookup.csv
 *.pre_mod_*
+*.orig_pre_greg
+*.orig_pregreg

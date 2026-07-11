@@ -74,6 +74,8 @@ INTEGER ERRFLAG,IRTNCD
 INTEGER POINTNO,IFLAG
 LOGICAL LTRERD,LFIRST,LNOTBK(12),LNOTRE
 LOGICAL DEBUG,LOPEVN,LKECHO
+INTEGER IDGDRV,IMORTDRV
+COMMON /GREGKW/ IDGDRV,IMORTDRV
 LOGICAL RRGO,RRT
 CHARACTER*250 RECORD
 CHARACTER*10 KARD(12),PVRDUM
@@ -233,7 +235,7 @@ GO TO(  100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, &
       11100,11200,11300,11400,11500,11600,11700,11800,11900,12000, &
       12100,12200,12300,12400,12500,12600,12700,12800,12900,13000, &
       13100,13200,13300,13400,13500,13600,13700,13800,13900,14000, &
-      14100,14200,14300,14400,14500,14600,14700,14800) &
+      14100,14200,14300,14400,14500,14600,14700,14800,14900,15000) &
       , NUMBER
 !
 !  ==========  OPTION NUMBER 1: PROCESS  ============================PROCESS
@@ -6335,6 +6337,39 @@ GOTO 10
 !  GOMPMORT: enable Greg Johnson gompit mortality (loaded in MORCON).
 CALL GOMPON
 IF(LKECHO)WRITE(JOSTND,9999) KEYWRD
+GO TO 10
+!
+!  ==========  OPTION NUMBER 149: DGDRIVER  =======================DGDRIVER
+14900 CONTINUE
+!  DGDRIVER: select Greg DG site driver (0=none,1=elev,2=cspi,3=bgi,4=esi,5=emt);
+!  default cspi(2). Records the choice reproducibly in the keyfile; GREGLOADDG
+!  consults IDGDRV. Draft: per-driver coefficient-file resolution is downstream.
+IDGDRV = 2
+IF (LNOTBK(1)) IDGDRV = INT(ARRAY(1))
+IF(LKECHO)WRITE(JOSTND,9999) KEYWRD
+GO TO 10
+!
+!  ==========  OPTION NUMBER 150: MORTDRVR  =======================MORTDRVR
+15000 CONTINUE
+!  MORTDRVR (MORTDRIVER, 8-char keyword form): select the Greg gompit mortality
+!  coefficient TIER. This is an additive extension of the crown-only GOMPSURV
+!  form (crown-only -> +size -> +size+BGI), NOT a swappable site-driver family
+!  (that 0-5 elev/cspi/bgi/esi/emt scheme belongs to DGDRIVER only and does not
+!  apply here):
+!     0 = crown-only  (default; same as no keyword; greg_mortality_coefficients.csv)
+!     1 = size         (+log(DBH) term; available, not recommended standalone)
+!     2 = size+BGI     (+BGI term on top of size; recommended opt-in upgrade)
+!  Bare keyword (no argument) defaults to the recommended tier, size+BGI(2).
+!  Records the choice reproducibly in the keyfile; GOMPLOAD logs IMORTDRV for
+!  reproducibility only -- actual tier selection still happens by which
+!  coefficient file is passed to FVS_GOMPIT_COEF (deliberately downstream,
+!  matching the DGDRIVER precedent). In-Fortran file-path resolution is out of
+!  scope for this pass.
+IMORTDRV = 2
+IF (LNOTBK(1)) IMORTDRV = INT(ARRAY(1))
+IF(LKECHO)WRITE(JOSTND,15001) KEYWRD,IMORTDRV
+15001 FORMAT (/A8,'   MORTALITY COEFFICIENT TIER =',I3, &
+     '  (0=CROWN-ONLY,1=SIZE,2=SIZE+BGI)')
 GO TO 10
 
 14700 CONTINUE

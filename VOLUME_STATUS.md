@@ -91,3 +91,73 @@ Scoped plan (larger job, do NOT bolt onto this branch blindly):
 Turnkey stub: rescore/run_rescore_base_true.py (rescore one binary into a tag) and
 rescore/terciles.py (tercile A/B) are the reusable harness; point them at the new
 test binary vs bin-r9vol.
+
+## 2026-07-17 (pm): tree-level decomposition + responsible layer (DEFINITIVE)
+
+### Method
+Isolated the estimator from projection with a cycle-0 identity test: sample large
+live ME FIA trees (known DBH, HT, SPCD, VOLBFNET, VOLCSNET, VOLCFNET), build
+single-tree NE stands, run FVS one cycle (no growth), read per-tree NSVB board
+foot VOL(10) and merch cubic from FVS_Summary2, compare to FIA's own NSVB values
+at IDENTICAL inputs. Harness: rescore/pertree_estimator.py, pertree_ctype.py,
+trace_run.py; evidence in rescore/FINDINGS_pertree.txt and maxlen_sweep_results.txt.
+
+### Tree-level ratio vs DBH (FVS/FIA, identical inputs, default R9 mrules MAXLEN=8ft)
+SW  BF_ratio 1.05 (10-13") -> 1.35 (23-40");  CF_ratio 0.99 -> 1.14
+HW  BF_ratio 0.94 (10-13") -> 1.42 (23-40");  CF_ratio 1.11 -> 1.28
+DBH>=16 overall:  SW BdFt +28.4% / cubic +11.0% ;  HW BdFt +31.8% / cubic +20.9%
+Board-foot-per-cubic (SW 23-40"): FVS 6.43 vs FIA 5.43 bf/cf (+18%).
+=> divergence is board-foot-specific, size-increasing, present at the TREE level
+   with zero projection. Small SW cubic matches FIA (0.99) -> same NSVB cubic
+   estimator confirmed; the split is entirely in the board-foot derivation.
+
+### Which layer (each candidate tested by A/B on identical-input binaries)
+(a) CTYPE convention (FIA 'I' vs FVS 'F' branch in nsvb.f90): INERT. VOL(10) is
+    byte-identical F vs I (SW26" 835 bf both). Ruled out.
+(b) Merch top MTOPP (7.6 SW / 9.6 HW): conservative, NOT the driver. A lower FIA
+    top (7.0/9.0) would lengthen the sawlog and make FVS bigger, wrong direction.
+(c) Log segmentation length (Region-9 mrules MAXLEN). THIS IS THE LAYER.
+    MAXLEN sweep, DBH>=16, identical inputs (cubic pinned at SW 1.110 / HW 1.209):
+        MAXLEN(ft)   SW BdFt ratio   HW BdFt ratio
+           8            1.284           1.318   (production default)
+          16            1.247           1.284   (standard International log)
+          32            1.190           1.196
+          64            1.023           0.960   (whole-bole, no bucking)
+    At whole-bole the same-tree board-foot excess collapses to ~0 (SW +2%, HW -4%)
+    while cubic is untouched. So the ENTIRE same-tree board-foot-specific excess is
+    the 8-ft bucking feeding NVEL INTL14: each short log gets a fresh 0.5"/4ft
+    internal-taper credit off a real (flatter-at-base) small-end diameter, over-
+    crediting board feet, and the effect grows with diameter/log count.
+
+### How much each layer explains (large SW, board-foot terms)
+- Scorecard aggregate large-tercile SW BdFt bias was +75%. Of that:
+  ~ +28 pts = same-tree 8-ft-segmentation vs FIA whole-bole board-foot method;
+  the shared cubic component (~+11 pts) is folded in; the remaining ~+40 pts is
+  PROJECTION (FVS grows large trees larger than observed; the board rule's
+  nonlinearity amplifies size error far more than cubic). Cubic same-tree is only
+  +11% (SW), so most of the cubic scorecard excess is also projection.
+- Standard 16-ft logs would trim only ~4 pts of the same-tree excess; even 16-ft
+  leaves +25%. FIA's VOLBFNET matches ~whole-bole, NOT 8-ft or 16-ft bucking.
+
+### Determination: NO board-foot CODE BUG (inherent method difference)
+NVEL INTL14 and the nsvb.f90 accumulation are correct: no units error, no double
+count, correct International 1/4 slot (VOL(10)), correct sawlog domain. The
+large-tree board-foot divergence is inherent to two different board-foot METHODS:
+FVS computes operational International 1/4 by bucking the sawlog into 8-ft logs (a
+legitimate Region-9 merch standard, MDL=CLK/NVB), while FIA's NSVB VOLBFNET is a
+whole-bole International integration of the same taper (no short-log bucking).
+Per the task's own guidance ("if the divergence is inherent ... do NOT force a
+change"), no production edit was made. Throwaway trace + env-gated MAXLEN/MTOP/
+CTYPE binaries (bin-r9vol-trace, bin-r9vol-seg) were used only to localize; the
+source edits were reverted and the worktree source is pristine (git clean).
+
+### Actionable next step (scorecard fairness, a REPORTING choice not a growth fix)
+To make the scored BdFt like-for-like against FIA VOLBFNET, compute the scored
+board foot with FIA's whole-bole International method (demonstrated ML64 run:
+large-tree same-tree BdFt bias -> ~0, cubic unchanged). Do NOT hard-set MAXLEN to
+a non-physical value in the operational merch path; instead either (i) score BdFt
+via the whole-bole integral in the summary path when comparing to FIA, or (ii)
+document the 8-ft-log convention so the residual board-foot column is read as
+operational, not FIA-matched. The remaining, larger board-foot excess after this
+alignment is the growth-model projection signal (large trees grown too big),
+which is where board-foot accuracy should next be pursued.

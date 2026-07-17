@@ -20,6 +20,8 @@
 
   REAL VOL(15),DBHOB,R,VC,CF,HT1PRD,HT2PRD,HTTOT,MTOPP
   REAL GCB,P,PT,CRD
+  REAL BFINT,TOPDIB,DIBBH,DSMLOG
+  INTEGER NLOG16,ILOG
   real*8 term1,term2,term3
 
   DO 100, I=1,15
@@ -201,7 +203,6 @@
                 (.00030183475*(DBHOB**2*HT1PRD**3))+ &
                 (.0000019222413*(DBHOB**4*HT1PRD**2))
         VOL(2)=VOL(2)*CF
-        VOL(10) = VOL(2)
 !*************----------------- TABLE C
      ELSEIF (VOLEQ(1:3).EQ.'903'.OR.IFORST.EQ.19) THEN
         IF(VOLSPP.EQ.'129') THEN
@@ -227,7 +228,6 @@
                 (.00039033000*(DBHOB**2*HT1PRD**3))- &
                 (.0000066236*(DBHOB**4*HT1PRD**2))
         VOL(2)=VOL(2)*CF
-        VOL(10) = VOL(2)
 !*************----------------- TABLE D
      ELSEIF (VOLEQ(1:3).EQ.'904'.OR.IFORST.EQ.20.OR.IFORST.EQ.22 &
               .OR.IFORST.EQ.30) THEN
@@ -257,7 +257,6 @@
                 (.00029155*(DBHOB**2*HT1PRD**3))- &
                 (.00000007493*(DBHOB**4*HT1PRD**2))
         VOL(2)=VOL(2)*CF
-        VOL(10) = VOL(2)
 !*************----------------- TABLE E
      ELSEIF (VOLEQ(1:3).EQ.'905'.OR. &
                  (IFORST.EQ.21 .AND. VOLSPP.GE.'300')) THEN
@@ -285,7 +284,6 @@
                 (.00037154*(DBHOB**2*HT1PRD**3))- &
                 (.0000057358*(DBHOB**4*HT1PRD**2))
         VOL(2)=VOL(2)*CF
-        VOL(10) = VOL(2)
 !*************----------------- TABLE F
      ELSEIF (VOLEQ(1:3).EQ.'906'.OR. &
                  (IFORST.EQ.21.AND.VOLSPP.LT.'300')) THEN
@@ -301,8 +299,37 @@
                 (.00030875*(DBHOB**2*HT1PRD**3))+ &
                 (.0000055105*(DBHOB**4*HT1PRD**2))
         VOL(2)=VOL(2)*CF
-        VOL(10) = VOL(2)
      ENDIF
+  ENDIF
+!**********************************************************
+!   GENUINE INTERNATIONAL 1/4-INCH BOARD FOOT (VOL(10))   *
+!**********************************************************
+!  Replaces the former VOL(10)=VOL(2) Scribner alias.  Segments the
+!  merchantable saw bole into 16-ft logs and applies the shared
+!  International 1/4 rule (INTL14) per log, matching the log-by-log
+!  accumulation pattern used by R4/R6/R10.  HT1PRD is the Gevorkiantz
+!  saw-log count in 8.25-ft units, so the number of 16-ft logs is
+!  HT1PRD/2.  A straight-line DIB taper from DBH down to the board-foot
+!  merch top sets each log's small-end diameter; INTL14 supplies the
+!  standard 0.5 in per 4-ft within-log taper and 5-bf rounding.
+  IF(BFPFLG.EQ.1 .AND. HT1PRD.GT.0.0 .AND. VOL(2).GT.0.0) THEN
+     IF(MTOPP.GT.0.1) THEN
+        TOPDIB = MTOPP
+     ELSEIF(VOLSPP.LT.'300') THEN
+        TOPDIB = 7.0
+     ELSE
+        TOPDIB = 9.0
+     ENDIF
+     DIBBH = DBHOB
+     IF(TOPDIB.GE.DIBBH) TOPDIB = DIBBH - 0.1
+     NLOG16 = INT(HT1PRD/2.0)
+     IF(NLOG16.LT.1) NLOG16 = 1
+     VOL(10) = 0.0
+     DO ILOG = 1, NLOG16
+        DSMLOG = DIBBH - (DIBBH-TOPDIB)*FLOAT(ILOG)/FLOAT(NLOG16)
+        CALL INTL14(DSMLOG,16.0,BFINT)
+        VOL(10) = VOL(10) + BFINT
+     ENDDO
   ENDIF
 !**********************************************************
 !           CUBIC FOOT MAIN STEM EQUATIONS                *

@@ -92,7 +92,7 @@ BFTOPD(I) = 0.
 SCFMIND(I) = 0.
 SCFTOPD(I) = 0.
 FRMCLS(I) = 80.0
-METHB(I) = 6
+METHB(I) = 9   ! International 1/4-in board foot (FIA/NSVB national std); selects TVOL(10) in fvsvol.f90 (was 6=Scribner)
 METHC(I) = 6
 BFSTMP(I) = 1.0
 SCFSTMP(I) = 1.0

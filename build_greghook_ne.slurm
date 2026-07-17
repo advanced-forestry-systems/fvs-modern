@@ -13,4 +13,4 @@ WT=/fs/scratch/PUOM0008/crsfaaron/fvs-modern-greg-hook
 cd "$WT"; mkdir -p logs bin-greghook
 bash deployment/scripts/build_fvs_executables.sh . ./bin-greghook ne 2>&1 | tail -40
 echo "=== SYMBOL GATE ==="
-nm "$WT/bin-greghook/FVSne" 2>/dev/null | grep -iE "gregloaddg_|gregdgv_|gregloadhg_|greghgv_" | sort
+nm "$WT/bin-greghook/FVSne" 2>/dev/null | grep -iE "gregloaddg_|gregdgv_|gregloadhg_|greghgv_|gregclim" | sort

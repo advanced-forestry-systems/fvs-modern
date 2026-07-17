@@ -57,6 +57,7 @@
 ../ne/cubrds.f90
 ../ne/cutstk.f90
 ../ne/dgdriv.f90
+../base/gregclim.f90
 ../ne/dgf.f90
 ../ne/findag.f90
 ../ne/forkod.f90

@@ -15,6 +15,7 @@
 !     FVS_GREG_ELEV     stand elevation (feet); if unset, 0.
 !==============================================================================
 SUBROUTINE GREGLOADDG
+USE GREGCLIM_MOD
 IMPLICIT NONE
 INCLUDE 'PRGPRM.f90'
 INCLUDE 'CONTRL.f90'
@@ -42,6 +43,9 @@ GEMT = 0.0; GTD = 0.0; GELEV = 0.0
 CALL GETENV('FVS_GREG_EMT', CVAL); IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GEMT
 CALL GETENV('FVS_GREG_TD',  CVAL); IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GTD
 CALL GETENV('FVS_GREG_ELEV',CVAL); IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GELEV
+!  Gap 1: load optional per-stand EMT/TD/ELEV lookup (FVS_GREG_CLIMATE_LOOKUP);
+!  no-op (scalar path) when the env var is unset.
+CALL GREGCLIM_LOAD(JOSTND)
 !
 CALL GETENV('FVS_GREGDG_COEF', CPATH)
 IF (CPATH.EQ.' ') THEN

@@ -1,4 +1,5 @@
 SUBROUTINE HTGF
+USE GREGCLIM_MOD
 IMPLICIT NONE
 !----------
 ! NE $Id$
@@ -47,8 +48,11 @@ LOGICAL DEBUG
 !
 INTEGER ISPC,I1,I2,I3,I,MODE0,IVAR,ITFN
 REAL SCALE,XHT,YRS,H,HTG1,HTMAX,AGET,GMOD,RELHTA,TEMHTG
-INTEGER IGYR
-REAL HTCUR,HGINC,CCFLV,CCHV,HGDEC
+INTEGER IGYR,NCYR
+REAL HTCUR,HGINC,CCFLV,CCHV,HGDEC,GTRHG
+LOGICAL LGCHIT
+CHARACTER(LEN=8) CTRCHG
+LOGICAL, SAVE :: LGTRHG=.FALSE., LGTRHGDN=.FALSE.
 REAL OGCA(MAXTRE), MCWX, MCWA, MCWB, MCWC
 INTEGER JJ, MFORM
 !
@@ -67,6 +71,19 @@ CALL MULTS (2,IY(ICYC),XHMULT)
 CALL GREGLOADHG
 ! Greg crown recession: lazy-load coefficients once (no-op unless CROWNDRIVER or FVS_GREGCRW set)
   CALL GREGLOADCRW
+!  Gap 2: number of annual sub-steps = actual cycle length (FINT), not a fixed 10.
+NCYR = NINT(FINT)
+IF (NCYR.LT.1) NCYR = 1
+!  Gap 1: apply per-stand EMT/TD/ELEV from the lookup (falls back to env scalars).
+IF (LGREGHG .AND. LGCLIM) THEN
+  GEMT = GCLIM_EMT0; GTD = GCLIM_TD0; GELEV = GCLIM_ELEV0
+  CALL GREGCLIM_APPLY(DBCN, NPLT, GEMT, GTD, GELEV, LGCHIT)
+ENDIF
+IF (.NOT.LGTRHGDN) THEN
+  CALL GETENV('FVS_GREG_TRACE', CTRCHG)
+  LGTRHG = (CTRCHG.NE.' ' .AND. CTRCHG(1:1).NE.'0')
+  LGTRHGDN = .TRUE.
+ENDIF
 IF (LGREGHG) THEN
   DO JJ=1,ITRN
     OGCA(JJ) = 0.0
@@ -153,13 +170,18 @@ IF (LGREGHG .AND. GHAVE_HG(ISPC)) THEN
   END DO
   CCFLV = 100.0/43560.0 * CCFLV        ! Greg ccfl: CCF of larger trees from MCW
   HTCUR = HT(I)
-  DO IGYR = 1, 10
+  DO IGYR = 1, NCYR
     CALL GREGHGV(ISPC, HTCUR, FLOAT(ICR(I))/100.0, CCFLV, CCHV, HGINC)
     HTCUR = HTCUR + HGINC
   END DO
-  HGDEC = HTCUR - HT(I)                ! 10-yr Greg height increment
-  HTG(I) = SCALE * XHT * HGDEC         ! scale to cycle, keep user multiplier; bypass native GMOD/HTCON
+  HGDEC = HTCUR - HT(I)                ! true FINT-year Greg height increment (NCYR annual steps)
+  HTG(I) = XHT * HGDEC                 ! cycle length already in NCYR; keep user multiplier; bypass native GMOD/HTCON/SCALE
   IF (HTG(I) .LT. 0.1) HTG(I) = 0.1
+  IF (LGTRHG .AND. ICYC.EQ.1) THEN
+    CALL GREGHGV(ISPC, HT(I), FLOAT(ICR(I))/100.0, CCFLV, CCHV, GTRHG)
+    WRITE(JOSTND,'(A,I3,1X,A4,7(1X,ES16.9))') ' GREGTRACE_HG ', ISPC, FIAJSP(ISPC), &
+      HT(I), FLOAT(ICR(I))/100.0, CCFLV, CCHV, GELEV, GTD, GTRHG
+  ENDIF
   TEMHTG = HTG(I)
 ENDIF
 !----------

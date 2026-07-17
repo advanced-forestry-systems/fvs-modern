@@ -39,6 +39,7 @@
 !==============================================================================
 
 SUBROUTINE GREGLOADHG
+USE GREGCLIM_MOD
 IMPLICIT NONE
 INCLUDE 'PRGPRM.f90'
 INCLUDE 'CONTRL.f90'
@@ -75,6 +76,8 @@ GEMT = 0.0; GELEV = 0.0
 CALL GETENV('FVS_GREG_EMT',  CVAL); IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GEMT
 CALL GETENV('FVS_GREG_TD',   CVAL); IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GTD
 CALL GETENV('FVS_GREG_ELEV', CVAL); IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GELEV
+!  Gap 1: load optional per-stand EMT/TD/ELEV lookup (shared, load-once).
+CALL GREGCLIM_LOAD(JOSTND)
 !
 !  -- Resolve config directory --
 CALL GETENV('FVS_GREG_CONFDIR', CDIR)

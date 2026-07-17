@@ -392,7 +392,7 @@
 
 !-----Get board foot volumes
         if(bfpFlg.eq.1) then
-          call r9bdft(vol,logLen,NUMSEG,logDia,errFlg,logVol)
+          call r9bdft(vol,logLen,NUMSEG,logDia,errFlg,logVol,TRIM)
           if(errFlg.ne.0) return
         endif
 
@@ -409,7 +409,7 @@
 !     Added calculate boardfoot volume if flag is turned on (YW 2019/05/29)    
         NUMSEG = NOLOGS
         if(bfpFlg.eq.1) then
-          call r9bdft(vol,logLen,NUMSEG,logDia,errFlg,logVol)
+          call r9bdft(vol,logLen,NUMSEG,logDia,errFlg,logVol,TRIM)
           if(errFlg.ne.0) return
         endif
         IF(ERRFLG .NE. 0) THEN
@@ -1367,7 +1367,7 @@
 !      res = ieor(transfer(x,Nan), NaN) == 0
 !      end subroutine
 
-      subroutine r9bdft(vol,logLen,NUMSEG,logDia,errFlg,logVol)
+      subroutine r9bdft(vol,logLen,NUMSEG,logDia,errFlg,logVol,WBTRIM)
 !_______________________________________________________________________
 !
 !  Calculates board foot volumes (in the vol array) from the specified 
@@ -1396,6 +1396,19 @@
       INTEGER   NUMSEG
       REAL      LOGDIA(21,3)
       INTEGER   ERRFLG
+!--- FIA whole-bole International 1/4-in board-foot option (env-gated) -------
+!    When FVS_BF_FIA_WHOLEBOLE=1, VOL(10) (the scored International 1/4-in
+!    board foot) is computed as a SINGLE whole-merchantable-sawlog evaluation
+!    of the International polynomial (total sawlog length, merch-top small-end
+!    DIB) instead of summing the polynomial over operational Region-9 8-ft
+!    logs. This reproduces FIA's NSVB VOLBFNET whole-bole convention (Westfall
+!    et al. 2024): one continuous 0.5in/4ft-taper integration, no short-log
+!    re-crediting -> like-for-like BdFt vs FIA. VOL(2) Scribner and the
+!    per-log LOGVOL are UNCHANGED. Default (unset) = operational 8-ft logs.
+      LOGICAL, SAVE :: WBINIT = .FALSE.
+      LOGICAL, SAVE :: WBFLAG = .FALSE.
+      CHARACTER(LEN=32) :: WBENV
+      REAL      WBLEN, WBDIB, BDFTWB, WBTRIM
 
 
 !..   Local variables
@@ -1430,6 +1443,14 @@
 
 !======================================================================
 
+      IF(.NOT.WBINIT) THEN
+          WBENV=' '
+          CALL GETENV('FVS_BF_FIA_WHOLEBOLE', WBENV)
+          IF(LEN_TRIM(WBENV).GT.0 .AND. WBENV(1:1).NE.'0') WBFLAG=.TRUE.
+          WBINIT=.TRUE.
+      ENDIF
+      WBLEN=0.0
+      WBDIB=0.0
       vol(2)=0.0
       vol(10)=0.0
 
@@ -1477,7 +1498,12 @@
             bdft=0.0
           endif
           logVol(7,i)=nint(bdft/5.0)*5.0
-          IF(i.LE.numSeg) vol(10)=vol(10) + logVol(7,i)
+          IF(i.LE.numSeg) THEN
+            IF(.NOT.WBFLAG) vol(10)=vol(10) + logVol(7,i)
+!           Accumulate whole-bole sawlog length; track merch-top small-end DIB
+            WBLEN = WBLEN + len
+            WBDIB = dib
+          ENDIF
 
          ELSE   ! IF len =0, Then exit loop
             EXIT
@@ -1485,6 +1511,17 @@
 
  870   continue
 
+!       FIA whole-bole International 1/4-in board foot: single evaluation over
+!       the full sawlog (total length WBLEN, merch-top small-end DIB WBDIB).
+!       Continuous whole bole = summed sawlog lengths + inter-log trims that
+!       operational 8-ft bucking removes (matches a single un-bucked bole).
+        IF(WBFLAG .AND. NUMSEG.GT.1) WBLEN = WBLEN + (NUMSEG-1)*WBTRIM
+        IF(WBFLAG .AND. WBLEN.GT.0.0 .AND. WBDIB.GE.4.0) THEN
+          BDFTWB=0.04976191*WBLEN*WBDIB**2 +0.006220239*WBLEN**2*WBDIB &
+                -0.1854762*WBLEN*WBDIB +0.0002591767*WBLEN**3 &
+                +0.01159226*WBLEN**2 +0.04222222*WBLEN
+          vol(10)=nint(BDFTWB/5.0)*5.0
+        ENDIF
         vol(2)=nint(vol(2))
         vol(10)=nint(vol(10))
         if (vol(10).lt.0.0) vol(10)=0.0

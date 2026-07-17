@@ -161,3 +161,93 @@ document the 8-ft-log convention so the residual board-foot column is read as
 operational, not FIA-matched. The remaining, larger board-foot excess after this
 alignment is the growth-model projection signal (large trees grown too big),
 which is where board-foot accuracy should next be pursued.
+
+---
+
+## FIA whole-bole International 1/4-in board foot: env-gated scored option (2026-07-17)
+
+Branch feat/r9-intl-boardfoot-20260717. Flag FVS_BF_FIA_WHOLEBOLE (env-gated,
+default operational 8-ft when unset).
+
+### Which routine actually carries the SCORED board foot (empirically settled)
+The scored FVS_Summary2 BdFt is NVEL VOL(10) from the Region-9 Clark path:
+fvsvol.f90 BFVOL entry -> BBFV = TVOL(10) (METHB=9) -> VOLINITNVB/VOLINIT ->
+R9CLARK -> subroutine r9bdft (r9clark.f90). r9bdft is the routine that builds
+the board foot: it sums the closed-form International 1/4-in polynomial over
+operational Region-9 8-ft logs. The earlier premise that scored BdFt came from
+nsvb.f90 NVB_CalcLOGVOL VOL(10) was WRONG for the board foot: that nsvb VOL(10)
+is the CUBIC NSVB call and is INERT to the scored board number. Settled by a
+decisive same-binary A/B on the flag (below): flipping FVS_BF_FIA_WHOLEBOLE,
+which gates ONLY the VOL(10) accumulation inside r9bdft, moves the scored BdFt.
+If r9bdft were off the scored path the number could not move.
+
+### Decisive identity test (cycle-0, 200 large ME FIA trees, same wholebole binary)
+Same binary bin-r9vol-wholebole/FVSne; only the env flag differs. FVS/FIA ratio
+of the scored BdFt vs FIA VOLBFNET, and MCuFt vs VOLCFNET (cubic control).
+
+| group        |  n  | BdFt ratio op-8ft | BdFt ratio whole-bole | CF ratio (both) |
+|--------------|-----|-------------------|-----------------------|-----------------|
+| SW DBH>=16   | 60  | 1.284             | 0.967                 | 1.110           |
+| HW DBH>=16   | 60  | 1.318             | 0.958                 | 1.209           |
+| ALL DBH>=16  | 120 | 1.301             | 0.963                 | 1.159           |
+
+The scored BdFt MOVES (op-8ft +30% -> whole-bole -3.7% same-tree) => r9bdft IS
+on the scored path. With the flag on the scored board foot lands within ~3-4% of
+FIA VOLBFNET (the tightest a single 0.5in/4ft International integration reaches
+vs FIA's exact NSVB-taper integration). CF ratio byte-identical both legs: the
+change is board-foot-only, cubic untouched.
+
+### Implementation
+r9clark.f90 subroutine r9bdft: env flag FVS_BF_FIA_WHOLEBOLE (GETENV, cached
+SAVE). When =1 the per-8-ft-log VOL(10) accumulation is suppressed and VOL(10) is
+set from ONE whole-bole International polynomial evaluation (length = summed
+sawlog lengths + (NUMSEG-1)*TRIM inter-log trims; small-end DIB = merch-top log
+DIB), single round to nearest 5 bf. TRIM passed in via a new r9bdft argument.
+VOL(2) Scribner, cubic VOL(4)/VOL(7), and the per-log LOGVOL array UNCHANGED.
+Default (flag unset) preserves the operational Region-9 8-ft-log board foot
+bit-for-bit. Worktree scorecard harness copy
+rescore/run_5model_scorecard_cohort_vol.py points ne at bin-r9vol-wholebole and
+now os.environ.setdefault('FVS_BF_FIA_WHOLEBOLE','1') so future scored runs use
+FIA parity by default; the A/B drivers pop the var for their op-8ft leg.
+
+### Cohort scorecard, BdFt aggregate bias % by QMD tercile (500 pairs, variant ne)
+BEFORE = operational 8-ft logs, AFTER = FIA whole-bole. MCuFt identical
+before/after in every cell (cubic unchanged). QMD tercile edges (fvs_base
+BEFORE): T1 <= 9.54 < T2 <= 11.39 < T3.
+
+| model         | tercile   |  n | BdFt before% | BdFt after% | dBdFt | MCuFt (bef=aft)% |
+|---------------|-----------|----|--------------|-------------|-------|------------------|
+| fvs_base      | T1_small  | 77 | 32.1         | 37.6        | +5.5  | 29.5             |
+| fvs_base      | T2_mid    | 96 | 39.2         | 40.0        | +0.8  | 29.1             |
+| fvs_base      | T3_large  | 89 | 54.1         | 39.2        | -14.9 | 41.2             |
+| fvs_base      | T3 SW     | 13 | 75.2         | 56.6        | -18.6 | 29.4             |
+| fvs_base      | T3 HW     | 76 | 50.6         | 36.3        | -14.3 | 43.4             |
+| fvs_regional  | T3_large  | 90 | 50.0         | 35.9        | -14.1 | 35.8             |
+| fvs_regional  | T3 SW     | 13 | 69.4         | 50.9        | -18.5 | 23.5             |
+| fvs_regional  | T3 HW     | 77 | 46.8         | 33.4        | -13.4 | 38.1             |
+| organon       | T3_large  | 98 | 39.6         | 25.4        | -14.3 | 24.5             |
+| organon       | T3 SW     | 14 | 63.8         | 47.8        | -16.0 | 18.8             |
+| organon       | T3 HW     | 84 | 35.5         | 21.6        | -14.0 | 25.6             |
+| conus_spdep   | T3_large  | 97 | 40.9         | 27.1        | -13.8 | 25.2             |
+| conus_spdep   | T3 SW     | 14 | 62.6         | 45.9        | -16.7 | 17.6             |
+| conus_spdep   | T3 HW     | 83 | 37.3         | 23.9        | -13.3 | 26.6             |
+| conus_climate | T3_large  | 98 | 39.1         | 24.7        | -14.4 | 24.2             |
+| conus_climate | T3 SW     | 14 | 59.8         | 42.0        | -17.8 | 16.3             |
+| conus_climate | T3 HW     | 84 | 35.7         | 21.8        | -13.9 | 25.7             |
+
+(a) Same-tree method artifact removed: large-tercile BdFt drops 14-15 pts per
+    model and now tracks the cubic level (AFTER BdFt_T3 ~= MCuFt_T3 every model).
+(b) Cubic unchanged: MCuFt identical before/after in all cells.
+(c) Residual large-tree BdFt bias = TRUE PROJECTION SIGNAL (large trees grown too
+    big; the board rule no longer amplifies it): fvs_base +39.2%, fvs_regional
+    +35.9%, organon +25.4%, conus_spdep +27.1%, conus_climate +24.7% (T3_large,
+    matching cubic +24-41%). Small trees (T1) rise ~4-6 pts under whole-bole
+    (short boles, minor absolute board foot); the large tercile is where the fix
+    acts.
+
+### Caveat
+Whole-bole International sits ~3-4% BELOW FIA VOLBFNET at large DBH (0.963 ALL),
+the inherent residual between a single 0.5in/4ft-taper International integration
+and FIA's exact NSVB-taper integration; the tightest the International rule
+reaches, matching the established MAXLEN=64 evidence. Default (flag unset)
+preserves the operational Region-9 8-ft-log board foot bit-for-bit.

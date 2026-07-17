@@ -396,3 +396,9 @@ manuscript/*.pre_edits*.docx
 bin-test/
 config/greg_emt_td_lookup.csv
 *.pre_mod_*
+
+# Greg native-hook TEST binary + run artifacts (kept on disk, not tracked)
+bin-greghook/
+sf_integration_dev/gompit_native/test_gregdghg
+sf_integration_dev/gompit_native/dg_fortran.csv
+sf_integration_dev/gompit_native/hg_fortran.csv

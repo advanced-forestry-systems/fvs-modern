@@ -1,0 +1,21 @@
+=== TAG=v6 REGION=NE per-stand median Reineke=-1.80 ===
+     site reineke ht_dom_mono qmd_mono ht_drop
+   <fctr>   <num>      <lgcl>   <lgcl>   <num>
+1:      1   -1.56       FALSE     TRUE    1.37
+2:      2   -1.69       FALSE    FALSE    3.14
+3:      3   -1.75       FALSE    FALSE    2.42
+4:      4   -1.60       FALSE    FALSE    4.17
+=== TAG=v6 REGION=SN per-stand median Reineke=-1.87 ===
+     site reineke ht_dom_mono qmd_mono ht_drop
+   <fctr>   <num>      <lgcl>   <lgcl>   <num>
+1:      1   -1.91       FALSE    FALSE    4.43
+2:      2   -2.05       FALSE    FALSE    3.82
+3:      3   -2.17       FALSE    FALSE    4.79
+4:      4   -1.99       FALSE    FALSE    2.52
+=== TAG=v6 REGION=PN per-stand median Reineke=-1.88 ===
+     site reineke ht_dom_mono qmd_mono ht_drop
+   <fctr>   <num>      <lgcl>   <lgcl>   <num>
+1:      1   -1.85       FALSE    FALSE    4.11
+2:      2   -1.95       FALSE     TRUE    6.03
+3:      3   -1.79       FALSE    FALSE    7.98
+4:      4   -1.78       FALSE     TRUE    8.34

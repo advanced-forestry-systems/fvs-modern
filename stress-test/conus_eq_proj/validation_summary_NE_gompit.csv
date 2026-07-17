@@ -1,0 +1,17 @@
+metric,value
+Y0_max_abs_dBA,0
+Y0_max_abs_dQMD,0
+Y0_max_abs_dTPH,0
+n_stands_common,31
+CCH_mean,0.326243716289959
+CCH_median,0.330907940618628
+CCH_max,0.581166568042483
+CCH_pct_gt8,0
+gompit_Y100_BA,182.45660465731
+gompit_Y100_TPH,460.43738468469
+logit_Y100_BA,404.40120628574
+logit_Y100_TPH,1147.91772870119
+gompit_surv_ann_mean_on_sample,0.965680019543358
+greg_pred_surv_new,0.8198
+greg_obs_surv,0.8193
+greg_auc_new,0.7398

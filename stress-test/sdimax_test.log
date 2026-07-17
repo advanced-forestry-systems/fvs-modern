@@ -1,0 +1,7 @@
+RUN CURRENT (redwood NA->1052 default):
+2026-06-10 13:03:01 [INFO] NSBE loaded: 465 species, 182 biomass coefs
+[CURRENT] n_plots=40  2025=7.0  2100=80.6  growth=1044%  (MgC/ha)
+RUN SDIFIX (redwood NA->394 median):
+2026-06-10 13:03:12 [INFO] NSBE loaded: 465 species, 182 biomass coefs
+[SDIFIX] n_plots=40  2025=7.0  2100=80.6  growth=1044%  (MgC/ha)
+restored ws.json

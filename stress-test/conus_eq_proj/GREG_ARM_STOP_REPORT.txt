@@ -1,0 +1,41 @@
+FAITHFUL GREG ARM (CONFIG=greg) -- STOP/BLOCKER REPORT  (2026-06-22)
+
+WHAT IS CONFIRMED / IN HAND (Greg's ACTUAL repo holoros & gregjohnsonbiometrics/fvs_remodeling, main, 43 commits):
+- DG params: rds/dg_parms.RDS  84 species (spcd,B0..B6). REAL fitted values loaded & verified.
+- HG params: rds/hg_parms.RDS  96 species (spcd,B0=max_height,B1..B8). REAL.
+- DG form (diameter_growth_equations_for_conus.qmd lines 56-86, est_dg), annual loop:
+    dg_hat = exp( B0 + B1*log((dbh+1)^2/(cr*ht+1)^B3) + B2*bal^B4/log(dbh+2.7) + B5*elev + B6*EMT )
+    NOTE: code uses log(dbh+2.7) in denom (NOT (dbh+2.7) as in the LaTeX eq-dg). Code is authoritative.
+    predictors: dbh(in), cr(frac), ht(ft), bal(ft2/ac), elev(ft), EMT(extreme min temp, degC). NO site index.
+- HG form (Height_Growth_Equations_for_CONUS.qmd lines 73-99, est_hg), annual loop:
+    dht = max_height*b1*b2*cr^b3*exp(-b1*ht -b4*ccfl -b8*cch^0.5 -b5*elev +b6*TD^0.5 +b7*EMT)*(1-exp(-b1*ht))^(b2-1)
+    max_height = per-species B0. predictors: ht(ft), cr, ccfl(ft2/ac), cch(frac), elev(ft), TD, EMT.
+- DG spot-check (his est_dg + his params; dbh0=10in,bal=80,cr=.5,ht=50,elev=1500,EMT=-20,5yr):
+    SPCD 131 loblolly pine -> 0.198 in/yr ; SPCD 202 Douglas-fir -> 0.149 in/yr ; SPCD 316 red maple -> 0.117 in/yr
+- CONUS tree-count coverage by Greg's REAL params: DG 86.4% (84/468 spp), HG 90.8% (96/468 spp).
+  Remaining ~13.6% DG / ~9.2% TPH -> fvs-conus trait-driven (species-free) fallback, logged per stand.
+
+TWO HARD BLOCKERS (per task STOP-don't-guess rule):
+
+BLOCKER 1 -- MORTALITY & CROWN-CHANGE DO NOT EXIST IN GREG'S REPO.
+  The authoritative repo contains ONLY diameter_growth + height_growth scripts and DG/HG RDS.
+  There is NO Mortality_Equations_for_CONUS.qmd, NO Crown_Change_Equations_for_CONUS.qmd,
+  and NO mort_parm_base_rate_cr_cch.RDS anywhere (checked working tree, origin/main, and
+  origin/constrained-refit-2026-04-25). README confirms only DG and HG have been developed.
+  -> The task spec's mortality/crown filenames are based on files that are not in Greg's repo.
+  -> A FAITHFUL greg mortality arm cannot use Greg's params because none exist.
+     (greg_mortality_coefficients.csv on scratch is OUR ORGANON/gompit refit, explicitly NOT Greg's.)
+
+BLOCKER 2 -- EMT / TD CLIMATE COVARIATES UNAVAILABLE FOR EASTERN CONUS (incl. NE validation region).
+  Greg's DG needs EMT; his HG needs EMT and TD. He extracts these from a climate raster stack on his
+  local Windows drive (F:/Projects/FVS Remodel/gis/, Normal_1991_2020_* + CONUS_Climate_Embedding_Top2.tif)
+  -- NOT present on Cardinal. The fvs-conus pairs file has NO EMT/TD (only climate_si, clim_pca1/2).
+  The only Greg-derived EMT/TD on Cardinal are inside rds/df_dg_res.RDS & df_hg_res.RDS, which cover
+  WESTERN STATES ONLY (STATECD 4,6,8,16,30,32,35,41,49,53,56). EMT range -46..-2 degC, TD 5..29 (plausible).
+  ClimateNA inputs exist for only 4 states (GA,ME,MN,WA) with NO EMT/TD outputs computed.
+  -> NE (ME/NH/VT/MA/CT/RI/NY/NJ/PA) has NO faithful EMT/TD source -> cannot run Greg DG/HG on NE
+     without fabricating EMT/TD. NE GO-bar validation is therefore not runnable faithfully.
+
+ARTIFACTS SAVED TO SCRATCH:
+  greg_climate_lookup.rds  (plot/county/state EMT+TD medians from Greg's residual RDS; WEST ONLY)
+  GREG_ARM_STOP_REPORT.txt (this file)

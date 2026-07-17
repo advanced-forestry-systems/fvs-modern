@@ -1,0 +1,14 @@
+55276 plots with full year set + area + strata
+wrote strata_trends_default.csv  (50 owner, 870 ecoregion, 480 state rows)
+year                                   2030       2125
+key          scenario                                 
+Industrial   managed (harvest)     1165.206   1067.741
+             reserve (no harvest)  1165.206   4314.801
+NIPF         managed (harvest)     4595.114   4463.454
+             reserve (no harvest)  4595.114  17346.854
+Public-Other managed (harvest)     1762.827   2112.002
+             reserve (no harvest)  1762.827   8480.341
+State        managed (harvest)      618.761    716.652
+             reserve (no harvest)   618.761   2384.516
+Unknown      managed (harvest)     1141.974   1033.912
+             reserve (no harvest)  1141.974   4384.149

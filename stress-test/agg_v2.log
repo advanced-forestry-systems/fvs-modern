@@ -1,0 +1,4 @@
+engine fvs_default: 49 states, 748004 plots, years 2025-2125 -> /fs/scratch/PUOM0008/crsfaaron/fvs_stress/perseus_series_default_v2
+engine fvs_calibrated: 49 states, 748004 plots, years 2025-2125 -> /fs/scratch/PUOM0008/crsfaaron/fvs_stress/perseus_series_calibrated_v2
+engine fvs_gompit: 49 states, 748004 plots, years 2025-2125 -> /fs/scratch/PUOM0008/crsfaaron/fvs_stress/perseus_series_gompit_v2
+ALL_AGG_DONE

@@ -1,0 +1,6 @@
+2026-06-20 05:32:45 [INFO] task 14: variant NE, K=12, N=12
+2026-06-20 05:32:46 [INFO] NSBE loaded: 465 species, 182 biomass coefs
+2026-06-20 05:33:00 [INFO] NE: 12 matched stands selected
+2026-06-20 05:33:00 [INFO] Loading posterior draws from /users/PUOM0008/crsfaaron/fvs-modern/config/calibrated/ne_draws.json
+2026-06-20 05:33:00 [INFO] Loaded 500 draws for 6 components: diameter_growth, height_diameter, height_increment, mortality, crown_ratio, stand_density
+2026-06-20 05:34:11 [INFO] NE done: 12 point, 144 draw runs, 2756 rows, 0 fail, 85.5s

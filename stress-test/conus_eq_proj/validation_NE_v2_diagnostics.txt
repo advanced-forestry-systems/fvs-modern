@@ -1,0 +1,33 @@
+NE v2 validation diagnostics (3 fixes applied) -- GO/NO-GO call: NO-GO
+Comparison: identical STAND_CNs, engine NE (default/calibrated) vs conus_b2/b1.
+Clean identical-stand set = 848 stands (engine nonzero year-0 AGB & has year-100).
+
+YEAR / AGB tons/ac (clean set, n=848):
+  y0   : b2=25.7  b1=25.7  engine=33.0   -> b2/b1 dev = -22.3%   (FAILS 5% bar)
+  y50  : b2=122.2 b1=135.1 engine=145.7  -> b2 -16.1% , b1 -7.3%
+  y100 : b2=125.7 b1=146.3 engine=199.3  -> b2 -36.9% , b1 -26.6%
+
+SEEDING FIDELITY (identical-stand check): PASS
+  - 848/848 stands are the engine's own STAND_CNs (standinit+treeinit seeding).
+  - year-0 per-tree heights match measured FIA treeinit HT (my/measured ratio median = 1.000).
+  - year-0 BA = 106 ft2/ac (physically correct for NE FIA plots).
+  Conclusion: same trees in. Seeding works.
+
+ROOT CAUSE of year-0 AGB gap: engine reports cycle-0 AGB on FVS-internal NE-variant
+  imputed heights (systematically taller than measured FIA heights for the same DBH),
+  while the equation projector computes AGB on the measured/Wykoff fvs-conus heights.
+  This is a height-model difference, not a seeding defect, but it breaks the strict
+  'year-0 AGB within ~5%' bar.
+
+TRAJECTORY CHECKS: PASS
+  - BA plateaus near SDImax ceiling (b2 ~382-402, b1 ~482; not above, no blow-up).
+  - TPH declines then stabilizes with ingrowth (b2 1769->1329->1042).
+  - QMD monotone up (b2 5.9->13.1->14.3; b1 5.9->14.2->15.7).
+  - year-100 AGB undershoot now ~ -27% to -37% (was ~2x / -50%+ in v1). Much improved.
+
+RECOMMENDED NEXT FIX (single, decisive): align the projector's year-0 (and per-cycle)
+  height basis with the engine. Either (a) replace the fvs-conus Wykoff ht-dbh with the
+  FVS NE-variant ht-dbh for the AGB step, or (b) compute year-0 AGB on FVS-imputed
+  heights (run trees through the engine's height routine) so the comparison isolates
+  growth dynamics rather than the height-model choice. After this, year-0 should fall
+  within 5% and year-50/100 gaps should shrink further.

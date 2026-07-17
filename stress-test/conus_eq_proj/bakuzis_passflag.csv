@@ -1,0 +1,5 @@
+arm,frontier_slope,SDI_p99,SDI_p50,BA_inversions,n_year,AGB_inversions,yd_monotone,reineke_flag,siteorder_flag,yd_flag,eichhorn_flag
+b1_gompit,-1.461,546,241,1,21,3,TRUE,PASS,FLAG,PASS,UNTESTABLE (no HT emitted)
+b1_native,-0.886,1460,669,0,21,11,TRUE,FLAG,PASS,PASS,UNTESTABLE (no HT emitted)
+b2_gompit,-1.391,581,289,0,21,0,TRUE,PASS,PASS,PASS,UNTESTABLE (no HT emitted)
+b2_native,-1.381,1085,587,0,21,0,TRUE,PASS,PASS,PASS,UNTESTABLE (no HT emitted)

@@ -1,0 +1,8 @@
+2026-06-20 05:26:42 [INFO] NSBE loaded: 465 species, 182 biomass coefs
+2026-06-20 05:26:42 [INFO] Loading posterior draws from /users/PUOM0008/crsfaaron/fvs-modern/config/calibrated/ne_draws.json
+2026-06-20 05:26:42 [INFO] Loaded 500 draws for 6 components: diameter_growth, height_diameter, height_increment, mortality, crown_ratio, stand_density
+stand   A_off   B_spfirst  C_valfirst
+82615111   153.56     96.51      96.51
+82615114   165.14     88.36     110.76
+82615109   135.89     74.23      96.92
+done n= 3

@@ -1,0 +1,2 @@
+NCORES_CLI <- suppressWarnings(as.integer(ga("cores", NA)))
+NCORES_ENV <- as.integer(Sys.getenv("SLURM_CPUS_PER_TASK", unset=NA)); if(is.na(NCORES_ENV)||NCORES_ENV<1){ ntsk<-suppressWarnings(as.integer(Sys.getenv("SLURM_NTASKS",unset=NA))); NCORES_ENV<-if(!is.na(ntsk)&&ntsk>1) ntsk else max(1L, detectCores()-1L) }; NCORES <- if(!is.na(NCORES_CLI)&&NCORES_CLI>=1L) NCORES_CLI else NCORES_ENV

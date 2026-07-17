@@ -1,0 +1,29 @@
+### default
+49 states; plantation-aware buckets written to /fs/scratch/PUOM0008/crsfaaron/fvs_stress/managed2_default
+  GA 2125 AGC Mg/ha: ext=37.6695 harvest=33.3331 int=17.9746
+  ME 2125 AGC Mg/ha: ext=68.6653 harvest=68.123 int=34.573
+  OR 2125 AGC Mg/ha: ext=50.8183 harvest=46.6064 int=32.4179
+  MS 2125 AGC Mg/ha: ext=51.6491 harvest=45.6775 int=28.2299
+### calibrated
+49 states; plantation-aware buckets written to /fs/scratch/PUOM0008/crsfaaron/fvs_stress/managed2_calibrated
+  GA 2125 AGC Mg/ha: ext=27.0843 harvest=24.0979 int=12.7311
+  ME 2125 AGC Mg/ha: ext=57.9585 harvest=57.5057 int=28.8154
+  OR 2125 AGC Mg/ha: ext=33.849 harvest=30.9874 int=20.9851
+  MS 2125 AGC Mg/ha: ext=38.9733 harvest=34.4501 int=21.0631
+### gompit
+Traceback (most recent call last):
+  File "/fs/scratch/PUOM0008/crsfaaron/fvs_stress/fvs_managed_v2.py", line 145, in <module>
+    main()
+  File "/fs/scratch/PUOM0008/crsfaaron/fvs_stress/fvs_managed_v2.py", line 78, in main
+    camp = pd.concat(rows, ignore_index=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/apps/python/3.12/lib/python3.12/site-packages/pandas/core/reshape/concat.py", line 382, in concat
+    op = _Concatenator(
+         ^^^^^^^^^^^^^^
+  File "/apps/python/3.12/lib/python3.12/site-packages/pandas/core/reshape/concat.py", line 445, in __init__
+    objs, keys = self._clean_keys_and_objs(objs, keys)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/apps/python/3.12/lib/python3.12/site-packages/pandas/core/reshape/concat.py", line 507, in _clean_keys_and_objs
+    raise ValueError("No objects to concatenate")
+ValueError: No objects to concatenate
+ALL_DONE

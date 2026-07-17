@@ -1,0 +1,10 @@
+55276 plots joined to TreeMap area (208 Mha across 3 yrs)
+CONUS 2030 live carbon: FVS-on-TreeMap 9284 TgC  vs  TreeMap-native 10151 TgC  (ratio 0.91)
+
+CONUS FVS reserve carbon (Tg C):
+ year  treemap_TgC  fiadb_TgC  tm_over_fia
+ 2030     9283.883   9085.174        1.022
+ 2075    27034.998  26603.491        1.016
+ 2125    36910.662  36862.387        1.001
+
+wrote treemap_conus/fvs_treemap_vs_fiadb.csv (144 state rows, 429 forest-type rows)

@@ -1,0 +1,12 @@
+PICKED CT 55919559010538 iy 2005 ntrees 34
+init treeinit rows 32
+cyc0: yrs=[2005, 2010] exit=10
+   grown rows 6 sumTPA 754.47 meanDBH 2.47
+   rebuilt rows 6 cols ['stand_id', 'plot_id', 'tree_id', 'tree_count']
+cyc1: yrs=[2005, 2010] exit=10
+   grown rows 18 sumTPA 3001.416 meanDBH 3.13
+   rebuilt rows 18 cols ['stand_id', 'plot_id', 'tree_id', 'tree_count']
+cyc2: yrs=[2005, 2010] exit=10
+   grown rows 54 sumTPA 13852.619 meanDBH 3.78
+   rebuilt rows 54 cols ['stand_id', 'plot_id', 'tree_id', 'tree_count']
+DONE

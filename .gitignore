@@ -1,214 +1,328 @@
-# FVS Bayesian Calibration: intermediate and large files
-calibration/data/raw_fia/
+
+*~
+\$HOME_OUT/
+\$O/
+\$OUTDIR/
+*.02b_bak
+10d}
+*.5k_bak
+*.a
+/acd/
+# === Added 2026-05-06: catch Cardinal-side data dirs and build artifacts ===
+# Additional 2026-05-06 patterns: perseus factorial outputs, compiled stan binaries, Fortran scratch
+# === Additions from conus-integration-2026-05-09 branch ===
+*.advi_bak
+# Aggregated Bakuzis summary tables are committed via `git add -f` so
+/ak/
+/apply_v6_patches.gs
+/archive/
+*.aux
+**/*.backup_*
+*.backup_*
+# Backup files from calibration iterations
+# Backup files from in-place edits
+**/*.bak
+**/*.bak_*
+*.bak_*
+*_bak
+**/bakuzis_*[0-9]*.err
+**/bakuzis_*[0-9]*.out
+#   bakuzis_benchmark_wide.csv
+#   bakuzis_laws_compliance.csv
+#   bakuzis_uncertainty_summary_long.csv
+/base/
+**/benchmark_*[0-9]*.err
+**/benchmark_*[0-9]*.out
+bin-r9vol/
+bin-r9vol-base/
+bin-r9vol-base-true/
+bin-test/
+/bm/
+**/*.broken
+# Build artifacts (shared libraries built from src-converted/)
+**/build_fvs_*[0-9]*.err
+**/build_fvs_*[0-9]*.out
+/build_letters.js
+build_ne_magfix.log
+/ca/
 calibration/data/fia_raw/
-calibration/data/nsvb/
-calibration/data/processed/
+calibration/data/fia_zips/
 calibration/data/fvs_variant_boundaries.geojson
+calibration/data/marshall_csvs/
+calibration/data/nsvb/
 calibration/data/plot_raster_lookup.csv
+calibration/data/processed/
+calibration/data/raw_fia/
+CALIBRATION_DELIVERY.txt
 calibration/logs/
-calibration/output/variants/*/*.rds
-calibration/output/variants/*/*.pdf
-calibration/output/comparisons/intermediate/
-calibration/stan/wykoff_dg
-*.rds
-
-# Keep comparison outputs and summary CSVs
-!calibration/output/comparisons/
-!calibration/output/comparisons/manuscript_tables/
-!calibration/output/comparisons/manuscript_figures/
-
-# Generated SLURM helper scripts (one-off resubmission scripts)
 calibration/osc/_*_generated.sh
 calibration/osc/resubmit_*.sh
-
-# Draws JSON configs (too large for git, archive separately)
-config/calibrated/*_draws.json
-
-# Delivery notes (ephemeral)
-CALIBRATION_DELIVERY.txt
-CALIBRATION_README.txt
-COPY_TO_CARDINAL.txt
-
-# User-specific environment config (keep .example version)
-config/fvs-modern.env
-.env
-.env.*
-!.env.example
-
-# HPC deployment scripts with embedded credentials
-deploy_cardinal*.py
-check_cardinal_job.py
-deploy_ablation_v3.sh
-slurm-*.out
-calibration/logs/
-
-# SSH keys
-*.pem
-id_*
-cardinal_key*
-
-# Compiled Fortran modules and Stan binaries
-*.mod
-*.o
-calibration/stan/wykoff_dg_v2
+calibration/output/bakuzis/
+!calibration/output/comparisons/
+calibration/output/comparisons/intermediate/
+!calibration/output/comparisons/manuscript_figures/
+calibration/output/comparisons/manuscript_figures/*.pdf
+!calibration/output/comparisons/manuscript_tables/
+calibration/output/comparisons/manuscript_tables/*.csv
+!calibration/output/comparisons/manuscript_tables/fia_benchmark_results_ablation_*.csv
+calibration/output/comparisons_overstory/*.jpg
+calibration/output/comparisons_overstory/*.pdf
+calibration/output/comparisons_overstory/*.png
+calibration/output/comparisons_overstory/*.pptx
+calibration/output/comparisons_overstory/silc_cfi/
+calibration/output/comparisons_overstory/validation_data_overstory*.csv
+calibration/output/conus/
+calibration/output/dg_all_variants_summary*.csv
+calibration/output/perseus/
+calibration/output/perseus_*/
+calibration/output/perseus_acd/
+calibration/output/perseus_hu_factorial/
+calibration/output/perseus_hu_sanity/
+calibration/output/sdimax_fixes_log.csv
+calibration/output/tables/
+calibration/output/variants/*/height_increment*
+calibration/output/variants/*/*.pdf
+calibration/output/variants/*/*.rds
+calibration/output/variants/*/*_samples.rds
+calibration/output/variants/*/standardization_params.rds
 calibration/output/variants/*/wykoff_dg*
-
-# Backup files from calibration iterations
-*_bak
-*.v1_bak
-*.5k_bak
-*.advi_bak
-*.02b_bak
-*.me_bak
-
-# LaTeX build artifacts
-*.aux
-*.nav
-*.snm
-*.toc
-*.synctex.gz
-
-# Python cache
-__pycache__/
-*.pyc
-
-# Database and binary test files
-*.db
-*.mdb
-*.exe
-*.xlsx
-*.sqlite
-
-# SLURM job output files (specific jobs)
+CALIBRATION_README.txt
+calibration/refit_constrained/
+calibration/slides/*.log
+calibration/slides/*.out
+calibration/slides/*.pdf
+calibration/slides/*.pptx
+calibration/slides/*.tex
 calibration/slurm/*_[0-9]*.err
 calibration/slurm/*_[0-9]*.out
 calibration/slurm/inspect_models*.sh
 calibration/slurm/inspect_script.R
-
-# Stan model specs are kept under version control for reproducibility.
+calibration/stan/*[^.]
+calibration/stan/cr_*
+calibration/stan/dg_*
+calibration/stan/dg_organon_lognormal
+calibration/stan/dg_organon_lognormal_v3
+calibration/stan/hcb_*
+calibration/stan/hg_*
+calibration/stan/hg_organon_speciesfree
+calibration/stan/ht_*
+!calibration/stan/*.md
+calibration/stan/modifier_*
+calibration/stan/modifier_common
+calibration/stan/mort_*
+!calibration/stan/*.stan
 # calibration/stan/*.stan
-
-# Output data files (too large / regenerated from pipeline)
-calibration/output/dg_all_variants_summary*.csv
-calibration/output/sdimax_fixes_log.csv
-calibration/output/tables/
-calibration/output/variants/*/height_increment*
-calibration/output/comparisons/manuscript_figures/*.pdf
-calibration/output/comparisons/manuscript_tables/*.csv
-!calibration/output/comparisons/manuscript_tables/fia_benchmark_results_ablation_*.csv
-calibration/variant_coefficients_template.xlsx
-
-# Ephemeral status notes
+calibration/stan/wykoff_dg
+calibration/stan/wykoff_dg_v2
 calibration_status_update.md
+calibration/variant_coefficients_template.xlsx
+/canada/
+# Canonical copy is in src-converted/; these directories were working
+cardinal_cleanup_*.sh
+cardinal_key*
+check_cardinal_job.py
+/ci/
+.claude/
+# Claude Code local settings (do not commit user-specific config)
+/clim/
+# Compiled Fortran modules and Stan binaries
+# Compiled Stan executables (rebuilt from .stan source on demand)
+config/calibrated/*_draws.json
+config/calibrated/*.pre_conus_*
+config/calibrated/*.pre_sf_*
+config/calibrated/*.sf_preview.json
+config/fvs-modern.env
+config/greg_emt_td_lookup.csv
+COPY_TO_CARDINAL.txt
+/covr/
+# --- Cowork autopilot hygiene 2026-07-03 ---
+/cr/
+/cs/
+# Database and binary test files
+*.db
+/dbs/
+/dbsqlite/
+# Delivery notes (ephemeral)
+deploy_ablation_v3.sh
+deploy_cardinal*.py
+/dfb/
+/dftm/
+# directory; force-add the three summary CSVs explicitly:
+docs/cardinal_runs/
+docs/email_*.md
+docs/fvs_*.docx
+docs/fvs_update_lifecycle.md
+docs/*_handoff.md
+docs/internal/
+docs/perseus_projection_status_*.md
+docs/*_runbook.md
+docs/*_status_*.md
+docs/validation/
+docs/*_verification_report.md
+/*.docx
+# Draft manuscripts and working artifacts at repo root
+# Draws JSON configs (too large for git, archive separately)
+.DS_Store
+*.dSYM/
+/ec/
+/econ/
+/em/
+.env
+.env.*
+!.env.example
+# ephemeral build log + manuscript edit-backup
+# Ephemeral status notes
+*.err
+/estb/
+*.exe
+/fiavbc/
+/fire/
+/fort.*
+fort.[0-9]*
+# Fortran build temporaries
+# FORTRAN scratch files at root
+# FVS Bayesian Calibration: intermediate and large files
+**/fvs_mod_*[0-9]*.err
+**/fvs_mod_*[0-9]*.out
+fvs-modern_quarantine_*/
+**/fvs_prod_*[0-9]*.err
+**/fvs_prod_*[0-9]*.out
 fvs-suggestions.txt
-
+**/fvs_trait_val_*[0-9]*.err
+**/fvs_trait_val_*[0-9]*.out
+# Generated SLURM helper scripts (one-off resubmission scripts)
+**/*__genmod.f90
+**/*__genmod.mod
+# HPC deployment scripts with embedded credentials
+id_*
+.idea/
+# IDE and editor files
+/ie/
+# Internal process docs (email drafts, handoff notes, Cardinal logs)
+*.kate-swp
+# Keep comparison outputs and summary CSVs
+# Keyword-file test outputs that regenerate on each run
+/kt/
+# LaTeX build artifacts
 # LaTeX slide build artifacts
-calibration/slides/*.log
-calibration/slides/*.out
-calibration/slides/*.tex
-calibration/slides/*.pdf
-
+lib/
+lib_pre_rebuild_*/
+lib_rebuild_*/
+# Local cleanup helper (one-off)
+# Local memory snapshots (kept on local Cowork, not in repo history)
+logs/
+/lpmpb/
+/ls/
+# Malformed/empty scratch files
+manuscript/*.pre_edits*.docx
+# Manuscript scratch tooling at repo root (PNAS v6 response work, not part
+*.mdb
+*.me_bak
+MEMORY/
+/metric/
+/mistoe/
+*.mod
 # Modernization deliverable docs (generated summaries)
 modernization/DELIVERABLES_SUMMARY.txt
 modernization/INDEX.txt
 modernization/SUMMARY.md
 modernization/TESTING_DELIVERABLES.md
-
-# NVEL volume test executables
-src-converted/volume/NVEL/*/publish/
-
-# Validation reports (generated)
-docs/validation/
-docs/*_verification_report.md
-docs/fvs_*.docx
-docs/fvs_update_lifecycle.md
-
-# Internal process docs (email drafts, handoff notes, Cardinal logs)
-docs/email_*.md
-docs/cardinal_runs/
-docs/*_runbook.md
-docs/*_handoff.md
-docs/internal/
-
-# OS artifacts
-.DS_Store
-*.swp
-*~
-.Rhistory
-.RData
-
-# Claude Code local settings (do not commit user-specific config)
-.claude/
-
-# Keyword-file test outputs that regenerate on each run
-src-converted/tests/**/fort.15
-src-converted/tests/**/*.out
-src-converted/tests/**/*.trl
-src-converted/tests/**/*.chp
-src-converted/tests/**/*.sng
-src-converted/tests/**/*.sum
-
-# Manuscript scratch tooling at repo root (PNAS v6 response work, not part
-# of fvs-modern). Keep these in a separate manuscript repo or local scratch.
-/package.json
-/package-lock.json
-/node_modules/
-/apply_v6_patches.gs
-/build_letters.js
-/pnas_v6_figures/
-
-# Perseus projection status and other dated internal status notes
-docs/perseus_projection_status_*.md
-docs/*_status_*.md
-
-# Build artifacts (shared libraries built from src-converted/)
-lib/
-*.so
-
-# Stale duplicate Fortran tree at repo root.
-# Canonical copy is in src-converted/; these directories were working
-# scratch during the fixed-to-free-form conversion and can be deleted.
-/acd/
-/ak/
-/archive/
-/base/
-/bm/
-/ca/
-/canada/
-/ci/
-/clim/
-/covr/
-/cr/
-/cs/
-/dbs/
-/dbsqlite/
-/dfb/
-/dftm/
-/ec/
-/econ/
-/em/
-/estb/
-/fiavbc/
-/fire/
-/ie/
-/kt/
-/lpmpb/
-/ls/
-/metric/
-/mistoe/
+*.nav
 /nc/
 /ne/
+/node_modules/
+# NVEL volume test executables
+*.o
 /oc/
+# of fvs-modern). Keep these in a separate manuscript repo or local scratch.
 /op/
 /organon/
+*.orig
+# OS artifacts
+*.out
+# Output data files (too large / regenerated from pipeline)
+/package.json
+/package-lock.json
+/*.pdf
+*.pem
+# Perseus projection status and other dated internal status notes
+# PERSEUS uncertainty run outputs (large CSVs, reproducible from code)
 /pg/
+# pipeline. Negation rules cannot re-include files from an ignored
+# plot validation tables, and rendered figures all stay out of repo history.)
 /pn/
+/pnas_v6_figures/
+/*.png
+# point to fvs-conus absolute paths; never commit these)
+*.pre_arm*
+*.pre_fiajsp
+*.pre_fix*
+*.pre_greg*
+*.pre_mod_*
+# Pre-rebuild library snapshots
+*.pre_sdimaxfmt
+# pre_sf timestamped config backups
+*.pyc
+__pycache__/
+# Python cache
+# raw deck builds, intermediate stand lists, version-suffixed PPTX revisions,
+.Rcheck/
 /rd/
+.RData
+*.rds
+rescore/
+# reviewers can regenerate figures without re-running the Cardinal
+.Rhistory
+# R package artifacts
+*.Rproj
+.Rproj.user/
+# scratch during the fixed-to-free-form conversion and can be deleted.
+# Script-accident dirs (unexpanded shell vars)
+# (see calibration/output/comparisons_overstory/FINDINGS.md for the summary;
+# Session-generated cleanup helpers (not committed)
+# SF integration preview configs (intermediate)
+# SF preview configs anywhere
+*.sf_preview.json
+# SILC overstory benchmark scratch staging
+# Slide decks (not part of the software distribution)
+**/slurm-*[0-9]*.err
+**/slurm-*[0-9]*.out
+# SLURM job output files (now in logs/)
+# SLURM job output files (specific jobs)
+slurm-*.out
 /sn/
+*.snm
+*.so
 /so/
+*.sqlite
+src-converted/bin/CMakeFiles/
+src-converted/bin/FVS*_CmakeDir/
+src-converted/tests/**/*.chp
+src-converted/tests/**/fort.15
+src-converted/tests/**/*.out
+src-converted/tests/**/*.sng
+src-converted/tests/**/*.sum
+src-converted/tests/**/*.trl
+src-converted/volume/NVEL/*/publish/
+# SSH keys
+# Stale duplicate Fortran tree at repo root.
+# Stan model specs are kept under version control for reproducibility.
 /strp/
+*.swp
+*.synctex.gz
+*.tar.gz
+test_*.f90
+test_*.key
+test_*.out
+test_*.tre
+# Timestamped calibration config backups
+*.toc
 /tt/
+# User-specific environment config (keep .example version)
 /ut/
+*.v1_bak
+# Validation reports (generated)
+# Variant posterior sample symlinks (created by link_variant_samples.sh,
 /vbase/
 /vcovr/
 /vdbs/
@@ -218,6 +332,7 @@ lib/
 /vls/
 /volume/
 /vorganon/
+.vscode/
 /vso/
 /vstrp/
 /vvolume/
@@ -228,173 +343,4 @@ lib/
 /ws/
 /wsbwe/
 /wwpb/
-
-# PERSEUS uncertainty run outputs (large CSVs, reproducible from code)
-calibration/output/perseus/
-calibration/output/bakuzis/
-# Aggregated Bakuzis summary tables are committed via `git add -f` so
-# reviewers can regenerate figures without re-running the Cardinal
-# pipeline. Negation rules cannot re-include files from an ignored
-# directory; force-add the three summary CSVs explicitly:
-#   bakuzis_uncertainty_summary_long.csv
-#   bakuzis_benchmark_wide.csv
-#   bakuzis_laws_compliance.csv
-
-# Slide decks (not part of the software distribution)
-calibration/slides/*.pptx
-
-# Draft manuscripts and working artifacts at repo root
-/*.docx
-/*.png
-/*.pdf
-
-# Malformed/empty scratch files
-10d}
-
-# IDE and editor files
-.vscode/
-.idea/
-*.kate-swp
-.Rproj.user/
-*.Rproj
-
-# Fortran build temporaries
-*.a
-*.dSYM/
-
-# R package artifacts
-.Rcheck/
-*.tar.gz
-
-# === Added 2026-05-06: catch Cardinal-side data dirs and build artifacts ===
-calibration/data/marshall_csvs/
-calibration/data/fia_zips/
-calibration/output/conus/
-calibration/output/perseus_acd/
-calibration/output/perseus_hu_sanity/
-calibration/refit_constrained/
-
-src-converted/bin/FVS*_CmakeDir/
-src-converted/bin/CMakeFiles/
-
-**/*__genmod.f90
-**/*__genmod.mod
-**/*.bak
-**/*.bak_*
-**/*.backup_*
-**/*.broken
-
-**/fvs_trait_val_*[0-9]*.out
-**/fvs_trait_val_*[0-9]*.err
-**/fvs_mod_*[0-9]*.out
-**/fvs_mod_*[0-9]*.err
-**/fvs_prod_*[0-9]*.out
-**/fvs_prod_*[0-9]*.err
-**/benchmark_*[0-9]*.out
-**/benchmark_*[0-9]*.err
-**/build_fvs_*[0-9]*.out
-**/build_fvs_*[0-9]*.err
-**/bakuzis_*[0-9]*.out
-**/bakuzis_*[0-9]*.err
-**/slurm-*[0-9]*.out
-**/slurm-*[0-9]*.err
-
-lib_pre_rebuild_*/
-lib_rebuild_*/
-
-test_*.tre
-test_*.out
-test_*.key
-test_*.f90
-
-# Session-generated cleanup helpers (not committed)
-cardinal_cleanup_*.sh
-fvs-modern_quarantine_*/
-
-# Additional 2026-05-06 patterns: perseus factorial outputs, compiled stan binaries, Fortran scratch
-calibration/output/perseus_hu_factorial/
-calibration/output/perseus_*/
-calibration/stan/*[^.]
-calibration/stan/dg_*
-calibration/stan/hg_*
-calibration/stan/hcb_*
-calibration/stan/ht_*
-calibration/stan/mort_*
-calibration/stan/cr_*
-calibration/stan/modifier_*
-!calibration/stan/*.stan
-!calibration/stan/*.md
-fort.[0-9]*
-
-# === Additions from conus-integration-2026-05-09 branch ===
-
-# Compiled Stan executables (rebuilt from .stan source on demand)
-calibration/stan/dg_organon_lognormal
-calibration/stan/dg_organon_lognormal_v3
-calibration/stan/hg_organon_speciesfree
-calibration/stan/modifier_common
-
-# SLURM job output files (now in logs/)
-logs/
-*.err
-*.out
-
-# Local memory snapshots (kept on local Cowork, not in repo history)
-MEMORY/
-
-# Backup files from in-place edits
-*.backup_*
-*.bak_*
-
-# Local cleanup helper (one-off)
-cardinal_cleanup_*.sh
-
-# Pre-rebuild library snapshots
-lib_pre_rebuild_*/
-
-# FORTRAN scratch files at root
-/fort.*
-
-# Variant posterior sample symlinks (created by link_variant_samples.sh,
-# point to fvs-conus absolute paths; never commit these)
-calibration/output/variants/*/*_samples.rds
-calibration/output/variants/*/standardization_params.rds
-
-# SILC overstory benchmark scratch staging
-# (see calibration/output/comparisons_overstory/FINDINGS.md for the summary;
-# raw deck builds, intermediate stand lists, version-suffixed PPTX revisions,
-# plot validation tables, and rendered figures all stay out of repo history.)
-calibration/output/comparisons_overstory/silc_cfi/
-calibration/output/comparisons_overstory/validation_data_overstory*.csv
-calibration/output/comparisons_overstory/*.png
-calibration/output/comparisons_overstory/*.jpg
-calibration/output/comparisons_overstory/*.pdf
-calibration/output/comparisons_overstory/*.pptx
-# Script-accident dirs (unexpanded shell vars)
-\$O/
-\$OUTDIR/
-\$HOME_OUT/
-# Timestamped calibration config backups
-config/calibrated/*.pre_conus_*
-# SF integration preview configs (intermediate)
-config/calibrated/*.sf_preview.json
-
-# SF preview configs anywhere
-*.sf_preview.json
-# pre_sf timestamped config backups
-config/calibrated/*.pre_sf_*
-# ephemeral build log + manuscript edit-backup
-build_ne_magfix.log
-manuscript/*.pre_edits*.docx
-# --- Cowork autopilot hygiene 2026-07-03 ---
-*.orig
-*.pre_greg*
-*.pre_arm*
-*.pre_fix*
-*.pre_sdimaxfmt
-*.pre_fiajsp
-bin-test/
-config/greg_emt_td_lookup.csv
-*.pre_mod_*
-bin-r9vol/
-rescore/
+*.xlsx

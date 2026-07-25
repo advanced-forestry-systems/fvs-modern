@@ -1,0 +1,853 @@
+#!/usr/bin/env python3
+"""
+run_5model_scorecard.py
+=======================
+5-model standalone FVS scorecard using FIA remeasurement pairs.
+
+Each configuration is a COMPLETE, internally consistent model system --
+DG + HG + crown recession + mortality -- not a mix-and-match of components.
+
+  System 1 - fvs_base      : native FVS (no Greg hooks, no calibration keywords,
+                               native varmort mortality)
+  System 2 - fvs_regional  : FVS calibration keywords (SDIMAX + BAMAX +
+                               BAIMULT + HTGMULT + MORTMULT); no Greg hooks
+  System 3 - organon       : Greg DG + Greg HG ORGANON arm
+                               (greg_hg_coefficients.csv) + Greg CRW + GOMPIT mort
+  System 4 - conus_spdep   : Greg DG + Greg HG compound_none
+                               (greg_hg_coefficients_compound_none.csv)
+                               + Greg CRW + GOMPIT mort
+  System 5 - conus_climate  : Greg DG + Greg HG compound_climate
+                               (greg_hg_coefficients_compound_climate.csv)
+                               + Greg CRW + GOMPIT mort
+
+Greg DG was trained on NE data; for plots outside NE northern states
+(CT/MA/ME/NH/NY/RI/VT) the DG env vars are stripped and calibrated BAIMULT
+keywords are injected instead. The model is NOT skipped -- only the DG
+component is swapped per plot. All 5 variants (ne/sn/wc/em/pn) run all 5
+systems.
+
+Mortality:
+  fvs_base    : native FVS varmort (no keywords, no GOMPIT)
+  fvs_regional: MORTMULT calibrated keywords (no GOMPIT env var)
+  organon / conus_spdep / conus_climate: Greg GOMPIT size+BGI tier
+               (FVS_GOMPIT=1 + FVS_GOMPIT_COEF); MORTMULT is NOT emitted
+               for these models (GOMPIT fully replaces native mortality).
+
+Usage:
+  python3 run_5model_scorecard.py --variant ne [--max-pairs 200] [--seed 42]
+
+Output:
+  calibration/output/fia_scorecard/scorecard_{variant}_5model.csv
+"""
+from __future__ import annotations
+
+import argparse
+import math
+import os
+import shutil
+import sqlite3
+import subprocess
+import sys
+import tempfile
+
+import numpy as np
+import pandas as pd
+
+# ---------------------------------------------------------------------------
+# Paths
+# ---------------------------------------------------------------------------
+PROJECT_ROOT = "/users/PUOM0008/crsfaaron/fvs-modern"
+LIB_DIR      = os.path.join(PROJECT_ROOT, "src-converted", "bin")
+CONFIG_DIR   = os.path.join(PROJECT_ROOT, "config")
+FIA_DIR      = "/fs/scratch/PUOM0008/crsfaaron/FIA"
+
+_CONF_DG = "/fs/scratch/PUOM0008/crsfaaron/wt-ne-dg/config"
+
+VARIANT_BINS: dict[str, str] = {
+    "ne": "/users/PUOM0008/crsfaaron/fvs-modern/src-converted/bin/FVSne",
+    "sn": "/users/PUOM0008/crsfaaron/fvs-modern/src-converted/bin/FVSsn",
+    "wc": "/users/PUOM0008/crsfaaron/fvs-modern/src-converted/bin/FVSwc",
+    "em": "/users/PUOM0008/crsfaaron/fvs-modern/src-converted/bin/FVSem",
+    "pn": "/users/PUOM0008/crsfaaron/fvs-modern/src-converted/bin/FVSpn",
+}
+
+_HG_BASE: dict[str, str] = {
+    "FVS_GREGHG":    "1",
+    "FVS_GREG_TD":   "28",
+    "FVS_GREG_EMT":  "-30",
+    "FVS_GREG_ELEV": "1000",
+}
+
+_DG_ENV: dict[str, str] = {
+    "FVS_GREGDG":      "1",
+    "FVS_GREGDG_COEF": f"{_CONF_DG}/greg_dg_coefficients.csv",
+    "FVS_GREG_DD0":    "1600",
+    "FVS_GREG_TD":     "28",
+    "FVS_GREG_PPT_SM": "230",
+    "FVS_GREG_DD18":   "3500",
+}
+
+# Keys stripped when DG falls back to calibrated keywords on non-NE plots
+_DG_KEYS: frozenset[str] = frozenset(_DG_ENV)
+
+_CRW_ENV: dict[str, str] = {
+    "FVS_GREGCRW":      "1",
+    "FVS_GREGCRW_COEF": f"{_CONF_DG}/greg_crown_change_coefficients.csv",
+}
+
+# Greg gompit mortality: size+BGI tier (recommended by mort_hook_policy.json;
+# strict win on log-loss and AUC in all six confirmed variants).
+_MORT_ENV: dict[str, str] = {
+    "FVS_GOMPIT":      "1",
+    "FVS_GOMPIT_COEF": f"{_CONF_DG}/greg_mortality_coefficients_size_bgi.csv",
+}
+
+# ---------------------------------------------------------------------------
+# Variant metadata
+# ---------------------------------------------------------------------------
+VARIANTS: dict[str, dict] = {
+    "ne": {"states": ["CT", "DE", "MA", "MD", "ME", "NH", "NJ", "NY", "PA", "RI", "VT", "WV"]},
+    "sn": {"states": ["AL", "GA", "MS", "SC"]},
+    "wc": {"states": ["OR", "WA"]},
+    "em": {"states": ["MT", "ND", "SD"]},
+    "pn": {"states": ["OR", "WA"]},
+}
+
+STATECD_TO_ABBREV: dict[int, str] = {
+    1:  "AL",  2:  "AK",  4:  "AZ",  5:  "AR",  6:  "CA",
+    8:  "CO",  9:  "CT", 10: "DE",  12: "FL",  13: "GA",
+    16: "ID",  17: "IL",  18: "IN",  19: "IA",  20: "KS",
+    21: "KY",  22: "LA",  23: "ME",  24: "MD",  25: "MA",
+    26: "MI",  27: "MN",  28: "MS",  29: "MO",  30: "MT",
+    31: "NE",  32: "NV",  33: "NH",  34: "NJ",  35: "NM",
+    36: "NY",  37: "NC",  38: "ND",  39: "OH",  40: "OK",
+    41: "OR",  42: "PA",  44: "RI",  45: "SC",  46: "SD",
+    47: "TN",  48: "TX",  49: "UT",  50: "VT",  51: "VA",
+    53: "WA",  54: "WV",  55: "WI",  56: "WY",
+}
+
+# ---------------------------------------------------------------------------
+# 5 Standalone Model Systems
+# ---------------------------------------------------------------------------
+# calib_components controls FvsConfigLoader keyword injection:
+#   None   -> no calibration keywords (pure native FVS)
+#   "all"  -> full: SDIMAX + BAMAX + MORTMULT + BAIMULT + HTGMULT
+#   dict   -> partial: always SDIMAX + BAMAX;
+#             "mort": True  -> also MORTMULT (omit when gompit handles mortality)
+#             "dg":   True  -> also BAIMULT
+#             "hg":   True  -> also HTGMULT
+#
+# states_restrict_dg: states where Greg DG is applied. For plots outside this
+#   list, DG env vars are stripped and calibrated BAIMULT is injected instead.
+#   The model continues to run -- only the DG component is swapped per plot.
+STANDALONE_MODELS: dict[str, dict] = {
+    # System 1: pure native FVS -- no env hooks, no calibration keywords, native varmort
+    "fvs_base": {
+        "extra_env":          {},
+        "calib_components":   None,
+        "variant_compatible": None,
+        "states_restrict":    None,
+        "states_restrict_dg": None,
+    },
+    # System 2: FVS with calibrated keywords -- BAIMULT + HTGMULT + MORTMULT;
+    #           no Greg hooks, no GOMPIT env var (MORTMULT handles mortality)
+    "fvs_regional": {
+        "extra_env":          {},
+        "calib_components":   {"dg": True, "hg": True, "mort": True},
+        "variant_compatible": None,
+        "states_restrict":    None,
+        "states_restrict_dg": None,
+    },
+    # System 3: Greg DG + Greg HG ORGANON arm + Greg CRW + GOMPIT mortality
+    "organon": {
+        "extra_env": {
+            **_DG_ENV,
+            **_HG_BASE,
+            "FVS_GREGHG_COEF": f"{_CONF_DG}/greg_hg_coefficients.csv",
+            **_CRW_ENV,
+            **_MORT_ENV,
+        },
+        "calib_components":   {"dg": False, "hg": False, "mort": False},
+        "variant_compatible": None,
+        "states_restrict":    None,
+        "states_restrict_dg": ["CT", "MA", "ME", "NH", "NY", "RI", "VT"],
+    },
+    # System 4: Greg DG + Greg HG compound_none (species-dependent) + Greg CRW + GOMPIT
+    "conus_spdep": {
+        "extra_env": {
+            **_DG_ENV,
+            **_HG_BASE,
+            "FVS_GREGHG_COEF": f"{_CONF_DG}/greg_hg_coefficients_compound_none.csv",
+            **_CRW_ENV,
+            **_MORT_ENV,
+        },
+        "calib_components":   {"dg": False, "hg": False, "mort": False},
+        "variant_compatible": None,
+        "states_restrict":    None,
+        "states_restrict_dg": ["CT", "MA", "ME", "NH", "NY", "RI", "VT"],
+    },
+    # System 5: Greg DG + Greg HG compound_climate + Greg CRW + GOMPIT mortality
+    "conus_climate": {
+        "extra_env": {
+            **_DG_ENV,
+            **_HG_BASE,
+            "FVS_GREGHG_COEF": f"{_CONF_DG}/greg_hg_coefficients_compound_climate.csv",
+            **_CRW_ENV,
+            **_MORT_ENV,
+        },
+        "calib_components":   {"dg": False, "hg": False, "mort": False},
+        "variant_compatible": None,
+        "states_restrict":    None,
+        "states_restrict_dg": ["CT", "MA", "ME", "NH", "NY", "RI", "VT"],
+    },
+}
+
+MODEL_ORDER = ["fvs_base", "fvs_regional", "organon", "conus_spdep", "conus_climate"]
+
+# ---------------------------------------------------------------------------
+# KEYFILE template
+# ---------------------------------------------------------------------------
+KEYFILE = """\
+STDIDENT
+{sid}
+DATABASE
+DSNIN
+{db}
+DSNOUT
+{db}
+STANDSQL
+SELECT * FROM fvs_standinit WHERE stand_id = '%StandID%'
+ENDSQL
+TREESQL
+SELECT * FROM fvs_treeinit WHERE stand_id = '%StandID%'
+ENDSQL
+END
+DATABASE
+SUMMARY            2
+END
+TIMEINT            0         1
+NUMCYCLE          {ncyc}
+{calib_kw}
+PROCESS
+STOP
+"""
+
+# ---------------------------------------------------------------------------
+# Stand initializer
+# ---------------------------------------------------------------------------
+def build_standinit(
+    sid:      str,
+    inv_year: int,
+    variant:  str,
+    cond_row: dict | None = None,
+) -> pd.DataFrame:
+    """Build a single-row fvs_standinit from FIA COND metadata."""
+    state_cd = 23
+    elev     = 1000
+    slope    = 5
+    site_idx = 42
+    age      = 60
+
+    if cond_row is not None:
+        def _safe(key: str, default, cast=int):
+            try:
+                v = cond_row.get(key)
+                if v is None or (isinstance(v, float) and math.isnan(v)):
+                    return default
+                return cast(v)
+            except (TypeError, ValueError):
+                return default
+
+        state_cd = _safe("STATECD", 23)
+        elev     = _safe("ELEV",    1000)
+        slope    = _safe("SLOPE",   5)
+        site_idx = _safe("SICOND",  42)
+
+    return pd.DataFrame([{
+        "stand_id":          sid,
+        "variant":           variant.upper(),
+        "inv_year":          int(inv_year),
+        "latitude":          46.5,
+        "longitude":         -68.7,
+        "region":            9,
+        "forest":            0,
+        "district":          0,
+        "basal_area_factor": 0.0,
+        "inv_plot_size":     1.0,
+        "brk_dbh":           999.0,
+        "num_plots":         1,
+        "age":               age,
+        "aspect":            0,
+        "slope":             slope,
+        "elevft":            elev,
+        "site_species":      12,
+        "site_index":        site_idx,
+        "state":             state_cd,
+        "county":            0,
+        "forest_type":       121,
+        "sam_wt":            1.0,
+    }])
+
+
+# ---------------------------------------------------------------------------
+# Tree list builder
+# ---------------------------------------------------------------------------
+def build_treeinit(tree_df: pd.DataFrame, sid: str) -> pd.DataFrame:
+    """Convert FIA TREE records (live, DIA >= 5 in) to fvs_treeinit."""
+    rows = []
+    for _, r in tree_df.iterrows():
+        try:
+            spcd = int(r["SPCD"])
+            dbh  = float(r["DIA"])
+        except (ValueError, TypeError, KeyError):
+            continue
+        if not (math.isfinite(dbh) and dbh >= 5.0):
+            continue
+        tpa_raw = r.get("TPA_UNADJ")
+        tpa = float(tpa_raw) if (tpa_raw is not None and pd.notna(tpa_raw)) else 6.018
+        if tpa <= 0:
+            tpa = 6.018
+        ht_raw = r.get("HT")
+        ht = float(ht_raw) if (ht_raw is not None and pd.notna(ht_raw) and float(ht_raw) > 0) else 0.0
+        cr_raw = r.get("CR")
+        cr = float(cr_raw) if (cr_raw is not None and pd.notna(cr_raw)) else 50.0
+        if cr <= 9:
+            cr = cr * 10
+        cr = int(max(15, min(99, cr)))
+        rows.append({
+            "stand_id":   sid,
+            "plot_id":    1,
+            "tree_id":    len(rows) + 1,
+            "tree_count": round(tpa, 4),
+            "species":    spcd,
+            "diameter":   round(dbh, 2),
+            "ht":         round(ht, 1),
+            "crratio":    cr,
+        })
+    return pd.DataFrame(rows)
+
+
+# ---------------------------------------------------------------------------
+# Calibration keyword helpers
+# ---------------------------------------------------------------------------
+_calib_kw_cache: dict[str, str] = {}
+
+
+def calibrated_keywords(variant: str) -> str:
+    """Full calibrated keyword block via FvsConfigLoader.generate_keywords()."""
+    if variant in _calib_kw_cache:
+        return _calib_kw_cache[variant]
+    try:
+        sys.path.insert(0, PROJECT_ROOT)
+        from config.config_loader import FvsConfigLoader
+        kw = FvsConfigLoader(
+            variant.lower(), version="calibrated", config_dir=CONFIG_DIR
+        ).generate_keywords(include_comments=False)
+        _calib_kw_cache[variant] = kw
+        return kw
+    except Exception as e:
+        sys.stderr.write(f"  calibrated kw unavailable for {variant}: {e}\n")
+        kw = "** CALIBRATED CONFIG NOT FOUND"
+        _calib_kw_cache[variant] = kw
+        return kw
+
+
+_partial_kw_cache: dict[str, str] = {}
+
+
+def partial_calibrated_keywords(
+    variant:      str,
+    include_dg:   bool,
+    include_hg:   bool,
+    include_mort: bool = True,
+) -> str:
+    """Partial calibration keywords.
+
+    Always emits SDIMAX + BAMAX. Optionally emits:
+      MORTMULT  if include_mort=True  (omit when gompit env var handles mortality)
+      BAIMULT   if include_dg=True
+      HTGMULT   if include_hg=True
+    """
+    cache_key = (
+        f"{variant}_dg{int(include_dg)}_hg{int(include_hg)}_mort{int(include_mort)}"
+    )
+    if cache_key in _partial_kw_cache:
+        return _partial_kw_cache[cache_key]
+    try:
+        sys.path.insert(0, PROJECT_ROOT)
+        from config.config_loader import FvsConfigLoader
+        loader = FvsConfigLoader(
+            variant.lower(), version="calibrated", config_dir=CONFIG_DIR
+        )
+        cats        = loader.config.get("categories", {})
+        precomputed = loader.config.get("calibration_multipliers") or {}
+        parts: list[str] = []
+
+        emit_sdimax = bool(loader.config.get("_emit_sdimax", True))
+        if emit_sdimax:
+            sdi_values = loader._find_sdi_param(cats)
+            if sdi_values is not None:
+                parts.append(loader._format_sdimax_keywords(sdi_values, False))
+
+        bamax_values = loader._find_bamax_param(cats)
+        if bamax_values is not None:
+            parts.append(loader._format_bamax_keywords(bamax_values, False))
+
+        if include_mort:
+            mort_mult = loader._array_or_none(precomputed.get("mort_multiplier"))
+            if mort_mult is None:
+                mort_mult = loader._compute_mortality_multipliers(cats)
+            if mort_mult is not None:
+                parts.append(loader._format_mortmult_keywords(mort_mult, False))
+
+        if include_dg:
+            dds = loader._array_or_none(precomputed.get("dds_multiplier"))
+            if dds is not None:
+                growth_mult = np.sqrt(np.clip(dds, 0.01, 100.0))
+            else:
+                growth_mult = loader._compute_growth_multipliers(cats)
+            if growth_mult is not None:
+                parts.append(loader._format_baimult_keywords(growth_mult, False))
+
+        if include_hg:
+            hg_mult = loader._array_or_none(precomputed.get("htg_multiplier"))
+            if hg_mult is None:
+                hg_mult = loader._compute_height_multipliers(cats)
+            if hg_mult is not None:
+                parts.append(loader._format_htgmult_keywords(hg_mult, False))
+
+        kw = "\n".join(p for p in parts if p)
+        _partial_kw_cache[cache_key] = kw
+        return kw
+    except Exception as e:
+        sys.stderr.write(
+            f"  partial calib kw error for {variant} "
+            f"(dg={include_dg}, hg={include_hg}, mort={include_mort}): {e}\n"
+        )
+        kw = "** PARTIAL CALIB NOT FOUND"
+        _partial_kw_cache[cache_key] = kw
+        return kw
+
+
+def get_calib_kw(variant: str, calib_components) -> str:
+    if calib_components is None:
+        return "** DEFAULT PARAMETERS"
+    if calib_components == "all":
+        return calibrated_keywords(variant)
+    return partial_calibrated_keywords(
+        variant,
+        include_dg=bool(calib_components.get("dg", True)),
+        include_hg=bool(calib_components.get("hg", True)),
+        include_mort=bool(calib_components.get("mort", True)),
+    )
+
+
+# ---------------------------------------------------------------------------
+# FVS runner
+# ---------------------------------------------------------------------------
+def run_stand(
+    sid:        str,
+    stand_df:   pd.DataFrame,
+    tree_df:    pd.DataFrame,
+    variant:    str,
+    model_name: str,
+    ncyc:       int,
+    *,
+    extra_env_override: dict | None = None,
+    calib_override=None,
+) -> tuple[pd.DataFrame | None, str | None]:
+    """Run FVS for one stand/model; return (Summary2_df, error_str).
+
+    extra_env_override and calib_override replace the model defaults when
+    provided (used for per-plot DG component swapping on non-NE plots).
+    """
+    mdl    = STANDALONE_MODELS[model_name]
+    binary = VARIANT_BINS.get(variant.lower())
+    if binary is None:
+        return None, f"no binary registered for variant {variant}"
+    if not os.path.exists(binary):
+        return None, f"binary not found: {binary}"
+    if len(tree_df) == 0:
+        return None, "empty tree list"
+
+    eff_extra_env = extra_env_override if extra_env_override is not None else mdl["extra_env"]
+    eff_calib     = calib_override     if calib_override     is not None else mdl["calib_components"]
+    calib_kw      = get_calib_kw(variant, eff_calib)
+
+    env = os.environ.copy()
+    env.update(eff_extra_env)
+
+    tmp = tempfile.mkdtemp(prefix="fvs5mdl_")
+    try:
+        db  = os.path.join(tmp, "FVS_Data.db")
+        con = sqlite3.connect(db)
+        stand_df.to_sql("fvs_standinit", con, if_exists="replace", index=False)
+        tree_df.to_sql("fvs_treeinit",   con, if_exists="replace", index=False)
+        con.close()
+
+        key = os.path.join(tmp, "run.key")
+        with open(key, "w") as fh:
+            fh.write(KEYFILE.format(sid=sid, db=db, ncyc=ncyc, calib_kw=calib_kw))
+
+        subprocess.run(
+            [binary, f"--keywordfile={key}"],
+            cwd=tmp,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            env=env,
+            timeout=120,
+        )
+
+        con = sqlite3.connect(db)
+        df  = pd.read_sql_query("SELECT * FROM FVS_Summary2", con)
+        con.close()
+        return df, None
+
+    except subprocess.TimeoutExpired:
+        return None, "timeout"
+    except Exception as exc:
+        return None, str(exc)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+# ---------------------------------------------------------------------------
+# FIA data loaders
+# ---------------------------------------------------------------------------
+_PLOT_COLS = {"CN", "PREV_PLT_CN", "MEASYEAR", "STATECD", "COUNTYCD", "PLOT"}
+_TREE_COLS = {"PLT_CN", "STATECD", "COUNTYCD", "PLOT", "SUBP", "TREE",
+              "STATUSCD", "SPCD", "DIA", "HT", "CR", "TPA_UNADJ",
+              "VOLCFNET", "VOLBFNET"}
+_COND_COLS = {"PLT_CN", "STATECD", "COUNTYCD", "INVYR", "COND_STATUS_CD",
+              "SICOND", "BALIVE", "FORTYPCD", "STDAGE", "SLOPE", "ELEV"}
+
+
+def load_pairs(variant: str, max_pairs: int = 200, seed: int = 42) -> pd.DataFrame:
+    """Find FIA remeasurement pairs (gap 5-15 yr) for this variant's states."""
+    states = VARIANTS[variant]["states"]
+    frames = []
+    for st in states:
+        f = os.path.join(FIA_DIR, f"{st}_PLOT.csv")
+        if not os.path.exists(f):
+            continue
+        df = pd.read_csv(f, usecols=lambda c: c in _PLOT_COLS, low_memory=False)
+        frames.append(df)
+    if not frames:
+        return pd.DataFrame()
+
+    plots = pd.concat(frames, ignore_index=True)
+    plots["CN"] = plots["CN"].astype("int64")
+    yr_map = dict(zip(plots["CN"], plots["MEASYEAR"]))
+
+    rem = plots.dropna(subset=["PREV_PLT_CN"]).copy()
+    rem["PREV_PLT_CN"] = rem["PREV_PLT_CN"].astype("int64")
+    rem["interval"] = rem.apply(
+        lambda r: r["MEASYEAR"] - yr_map.get(r["PREV_PLT_CN"], float("nan")),
+        axis=1,
+    )
+    rem = rem[(rem["interval"] >= 5) & (rem["interval"] <= 15)].copy()
+    if len(rem) == 0:
+        return pd.DataFrame()
+
+    rng = np.random.default_rng(seed)
+    n   = min(max_pairs, len(rem))
+    idx = rng.choice(len(rem), size=n, replace=False)
+    return rem.iloc[idx].reset_index(drop=True)
+
+
+def load_trees_for_cns(states: list[str], cns: set) -> pd.DataFrame:
+    cns_int = {int(c) for c in cns}
+    frames  = []
+    for st in states:
+        f = os.path.join(FIA_DIR, f"{st}_TREE.csv")
+        if not os.path.exists(f):
+            continue
+        df = pd.read_csv(f, usecols=lambda c: c in _TREE_COLS, low_memory=False)
+        df["PLT_CN"] = df["PLT_CN"].astype("int64")
+        sub = df.loc[df["PLT_CN"].isin(cns_int)].copy()
+        if "STATUSCD" in sub.columns:
+            sub = sub.loc[sub["STATUSCD"] == 1].copy()
+        if not sub.empty:
+            frames.append(sub)
+    if not frames:
+        return pd.DataFrame()
+    return pd.concat(frames, ignore_index=True)
+
+
+def load_cond_for_cns(states: list[str], cns: set) -> pd.DataFrame:
+    cns_int = {int(c) for c in cns}
+    frames  = []
+    for st in states:
+        f = os.path.join(FIA_DIR, f"{st}_COND.csv")
+        if not os.path.exists(f):
+            continue
+        df = pd.read_csv(f, usecols=lambda c: c in _COND_COLS, low_memory=False)
+        df["PLT_CN"] = df["PLT_CN"].astype("int64")
+        sub = df.loc[df["PLT_CN"].isin(cns_int)].copy()
+        if not sub.empty:
+            frames.append(sub)
+    if not frames:
+        return pd.DataFrame()
+    return pd.concat(frames, ignore_index=True)
+
+
+def obs_ba_ft2ac(tree_df: pd.DataFrame, plt_cn: int, min_dia: float = 5.0) -> float:
+    """Observed BA (ft2/ac) from FIA TREE records at the remeasurement year.
+
+    BIASFIX: apply the same DIA >= min_dia (default 5.0 in) threshold used by
+    build_treeinit() for the FVS input tree list. FVS is only given >=5" trees
+    and its Summary BA reflects only those; the raw FIA TREE table also carries
+    1-5" microplot saplings at ~75 TPA each that add basal area but carry NULL
+    merch volume. Counting saplings in OBS BA (but not in PRED BA, nor in OBS
+    volume) manufactured a spurious ~20-30% BA under-prediction while leaving
+    volume comparisons clean -- the contradictory signature Aaron flagged.
+    """
+    t = tree_df.loc[tree_df["PLT_CN"] == plt_cn].copy()
+    t = t.loc[t["DIA"].notna() & t["TPA_UNADJ"].notna() & (t["DIA"] >= min_dia)]
+    if len(t) == 0:
+        return float("nan")
+    return float((t["TPA_UNADJ"] * 0.005454154 * t["DIA"] ** 2).sum())
+
+
+def obs_vol_mcuft_bdft(tree_df: pd.DataFrame, plt_cn: int) -> tuple[float, float]:
+    """Observed volume (Mcuft/ac, bdft/ac) from FIA TREE records at T2."""
+    t = tree_df.loc[tree_df["PLT_CN"] == plt_cn].copy()
+    mcuft: float = float("nan")
+    bdft:  float = float("nan")
+    if "VOLCFNET" in t.columns:
+        cf = t.loc[t["VOLCFNET"].notna() & t["TPA_UNADJ"].notna()]
+        if len(cf) > 0:
+            mcuft = float((cf["TPA_UNADJ"] * cf["VOLCFNET"]).sum())
+    if "VOLBFNET" in t.columns:
+        bf = t.loc[t["VOLBFNET"].notna() & t["TPA_UNADJ"].notna()]
+        if len(bf) > 0:
+            bdft = float((bf["TPA_UNADJ"] * bf["VOLBFNET"]).sum())
+    return mcuft, bdft
+
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+def main() -> None:
+    global FIA_DIR
+    ap = argparse.ArgumentParser(
+        description="5-model standalone FVS scorecard on FIA remeasurement pairs"
+    )
+    ap.add_argument("--variant",   required=True, choices=list(VARIANTS))
+    ap.add_argument("--max-pairs", type=int, default=200)
+    ap.add_argument("--seed",      type=int, default=42)
+    ap.add_argument(
+        "--outdir",
+        default="/users/PUOM0008/crsfaaron/fvs-modern/calibration/output/fia_scorecard",
+    )
+    ap.add_argument(
+        "--fia-dir",
+        default=FIA_DIR,
+        help="Root directory containing per-state FIA CSV files (default: %(default)s)",
+    )
+    args = ap.parse_args()
+    FIA_DIR = args.fia_dir
+
+    variant = args.variant
+    states  = VARIANTS[variant]["states"]
+
+    active_models: list[str] = []
+    skipped_models: list[str] = []
+    for m in MODEL_ORDER:
+        vc = STANDALONE_MODELS[m]["variant_compatible"]
+        if vc is None or variant in vc:
+            active_models.append(m)
+        else:
+            skipped_models.append(m)
+
+    if skipped_models:
+        print(f"[scorecard] NOTE: skipping {skipped_models} "
+              f"(not variant-compatible with {variant})")
+    print(f"[scorecard] variant={variant}  states={states}")
+    print(f"[scorecard] active models={active_models}")
+    sys.stdout.flush()
+
+    pairs = load_pairs(variant, max_pairs=args.max_pairs, seed=args.seed)
+    if len(pairs) == 0:
+        print(f"[scorecard] ERROR: no remeasurement pairs found for {variant}")
+        sys.exit(1)
+    print(f"[scorecard] found {len(pairs)} pairs (interval 5-15 yr), "
+          f"sampling up to {args.max_pairs}")
+    sys.stdout.flush()
+
+    all_cns = set(pairs["PREV_PLT_CN"].tolist()) | set(pairs["CN"].tolist())
+    trees   = load_trees_for_cns(states, all_cns)
+    conds   = load_cond_for_cns(states, all_cns)
+    print(f"[scorecard] loaded {len(trees)} tree recs, {len(conds)} cond recs "
+          f"for {len(all_cns)} plot CNs")
+    sys.stdout.flush()
+
+    rows: list[dict] = []
+    n_mdl   = len(active_models)
+    n_total = len(pairs) * n_mdl
+    n_done  = 0
+
+    for _, pr in pairs.iterrows():
+        t1_cn     = int(pr["PREV_PLT_CN"])
+        t2_cn     = int(pr["CN"])
+        ncyc      = int(pr["interval"])
+        state_cd  = int(pr.get("STATECD", 0)) if pd.notna(pr.get("STATECD")) else 0
+        measyear2 = int(pr["MEASYEAR"])
+        measyear1 = measyear2 - ncyc
+
+        t1 = trees.loc[trees["PLT_CN"] == t1_cn].copy()
+        if len(t1) < 3:
+            n_done += n_mdl
+            continue
+
+        cond_row = None
+        c1 = conds.loc[conds["PLT_CN"] == t1_cn]
+        if len(c1) > 0:
+            cond_row = c1.iloc[0].to_dict()
+
+        ba_obs              = obs_ba_ft2ac(trees, t2_cn)              # BIASFIX >=5"
+        ba_obs_allsize      = obs_ba_ft2ac(trees, t2_cn, min_dia=0.0)  # diag: old all-size
+        mcuft_obs, bdft_obs = obs_vol_mcuft_bdft(trees, t2_cn)
+
+        sid      = f"{variant.upper()}_{t1_cn % 10_000_000:07d}"
+        stand_df = build_standinit(sid, measyear1, variant, cond_row)
+        tree_df  = build_treeinit(t1, sid)
+        if len(tree_df) == 0:
+            n_done += n_mdl
+            continue
+
+        state_abbrev = STATECD_TO_ABBREV.get(state_cd)
+
+        for model_name in active_models:
+            mdl = STANDALONE_MODELS[model_name]
+
+            # Per-plot DG swap: Greg DG is restricted to NE northern states.
+            # Outside those states, strip DG env vars and add calibrated BAIMULT.
+            # The model is NOT skipped -- only the DG component is swapped.
+            restrict_dg = mdl.get("states_restrict_dg")
+            if restrict_dg and state_abbrev not in restrict_dg:
+                eff_extra_env: dict | None = {
+                    k: v for k, v in mdl["extra_env"].items()
+                    if k not in _DG_KEYS
+                }
+                base_cc = mdl["calib_components"] or {}
+                eff_calib = {**base_cc, "dg": True}
+            else:
+                eff_extra_env = None   # use model default
+                eff_calib     = None   # use model default
+
+            result_df, err = run_stand(
+                sid, stand_df, tree_df, variant, model_name, ncyc,
+                extra_env_override=eff_extra_env,
+                calib_override=eff_calib,
+            )
+            n_done += 1
+
+            if err:
+                if n_done % 20 == 0:
+                    print(f"  [{n_done}/{n_total}] {sid} {model_name}: ERR {err}")
+                    sys.stdout.flush()
+                continue
+            if result_df is None or len(result_df) == 0:
+                continue
+
+            last = result_df.iloc[-1]
+            rows.append({
+                "PLOT":       t1_cn,
+                "STATE":      state_cd,
+                "MEASYEAR1":  measyear1,
+                "MEASYEAR2":  measyear2,
+                "PERIOD_YR":  ncyc,
+                "variant":    variant,
+                "model":      model_name,
+                "BA_PRED":    float(last.get("BA",     float("nan"))),
+                "TPA_PRED":   float(last.get("Tpa",    float("nan"))),
+                "QMD_PRED":   float(last.get("QMD",    float("nan"))),
+                "MCuFt_PRED": float(last.get("MCuFt",  float("nan"))),
+                "BdFt_PRED":  float(last.get("BdFt",   float("nan"))),
+                "BA_OBS":         ba_obs,
+                "BA_OBS_ALLSIZE": ba_obs_allsize,
+                "MCuFt_OBS":  mcuft_obs,
+                "BdFt_OBS":   bdft_obs,
+            })
+
+            if n_done % 100 == 0 or n_done == n_total:
+                ba_p = rows[-1]["BA_PRED"] if rows else float("nan")
+                print(
+                    f"  [{n_done}/{n_total}] {sid} {model_name}: "
+                    f"BA_pred={ba_p:.1f}  BA_obs={ba_obs:.1f}"
+                )
+                sys.stdout.flush()
+
+    out_df = pd.DataFrame(rows)
+    os.makedirs(args.outdir, exist_ok=True)
+    outfile = os.path.join(args.outdir, f"scorecard_{variant}_5model.csv")
+    out_df.to_csv(outfile, index=False)
+    print(f"\n[scorecard] wrote {len(out_df)} rows -> {outfile}")
+
+    print("\n" + "=" * 90)
+    print(f"  5-MODEL SCORECARD   variant = {variant}   n_pairs_attempted = {len(pairs)}")
+    print("=" * 90)
+    hdr = (f"  {'model':<18} {'n':>5} {'BA_bias%':>10} {'BA_RMSE':>9} "
+           f"{'MCuFt_bias%':>13} {'MCuFt_RMSE':>11} {'BdFt_bias%':>11}")
+    print(hdr)
+    print("-" * 90)
+
+    for model_name in active_models:
+        grp = out_df.loc[out_df["model"] == model_name].copy()
+        ok  = (
+            grp["BA_PRED"].notna() & grp["BA_OBS"].notna()
+            & (grp["BA_OBS"] > 0) & (grp["BA_PRED"] > 0)
+        )
+        n = int(ok.sum())
+        if n == 0:
+            print(f"  {model_name:<18} {'0':>5}  (no usable predictions)")
+            continue
+        ba_bias_pct = 100.0 * (
+            grp.loc[ok, "BA_PRED"].mean() / grp.loc[ok, "BA_OBS"].mean() - 1
+        )
+        ba_rmse = float(
+            np.sqrt(((grp.loc[ok, "BA_PRED"] - grp.loc[ok, "BA_OBS"]) ** 2).mean())
+        )
+        def _fmt(v, spec="+.2f"):
+            return f"{v:{spec}}" if (v == v and abs(v) != float("inf")) else "n/a"
+        vol_ok = (
+            grp["MCuFt_PRED"].notna() & grp["MCuFt_OBS"].notna()
+            & (grp["MCuFt_OBS"] > 0) & (grp["MCuFt_PRED"] > 0)
+        )
+        if vol_ok.any():
+            mcuft_bias_pct = 100.0 * (
+                grp.loc[vol_ok, "MCuFt_PRED"].mean()
+                / grp.loc[vol_ok, "MCuFt_OBS"].mean() - 1
+            )
+            mcuft_rmse = float(
+                np.sqrt(
+                    ((grp.loc[vol_ok, "MCuFt_PRED"] - grp.loc[vol_ok, "MCuFt_OBS"]) ** 2).mean()
+                )
+            )
+            bdft_ok = (
+                grp["BdFt_PRED"].notna() & grp["BdFt_OBS"].notna()
+                & (grp["BdFt_OBS"] > 0) & (grp["BdFt_PRED"] > 0)
+            )
+            bdft_bias_pct = (
+                100.0 * (
+                    grp.loc[bdft_ok, "BdFt_PRED"].mean()
+                    / grp.loc[bdft_ok, "BdFt_OBS"].mean() - 1
+                )
+                if bdft_ok.any() else float("nan")
+            )
+            print(
+                f"  {model_name:<18} {n:>5} {_fmt(ba_bias_pct):>10} {ba_rmse:>9.2f} "
+                f"  {_fmt(mcuft_bias_pct):>11}  {mcuft_rmse:>10.2f}  {_fmt(bdft_bias_pct):>10}"
+            )
+        else:
+            print(
+                f"  {model_name:<18} {n:>5} {_fmt(ba_bias_pct):>10} {ba_rmse:>9.2f} "
+                f"  {'n/a':>11}  {'n/a':>10}  {'n/a':>10}"
+            )
+
+    print("=" * 90)
+
+
+if __name__ == "__main__":
+    main()

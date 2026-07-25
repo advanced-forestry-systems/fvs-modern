@@ -20,7 +20,7 @@
 !    NGREGHG   -- number of FVS species with a fitted Greg HG row.
 !    GHG       -- GHG(ISPC,1:9): (1)=MX asymptote, (2:9)=B1..B8.
 !    GHAVE_HG  -- .TRUE. for species that carry a fitted Greg HG row.
-!    GMCW      -- GMCW(ISPC,1:4): (1)=FORM code, (2:4)=A,B,C for MCW quadratic.
+!    GMCW      -- GMCW(ISPC,1:6): (1)=FORM,(2:4)=A,B,C,(5)=CWMAX,(6)=DBHMAX.
 !    GHAVE_MCW -- .TRUE. for species that carry a fitted MCW row.
 !    GEMT/GTD/GELEV -- per-stand climate for HG (EMT deg C, TD deg C, elevation ft).
 !                      GTD is shared with DG (same FVS_GREG_TD env var).
@@ -41,7 +41,7 @@ COMMON /GREGMI/ NGREGDG
 COMMON /GREGML/ LGREGDG, GHAVE_DG
 ! -- HG --
 INTEGER NGREGHG
-REAL    GHG(MAXSP,9), GMCW(MAXSP,4), GEMT, GELEV
+REAL    GHG(MAXSP,9), GMCW(MAXSP,6), GEMT, GELEV
 LOGICAL LGREGHG, GHAVE_HG(MAXSP), GHAVE_MCW(MAXSP)
 COMMON /GREGHR/ GHG, GMCW, GEMT, GELEV
 COMMON /GREGHC/ NGREGHG

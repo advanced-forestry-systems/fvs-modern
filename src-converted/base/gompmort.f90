@@ -44,11 +44,11 @@ INCLUDE 'GOMPMC.f90'
 !
 INTEGER, PARAMETER :: MXG = 600
 INTEGER GSPCD(MXG)
-REAL    TB(MXG,5)
+REAL    TB(MXG,6)
 CHARACTER(LEN=256) CVAL, CPATH
 CHARACTER(LEN=512) LINE
-INTEGER I, J, NG, IOS, U, IFIA, NN, ISPC
-REAL B0,B1,B2,B3,B4
+INTEGER I, J, NG, IOS, IOS2, U, IFIA, NN, ISPC
+REAL B0,B1,B2,B3,B4,B5
 LOGICAL, SAVE :: LDONE = .FALSE.
 LOGICAL LENABLE
 !
@@ -70,7 +70,7 @@ NGOMP = 0
 DO ISPC=1,MAXSP
   GHAVE(ISPC) = .FALSE.
   GGRP(ISPC)  = 16
-  DO J=1,5
+  DO J=1,6
     GB(ISPC,J) = 0.0
   ENDDO
 ENDDO
@@ -92,12 +92,22 @@ ENDIF
 READ(U,'(A)',IOSTAT=IOS) LINE          ! header
 NG = 0
 10 CONTINUE
-  READ(U,*,IOSTAT=IOS) IFIA, NN, B0, B1, B2, B3, B4
+  READ(U,'(A)',IOSTAT=IOS) LINE
   IF (IOS.NE.0) GO TO 20
+  IF (LINE.EQ.' ') GO TO 10
+  ! Try 6 coefficients (size-aware b5); fall back to 5 (size-blind) with
+  ! b5=0. Internal (line) read never over-consumes the next species row.
+  B5 = 0.0
+  READ(LINE,*,IOSTAT=IOS2) IFIA, NN, B0, B1, B2, B3, B4, B5
+  IF (IOS2.NE.0) THEN
+    B5 = 0.0
+    READ(LINE,*,IOSTAT=IOS2) IFIA, NN, B0, B1, B2, B3, B4
+    IF (IOS2.NE.0) GO TO 10
+  ENDIF
   IF (NG.GE.MXG) GO TO 20
   NG = NG + 1
   GSPCD(NG) = IFIA
-  TB(NG,1)=B0; TB(NG,2)=B1; TB(NG,3)=B2; TB(NG,4)=B3; TB(NG,5)=B4
+  TB(NG,1)=B0; TB(NG,2)=B1; TB(NG,3)=B2; TB(NG,4)=B3; TB(NG,5)=B4; TB(NG,6)=B5
   GO TO 10
 20 CONTINUE
 CLOSE(U)
@@ -118,7 +128,7 @@ DO ISPC=1,MAXSP
     DO J=1,NG
       IF (GSPCD(J).EQ.IFIA) THEN
         GB(ISPC,1)=TB(J,1); GB(ISPC,2)=TB(J,2); GB(ISPC,3)=TB(J,3)
-        GB(ISPC,4)=TB(J,4); GB(ISPC,5)=TB(J,5)
+        GB(ISPC,4)=TB(J,4); GB(ISPC,5)=TB(J,5); GB(ISPC,6)=TB(J,6)
         GHAVE(ISPC) = .TRUE.
         NGOMP = NGOMP + 1
         GO TO 30
@@ -131,20 +141,35 @@ ENDDO
 LGOMP = .TRUE.
 WRITE(JOSTND,*) 'GOMPMORT enabled: ', NG, ' fitted species read, ', &
      NGOMP, ' matched to this variant.'
+!
+! Read universal hazard multiplier and survival floor from env vars.
+! FVS_GOMP_MORTMULT (default 1.0): scales annual hazard; 0.5 halves mortality.
+! FVS_GOMP_SFLOOR   (default 0.0=off): hard floor on annual survival for ALL trees.
+GMORTMULT = 1.0
+CALL GETENV('FVS_GOMP_MORTMULT', CVAL)
+IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GMORTMULT
+IF (GMORTMULT.LE.0.0) GMORTMULT = 1.0
+GSFLOOR = 0.0
+CALL GETENV('FVS_GOMP_SFLOOR', CVAL)
+IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GSFLOOR
+IF (GSFLOOR.LT.0.0 .OR. GSFLOOR.GT.1.0) GSFLOOR = 0.0
+WRITE(JOSTND,'(A,F6.3,A,F6.4)') &
+     '  GOMPMORT cap: MORTMULT=', GMORTMULT, '  SFLOOR=', GSFLOOR
 RETURN
 END
 
 
-SUBROUTINE GOMPSURV(ISPC, CR, CCHV, FINTL, SURV)
+SUBROUTINE GOMPSURV(ISPC, CR, CCHV, FINTL, SURV, DBHV)
 !  Period survival for one tree of FVS species ISPC. Caller guarantees
 !  GHAVE(ISPC). Returns SURV in (0,1].
 IMPLICIT NONE
 INCLUDE 'PRGPRM.f90'
 INCLUDE 'GOMPMC.f90'
 INTEGER ISPC
-REAL CR, CCHV, FINTL, SURV
-REAL B0,B1,B2,B3,B4,CRC,CCHC,ETA,HZ,CTERM
+REAL CR, CCHV, FINTL, SURV, DBHV
+REAL B0,B1,B2,B3,B4,B5,CRC,CCHC,ETA,HZ,CTERM,SFLR
 B0=GB(ISPC,1); B1=GB(ISPC,2); B2=GB(ISPC,3); B3=GB(ISPC,4); B4=GB(ISPC,5)
+B5=GB(ISPC,6)
 CRC = CR
 IF (CRC.LT.1.0E-4) CRC = 1.0E-4
 IF (CRC.GT.1.0)    CRC = 1.0
@@ -155,11 +180,19 @@ IF (CCHC.GT.0.0) THEN
 ELSE
   CTERM = 0.0
 ENDIF
-ETA = B0 + B1*(CRC+0.01)**B2 + B3*CTERM
+ETA = B0 + B1*(CRC+0.01)**B2 + B3*CTERM + B5*LOG(MAX(DBHV,0.1))
 IF (ETA.GT.30.0)  ETA = 30.0
 IF (ETA.LT.-30.0) ETA = -30.0
-HZ = 1.0 - EXP(-EXP(ETA))   ! Greg gompit: annual SURVIVAL (high eta -> high survival)
+HZ = 1.0 - EXP(-EXP(ETA) * GMORTMULT)   ! GOMPIT annual survival; GMORTMULT scales hazard
 SURV = MAX(0.0,MIN(1.0,HZ)) ** FINTL   ! compound annual survival over the cycle
+!
+! Universal survival floor: apply to ALL trees when GSFLOOR > 0.
+! This substitutes for the FVS MORTMULT keyword, which does not reach GOMPIT.
+! With FVS_GOMP_SFLOOR=0.98: at most 2%/yr mortality; 10-yr max = ~18%; 30-yr = ~45%.
+IF (GSFLOOR.GT.0.0) THEN
+  SFLR = GSFLOOR ** FINTL
+  IF (SURV.LT.SFLR) SURV = SFLR
+ENDIF
 RETURN
 END
 
@@ -332,4 +365,5 @@ INCLUDE 'PRGPRM.f90'
 INCLUDE 'GOMPMC.f90'
 DATA LGOMP /.FALSE./, LGOMPKW /.FALSE./, GHAVE /MAXSP*.FALSE./
 DATA NGOMP /0/, GGRP /MAXSP*16/
+DATA GSFLOOR /0.0/, GMORTMULT /1.0/
 END

@@ -132,7 +132,7 @@ I=IND1(I3)
 !----------
 !  ITERATE 10 TIMES, SINCE DG EQUATION IS AN ANNUAL BASIS
 !----------
-DO 1000 ILOOP=1,10
+DO 1000 ILOOP=1,NINT(FINT)
 D=TEMD(I)
 WK2(I)=0.0
 IF(D .LE. 0.0) GO TO 10
@@ -178,7 +178,7 @@ WK2(I)=ALOG(DDS)+COR(ISPC)
 !  --- Greg DG substitution (option 1): override native WK2 for covered species ---
 IF (LGREGDG .AND. GHAVE_DG(ISPC)) THEN
   DGGD = DIAM(I)
-  DO IGYR = 1, 10
+  DO IGYR = 1, NINT(FINT)
     CALL GREGDGV(ISPC, DGGD, FLOAT(ICR(I))/100.0, HT(I), PTBALT(I), GELEV, GEMT, GGINC)
     DGGD = DGGD + GGINC
   END DO

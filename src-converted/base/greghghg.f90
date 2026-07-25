@@ -153,7 +153,7 @@ ENDIF
 !  -- Load optional MCW table for CCFL computation --
 DO ISPC=1,MAXSP
   GHAVE_MCW(ISPC) = .FALSE.
-  GMCW(ISPC,1)=0.0; GMCW(ISPC,2)=0.0; GMCW(ISPC,3)=0.0; GMCW(ISPC,4)=0.0
+  GMCW(ISPC,1)=0.0; GMCW(ISPC,2)=0.0; GMCW(ISPC,3)=0.0; GMCW(ISPC,4)=0.0; GMCW(ISPC,5)=0.0; GMCW(ISPC,6)=0.0
 ENDDO
 CALL GETENV('FVS_GREG_MCW_COEF', CPATH)
 IF (CPATH.EQ.' ' .AND. LKWSEL) THEN
@@ -166,12 +166,12 @@ IF (CPATH.NE.' ') THEN
     READ(U,'(A)',IOSTAT=IOS) LINE
     NG = 0
 130 CONTINUE
-      READ(U,*,IOSTAT=IOS) IFIA, NN, C0, C1, C2
+      READ(U,*,IOSTAT=IOS) IFIA, NN, C0, C1, C2, C3, C4
       IF (IOS.NE.0) GO TO 140
       IF (NG.GE.MXG) GO TO 140
       NG = NG + 1
       GSPCD(NG) = IFIA
-      TB(NG,1)=REAL(NN); TB(NG,2)=C0; TB(NG,3)=C1; TB(NG,4)=C2
+      TB(NG,1)=REAL(NN); TB(NG,2)=C0; TB(NG,3)=C1; TB(NG,4)=C2; TB(NG,5)=C3; TB(NG,6)=C4
       GO TO 130
 140 CONTINUE
     CLOSE(U)
@@ -186,6 +186,7 @@ IF (CPATH.NE.' ') THEN
           IF (GSPCD(J).EQ.IFIA) THEN
             GMCW(ISPC,1)=TB(J,1); GMCW(ISPC,2)=TB(J,2)
             GMCW(ISPC,3)=TB(J,3); GMCW(ISPC,4)=TB(J,4)
+            GMCW(ISPC,5)=TB(J,5); GMCW(ISPC,6)=TB(J,6)
             GHAVE_MCW(ISPC) = .TRUE.
             EXIT
           ENDIF
@@ -271,6 +272,7 @@ IF (LKWSEL) THEN
   WRITE(JOSTND,*) 'GREGCRW: CROWNDRIVER 1 -> ', TRIM(CPATH)
 ELSE
   CALL GETENV('FVS_GREGCRW_COEF', CPATH)
+  IF (CPATH.EQ.' ') CPATH = TRIM(CDIR)//'/greg_crown_change_coefficients.csv'
 ENDIF
 IF (CPATH.EQ.' ') THEN
   WRITE(JOSTND,*) 'GREGCRW: no coefficient file; NOT enabled.'
@@ -315,6 +317,7 @@ DO ISPC=1,MAXSP
   ENDIF
 ENDDO
 WRITE(JOSTND,*) 'GREGCRW enabled: ', NG, ' species.'
+ICRWDRV = 1  ! ensure crown.f90 hook fires whether activated by keyword or env var
 RETURN
 END
 

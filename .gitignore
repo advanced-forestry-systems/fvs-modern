@@ -396,3 +396,18 @@ manuscript/*.pre_edits*.docx
 bin-test/
 config/greg_emt_td_lookup.csv
 *.pre_mod_*
+
+# --- Cardinal build output + job logs (Task C, 2026-07-25) ---
+# Local FVS build output directories (7 x ~8-32 MB, reproducible from source)
+/bin-gompsize/
+/bin-hg/
+/bin-mcw/
+/bin-mortcap/
+/bin-rebuilt_20260714_171604/
+/bin-vol/
+# Compiled variant executables dropped in the source tree
+/src-converted/bin/FVS??
+# SLURM stdout/stderr logs (job provenance lives in the submit scripts)
+calibration/slurm/*.log
+calibration/*.log
+build_*.log

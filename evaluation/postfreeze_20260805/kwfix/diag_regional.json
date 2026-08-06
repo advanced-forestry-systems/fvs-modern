@@ -1,0 +1,204 @@
+{
+  "config_path": "/users/PUOM0008/crsfaaron/fvs-modern/config/calibrated/ne.json",
+  "top_level_keys": [
+    "calibration",
+    "calibration_multipliers",
+    "categories",
+    "categories_conus",
+    "categories_conus_greg",
+    "categories_conus_mod",
+    "categories_conus_organon",
+    "categories_conus_sf",
+    "categories_conus_sf_modifier",
+    "categories_conus_stand",
+    "files_parsed",
+    "maxsp",
+    "variant",
+    "variant_name"
+  ],
+  "category_keys": [
+    "bark_ratio",
+    "crown",
+    "growth",
+    "height_diameter",
+    "mortality",
+    "other",
+    "self_thinning",
+    "site_index",
+    "species_definitions"
+  ],
+  "calibration_multipliers_keys": [
+    "cr_multiplier",
+    "dds_multiplier",
+    "htdbh_multiplier",
+    "htg_multiplier",
+    "mort_multiplier",
+    "provenance"
+  ],
+  "_emit_sdimax": true,
+  "raw_mort_multiplier": {
+    "present": true,
+    "n": 108,
+    "n_nan": 0,
+    "min": 0.23828002,
+    "max": 6.68852498,
+    "n_gt_0p01_from_1": 84,
+    "first10": [
+      1.891352,
+      0.833011,
+      1.403426,
+      0.57252,
+      1.204338,
+      2.289852,
+      1.0,
+      0.734131,
+      0.720836,
+      0.669863
+    ]
+  },
+  "raw_dds_multiplier": {
+    "present": true,
+    "n": 108,
+    "n_nan": 0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_gt_0p01_from_1": 0,
+    "first10": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "raw_htg_multiplier": {
+    "present": true,
+    "n": 108,
+    "n_nan": 0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_gt_0p01_from_1": 0,
+    "first10": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "mort_source": "precomputed",
+  "mort_multiplier": {
+    "present": true,
+    "n": 108,
+    "n_nan": 0,
+    "min": 0.23828002,
+    "max": 6.68852498,
+    "n_gt_0p01_from_1": 84,
+    "first10": [
+      1.891352,
+      0.833011,
+      1.403426,
+      0.57252,
+      1.204338,
+      2.289852,
+      1.0,
+      0.734131,
+      0.720836,
+      0.669863
+    ]
+  },
+  "dg_source": "precomputed_dds_sqrt",
+  "growth_multiplier": {
+    "present": true,
+    "n": 108,
+    "n_nan": 0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_gt_0p01_from_1": 0,
+    "first10": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "hg_source": "precomputed",
+  "htg_multiplier": {
+    "present": true,
+    "n": 108,
+    "n_nan": 0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_gt_0p01_from_1": 0,
+    "first10": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "bamax_param": null,
+  "sdi_param_n": 108,
+  "emitted_record_counts": {
+    "sdimax": 85,
+    "bamax": 0,
+    "mortmult": 84,
+    "baimult": 0,
+    "htgmult": 0
+  },
+  "sample_records": {
+    "sdimax": [
+      "SDIMAX             1     655.0",
+      "SDIMAX             2     387.0",
+      "SDIMAX             3     412.0"
+    ],
+    "bamax": [],
+    "mortmult": [
+      "MORTMULT                     1    1.8914       0.0     999.0",
+      "MORTMULT                     2    0.8330       0.0     999.0",
+      "MORTMULT                     3    1.4034       0.0     999.0"
+    ],
+    "baimult": [],
+    "htgmult": []
+  },
+  "column_dissection": {
+    "sdimax": {
+      "keyword_1_8": "'SDIMAX  '",
+      "f1_11_20": "'         1'",
+      "f2_21_30": "'     655.0'",
+      "f3_31_40": "'          '",
+      "f4_41_50": "'          '",
+      "f5_51_60": "'          '"
+    },
+    "mortmult": {
+      "keyword_1_8": "'MORTMULT'",
+      "f1_11_20": "'          '",
+      "f2_21_30": "'         1'",
+      "f3_31_40": "'    1.8914'",
+      "f4_41_50": "'       0.0'",
+      "f5_51_60": "'     999.0'"
+    }
+  }
+}

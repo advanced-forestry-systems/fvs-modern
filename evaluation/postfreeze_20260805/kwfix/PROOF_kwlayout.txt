@@ -1,0 +1,41 @@
+FVS keyword column-layout proof, frozen binary
+binary : /users/PUOM0008/crsfaaron/fvs-modern/bin-balfix_20260804/FVSne
+
+=== BAMAX keyword block written ===
+  |BAMAX                250.0|   {"kw": "BAMAX   ", "f1_date": "          ", "f2_species": " 250.0    ", "f3_value": "          "}
+  |BAMAX                    2     250.0|   {"kw": "BAMAX   ", "f1_date": "          ", "f2_species": "     2    ", "f3_value": " 250.0    "}
+  |BAMAX          250.0|   {"kw": "BAMAX   ", "f1_date": "     250.0", "f2_species": "          ", "f3_value": "          "}
+returncode = 10
+--- listing echo of MAXIMUM BASAL AREA ---
+  line 118: BAMAX      MAXIMUM BASAL AREA=      0.00
+  line 120: BAMAX      MAXIMUM BASAL AREA=      0.00
+  line 122: BAMAX      MAXIMUM BASAL AREA=    250.00
+
+=== BAIMULT / HTGMULT keyword block written ===
+  |BAIMULT                  2    1.8914|   {"kw": "BAIMULT ", "f1_date": "          ", "f2_species": "     2    ", "f3_value": "1.8914    "}
+  |BAIMULT                      2    1.8914|   {"kw": "BAIMULT ", "f1_date": "          ", "f2_species": "         2", "f3_value": "    1.8914"}
+  |HTGMULT                  2    1.8914|   {"kw": "HTGMULT ", "f1_date": "          ", "f2_species": "     2    ", "f3_value": "1.8914    "}
+  |HTGMULT                      2    1.8914|   {"kw": "HTGMULT ", "f1_date": "          ", "f2_species": "         2", "f3_value": "    1.8914"}
+  |BAIMULT                 12   12.3456|   {"kw": "BAIMULT ", "f1_date": "          ", "f2_species": "    12   1", "f3_value": "2.3456    "}
+  |BAIMULT                     12   12.3456|   {"kw": "BAIMULT ", "f1_date": "          ", "f2_species": "        12", "f3_value": "   12.3456"}
+returncode = 20
+--- listing echo of BAIMULT / HTGMULT / FVS errors ---
+  line 34: ********   FVS03 WARNING:  FOREST CODE INDICATES THE GEOGRAPHIC LOCATION IS OUTSIDE THE RANGE OF THE MODEL.  DEFAULT CODE IS USED.
+  line 118: BAIMULT    DATE/CYCLE=    1; SPECIES=TA  (CODE=   2); MULTIPLIER=    1.8914
+  line 120: BAIMULT    DATE/CYCLE=    1; SPECIES=TA  (CODE=   2); MULTIPLIER=    1.8914
+  line 122: HTGMULT    DATE/CYCLE=    1; SPECIES=TA  (CODE=   2); MULTIPLIER=    1.8914
+  line 124: HTGMULT    DATE/CYCLE=    1; SPECIES=TA  (CODE=   2); MULTIPLIER=    1.8914
+  line 126:  CARD NUM =   23; KEYWORD FIELD = 'BAIMULT '
+  line 130: ********   FVS04 ERROR:  A REQUIRED PARAMETER IS MISSING OR A PARAMETER IS INCORRECT; KEYWORD IGNORED.
+  line 132: BAIMULT    DATE/CYCLE=    1; SPECIES=WC  (CODE=  12); MULTIPLIER=   12.3456
+  line 250:                BASE     BAIMULT   2000       2.0000     1.8914
+  line 251:                BASE     BAIMULT   2000       2.0000     1.8914
+  line 252:                BASE     HTGMULT   2000       2.0000     1.8914
+  line 253:                BASE     HTGMULT   2000       2.0000     1.8914
+  line 254:                BASE     BAIMULT   2000      12.0000    12.3456
+  line 420:                BASE     BAIMULT   2000  DONE IN 2000               2.0000     1.8914
+  line 421:                BASE     BAIMULT   2000  DONE IN 2000               2.0000     1.8914
+  line 422:                BASE     BAIMULT   2000  DONE IN 2000              12.0000    12.3456
+  line 423:                BASE     HTGMULT   2000  DONE IN 2000               2.0000     1.8914
+  line 424:                BASE     HTGMULT   2000  DONE IN 2000               2.0000     1.8914
+

@@ -1,0 +1,134 @@
+--- /fs/scratch/PUOM0008/crsfaaron/balfix_run_20260804/run_driver_final.py	2026-08-05 06:19:52.960215873 -0400
++++ run_driver_inputguard.py	2026-08-06 08:04:24.514647000 -0400
+@@ -28,6 +28,15 @@
+ Usage:
+   python3 run_5model_scorecard_cohort.py --variant ne [--max-pairs 5000] [--seed 42]
+ """
++# ===========================================================================
++# GUARDED COPY of run_driver_final.py (md5 6072753c4c069fc273e11347d199a7a2).
++# The original is a published provenance tag and is NOT modified.
++# Two DIAGNOSTIC-ONLY input-side guards are added here:
++#   Defect A  species validation via IG.validate_spcd_series (build_treeinit)
++#   Defect B  dense collision-free StandIDs via IG.build_standid_map plus a
++#             CN lookup table via IG.write_standid_lookup
++# Neither changes FVS model output on valid input.
++# ===========================================================================
+ from __future__ import annotations
+ 
+ import argparse
+@@ -42,6 +51,15 @@
+ import numpy as np
+ import pandas as pd
+ 
++# --- INPUT GUARDS (diagnostic-only; see tools/fvs_input_guards.py) ---
++sys.path.insert(0, "/users/PUOM0008/crsfaaron/fvs-modern/tools")
++import fvs_input_guards as IG  # noqa: E402
++
++# Mutable module-level guard state so build_treeinit can see the CLI flag
++# and so the run can report a species audit at the end.
++SPCD_GUARD = {"strict": False, "n_stands": 0, "n_valid": 0,
++              "n_out_of_region": 0, "n_null": 0, "oor_codes": {}}
++
+ # ---------------------------------------------------------------------------
+ # Paths
+ # ---------------------------------------------------------------------------
+@@ -282,7 +300,27 @@
+ # Tree list builder
+ # ---------------------------------------------------------------------------
+ def build_treeinit(tree_df: pd.DataFrame, sid: str) -> pd.DataFrame:
+-    """Convert FIA TREE records (live, DIA >= 5 in) to fvs_treeinit."""
++    """Convert FIA TREE records (live, DIA >= 5 in) to fvs_treeinit.
++
++    INPUT GUARD (Defect A).  The FVS NE variant silently remaps any species
++    code it does not carry to the internal code OH and returns success
++    (base/intree.f90:421 emits only a NOTE in the listing).  So the tree list
++    is validated HERE, before the keyword file is written and before the
++    binary is launched: an impossible SPCD raises, an out-of-region SPCD
++    warns.  Diagnostic only -- valid input is passed through unchanged.
++    """
++    _codes = [c for c in tree_df.get("SPCD", pd.Series(dtype=float)).tolist()
++              if pd.notna(c)]
++    _n_null = len(tree_df) - len(_codes)
++    _audit = IG.validate_spcd_series(_codes, strict=SPCD_GUARD["strict"],
++                                     label=sid)
++    SPCD_GUARD["n_stands"] += 1
++    SPCD_GUARD["n_valid"] += _audit["n_valid"]
++    SPCD_GUARD["n_out_of_region"] += _audit["n_out_of_region"]
++    SPCD_GUARD["n_null"] += _n_null
++    for _c, _k in _audit["out_of_region_codes"].items():
++        SPCD_GUARD["oor_codes"][_c] = SPCD_GUARD["oor_codes"].get(_c, 0) + _k
++
+     rows = []
+     for _, r in tree_df.iterrows():
+         try:
+@@ -795,6 +833,9 @@
+     )
+     ap.add_argument("--variant",   required=True, choices=list(VARIANTS))
+     ap.add_argument("--max-pairs", type=int, default=200)
++    ap.add_argument("--spcd-strict", action="store_true",
++                    help="input guard: raise on out-of-region SPCD too, "
++                         "not just on impossible ones")
+     ap.add_argument("--seed",      type=int, default=42)
+     ap.add_argument(
+         "--outdir",
+@@ -884,6 +925,32 @@
+           f"(method = {'PREV_TRE_CN' if has_prev else 'SUBP+TREE fallback'})")
+     sys.stdout.flush()
+ 
++    # ------------------------------------------------------------------
++    # INPUT GUARD (Defect B).  The legacy scheme
++    #     sid = f"{variant.upper()}_{t1_cn % 10_000_000:07d}"
++    # aliases: on the 3,321-plot list it collapses to 50 distinct StandIDs,
++    # largest collision group 147.  Replaced with a dense sequential index
++    # that is collision-free by construction, plus a CN lookup table written
++    # alongside the outputs.  The full CN cannot be used as an in-FVS
++    # identifier: dbsqlite/dbstreesin.f90:20 declares ITREE as a default
++    # INTEGER and line 97 binds TREE_ID with fsql3_colint, so a 14- to
++    # 15-digit FIA CN overflows signed 32-bit.
++    # ------------------------------------------------------------------
++    SPCD_GUARD["strict"] = bool(getattr(args, "spcd_strict", False))
++    _t1_list = [int(c) for c in pairs["PREV_PLT_CN"].tolist()]
++    standid_map = IG.build_standid_map(_t1_list, variant)
++    _legacy = IG.check_standid_collisions(
++        _t1_list, lambda c: IG.legacy_standid(c, variant))
++    print("[guard] StandID: %d unique CNs -> %d distinct StandIDs, "
++          "max collision group %d"
++          % (len(standid_map), standid_map.n_distinct(),
++             standid_map.max_collision_group()))
++    print("[guard] legacy modulo scheme on the same CNs would have produced "
++          "%d distinct StandIDs, max collision group %d, %d CNs aliased"
++          % (_legacy["n_distinct_standids"], _legacy["max_group_size"],
++             _legacy["n_cns_in_collision"]))
++    sys.stdout.flush()
++
+     rows: list[dict] = []
+     tl_frames: list[pd.DataFrame] = []
+     map_rows:  list[dict] = []
+@@ -929,7 +996,7 @@
+         # Diagnostic: whole-stand observed (all live DIA>=5 at T2)
+         ba_obs_whole       = obs_ba_ft2ac_wholestand(trees, t2_cn_s)
+ 
+-        sid      = f"{variant.upper()}_{t1_cn % 10_000_000:07d}"
++        sid      = standid_map.standid(str(t1_cn))
+         stand_df = build_standinit(sid, measyear1, variant, cond_row,
+                                    ecoregion=ecomap.get(t1_cn))
+         tree_df  = build_treeinit(t1, sid)
+@@ -1046,6 +1113,18 @@
+     os.makedirs(args.outdir, exist_ok=True)
+ 
+     sfx = f"{args.tag}_arm{args.arm}_s{args.shard:02d}"
++
++    # INPUT GUARD (Defect B): CN lookup table alongside the outputs.
++    # Control numbers only, no spatial attribute of any kind.
++    sid_out = os.path.join(args.outdir, f"standid_lookup_{sfx}.csv")
++    IG.write_standid_lookup(sid_out, standid_map)
++    print(f"[guard] wrote StandID->CN lookup "
++          f"({len(standid_map)} rows) -> {sid_out}")
++    print("[guard] species audit: %d stands, %d valid SPCD records, "
++          "%d out-of-region, %d null; out-of-region codes: %s"
++          % (SPCD_GUARD["n_stands"], SPCD_GUARD["n_valid"],
++             SPCD_GUARD["n_out_of_region"], SPCD_GUARD["n_null"],
++             sorted(SPCD_GUARD["oor_codes"].items()) or "none"))
+     if tl_frames:
+         tl_all = pd.concat(tl_frames, ignore_index=True)
+         tl_out = os.path.join(args.outdir, f"treelist_{sfx}.csv")

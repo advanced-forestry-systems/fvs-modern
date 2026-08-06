@@ -1,0 +1,29 @@
+{
+ "spcd_source_file": "/users/PUOM0008/crsfaaron/fvs-modern/src-converted/ne/blkdat.f90",
+ "spcd_source_lines": "DATA JSP 126-142; DATA FIAJSP 144-160 (MAXSP=108 at ne/common/PRGPRM.f90:12; slot 71 blank)",
+ "ne_species_count": 107,
+ "spcd_9999_listing_line": "NOTE: INPUT SPECIES CODE (9999    )WAS SET TO (OH  ) FOR THIS PROJECTION.",
+ "spcd_9999_guard_rejected": true,
+ "legacy_distinct_standids": 50,
+ "legacy_max_collision_group": 147,
+ "new_distinct_standids": 3321,
+ "new_max_collision_group": 1,
+ "standid_output_maxabsdiff": 0.0,
+ "treeid_declared_type": "default Fortran INTEGER (4-byte signed, max 2147483647); dbsqlite/dbstreesin.f90:20 'INTEGER ITREE,IPLOT,HISTORY,...' bound at line 97 by fsql3_colint",
+ "treeid_overflow_confirmed": true,
+ "fvs_returncode_on_spcd_9999": 10,
+ "fvs_produced_output_on_spcd_9999": true,
+ "legacy_cns_in_collision": 3320,
+ "n_cns": 3321,
+ "known_fia_spcd_universe_size": 248,
+ "standid_control_maxabsdiff": 0.0,
+ "standid_text_cols_differ_AvsB": [
+  "CaseID",
+  "StandID"
+ ],
+ "standid_text_cols_differ_control": [
+  "CaseID"
+ ],
+ "n_numeric_cols_compared": 64,
+ "max_treeid_on_3321_list": 33219999
+}

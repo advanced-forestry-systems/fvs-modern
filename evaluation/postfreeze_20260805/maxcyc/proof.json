@@ -1,0 +1,19 @@
+{
+  "boundary40_codes": [
+    "FVS03:WARNING"
+  ],
+  "boundary40_passed": true,
+  "boundary40_returncode": 10,
+  "boundary40_summary_rows": 41,
+  "guarded_postrun_detected": true,
+  "guarded_presubmit_rejected": true,
+  "maxcyc_parsed": 40,
+  "note_fvs03_warning": "FVS03 is a WARNING (forest code outside model range, default used) emitted by the synthetic stand on both the 40 and 41 cases. check_run fails on ERROR severity only, so FVS03 does not fail a legal run.  This was found by the boundary test, not by inspection.",
+  "unguarded_all_codes": [
+    "FVS03",
+    "FVS04"
+  ],
+  "unguarded_fvs04_line": "********   FVS04 ERROR:  A REQUIRED PARAMETER IS MISSING OR A PARAMETER IS INCORRECT; KEYWORD IGNORED.",
+  "unguarded_returncode": 20,
+  "unguarded_summary_rows": 2
+}

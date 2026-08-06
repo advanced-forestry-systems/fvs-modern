@@ -1,0 +1,219 @@
+==============================================================================
+PROOF.txt -- two input-side guards for the FVS Northeast driver
+DIAGNOSTIC-ONLY.  Neither guard changes FVS model output on valid input.
+Built 2026-08-06 on OSC Cardinal, account puom0008.
+==============================================================================
+
+Files created / owned by this track:
+  /users/PUOM0008/crsfaaron/fvs-modern/tools/fvs_input_guards.py
+  /fs/scratch/PUOM0008/crsfaaron/postfreeze_20260805/inputguard/run_driver_inputguard.py
+  /fs/scratch/PUOM0008/crsfaaron/postfreeze_20260805/inputguard/run_driver_inputguard.diff
+  /fs/scratch/PUOM0008/crsfaaron/postfreeze_20260805/inputguard/PROOF.txt   proof.json   proof_raw.txt   proof_raw2.txt
+  /fs/scratch/PUOM0008/crsfaaron/postfreeze_20260805/inputguard/proof_run.py   proof_run2.py   patch_driver.py   extract_fia.py
+  /fs/scratch/PUOM0008/crsfaaron/postfreeze_20260805/inputguard/test_out/  (guarded-driver smoke run, 5 pairs)
+
+Provenance of things NOT modified:
+  6072753c4c069fc273e11347d199a7a2  /fs/scratch/PUOM0008/crsfaaron/balfix_run_20260804/run_driver_final.py
+      (published provenance tag 6072753c4c069fc273e11347d199a7a2, unchanged)
+  b85e4c06995382425b01c756811d6d34  /users/PUOM0008/crsfaaron/fvs-modern/bin-balfix_20260804/FVSne
+  5f43e67952ab71135b4b159e730dfd77  /fs/scratch/PUOM0008/crsfaaron/balfix_run_20260804/plot_list_3321.csv
+
+==============================================================================
+SPECIES-LIST SOURCE (derived from source, not from memory)
+==============================================================================
+File : /users/PUOM0008/crsfaaron/fvs-modern/src-converted/ne/blkdat.f90
+  DATA JSP    lines 126-142   (108 internal alpha codes)
+  DATA FIAJSP lines 144-160   (parallel FIA SPCD crosswalk)
+  MAXSP = 108 at /users/PUOM0008/crsfaaron/fvs-modern/src-converted/ne/common/PRGPRM.f90:12
+  Slot 71 is blank in both arrays, so the NE variant carries
+  107 distinct FIA species codes.
+
+12:PARAMETER (MAXSP =108)
+DATA FIAJSP / &
+    '012',   '071',   '094',   '097',   '091',   '095',   '090', &
+    '125',   '129',   '131',   '132',   '241',   '043',   '068', &
+    '057',   '261',   '260',   '100',   '105',   '110',   '123', &
+  ... (through line 160)
+
+The silent-remap message itself, /users/PUOM0008/crsfaaron/fvs-modern/src-converted/base/intree.f90:421 :
+75 FORMAT(T12,'NOTE: INPUT SPECIES CODE (',A8,')WAS SET TO (' &
+       ,A4,') FOR THIS PROJECTION.')
+INOSPC = INOSPC+1
+
+KNOWN_FIA_SPCD (the 'is this a real FIA code' universe) is the union of
+DATA FIAJSP over all 24 variant blkdat.f90 files: 248 codes.
+Codes inside 1..999 that appear in no variant table are still reported
+OUT_OF_REGION, not INVALID, because the union is a lower bound on the
+true FIA SPCD list.  9999 is outside the structural FIA range entirely.
+
+==============================================================================
+PROOF 1 -- Defect A: FVS silently swallows SPCD 9999
+==============================================================================
+==============================================================================
+BLOCK 1 -- Defect A: FVS silently accepts SPCD 9999
+binary: /users/PUOM0008/crsfaaron/fvs-modern/bin-balfix_20260804/FVSne
+md5: b85e4c06995382425b01c756811d6d34  /users/PUOM0008/crsfaaron/fvs-modern/bin-balfix_20260804/FVSne
+arm: fvs_base
+FVS returncode: 10 (10 is the normal FVS STOP)
+listing lines matching 'SPECIES CODE':
+               NOTE: INPUT SPECIES CODE (9999    )WAS SET TO (OH  ) FOR THIS PROJECTION.
+               SPECIES CODE OUTPUT FORMAT: NORMAL
+FVS_Summary2 rows produced: 2
+
+Now the guard, BEFORE FVS is ever launched:
+    SpeciesCodeError: FVS input guard: species code 9999 is not a valid FIA SPCD (outside the structural FIA SPCD range 1-999). The FVS NE variant would silently remap it to OH and return success, so this input must be rejected before FVS is launched.
+    series guard: SpeciesCodeError: FVS input guard [synthetic stand]: 1 record(s) carry species codes that are not valid FIA SPCDs: 9999 x1.  FVS NE would silently remap every one of them to OH and return success.
+
+==============================================================================
+BLOCK 3 -- Defect B latency: StandID does not change output
+rc A/B: 10 10
+FVS_Summary2 shape A=(2, 37) B=(2, 37)
+FVS_TreeList shape A=(24, 35) B=(24, 35)
+per-column max |A-B| (nonzero shown; all others 0):
+    FVS_Summary2   CaseID (text identical)      1.0
+    FVS_TreeList   CaseID (text identical)      1.0
+MAX ABS DIFF ACROSS EVERY NUMERIC COLUMN OF BOTH TABLES: 1.0
+
+DONE
+
+==============================================================================
+PROOF 2 -- Defect B: StandID collision reproduction on the real CN list
+==============================================================================
+plot list      : /fs/scratch/PUOM0008/crsfaaron/balfix_run_20260804/plot_list_3321.csv
+md5            : 5f43e67952ab71135b4b159e730dfd77 (expected 5f43e67952ab71135b4b159e730dfd77)
+CNs read       : 3321
+
+LEGACY  sid = f"{variant.upper()}_{cn %% 10_000_000:07d}"
+  distinct StandIDs      : 50
+  largest collision group: 147  (StandID NE_7010661)
+  CNs sitting in a collision group: 3320 of 3321
+  group-size histogram (size: how many StandIDs): [(1, 1), (5, 1), (6, 2), (7, 1), (8, 2), (9, 2), (11, 1), (35, 2), (36, 1), (37, 2), (38, 1), (39, 1), (45, 2), (46, 1), (51, 3), (55, 2), (58, 1), (60, 1), (61, 2), (63, 1), (78, 1), (84, 1), (95, 1), (99, 1), (105, 1), (108, 1), (110, 2), (112, 2), (114, 1), (115, 1), (121, 1), (122, 2), (127, 1), (130, 1), (140, 1), (141, 1), (147, 1)]
+
+NEW     IG.build_standid_map(cns, 'ne')
+  distinct StandIDs      : 3321
+  largest collision group: 1
+  first / last StandID   : NE_0000001 / NE_0003321
+
+==============================================================================
+PROOF 3 -- Defect B latency: StandID does not change model output
+==============================================================================
+==============================================================================
+BLOCK 3 -- StandID latency, with a same-StandID control
+binary: /users/PUOM0008/crsfaaron/fvs-modern/bin-balfix_20260804/FVSne  arm: fvs_base
+returncodes A/B/control: 10 10 10
+shapes: Summary2 (2, 37) (2, 37)   TreeList (24, 35) (24, 35)
+
+TEST     A vs B   (StandID NE_0000001 vs NE_9999999, all else identical)
+  A-vs-B    FVS_Summary2  numeric cols=35  MAX|A-B|=0 (worst: None)
+  A-vs-B    FVS_Summary2  text cols that differ: ['CaseID', 'StandID']
+  A-vs-B    FVS_TreeList  numeric cols=29  MAX|A-B|=0 (worst: None)
+  A-vs-B    FVS_TreeList  text cols that differ: ['CaseID', 'StandID']
+
+CONTROL  A vs A'  (SAME StandID, two separate runs)
+  A-vs-A'   FVS_Summary2  numeric cols=35  MAX|A-B|=0 (worst: None)
+  A-vs-A'   FVS_Summary2  text cols that differ: ['CaseID']
+  A-vs-A'   FVS_TreeList  numeric cols=29  MAX|A-B|=0 (worst: None)
+  A-vs-A'   FVS_TreeList  text cols that differ: ['CaseID']
+
+MAX ABS DIFF over 35 numeric Summary2 cols + 29 numeric TreeList cols = 0
+Text cols differing A vs B : ['CaseID', 'StandID']
+Text cols differing A vs A': ['CaseID']
+=> a text column that also differs in the CONTROL is a per-run artifact,
+   not a StandID effect.
+DONE
+
+VERDICT: the latency claim HOLDS.  Max abs difference across all 64
+numeric columns of FVS_Summary2 and FVS_TreeList is 0.0.
+CaseID is a per-run GUID: it also differs in the same-StandID control,
+so it is not a StandID effect.  StandID itself differs by construction.
+The StandID change is therefore NOT behaviour-changing.
+
+==============================================================================
+PROOF 4 -- TREE_ID 32-bit overflow claim
+==============================================================================
+File: /users/PUOM0008/crsfaaron/fvs-modern/src-converted/dbsqlite/dbstreesin.f90
+INTEGER ITREE,IPLOT,HISTORY,CRWNR,DMG1,DMG2,DMG3,SVR1,SVR2
+   CASE('TREE_ID')
+     ITREE = fsql3_colint(IinDBref,ColNumber,0)
+     MATCHED=.TRUE.
+30:integer  fsql3_step,fsql3_finalize,fsql3_colisnull, &
+31-            fsql3_colname,fsql3_colcnt,fsql3_colint,fsql3_coltext
+32-real*4   fsql3_colreal
+
+ITREE is a DEFAULT Fortran INTEGER (line 20), bound to the TREE_ID column
+by fsql3_colint (line 97).  Default INTEGER on this build is 4-byte
+signed, max 2147483647.
+A real FIA control number from the plot list, 107545100010661, is 15 digits and
+evaluates to 107545100010661, which is 5.01e+04 times the signed 32-bit maximum.
+OVERFLOW CONFIRMED.  The full CN can never be used as TREE_ID; the guard
+allocates tree_id = stand_index * 10000 + tree_seq, whose maximum on the
+3,321-stand list is 33219999, comfortably inside 2147483647.
+
+==============================================================================
+MODULE SELF-TEST  (python3 /users/PUOM0008/crsfaaron/fvs-modern/tools/fvs_input_guards.py)
+==============================================================================
+/users/PUOM0008/crsfaaron/fvs-modern/tools/fvs_input_guards.py:468: OutOfRegionSpeciesWarning: FVS input guard: species code 263 is out of region for the NE variant (real FIA species carried by another FVS variant but not by NE; FVS will silently set it to OH).
+  validate_spcd(263)
+==============================================================================
+fvs_input_guards self-test
+  species source : /users/PUOM0008/crsfaaron/fvs-modern/src-converted/ne/blkdat.f90
+  species lines  : JSP 126-142; FIAJSP 144-160
+==============================================================================
+PASS NE species count                                     got=107                    want=107
+PASS NE table slots (incl. blank 71)                      got=108                    want=108
+PASS 998 maps to OH                                       got='OH'                   want='OH'
+PASS classify 12                                          got='VALID'                want='VALID'
+PASS classify 97                                          got='VALID'                want='VALID'
+PASS classify 316                                         got='VALID'                want='VALID'
+PASS classify 802                                         got='VALID'                want='VALID'
+PASS classify 998                                         got='VALID'                want='VALID'
+PASS classify 11                                          got='OUT_OF_REGION'        want='OUT_OF_REGION'
+PASS classify 20                                          got='OUT_OF_REGION'        want='OUT_OF_REGION'
+PASS classify 263                                         got='OUT_OF_REGION'        want='OUT_OF_REGION'
+PASS classify 264                                         got='OUT_OF_REGION'        want='OUT_OF_REGION'
+PASS classify 9999                                        got='INVALID'              want='INVALID'
+PASS classify 0                                           got='INVALID'              want='INVALID'
+PASS classify -5                                          got='INVALID'              want='INVALID'
+PASS classify 100000                                      got='INVALID'              want='INVALID'
+PASS classify 'abc'                                       got='INVALID'              want='INVALID'
+PASS classify None                                        got='INVALID'              want='INVALID'
+PASS classify ''                                          got='INVALID'              want='INVALID'
+PASS validate_spcd(9999) raises                           got=True                   want=True
+PASS validate_spcd(263) does NOT raise by default         got=False                  want=False
+PASS validate_spcd(263, strict=True) raises               got=True                   want=True
+PASS validate_spcd(263) warns                             got=1                      want=1
+PASS series n_valid                                       got=3                      want=3
+PASS series n_out_of_region                               got=4                      want=4
+PASS series n_invalid                                     got=0                      want=0
+PASS series with 9999 raises                              got=True                   want=True
+PASS tree_id(1,1)                                         got=10001                  want=10001
+PASS tree_id(3321,9999) fits int32                        got=True                   want=True
+PASS a 15-digit FIA CN overflows int32                    got=True                   want=True
+PASS plot list length                                     got=3321                   want=3321
+PASS legacy distinct StandIDs                             got=50                     want=50
+PASS legacy max collision group                           got=147                    want=147
+PASS legacy CNs in a collision group                      got=3320                   want=3320
+PASS new distinct StandIDs                                got=3321                   want=3321
+PASS new max collision group                              got=1                      want=1
+PASS new first StandID                                    got='NE_0000001'           want='NE_0000001'
+PASS new last StandID                                     got='NE_0003321'           want='NE_0003321'
+------------------------------------------------------------------------------
+38 checks, 0 failures -- ALL PASS
+
+==============================================================================
+GUARDED DRIVER COPY -- smoke run, 5 pairs, arm A, fvs_base
+==============================================================================
+[guard] StandID: 5 unique CNs -> 5 distinct StandIDs, max collision group 1
+[guard] legacy modulo scheme on the same CNs would have produced 5 distinct StandIDs, max collision group 1, 0 CNs aliased
+[guard] wrote StandID->CN lookup (5 rows) -> /fs/scratch/PUOM0008/crsfaaron/postfreeze_20260805/inputguard/test_out/standid_lookup_guardsmoke_armA_s00.csv
+[guard] species audit: 1 stands, 29 valid SPCD records, 0 out-of-region, 0 null; out-of-region codes: none
+
+StandID,CN,StandIndex
+NE_0000001,168996964010661,1
+NE_0000002,53957309010538,2
+NE_0000003,58317205010538,3
+
+unified diff vs the untouched original: /fs/scratch/PUOM0008/crsfaaron/postfreeze_20260805/inputguard/run_driver_inputguard.diff
+ run_driver_inputguard.py |   83 +++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 81 insertions(+), 2 deletions(-)
+

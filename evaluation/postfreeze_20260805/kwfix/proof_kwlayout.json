@@ -1,0 +1,34 @@
+{
+  "bamax_echoed_values_in_order": [
+    0.0,
+    0.0,
+    250.0
+  ],
+  "bamax_legacy_scalar_bound": false,
+  "bamax_legacy_species_bound": false,
+  "bamax_corrected_bound": true,
+  "mult_echo_lines": [
+    "********   FVS03 WARNING:  FOREST CODE INDICATES THE GEOGRAPHIC LOCATION IS OUTSIDE THE RANGE OF THE MODEL.  DEFAULT CODE IS USED.",
+    "BAIMULT    DATE/CYCLE=    1; SPECIES=TA  (CODE=   2); MULTIPLIER=    1.8914",
+    "BAIMULT    DATE/CYCLE=    1; SPECIES=TA  (CODE=   2); MULTIPLIER=    1.8914",
+    "HTGMULT    DATE/CYCLE=    1; SPECIES=TA  (CODE=   2); MULTIPLIER=    1.8914",
+    "HTGMULT    DATE/CYCLE=    1; SPECIES=TA  (CODE=   2); MULTIPLIER=    1.8914",
+    " CARD NUM =   23; KEYWORD FIELD = 'BAIMULT '",
+    "********   FVS04 ERROR:  A REQUIRED PARAMETER IS MISSING OR A PARAMETER IS INCORRECT; KEYWORD IGNORED.",
+    "BAIMULT    DATE/CYCLE=    1; SPECIES=WC  (CODE=  12); MULTIPLIER=   12.3456",
+    "               BASE     BAIMULT   2000       2.0000     1.8914",
+    "               BASE     BAIMULT   2000       2.0000     1.8914",
+    "               BASE     HTGMULT   2000       2.0000     1.8914",
+    "               BASE     HTGMULT   2000       2.0000     1.8914",
+    "               BASE     BAIMULT   2000      12.0000    12.3456",
+    "               BASE     BAIMULT   2000  DONE IN 2000               2.0000     1.8914",
+    "               BASE     BAIMULT   2000  DONE IN 2000               2.0000     1.8914",
+    "               BASE     BAIMULT   2000  DONE IN 2000              12.0000    12.3456",
+    "               BASE     HTGMULT   2000  DONE IN 2000               2.0000     1.8914",
+    "               BASE     HTGMULT   2000  DONE IN 2000               2.0000     1.8914"
+  ],
+  "mult_returncode": 20,
+  "mult_fvs_errors": [
+    "********   FVS04 ERROR:  A REQUIRED PARAMETER IS MISSING OR A PARAMETER IS INCORRECT; KEYWORD IGNORED."
+  ]
+}

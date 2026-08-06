@@ -1,0 +1,82 @@
+==============================================================================
+PROOF: MAXCYC / NUMCYCLE silent-truncation guard
+date: 2026-08-05/06   binary: /users/PUOM0008/crsfaaron/fvs-modern/bin-balfix_20260804/FVSne
+stand: SYNTHETIC even-aged Picea rubens monoculture, 200 TPA, 9.0 in DBH, SI 42, no FIA data
+==============================================================================
+
+[5] PARSED MAXCYC FROM SOURCE
+------------------------------------------------------------------------------
+$ grep -n 'PARAMETER (MAXCYC' /users/PUOM0008/crsfaaron/fvs-modern/src-converted/base/PRGPRM.f90
+13:PARAMETER (MAXCYC=40)
+31:!     MAXCYC= THE MAX NUMBER OF CYCLES ALLOWED IN THE MODEL.
+G.read_maxcyc(...) -> 40   (MAXCYC_DEFAULT fallback = 40)
+MATCHES 40: True
+
+[2] CONTROL -- UNGUARDED RUN, NUMCYCLE 41 (the silent failure)
+------------------------------------------------------------------------------
+$ /users/PUOM0008/crsfaaron/fvs-modern/bin-balfix_20260804/FVSne --keywordfile=run.key    # TIMEINT 0 1 / NUMCYCLE 41
+return code            : 20   (normal FVS STOP is 10)
+FVS_Summary2 row count : 2
+FVS error codes in listing:
+   FVS03 WARNING line 33: ********   FVS03 WARNING:  FOREST CODE INDICATES THE GEOGRAPHIC LOCATION IS OUTSIDE THE RANGE OF THE MODEL.  DEFAULT CODE IS USED.
+   FVS04 ERROR   line 93: ********   FVS04 ERROR:  A REQUIRED PARAMETER IS MISSING OR A PARAMETER IS INCORRECT; KEYWORD IGNORED.
+stderr head: STOP 20 
+
+=> An unguarded driver that DEVNULLs stdout/stderr and ignores the return code sees a well-formed 2-row summary and reports success.
+
+[3a] GUARDED PATH -- PRE-SUBMIT, FVS IS NEVER LAUNCHED
+------------------------------------------------------------------------------
+>>> fvs_run_guards.validate_numcycle(41)
+FVSKeywordError: NUMCYCLE=41 exceeds the compiled ceiling MAXCYC=40 (PARAMETER (MAXCYC=40) in src-converted/base/PRGPRM.f90). FVS would NOT abort: it emits 'FVS04 ERROR: A REQUIRED PARAMETER IS MISSING OR A PARAMETER IS INCORRECT; KEYWORD IGNORED' into the .out listing, discards the keyword, runs ONE cycle, exits with return code 20, and still writes a well-formed two-row FVS_Summary2 table.  Refusing to launch.
+>>> fvs_run_guards.validate_keyword_file(/fs/scratch/PUOM0008/crsfaaron/postfreeze_20260805/maxcyc/case_numcycle41/run.key)
+FVSKeywordError: NUMCYCLE=41 exceeds the compiled ceiling MAXCYC=40 (PARAMETER (MAXCYC=40) in src-converted/base/PRGPRM.f90). FVS would NOT abort: it emits 'FVS04 ERROR: A REQUIRED PARAMETER IS MISSING OR A PARAMETER  ...
+
+[3b] GUARDED PATH -- POST-RUN, ON THE CONTROL RUN'S ARTIFACTS
+------------------------------------------------------------------------------
+>>> fvs_run_guards.check_run(returncode=20, out_path=..., expected_cycles=41, summary_rows=2)
+FVSRunError: FVS run guard FAILED (returncode=20, listing=/fs/scratch/PUOM0008/crsfaaron/postfreeze_20260805/maxcyc/case_numcycle41/run.out):
+  - FVS returned code 20 (normal FVS STOP is 10; 20 is the keyword-rejected / truncated-run signature).
+  - FVS error code(s) present in the listing /fs/scratch/PUOM0008/crsfaaron/postfreeze_20260805/maxcyc/case_numcycle41/run.out -- FVS04 ERROR at listing line 93: ********   FVS04 ERROR:  A REQUIRED PARAMETER IS MISSING OR A PARAMETER IS INCORRECT; KEYWORD IGNORED.
+  - FVS_Summary2 has 2 row(s) but 41 cycle(s) were requested, so 42 row(s) were expected.  A truncated run typically yields exactly 2 rows.
+  stderr: STOP 20
+
+[4] BOUNDARY -- NUMCYCLE 40 THROUGH THE GUARDED PATH (must PASS)
+------------------------------------------------------------------------------
+>>> fvs_run_guards.validate_numcycle(40)
+pre-submit OK, launching FVS
+$ /users/PUOM0008/crsfaaron/fvs-modern/bin-balfix_20260804/FVSne --keywordfile=run.key    # TIMEINT 0 1 / NUMCYCLE 40
+return code            : 10
+FVS_Summary2 row count : 41   (expected 41 = 40 cycles + 1)
+FVS codes in listing: [('FVS03', 'WARNING')]
+   FVS03 WARNING line 33: ********   FVS03 WARNING:  FOREST CODE INDICATES THE GEOGRAPHIC LOCATION IS OUTSIDE THE RANGE OF THE MODEL.  DEFAULT CODE IS USED.
+NOTE: FVS03 is a WARNING (synthetic stand has no real forest code), not an ERROR.  check_run fails on ERROR severity only, so this legal run passes while still reporting the warning.
+>>> fvs_run_guards.check_run(returncode=10, out_path=..., expected_cycles=40, summary_rows=41)
+POST-RUN OK: returncode normal, no FVS ERROR codes, summary rows consistent.  The guard is not simply rejecting everything.
+   non-failing warnings reported: ['FVS03']
+
+==============================================================================
+VERDICT
+------------------------------------------------------------------------------
+MAXCYC parsed from PRGPRM.f90          : 40
+unguarded NUMCYCLE 41 return code      : 20
+unguarded NUMCYCLE 41 summary rows     : 2
+unguarded FVS04 listing line           : ********   FVS04 ERROR:  A REQUIRED PARAMETER IS MISSING OR A PARAMETER IS INCORRECT; KEYWORD IGNORED.
+guard rejected 41 before launch        : True
+guard caught 41 after the run          : True
+boundary NUMCYCLE 40 passed guarded    : True
+boundary NUMCYCLE 40 summary rows      : 41
+==============================================================================
+
+==============================================================================
+[6] STANDALONE CLI ON THE REAL ARTIFACTS
+------------------------------------------------------------------------------
+$ python3 tools/fvs_run_guards.py --key case_numcycle41/run.key --out case_numcycle41/run.out --rc 20 --expected-cycles 41 --summary-rows 2
+MAXCYC parsed from /users/PUOM0008/crsfaaron/fvs-modern/src-converted/base/PRGPRM.f90: 40
+PRE-SUBMIT REJECT: NUMCYCLE=41 exceeds the compiled ceiling MAXCYC=40 (PARAMETER (MAXCYC=40) in src-converted/base/PRGPRM.f90). FVS would NOT abort: it emits 'FVS04 ERROR: A REQUIRED PARAMETER IS MISSING OR A PARAMETER IS INCORRECT; KEYWORD IGNORED' into the .out listing, discards the keyword, runs ONE cycle, exits with return code 20, and still writes a well-formed two-row FVS_Summary2 table.  Refusing to launch.
+LISTING FVS03 WARNING line 33: ********   FVS03 WARNING:  FOREST CODE INDICATES THE GEOGRAPHIC LOCATION IS OUTSIDE THE RANGE OF THE MODEL.  DEFAULT CODE IS USED.
+LISTING FVS04 ERROR line 93: ********   FVS04 ERROR:  A REQUIRED PARAMETER IS MISSING OR A PARAMETER IS INCORRECT; KEYWORD IGNORED.
+POST-RUN FAIL: FVS run guard FAILED (returncode=20, listing=case_numcycle41/run.out):
+  - FVS returned code 20 (normal FVS STOP is 10; 20 is the keyword-rejected / truncated-run signature).
+  - FVS error code(s) present in the listing case_numcycle41/run.out -- FVS04 ERROR at listing line 93: ********   FVS04 ERROR:  A REQUIRED PARAMETER IS MISSING OR A PARAMETER IS INCORRECT; KEYWORD IGNORED.
+  - FVS_Summary2 has 2 row(s) but 41 cycle(s) were requested, so 42 row(s) were expected.  A truncated run typically yields exactly 2 rows.
+CLI exit=3

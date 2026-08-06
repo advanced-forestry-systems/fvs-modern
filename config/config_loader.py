@@ -36,6 +36,7 @@ Usage patterns:
 """
 
 from __future__ import annotations
+import sys
 
 import json
 import logging
@@ -1135,19 +1136,59 @@ class FvsConfigLoader:
         return "\n".join(lines)
 
     def _format_bamax_keywords(self, values: list, comments: bool) -> str:
-        """Format BAMAX keyword block."""
+        """Format BAMAX keyword block.
+
+        COLUMN LAYOUT, read out of src-converted/vbase/initre.f90 option 66
+        ("OPTION NUMBER 66: BAMAX") and then proved by FVS keyword echo against
+        the frozen binary on 2026-08-05:
+
+            6800 CONTINUE
+            LMORT=.TRUE.
+            IF(ARRAY(1).GT.0.0) THEN
+              BAMAX=ARRAY(1)
+              LBAMAX=.TRUE.
+            ENDIF
+
+        BAMAX is NOT a scheduled activity.  It carries no date field and no
+        species field; the maximum basal area is read straight out of field 1,
+        which keyrdr.f90 takes from RECORD(11:20).  The previous writer padded
+        the keyword to 16 columns, which pushed the value into columns 17-26 and
+        left field 1 blank, so ARRAY(1) was 0.0, the .GT.0.0 test failed, and
+        BAMAX was never set.  FVS raised no error, because a blank field is
+        perfectly legal.  Proof: both legacy forms echoed
+        "BAMAX      MAXIMUM BASAL AREA=      0.00" while the corrected form
+        echoed 250.00, in postfreeze_20260805/kwfix/case_bamax/run.out.
+
+        The previous per-species branch was doubly wrong.  BAMAX has no species
+        dimension at all, so a per-species vector cannot be expressed in this
+        keyword.  It is now rejected loudly instead of written as records FVS
+        discards without comment.
+        """
         lines = []
         if comments:
-            lines.append("!! Maximum basal area")
-        # BAMAX uses a single value or per species
+            lines.append("!! Maximum basal area (ft2 ac-1), stand level, no species field")
+        if isinstance(values, bool):
+            raise TypeError("BAMAX value must be numeric, got bool")
         if isinstance(values, (int, float)):
-            lines.append(f"BAMAX           {values:10.1f}")
-        else:
-            for i, val in enumerate(values):
-                if isinstance(val, str) or val is None:
-                    continue
-                if val > 0:
-                    lines.append(f"BAMAX           {i + 1:10d}{val:10.1f}")
+            if float(values) > 0:
+                lines.append(f"{'BAMAX':<10}{float(values):10.1f}")
+            return "\n".join(lines)
+        numeric = [
+            float(v) for v in values
+            if v is not None and not isinstance(v, str) and float(v) > 0
+        ]
+        distinct = sorted({round(v, 4) for v in numeric})
+        if not distinct:
+            return "\n".join(lines)
+        if len(distinct) > 1:
+            raise ValueError(
+                "BAMAX is a stand-level keyword with no species field "
+                "(initre.f90 option 66 reads only ARRAY(1)), but "
+                f"{len(distinct)} distinct per-species values were supplied "
+                f"(first five: {distinct[:5]}). Collapse them to a single stand "
+                "value, or use SDIMAX, which does take a species index."
+            )
+        lines.append(f"{'BAMAX':<10}{distinct[0]:10.1f}")
         return "\n".join(lines)
 
     def _format_mortmult_keywords(self, multipliers: np.ndarray, comments: bool) -> str:
@@ -1179,27 +1220,90 @@ class FvsConfigLoader:
                 )
         return "\n".join(lines)
 
-    def _format_baimult_keywords(self, multipliers: np.ndarray, comments: bool) -> str:
-        """Format BAIMULT (growth multiplier) keyword block."""
+    def _format_scheduled_multiplier(
+        self, keyword: str, multipliers, comments: bool, header: str
+    ) -> str:
+        """Emit a scheduled per-species multiplier keyword block.
+
+        Shared by BAIMULT (initre.f90 option 58, activity code 91) and HTGMULT
+        (option 62, activity code 92).  HTGMULT is literally "6400 CONTINUE;
+        I=92; GOTO 6005", i.e. it re-enters the BAIMULT handler, so the two have
+        identical record layouts.  That handler reads:
+
+            IDT=1
+            IF (LNOTBK(1)) IDT=IFIX(ARRAY(1))   <- field 1 is the DATE
+            IF (.NOT.LNOTBK(3)) ARRAY(3)=1.0
+            CALL SPDECD (2,IS,...)              <- field 2 is the SPECIES
+            CALL OPNEW(KODE,IDT,I,2,ARRAY(2))   <- field 3 is the MULTIPLIER
+
+        Both are therefore SCHEDULED activities with the same layout as MORTMULT:
+        cols 1-10 keyword, f1 cols 11-20 date (blank -> cycle 1), f2 cols 21-30
+        species, f3 cols 31-40 multiplier.  The previous writer padded the
+        keyword to 16 columns and omitted the date field, putting every value six
+        columns right of where keyrdr.f90 reads it.
+
+        That offset is VALUE DEPENDENT, which is exactly why it survived so long.
+        Proved by FVS keyword echo against the frozen binary on 2026-08-05, in
+        postfreeze_20260805/kwfix/case_mult/run.out: species 2 with multiplier
+        1.8914 echoed identically under both layouts, because the six-column
+        spill happened to land in blank columns, whereas species 12 with
+        multiplier 12.3456 raised "FVS04 ERROR: A REQUIRED PARAMETER IS MISSING
+        OR A PARAMETER IS INCORRECT; KEYWORD IGNORED" under the legacy layout and
+        decoded correctly under this one.  The production driver discards stdout,
+        stderr and the return code, so that FVS04 was invisible and the keyword
+        was dropped in silence.
+
+        Suppression is also announced.  A multiplier within 0.01 of unity is a
+        no-op and is correctly omitted, but a family in which EVERY species is
+        unity produces an empty block that is indistinguishable from a broken
+        writer.  That ambiguity is what made the fvs_regional arm look
+        mis-formatted when it was in fact being handed an all-unity vector.  When
+        a non-empty vector yields zero records, a one-line note now goes to
+        stderr, and to the block itself when comments are on.
+        """
         lines = []
         if comments:
-            lines.append("!! Diameter growth multipliers (calibrated / default)")
+            lines.append(header)
+        n_emitted = 0
         for i, mult in enumerate(multipliers):
-            if abs(mult - 1.0) > 0.01:
-                # BAIMULT via READCORD or GROWTH multiplier approach
-                # Using species level growth multiplier
-                lines.append(f"BAIMULT         {i + 1:10d}{mult:10.4f}")
+            if abs(float(mult) - 1.0) > 0.01:
+                lines.append(
+                    f"{keyword:<10}{'':10}{i + 1:10d}{float(mult):10.4f}"
+                )
+                n_emitted += 1
+        n_in = len(multipliers)
+        if n_in and n_emitted == 0:
+            msg = (
+                f"[config_loader] {keyword}: {n_in} species supplied, 0 records "
+                "emitted because every multiplier is within 0.01 of unity. This "
+                "family is a NO-OP for this variant; the arm runs on the "
+                "uncalibrated growth model. This is a calibration content "
+                "question, not a keyword formatting failure."
+            )
+            sys.stderr.write(msg + "\n")
+            if comments:
+                lines.append("!! " + msg[len("[config_loader] "):])
         return "\n".join(lines)
 
+    def _format_baimult_keywords(self, multipliers: np.ndarray, comments: bool) -> str:
+        """Format BAIMULT (diameter growth multiplier) keyword block.
+
+        See _format_scheduled_multiplier for the column layout and its proof.
+        """
+        return self._format_scheduled_multiplier(
+            "BAIMULT", multipliers, comments,
+            "!! Diameter growth multipliers (calibrated / default)",
+        )
+
     def _format_htgmult_keywords(self, multipliers: np.ndarray, comments: bool) -> str:
-        """Format height growth multiplier keyword block."""
-        lines = []
-        if comments:
-            lines.append("!! Height growth multipliers (calibrated / default)")
-        for i, mult in enumerate(multipliers):
-            if abs(mult - 1.0) > 0.01:
-                lines.append(f"HTGMULT         {i + 1:10d}{mult:10.4f}")
-        return "\n".join(lines)
+        """Format HTGMULT (height growth multiplier) keyword block.
+
+        See _format_scheduled_multiplier for the column layout and its proof.
+        """
+        return self._format_scheduled_multiplier(
+            "HTGMULT", multipliers, comments,
+            "!! Height growth multipliers (calibrated / default)",
+        )
 
     # =========================================================================
     # Comparison / Diagnostics

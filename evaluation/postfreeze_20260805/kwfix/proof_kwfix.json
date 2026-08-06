@@ -1,0 +1,17 @@
+{
+  "identical::fvs_regional (dg=T,hg=T,mort=T)": true,
+  "identical::greg arms (dg=F,hg=F,mort=F)": true,
+  "freeze_zero_impact": true,
+  "BAIMULT_records": [
+    "BAIMULT                      2    1.8914",
+    "BAIMULT                     12   12.3456"
+  ],
+  "HTGMULT_records": [
+    "HTGMULT                      2    1.8914",
+    "HTGMULT                     12   12.3456"
+  ],
+  "BAMAX_scalar": "BAMAX          250.0",
+  "bamax_vector_rejected": true,
+  "suppression_note_emitted": true,
+  "suppression_block_bytes": 0
+}

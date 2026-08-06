@@ -1,0 +1,33 @@
+=== 1. Zero impact on the frozen run ===
+The frozen five-arm run used calib_components None (fvs_base), {dg,hg,mort all True} (fvs_regional), and all False (three Greg arms).
+  fvs_regional (dg=T,hg=T,mort=T)
+    records old=169 new=169
+    md5 old=25f32ba5613a3ed2029c44c735f9f013 new=25f32ba5613a3ed2029c44c735f9f013  IDENTICAL=True
+    new-writer stderr note(s):
+      [config_loader] BAIMULT: 108 species supplied, 0 records emitted because every multiplier is within 0.01 of unity. This family is a NO-OP for this variant; the arm runs on the uncalibrated growth model. This is a calibration content question, not a keyword formatting failure.
+      [config_loader] HTGMULT: 108 species supplied, 0 records emitted because every multiplier is within 0.01 of unity. This family is a NO-OP for this variant; the arm runs on the uncalibrated growth model. This is a calibration content question, not a keyword formatting failure.
+  greg arms (dg=F,hg=F,mort=F)
+    records old=85 new=85
+    md5 old=a75b26d5887c0ec5684536fb539a2990 new=a75b26d5887c0ec5684536fb539a2990  IDENTICAL=True
+  ZERO IMPACT ON FREEZE = True
+
+=== 2. Corrected column layout ===
+  BAIMULT:
+    |BAIMULT                      2    1.8914|  {"kw": "BAIMULT ", "f1": "          ", "f2": "         2", "f3": "    1.8914"}
+    |BAIMULT                     12   12.3456|  {"kw": "BAIMULT ", "f1": "          ", "f2": "        12", "f3": "   12.3456"}
+  HTGMULT:
+    |HTGMULT                      2    1.8914|  {"kw": "HTGMULT ", "f1": "          ", "f2": "         2", "f3": "    1.8914"}
+    |HTGMULT                     12   12.3456|  {"kw": "HTGMULT ", "f1": "          ", "f2": "        12", "f3": "   12.3456"}
+  BAMAX scalar 250.0:
+    |BAMAX          250.0|  {"kw": "BAMAX   ", "f1": "     250.0", "f2": "          ", "f3": "          "}
+
+=== 3. BAMAX per-species vector is now rejected ===
+  ValueError: BAMAX is a stand-level keyword with no species field (initre.f90 option 66 reads only ARRAY(1)), but 3 distinct per-species values were supplied (first five: [200.0, 250.0, 300.0]). Collapse them to a single stand value, or use SDIMAX, which does take a species index.
+  BAMAX uniform vector collapses to one record:
+    |BAMAX          250.0|
+
+=== 4. Suppression diagnostic (defect 3 self-announcement) ===
+  emitted records = 0
+  emitted bytes   = 0  (must be 0 for driver-path safety)
+  stderr:
+    [config_loader] BAIMULT: 108 species supplied, 0 records emitted because every multiplier is within 0.01 of unity. This family is a NO-OP for this variant; the arm runs on the uncalibrated growth model. This is a calibration content question, not a keyword formatting failure.

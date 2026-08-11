@@ -1,0 +1,12 @@
+# build + run artifacts (keep only sources)
+diag
+diag2
+collapse
+invtest
+run/*.out
+run/*.sum
+run/*.trl
+run/*.chp
+run/*.key
+*.o
+*.mod

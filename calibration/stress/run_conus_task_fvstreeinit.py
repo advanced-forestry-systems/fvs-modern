@@ -79,6 +79,14 @@ def main():
     os.makedirs(a.output_dir, exist_ok=True)
     variant, batch_id, batch_size = lookup_task(a.manifest, a.task_id)
     t0 = time.time()
+    # idempotency: skip if this batch already produced output (clean reruns of
+    # timed-out / failed tasks just resubmit the whole array)
+    done_csv = os.path.join(a.output_dir, f"conus_{variant.lower()}_b{batch_id}.csv")
+    done_ledger = os.path.join(a.output_dir, f"ledger_{variant.lower()}_b{batch_id}.json")
+    if os.path.exists(done_csv) and os.path.exists(done_ledger) \
+            and os.path.getsize(done_csv) > 0:
+        log.info(f"task {a.task_id}: {variant} b{batch_id} already done; skipping")
+        return
     log.info(f"task {a.task_id}: {variant} batch {batch_id}")
 
     si_all = pd.read_csv(os.path.join(a.standinit_dir, f"standinit_{variant}.csv"), low_memory=False)

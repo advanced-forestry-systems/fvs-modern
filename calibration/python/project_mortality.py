@@ -31,7 +31,7 @@ CCH_A, CCH_B = 0.062, 0.0036
 
 def spp_group(spcd: int) -> str:
     """Coarse FIA-SPCD -> ORGANON crown group (matches the cch validation)."""
-    return "1" if int(spcd) < 300 else "16"
+    return 1 if int(spcd) < 300 else 16
 
 
 def cycle_survival(tl, greg: GregMortality, years: float,

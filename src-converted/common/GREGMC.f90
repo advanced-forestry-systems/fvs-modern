@@ -11,10 +11,14 @@
 !                owns their diameter increment. Unfit species keep native NE-TWIGS.
 !    GEMT/GTD/GELEV -- per-stand climate (extreme min temp, temp diff) and elevation
 !                (feet), resolved once per stand by GREGLOADDG.
+!    GDGMAX   -- per-FVS-species maximum diameter (in) for the size-based DG
+!                deceleration in GREGDGV. Read from an optional 10th column
+!                (DBHMAX) of the coefficient file; if the column is absent the
+!                array is left at a large sentinel so decel==1 (old behaviour).
 !----------
 INTEGER NGREGDG
-REAL    GDG(MAXSP,7), GEMT, GTD, GELEV
+REAL    GDG(MAXSP,7), GDGMAX(MAXSP), GEMT, GTD, GELEV
 LOGICAL LGREGDG, GHAVE_DG(MAXSP)
-COMMON /GREGMR/ GDG, GEMT, GTD, GELEV
+COMMON /GREGMR/ GDG, GDGMAX, GEMT, GTD, GELEV
 COMMON /GREGMI/ NGREGDG
 COMMON /GREGML/ LGREGDG, GHAVE_DG

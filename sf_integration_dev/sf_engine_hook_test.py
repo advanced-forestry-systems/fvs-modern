@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 """Minimal proof that the fvs2py stop-point-5 hook works IN-PROCESS.
-Uses the known-good NE test keyfile (inline TREEDATA), prepends a DSNOUT to a
-temp DB exactly like the fvs2py test fixture, runs the stop-point-5 loop, and
-reads per-tree engine increments. Isolates the injection mechanism from the
-SQLite-input plumbing that crashed the perseus keyfile path.
+
+Uses the known-good NE test keyfile (inline TREEDATA), runs the stop-point-5
+loop, and reads per-tree engine increments. Isolates the injection mechanism
+from the SQLite-input plumbing that crashed the perseus keyfile path.
+
+NOTE: requires an FVSne.so built from source that includes the prtexm.f90
+ERR= recovery patch (this PR). Older prebuilt .so files abort at
+vbase/prtexm.f90 with "I/O past end of record on unformatted file" before
+this loop can run. Set FVSNE_SO to point at a freshly built library.
 """
 import os, sys, tempfile
 import numpy as np
@@ -28,9 +33,21 @@ def main():
                   config_dir=os.path.expanduser("~/fvs-modern/config"))
         fvs.load_keyfile(kpath)
 
+        def ntrees():
+            try:
+                return int(fvs.dims.get("ntrees", 0))
+            except Exception:
+                return 0
+
         def ga(a):
-            try: return np.asarray(fvs.get_tree_attr(a), dtype=float)
-            except Exception as e: print("  attr", a, "err", e); return np.array([])
+            # Guard: reading a per-tree attr with zero live trees walks
+            # uninitialized engine memory and segfaults at interpreter exit.
+            if ntrees() <= 0:
+                return np.array([])
+            try:
+                return np.asarray(fvs.get_tree_attr(a), dtype=float)
+            except Exception as e:
+                print("  attr", a, "err", e); return np.array([])
 
         stop = 0
         fvs.run(stop_point_code=5, stop_point_year=-1)
@@ -46,7 +63,8 @@ def main():
             fvs.run(stop_point_code=5, stop_point_year=-1)
         try: fvs.run()
         except Exception: pass
-        print(f"RESULT: {stop} stop-point-5 hooks fired; restart_code={getattr(fvs,'restart_code',None)}")
+        rc = getattr(fvs, 'restart_code', None)
+        print(f'RESULT: {stop} stop-point-5 hooks fired; restart_code={rc}')
         print("MECHANISM_OK" if stop > 0 else "MECHANISM_FAILED")
 
 if __name__ == "__main__":

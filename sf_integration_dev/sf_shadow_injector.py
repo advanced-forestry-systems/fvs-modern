@@ -194,12 +194,17 @@ def run_shadow(variant, plot_data, tree_df, num_cycles=10, cycle_length=5,
         chk = np.asarray(fvs.get_tree_attr("dbh"), float)
         attrs_ok = np.isfinite(chk).any() and np.nansum(np.abs(chk)) > 0
         if not attrs_ok:
-            print("[DIAGNOSTIC] add_trees registered the tree COUNT but the per-tree "
-                  "attribute arrays (dbh/species/ht) read all-zero. fvsAddTrees is not "
-                  "populating the arrays that get_tree_attr and the growth routines use. "
-                  "Real per-tree increments cannot be logged until this engine-side "
-                  "plumbing is fixed (fvsAddTrees must write the DBH/ISP/HT/CR arrays, "
-                  "or get_tree_attr must read the array fvsAddTrees writes).")
+            print("[DIAGNOSTIC] per-tree attributes read all-zero after add_trees at this "
+                  "stop point. This is a USAGE SEQUENCE issue, not an engine defect: the FVS "
+                  "R API test (src-converted/tests/APIviaR/Rapi.R) calls fvsAddTrees at STOP "
+                  "POINT 6 (the ESTAB point) during an ACTIVE run to add regeneration to an "
+                  "already-initialized stand, then reads it back successfully. Calling it at "
+                  "stop point 7 on a zero-inventory stand (LSTART true, no stand context) does "
+                  "not feed the growth arrays. Correct database-free pattern: seed the stand "
+                  "via the keyfile inventory (inline TREEDATA) and, for regen, add_trees at "
+                  "sp6 mid-run. The faithful per-tree sf-vs-engine comparison is available "
+                  "offline via benchmark_sf_vs_legA.R (which has the metric BAL/BGI/rd "
+                  "covariates get_tree_attr cannot expose in-process).")
 
         log = []
         stop = 0
@@ -252,12 +257,14 @@ def run_shadow(variant, plot_data, tree_df, num_cycles=10, cycle_length=5,
         # ---- sanity verdict ---------------------------------------------------
         print("\n===== SANITY =====")
         if not len(df) or not attrs_ok:
-            print("VERDICT: engine increments NOT verifiable in-process. add_trees does "
-                  "not populate per-tree attributes in this build; every dbh/dg/htg read "
-                  "0. The database-free boot itself works (no segfault, #85 fix active), "
-                  "but the tree-attribute plumbing (fvsAddTrees) must be fixed before "
-                  "real sf-vs-engine increments can be logged. Faithful DG/HG/mort "
-                  "comparison remains available offline via benchmark_sf_vs_legA.R.")
+            print("VERDICT: boot works (no segfault, #85 fix active) and add_trees returns "
+                  "cleanly, but per-tree attributes read 0 because add_trees was called at the "
+                  "wrong stop point for this stand state (see DIAGNOSTIC). This is a usage "
+                  "sequence, not an engine defect. To log real in-process increments, load the "
+                  "synthetic stand as keyfile inventory and call add_trees at sp6 mid-run per "
+                  "the FVS R API contract. The faithful DG/HG/mort sf-vs-engine comparison "
+                  "already exists offline via benchmark_sf_vs_legA.R and does not depend on "
+                  "this in-process hook.")
         else:
             eng = df["engine_dg_cm_yr"].to_numpy()
             sf = df["sf_dg_pred_cm_yr_stdpart"].to_numpy()

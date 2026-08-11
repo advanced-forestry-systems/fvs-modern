@@ -37,6 +37,9 @@ INCLUDE 'COEFFS.f90'
 !
 INCLUDE 'CONTRL.f90'
 !
+!
+INCLUDE 'GREGHDMC.f90'
+!
 !OMMONS
 !
 INTEGER MODE,ISPC,IFOR,J,I
@@ -45,6 +48,7 @@ REAL SNALL(3,108), SNDBAL(108)
 INTEGER IWYKCA(108)
 LOGICAL DEBUG
 INTEGER IDANUW
+REAL GREGHTDBH, GHDVAL
 !
 !================================================
 !     SPECIES LIST FOR NORTHEASTERN UNITED STATES
@@ -448,6 +452,18 @@ IF(MODE .EQ. 0) THEN
       H=4.5+P2*EXP(-1.*P3*D**P4)
     ELSE
       H=((4.5+P2*EXP(-1.*P3*(3.**P4))-4.51)*(D-DB)/(3.-DB))+4.51
+    ENDIF
+  ENDIF
+!----------
+!  CONUS native HT-DBH substitution (greghtdbh.f90). When enabled via
+!  FVS_GREGHTDBH and the species carries a fitted Marshall HT-DBH row, replace
+!  the native Wykoff / Curtis-Arney height with the CONUS prediction. Uncovered
+!  species and non-positive returns keep the native value unchanged.
+!----------
+  IF (LGREGHTDBH) THEN
+    IF (GHAVE_HD(ISPC)) THEN
+      GHDVAL = GREGHTDBH(ISPC, D)
+      IF (GHDVAL .GT. 0.0) H = GHDVAL
     ENDIF
   ENDIF
 ELSE

@@ -1,0 +1,1401 @@
+scale,key,engine,scenario,year,total_TgC,total_lo,total_hi,mean_MgC_ha,n_plots
+owner,Industrial,default,reserve (no harvest),2030,1165.206,1110.601,1222.95,50.5,5886
+owner,Industrial,default,reserve (no harvest),2055,2480.901,2359.947,2594.607,107.28,5886
+owner,Industrial,default,reserve (no harvest),2080,3419.257,3263.708,3608.508,148.47,5886
+owner,Industrial,default,reserve (no harvest),2105,4013.618,3818.359,4231.125,175.13,5886
+owner,Industrial,default,reserve (no harvest),2125,4314.801,4091.242,4537.161,188.45,5886
+owner,Industrial,default,managed (harvest),2030,1165.206,1105.689,1230.684,50.5,5886
+owner,Industrial,default,managed (harvest),2055,1820.977,1718.435,1919.072,79.23,5886
+owner,Industrial,default,managed (harvest),2080,1719.738,1641.121,1808.93,76.33,5886
+owner,Industrial,default,managed (harvest),2105,1354.59,1286.591,1425.394,61.47,5886
+owner,Industrial,default,managed (harvest),2125,1067.741,1013.489,1127.972,48.81,5886
+owner,NIPF,default,reserve (no harvest),2030,4595.114,4476.056,4721.399,49.23,22022
+owner,NIPF,default,reserve (no harvest),2055,9889.628,9653.256,10174.279,105.82,22022
+owner,NIPF,default,reserve (no harvest),2080,13689.967,13304.673,14044.049,147.79,22022
+owner,NIPF,default,reserve (no harvest),2105,16115.781,15618.136,16556.204,175.69,22022
+owner,NIPF,default,reserve (no harvest),2125,17346.854,16866.98,17810.831,189.87,22022
+owner,NIPF,default,managed (harvest),2030,4595.114,4456.586,4739.637,49.23,22022
+owner,NIPF,default,managed (harvest),2055,7342.122,7160.581,7556.556,79.15,22022
+owner,NIPF,default,managed (harvest),2080,7062.262,6882.272,7258.727,78.35,22022
+owner,NIPF,default,managed (harvest),2105,5637.886,5475.358,5801.96,64.58,22022
+owner,NIPF,default,managed (harvest),2125,4463.454,4353.893,4590.309,51.82,22022
+owner,Public-Other,default,reserve (no harvest),2030,1762.827,1693.186,1834.246,32.16,18766
+owner,Public-Other,default,reserve (no harvest),2055,4112.777,3960.967,4276.266,72.72,18766
+owner,Public-Other,default,reserve (no harvest),2080,6130.932,5883.263,6398.76,107.68,18766
+owner,Public-Other,default,reserve (no harvest),2105,7625.043,7346.379,7892.876,133.77,18766
+owner,Public-Other,default,reserve (no harvest),2125,8480.341,8123.215,8807.493,148.58,18766
+owner,Public-Other,default,managed (harvest),2030,1762.827,1691.134,1847.48,32.16,18766
+owner,Public-Other,default,managed (harvest),2055,2955.19,2847.145,3073.019,51.3,18766
+owner,Public-Other,default,managed (harvest),2080,3024.669,2902.707,3122.245,52.4,18766
+owner,Public-Other,default,managed (harvest),2105,2552.123,2432.789,2668.851,44.54,18766
+owner,Public-Other,default,managed (harvest),2125,2112.002,2027.387,2207.466,36.87,18766
+owner,State,default,reserve (no harvest),2030,618.761,579.803,662.752,50.96,3778
+owner,State,default,reserve (no harvest),2055,1329.723,1241.567,1411.296,107.45,3778
+owner,State,default,reserve (no harvest),2080,1854.19,1753.276,1974.991,150.14,3778
+owner,State,default,reserve (no harvest),2105,2202.98,2046.105,2363.016,179.86,3778
+owner,State,default,reserve (no harvest),2125,2384.516,2228.511,2548.561,195.27,3778
+owner,State,default,managed (harvest),2030,618.761,565.855,657.032,50.96,3778
+owner,State,default,managed (harvest),2055,1023.024,961.145,1086.488,83.44,3778
+owner,State,default,managed (harvest),2080,1026.683,974.804,1103.923,86.26,3778
+owner,State,default,managed (harvest),2105,867.968,817.099,920.268,75.69,3778
+owner,State,default,managed (harvest),2125,716.652,673.522,764.737,63.46,3778
+owner,Unknown,default,reserve (no harvest),2030,1141.974,1060.284,1224.681,49.87,4824
+owner,Unknown,default,reserve (no harvest),2055,2407.938,2246.71,2598.897,109.38,4824
+owner,Unknown,default,reserve (no harvest),2080,3373.013,3167.175,3649.315,156.19,4824
+owner,Unknown,default,reserve (no harvest),2105,4028.151,3732.916,4339.774,188.46,4824
+owner,Unknown,default,reserve (no harvest),2125,4384.149,4123.929,4718.084,206.11,4824
+owner,Unknown,default,managed (harvest),2030,1141.974,1049.635,1227.735,49.87,4824
+owner,Unknown,default,managed (harvest),2055,1722.219,1619.354,1840.28,78.77,4824
+owner,Unknown,default,managed (harvest),2080,1638.519,1538.261,1746.903,77.63,4824
+owner,Unknown,default,managed (harvest),2105,1302.24,1214.239,1396.072,62.96,4824
+owner,Unknown,default,managed (harvest),2125,1033.912,966.082,1109.033,50.42,4824
+ecoregion,Acadian Plains and Hills,default,reserve (no harvest),2030,300.338,273.356,332.634,91.32,1017
+ecoregion,Acadian Plains and Hills,default,reserve (no harvest),2055,575.337,523.649,632.812,172.51,1017
+ecoregion,Acadian Plains and Hills,default,reserve (no harvest),2080,770.263,702.912,835.217,230.42,1017
+ecoregion,Acadian Plains and Hills,default,reserve (no harvest),2105,897.448,799.231,985.404,269.01,1017
+ecoregion,Acadian Plains and Hills,default,reserve (no harvest),2125,955.825,868.682,1052.574,287.1,1017
+ecoregion,Acadian Plains and Hills,default,managed (harvest),2030,300.338,271.778,329.774,91.32,1017
+ecoregion,Acadian Plains and Hills,default,managed (harvest),2055,407.023,372.582,443.183,121.34,1017
+ecoregion,Acadian Plains and Hills,default,managed (harvest),2080,373.847,341.377,408.649,111.24,1017
+ecoregion,Acadian Plains and Hills,default,managed (harvest),2105,291.523,267.498,317.538,87.5,1017
+ecoregion,Acadian Plains and Hills,default,managed (harvest),2125,219.297,202.42,242.624,66.36,1017
+ecoregion,Algonquin/Southern Laurentians,default,reserve (no harvest),2030,0.023,0.023,0.023,39.6,2
+ecoregion,Algonquin/Southern Laurentians,default,reserve (no harvest),2055,0.044,0.044,0.044,106.95,2
+ecoregion,Algonquin/Southern Laurentians,default,reserve (no harvest),2080,0.063,0.063,0.063,151.36,2
+ecoregion,Algonquin/Southern Laurentians,default,reserve (no harvest),2105,0.076,0.076,0.076,175.87,2
+ecoregion,Algonquin/Southern Laurentians,default,reserve (no harvest),2125,0.084,0.084,0.084,188.56,2
+ecoregion,Algonquin/Southern Laurentians,default,managed (harvest),2030,0.023,0.023,0.023,39.6,2
+ecoregion,Algonquin/Southern Laurentians,default,managed (harvest),2055,0.036,0.036,0.036,91.79,2
+ecoregion,Algonquin/Southern Laurentians,default,managed (harvest),2080,0.041,0.041,0.041,101.05,2
+ecoregion,Algonquin/Southern Laurentians,default,managed (harvest),2105,0.038,0.038,0.038,86.86,2
+ecoregion,Algonquin/Southern Laurentians,default,managed (harvest),2125,0.034,0.034,0.034,72.94,2
+ecoregion,Arizona/New Mexico Mountains,default,reserve (no harvest),2030,26.552,20.166,33.856,5.99,1276
+ecoregion,Arizona/New Mexico Mountains,default,reserve (no harvest),2055,69.436,56.139,87.707,15.18,1276
+ecoregion,Arizona/New Mexico Mountains,default,reserve (no harvest),2080,113.739,86.399,149.845,24.2,1276
+ecoregion,Arizona/New Mexico Mountains,default,reserve (no harvest),2105,154.123,111.271,211.99,31.42,1276
+ecoregion,Arizona/New Mexico Mountains,default,reserve (no harvest),2125,178.899,124.213,249.203,35.12,1276
+ecoregion,Arizona/New Mexico Mountains,default,managed (harvest),2030,26.552,19.504,33.615,5.99,1276
+ecoregion,Arizona/New Mexico Mountains,default,managed (harvest),2055,56.405,44.591,73.546,12.24,1276
+ecoregion,Arizona/New Mexico Mountains,default,managed (harvest),2080,73.041,51.248,95.749,15.26,1276
+ecoregion,Arizona/New Mexico Mountains,default,managed (harvest),2105,77.617,53.368,111.732,15.0,1276
+ecoregion,Arizona/New Mexico Mountains,default,managed (harvest),2125,71.942,42.438,117.637,12.82,1276
+ecoregion,Arizona/New Mexico Plateau,default,reserve (no harvest),2030,0.969,0.248,2.223,0.63,538
+ecoregion,Arizona/New Mexico Plateau,default,reserve (no harvest),2055,2.481,0.705,5.29,1.57,538
+ecoregion,Arizona/New Mexico Plateau,default,reserve (no harvest),2080,4.03,1.176,8.361,2.66,538
+ecoregion,Arizona/New Mexico Plateau,default,reserve (no harvest),2105,5.458,1.757,11.29,3.67,538
+ecoregion,Arizona/New Mexico Plateau,default,reserve (no harvest),2125,6.405,1.893,12.579,4.23,538
+ecoregion,Arizona/New Mexico Plateau,default,managed (harvest),2030,0.969,0.217,2.027,0.63,538
+ecoregion,Arizona/New Mexico Plateau,default,managed (harvest),2055,2.007,0.502,4.202,1.26,538
+ecoregion,Arizona/New Mexico Plateau,default,managed (harvest),2080,2.573,0.687,5.648,1.74,538
+ecoregion,Arizona/New Mexico Plateau,default,managed (harvest),2105,2.739,0.891,6.038,1.9,538
+ecoregion,Arizona/New Mexico Plateau,default,managed (harvest),2125,2.61,0.762,5.635,1.72,538
+ecoregion,Arkansas Valley,default,reserve (no harvest),2030,51.581,43.452,64.962,47.36,231
+ecoregion,Arkansas Valley,default,reserve (no harvest),2055,121.303,98.73,151.54,110.03,231
+ecoregion,Arkansas Valley,default,reserve (no harvest),2080,167.044,134.413,199.275,152.51,231
+ecoregion,Arkansas Valley,default,reserve (no harvest),2105,194.252,157.178,228.332,177.29,231
+ecoregion,Arkansas Valley,default,reserve (no harvest),2125,206.896,166.368,252.365,188.67,231
+ecoregion,Arkansas Valley,default,managed (harvest),2030,51.581,40.112,61.737,47.36,231
+ecoregion,Arkansas Valley,default,managed (harvest),2055,94.888,77.285,111.978,85.63,231
+ecoregion,Arkansas Valley,default,managed (harvest),2080,92.027,73.253,109.409,84.11,231
+ecoregion,Arkansas Valley,default,managed (harvest),2105,72.229,57.866,84.436,65.77,231
+ecoregion,Arkansas Valley,default,managed (harvest),2125,55.485,46.754,66.574,50.45,231
+ecoregion,Aspen Parkland/Northern Glaciated Plains,default,reserve (no harvest),2030,0.92,0.244,1.834,39.43,12
+ecoregion,Aspen Parkland/Northern Glaciated Plains,default,reserve (no harvest),2055,2.591,0.652,5.338,78.17,12
+ecoregion,Aspen Parkland/Northern Glaciated Plains,default,reserve (no harvest),2080,3.611,0.681,7.629,107.71,12
+ecoregion,Aspen Parkland/Northern Glaciated Plains,default,reserve (no harvest),2105,4.615,1.426,9.361,137.81,12
+ecoregion,Aspen Parkland/Northern Glaciated Plains,default,reserve (no harvest),2125,5.398,1.012,10.582,158.53,12
+ecoregion,Aspen Parkland/Northern Glaciated Plains,default,managed (harvest),2030,0.92,0.207,1.889,39.43,12
+ecoregion,Aspen Parkland/Northern Glaciated Plains,default,managed (harvest),2055,1.984,0.368,3.78,51.52,12
+ecoregion,Aspen Parkland/Northern Glaciated Plains,default,managed (harvest),2080,1.701,0.423,3.357,47.44,12
+ecoregion,Aspen Parkland/Northern Glaciated Plains,default,managed (harvest),2105,1.592,0.364,3.41,46.45,12
+ecoregion,Aspen Parkland/Northern Glaciated Plains,default,managed (harvest),2125,1.54,0.344,3.15,42.35,12
+ecoregion,Atlantic Coastal Pine Barrens,default,reserve (no harvest),2030,22.539,14.365,32.913,39.73,100
+ecoregion,Atlantic Coastal Pine Barrens,default,reserve (no harvest),2055,56.387,39.59,77.904,104.35,100
+ecoregion,Atlantic Coastal Pine Barrens,default,reserve (no harvest),2080,77.719,58.273,102.707,150.36,100
+ecoregion,Atlantic Coastal Pine Barrens,default,reserve (no harvest),2105,91.442,72.348,120.855,175.68,100
+ecoregion,Atlantic Coastal Pine Barrens,default,reserve (no harvest),2125,99.041,74.342,131.688,188.41,100
+ecoregion,Atlantic Coastal Pine Barrens,default,managed (harvest),2030,22.539,14.474,33.341,39.73,100
+ecoregion,Atlantic Coastal Pine Barrens,default,managed (harvest),2055,44.713,33.952,59.908,83.91,100
+ecoregion,Atlantic Coastal Pine Barrens,default,managed (harvest),2080,42.918,33.926,53.304,86.72,100
+ecoregion,Atlantic Coastal Pine Barrens,default,managed (harvest),2105,34.467,26.46,43.686,67.46,100
+ecoregion,Atlantic Coastal Pine Barrens,default,managed (harvest),2125,27.819,19.241,37.143,52.43,100
+ecoregion,Blue Mountains,default,reserve (no harvest),2030,45.282,38.72,53.148,26.2,894
+ecoregion,Blue Mountains,default,reserve (no harvest),2055,142.626,123.003,161.31,70.2,894
+ecoregion,Blue Mountains,default,reserve (no harvest),2080,218.128,191.209,248.495,108.06,894
+ecoregion,Blue Mountains,default,reserve (no harvest),2105,266.253,232.236,305.871,133.19,894
+ecoregion,Blue Mountains,default,reserve (no harvest),2125,288.462,256.74,324.772,144.83,894
+ecoregion,Blue Mountains,default,managed (harvest),2030,45.282,38.04,53.82,26.2,894
+ecoregion,Blue Mountains,default,managed (harvest),2055,103.876,91.247,119.906,47.83,894
+ecoregion,Blue Mountains,default,managed (harvest),2080,90.453,81.067,102.735,44.88,894
+ecoregion,Blue Mountains,default,managed (harvest),2105,61.134,53.533,70.127,31.74,894
+ecoregion,Blue Mountains,default,managed (harvest),2125,41.405,36.696,46.507,21.71,894
+ecoregion,Blue Ridge,default,reserve (no harvest),2030,138.271,112.821,177.096,42.1,752
+ecoregion,Blue Ridge,default,reserve (no harvest),2055,270.506,227.102,330.963,95.45,752
+ecoregion,Blue Ridge,default,reserve (no harvest),2080,371.533,308.231,433.322,137.28,752
+ecoregion,Blue Ridge,default,reserve (no harvest),2105,440.94,375.898,524.278,166.02,752
+ecoregion,Blue Ridge,default,reserve (no harvest),2125,480.41,404.913,577.671,181.49,752
+ecoregion,Blue Ridge,default,managed (harvest),2030,138.271,109.733,172.384,42.1,752
+ecoregion,Blue Ridge,default,managed (harvest),2055,197.71,165.4,232.701,72.99,752
+ecoregion,Blue Ridge,default,managed (harvest),2080,194.898,170.925,226.362,76.02,752
+ecoregion,Blue Ridge,default,managed (harvest),2105,162.747,134.807,189.077,64.6,752
+ecoregion,Blue Ridge,default,managed (harvest),2125,134.817,113.967,159.296,52.94,752
+ecoregion,Boston Mountains,default,reserve (no harvest),2030,43.486,35.565,50.729,47.47,256
+ecoregion,Boston Mountains,default,reserve (no harvest),2055,98.068,81.127,112.629,106.38,256
+ecoregion,Boston Mountains,default,reserve (no harvest),2080,136.824,116.35,159.701,147.05,256
+ecoregion,Boston Mountains,default,reserve (no harvest),2105,160.266,140.135,182.549,172.38,256
+ecoregion,Boston Mountains,default,reserve (no harvest),2125,171.289,147.315,197.226,184.49,256
+ecoregion,Boston Mountains,default,managed (harvest),2030,43.486,36.137,51.693,47.47,256
+ecoregion,Boston Mountains,default,managed (harvest),2055,76.358,63.756,87.063,82.82,256
+ecoregion,Boston Mountains,default,managed (harvest),2080,76.902,64.74,88.098,82.35,256
+ecoregion,Boston Mountains,default,managed (harvest),2105,61.809,53.083,72.133,66.74,256
+ecoregion,Boston Mountains,default,managed (harvest),2125,48.07,41.994,55.588,52.33,256
+ecoregion,"California Coastal Sage, Chaparral, and Oak Woodlands",default,reserve (no harvest),2030,10.741,7.642,14.194,46.95,111
+ecoregion,"California Coastal Sage, Chaparral, and Oak Woodlands",default,reserve (no harvest),2055,41.445,29.915,59.187,133.26,111
+ecoregion,"California Coastal Sage, Chaparral, and Oak Woodlands",default,reserve (no harvest),2080,74.908,52.866,102.787,228.84,111
+ecoregion,"California Coastal Sage, Chaparral, and Oak Woodlands",default,reserve (no harvest),2105,105.476,72.947,144.924,312.73,111
+ecoregion,"California Coastal Sage, Chaparral, and Oak Woodlands",default,reserve (no harvest),2125,127.232,90.297,171.118,371.04,111
+ecoregion,"California Coastal Sage, Chaparral, and Oak Woodlands",default,managed (harvest),2030,10.741,7.795,14.386,46.95,111
+ecoregion,"California Coastal Sage, Chaparral, and Oak Woodlands",default,managed (harvest),2055,30.778,21.672,47.075,86.63,111
+ecoregion,"California Coastal Sage, Chaparral, and Oak Woodlands",default,managed (harvest),2080,33.688,22.979,45.954,96.23,111
+ecoregion,"California Coastal Sage, Chaparral, and Oak Woodlands",default,managed (harvest),2105,30.804,20.127,45.093,84.58,111
+ecoregion,"California Coastal Sage, Chaparral, and Oak Woodlands",default,managed (harvest),2125,28.095,17.704,40.593,75.73,111
+ecoregion,Canadian Rockies,default,reserve (no harvest),2030,23.586,19.111,27.39,33.72,369
+ecoregion,Canadian Rockies,default,reserve (no harvest),2055,55.505,45.965,65.119,60.08,369
+ecoregion,Canadian Rockies,default,reserve (no harvest),2080,80.795,68.68,96.094,81.6,369
+ecoregion,Canadian Rockies,default,reserve (no harvest),2105,101.627,85.991,118.459,100.22,369
+ecoregion,Canadian Rockies,default,reserve (no harvest),2125,115.218,95.338,135.581,113.0,369
+ecoregion,Canadian Rockies,default,managed (harvest),2030,23.586,19.499,28.319,33.72,369
+ecoregion,Canadian Rockies,default,managed (harvest),2055,36.581,31.162,43.157,33.23,369
+ecoregion,Canadian Rockies,default,managed (harvest),2080,32.489,26.47,38.501,28.24,369
+ecoregion,Canadian Rockies,default,managed (harvest),2105,27.219,22.888,32.868,24.21,369
+ecoregion,Canadian Rockies,default,managed (harvest),2125,23.34,19.304,27.994,21.47,369
+ecoregion,Cascades,default,reserve (no harvest),2030,81.29,64.847,96.862,30.36,821
+ecoregion,Cascades,default,reserve (no harvest),2055,295.028,234.368,371.49,91.8,821
+ecoregion,Cascades,default,reserve (no harvest),2080,525.035,437.44,675.814,157.93,821
+ecoregion,Cascades,default,reserve (no harvest),2105,718.662,573.832,874.254,214.67,821
+ecoregion,Cascades,default,reserve (no harvest),2125,839.118,624.082,1048.855,251.84,821
+ecoregion,Cascades,default,managed (harvest),2030,81.29,64.891,100.74,30.36,821
+ecoregion,Cascades,default,managed (harvest),2055,228.692,178.208,283.945,66.78,821
+ecoregion,Cascades,default,managed (harvest),2080,272.605,210.53,341.879,77.96,821
+ecoregion,Cascades,default,managed (harvest),2105,245.95,185.959,311.768,70.8,821
+ecoregion,Cascades,default,managed (harvest),2125,208.254,159.625,262.144,61.65,821
+ecoregion,Central Appalachians,default,reserve (no harvest),2030,152.575,131.951,174.843,43.17,829
+ecoregion,Central Appalachians,default,reserve (no harvest),2055,324.849,284.141,377.377,102.02,829
+ecoregion,Central Appalachians,default,reserve (no harvest),2080,456.512,405.282,510.221,147.51,829
+ecoregion,Central Appalachians,default,reserve (no harvest),2105,547.776,478.58,620.584,179.59,829
+ecoregion,Central Appalachians,default,reserve (no harvest),2125,593.519,526.467,661.461,195.79,829
+ecoregion,Central Appalachians,default,managed (harvest),2030,152.575,129.302,178.045,43.17,829
+ecoregion,Central Appalachians,default,managed (harvest),2055,236.866,210.968,269.404,76.91,829
+ecoregion,Central Appalachians,default,managed (harvest),2080,232.396,206.759,260.176,77.78,829
+ecoregion,Central Appalachians,default,managed (harvest),2105,190.899,172.718,213.522,64.96,829
+ecoregion,Central Appalachians,default,managed (harvest),2125,149.779,133.011,174.068,51.22,829
+ecoregion,Central Basin and Range,default,reserve (no harvest),2030,1.312,0.706,1.871,1.18,894
+ecoregion,Central Basin and Range,default,reserve (no harvest),2055,4.28,2.263,6.746,2.95,894
+ecoregion,Central Basin and Range,default,reserve (no harvest),2080,6.922,3.271,11.045,4.55,894
+ecoregion,Central Basin and Range,default,reserve (no harvest),2105,9.633,5.291,15.229,6.02,894
+ecoregion,Central Basin and Range,default,reserve (no harvest),2125,11.72,6.479,19.616,7.07,894
+ecoregion,Central Basin and Range,default,managed (harvest),2030,1.312,0.732,1.941,1.18,894
+ecoregion,Central Basin and Range,default,managed (harvest),2055,3.625,1.78,5.91,2.22,894
+ecoregion,Central Basin and Range,default,managed (harvest),2080,4.541,2.375,7.325,2.52,894
+ecoregion,Central Basin and Range,default,managed (harvest),2105,5.127,2.579,8.304,2.6,894
+ecoregion,Central Basin and Range,default,managed (harvest),2125,5.309,2.549,8.579,2.55,894
+ecoregion,Central California Valley,default,reserve (no harvest),2030,0.045,0.045,0.045,30.78,2
+ecoregion,Central California Valley,default,reserve (no harvest),2055,0.105,0.105,0.105,69.3,2
+ecoregion,Central California Valley,default,reserve (no harvest),2080,0.177,0.177,0.177,115.81,2
+ecoregion,Central California Valley,default,reserve (no harvest),2105,0.248,0.248,0.248,166.14,2
+ecoregion,Central California Valley,default,reserve (no harvest),2125,0.311,0.311,0.311,211.32,2
+ecoregion,Central California Valley,default,managed (harvest),2030,0.045,0.045,0.045,30.78,2
+ecoregion,Central California Valley,default,managed (harvest),2055,0.06,0.06,0.06,38.73,2
+ecoregion,Central California Valley,default,managed (harvest),2080,0.073,0.073,0.073,46.77,2
+ecoregion,Central California Valley,default,managed (harvest),2105,0.071,0.071,0.071,50.66,2
+ecoregion,Central California Valley,default,managed (harvest),2125,0.077,0.077,0.077,55.59,2
+ecoregion,Central Corn Belt Plains,default,reserve (no harvest),2030,12.548,7.084,20.035,51.1,42
+ecoregion,Central Corn Belt Plains,default,reserve (no harvest),2055,27.545,16.126,42.405,112.0,42
+ecoregion,Central Corn Belt Plains,default,reserve (no harvest),2080,39.066,23.766,59.565,152.0,42
+ecoregion,Central Corn Belt Plains,default,reserve (no harvest),2105,45.324,24.158,70.571,177.6,42
+ecoregion,Central Corn Belt Plains,default,reserve (no harvest),2125,47.468,27.634,71.097,188.68,42
+ecoregion,Central Corn Belt Plains,default,managed (harvest),2030,12.548,7.091,19.073,51.1,42
+ecoregion,Central Corn Belt Plains,default,managed (harvest),2055,19.34,11.897,30.34,80.07,42
+ecoregion,Central Corn Belt Plains,default,managed (harvest),2080,18.325,9.595,28.865,70.6,42
+ecoregion,Central Corn Belt Plains,default,managed (harvest),2105,12.911,7.126,21.257,53.4,42
+ecoregion,Central Corn Belt Plains,default,managed (harvest),2125,8.597,4.95,13.747,38.89,42
+ecoregion,Central Great Plains,default,reserve (no harvest),2030,12.352,7.269,18.889,26.12,184
+ecoregion,Central Great Plains,default,reserve (no harvest),2055,35.879,21.092,53.699,78.44,184
+ecoregion,Central Great Plains,default,reserve (no harvest),2080,57.065,35.52,82.676,140.47,184
+ecoregion,Central Great Plains,default,reserve (no harvest),2105,73.259,46.666,101.516,194.0,184
+ecoregion,Central Great Plains,default,reserve (no harvest),2125,83.842,54.428,126.627,221.68,184
+ecoregion,Central Great Plains,default,managed (harvest),2030,12.352,7.267,17.499,26.12,184
+ecoregion,Central Great Plains,default,managed (harvest),2055,26.394,16.564,40.358,59.6,184
+ecoregion,Central Great Plains,default,managed (harvest),2080,28.542,17.511,41.55,78.51,184
+ecoregion,Central Great Plains,default,managed (harvest),2105,25.136,13.529,36.496,74.94,184
+ecoregion,Central Great Plains,default,managed (harvest),2125,21.848,12.343,34.704,58.84,184
+ecoregion,Central Irregular Plains,default,reserve (no harvest),2030,64.172,51.664,78.936,41.07,195
+ecoregion,Central Irregular Plains,default,reserve (no harvest),2055,147.173,119.999,172.551,95.24,195
+ecoregion,Central Irregular Plains,default,reserve (no harvest),2080,202.903,170.169,242.111,132.46,195
+ecoregion,Central Irregular Plains,default,reserve (no harvest),2105,237.038,199.935,275.908,155.65,195
+ecoregion,Central Irregular Plains,default,reserve (no harvest),2125,254.015,204.587,303.202,166.07,195
+ecoregion,Central Irregular Plains,default,managed (harvest),2030,64.172,50.847,76.324,41.07,195
+ecoregion,Central Irregular Plains,default,managed (harvest),2055,109.248,92.741,130.923,71.38,195
+ecoregion,Central Irregular Plains,default,managed (harvest),2080,103.435,85.785,123.807,67.85,195
+ecoregion,Central Irregular Plains,default,managed (harvest),2105,80.214,66.673,93.775,53.01,195
+ecoregion,Central Irregular Plains,default,managed (harvest),2125,61.783,50.666,74.498,40.0,195
+ecoregion,Chihuahuan Desert,default,reserve (no harvest),2030,0.752,0.289,1.356,8.12,75
+ecoregion,Chihuahuan Desert,default,reserve (no harvest),2055,3.166,1.274,5.646,30.29,75
+ecoregion,Chihuahuan Desert,default,reserve (no harvest),2080,6.554,2.954,10.998,61.38,75
+ecoregion,Chihuahuan Desert,default,reserve (no harvest),2105,9.804,4.438,18.287,93.29,75
+ecoregion,Chihuahuan Desert,default,reserve (no harvest),2125,11.282,5.255,18.06,110.42,75
+ecoregion,Chihuahuan Desert,default,managed (harvest),2030,0.752,0.313,1.344,8.12,75
+ecoregion,Chihuahuan Desert,default,managed (harvest),2055,2.596,1.138,4.45,24.13,75
+ecoregion,Chihuahuan Desert,default,managed (harvest),2080,4.017,1.961,7.496,37.01,75
+ecoregion,Chihuahuan Desert,default,managed (harvest),2105,4.219,1.798,6.95,40.88,75
+ecoregion,Chihuahuan Desert,default,managed (harvest),2125,3.136,1.822,5.392,33.18,75
+ecoregion,Coast Range,default,reserve (no harvest),2030,70.557,55.695,84.985,55.04,371
+ecoregion,Coast Range,default,reserve (no harvest),2055,257.796,206.942,320.809,182.25,371
+ecoregion,Coast Range,default,reserve (no harvest),2080,430.387,355.863,516.037,294.29,371
+ecoregion,Coast Range,default,reserve (no harvest),2105,549.309,455.12,671.132,369.5,371
+ecoregion,Coast Range,default,reserve (no harvest),2125,620.258,508.95,740.905,413.82,371
+ecoregion,Coast Range,default,managed (harvest),2030,70.557,54.483,85.533,55.04,371
+ecoregion,Coast Range,default,managed (harvest),2055,193.533,151.723,234.054,131.88,371
+ecoregion,Coast Range,default,managed (harvest),2080,191.656,151.783,223.864,125.83,371
+ecoregion,Coast Range,default,managed (harvest),2105,142.51,118.169,176.681,91.13,371
+ecoregion,Coast Range,default,managed (harvest),2125,115.419,91.046,138.965,72.77,371
+ecoregion,Colorado Plateaus,default,reserve (no harvest),2030,3.831,2.48,5.227,1.52,820
+ecoregion,Colorado Plateaus,default,reserve (no harvest),2055,11.68,7.265,17.357,4.05,820
+ecoregion,Colorado Plateaus,default,reserve (no harvest),2080,19.982,12.112,30.152,6.71,820
+ecoregion,Colorado Plateaus,default,reserve (no harvest),2105,26.9,16.898,39.208,8.96,820
+ecoregion,Colorado Plateaus,default,reserve (no harvest),2125,31.329,18.329,44.559,10.46,820
+ecoregion,Colorado Plateaus,default,managed (harvest),2030,3.831,2.549,5.65,1.52,820
+ecoregion,Colorado Plateaus,default,managed (harvest),2055,9.295,5.546,13.228,3.17,820
+ecoregion,Colorado Plateaus,default,managed (harvest),2080,11.78,6.729,17.798,3.94,820
+ecoregion,Colorado Plateaus,default,managed (harvest),2105,11.345,7.469,18.242,3.81,820
+ecoregion,Colorado Plateaus,default,managed (harvest),2125,10.147,6.457,14.46,3.48,820
+ecoregion,Columbia Mountains/Northern Rockies,default,reserve (no harvest),2030,169.294,154.851,185.005,32.3,1629
+ecoregion,Columbia Mountains/Northern Rockies,default,reserve (no harvest),2055,487.675,457.527,523.784,77.89,1629
+ecoregion,Columbia Mountains/Northern Rockies,default,reserve (no harvest),2080,736.256,685.023,787.291,115.49,1629
+ecoregion,Columbia Mountains/Northern Rockies,default,reserve (no harvest),2105,934.304,868.278,999.764,146.65,1629
+ecoregion,Columbia Mountains/Northern Rockies,default,reserve (no harvest),2125,1060.414,958.656,1141.223,166.44,1629
+ecoregion,Columbia Mountains/Northern Rockies,default,managed (harvest),2030,169.294,156.493,188.966,32.3,1629
+ecoregion,Columbia Mountains/Northern Rockies,default,managed (harvest),2055,345.603,316.139,376.934,51.16,1629
+ecoregion,Columbia Mountains/Northern Rockies,default,managed (harvest),2080,303.022,278.253,331.839,45.94,1629
+ecoregion,Columbia Mountains/Northern Rockies,default,managed (harvest),2105,246.231,226.877,264.412,38.71,1629
+ecoregion,Columbia Mountains/Northern Rockies,default,managed (harvest),2125,206.678,189.799,226.008,32.59,1629
+ecoregion,Columbia Plateau,default,reserve (no harvest),2030,9.188,5.697,13.856,26.63,50
+ecoregion,Columbia Plateau,default,reserve (no harvest),2055,22.965,12.282,34.483,57.29,50
+ecoregion,Columbia Plateau,default,reserve (no harvest),2080,33.708,20.715,49.802,89.47,50
+ecoregion,Columbia Plateau,default,reserve (no harvest),2105,44.07,29.533,61.031,120.86,50
+ecoregion,Columbia Plateau,default,reserve (no harvest),2125,50.325,34.536,70.429,138.58,50
+ecoregion,Columbia Plateau,default,managed (harvest),2030,9.188,5.203,14.001,26.63,50
+ecoregion,Columbia Plateau,default,managed (harvest),2055,15.767,8.328,24.335,36.03,50
+ecoregion,Columbia Plateau,default,managed (harvest),2080,14.191,9.461,20.762,39.42,50
+ecoregion,Columbia Plateau,default,managed (harvest),2105,13.308,10.333,18.106,39.02,50
+ecoregion,Columbia Plateau,default,managed (harvest),2125,11.048,7.736,14.768,31.49,50
+ecoregion,Cross Timbers,default,reserve (no harvest),2030,43.001,31.316,52.199,41.8,388
+ecoregion,Cross Timbers,default,reserve (no harvest),2055,133.363,99.606,167.428,105.13,388
+ecoregion,Cross Timbers,default,reserve (no harvest),2080,202.592,150.499,261.275,157.76,388
+ecoregion,Cross Timbers,default,reserve (no harvest),2105,243.218,187.844,313.914,192.76,388
+ecoregion,Cross Timbers,default,reserve (no harvest),2125,260.423,195.425,325.773,209.27,388
+ecoregion,Cross Timbers,default,managed (harvest),2030,43.001,32.13,52.657,41.8,388
+ecoregion,Cross Timbers,default,managed (harvest),2055,106.277,81.322,131.929,76.95,388
+ecoregion,Cross Timbers,default,managed (harvest),2080,109.069,80.403,139.897,77.64,388
+ecoregion,Cross Timbers,default,managed (harvest),2105,81.196,62.532,100.745,60.0,388
+ecoregion,Cross Timbers,default,managed (harvest),2125,57.561,43.943,73.235,43.92,388
+ecoregion,Driftless Area,default,reserve (no harvest),2030,64.62,57.208,73.657,48.23,393
+ecoregion,Driftless Area,default,reserve (no harvest),2055,142.359,127.993,155.333,104.98,393
+ecoregion,Driftless Area,default,reserve (no harvest),2080,197.021,177.79,220.283,145.38,393
+ecoregion,Driftless Area,default,reserve (no harvest),2105,230.981,207.054,258.982,170.89,393
+ecoregion,Driftless Area,default,reserve (no harvest),2125,249.12,221.123,274.107,184.62,393
+ecoregion,Driftless Area,default,managed (harvest),2030,64.62,56.558,73.973,48.23,393
+ecoregion,Driftless Area,default,managed (harvest),2055,118.565,103.899,132.972,87.14,393
+ecoregion,Driftless Area,default,managed (harvest),2080,129.466,112.841,148.095,95.32,393
+ecoregion,Driftless Area,default,managed (harvest),2105,115.773,102.201,130.16,85.67,393
+ecoregion,Driftless Area,default,managed (harvest),2125,99.903,87.552,111.869,74.18,393
+ecoregion,East Central Texas Plains,default,reserve (no harvest),2030,35.671,29.555,43.872,41.19,205
+ecoregion,East Central Texas Plains,default,reserve (no harvest),2055,108.937,85.701,134.208,101.53,205
+ecoregion,East Central Texas Plains,default,reserve (no harvest),2080,160.261,126.729,196.366,140.28,205
+ecoregion,East Central Texas Plains,default,reserve (no harvest),2105,187.094,147.923,236.811,157.86,205
+ecoregion,East Central Texas Plains,default,reserve (no harvest),2125,196.493,151.468,246.477,163.72,205
+ecoregion,East Central Texas Plains,default,managed (harvest),2030,35.671,28.765,43.297,41.19,205
+ecoregion,East Central Texas Plains,default,managed (harvest),2055,81.867,63.92,97.765,70.27,205
+ecoregion,East Central Texas Plains,default,managed (harvest),2080,71.064,54.677,90.088,55.7,205
+ecoregion,East Central Texas Plains,default,managed (harvest),2105,44.202,30.493,60.584,31.18,205
+ecoregion,East Central Texas Plains,default,managed (harvest),2125,27.457,19.392,39.432,18.92,205
+ecoregion,Eastern Cascades Slopes and Foothills,default,reserve (no harvest),2030,40.535,34.721,47.213,30.52,753
+ecoregion,Eastern Cascades Slopes and Foothills,default,reserve (no harvest),2055,112.545,99.232,130.686,74.17,753
+ecoregion,Eastern Cascades Slopes and Foothills,default,reserve (no harvest),2080,170.98,144.011,196.51,112.02,753
+ecoregion,Eastern Cascades Slopes and Foothills,default,reserve (no harvest),2105,207.402,175.482,237.952,137.31,753
+ecoregion,Eastern Cascades Slopes and Foothills,default,reserve (no harvest),2125,226.006,195.758,263.284,150.16,753
+ecoregion,Eastern Cascades Slopes and Foothills,default,managed (harvest),2030,40.535,34.814,47.29,30.52,753
+ecoregion,Eastern Cascades Slopes and Foothills,default,managed (harvest),2055,77.386,66.22,91.101,47.89,753
+ecoregion,Eastern Cascades Slopes and Foothills,default,managed (harvest),2080,67.922,59.351,78.159,44.29,753
+ecoregion,Eastern Cascades Slopes and Foothills,default,managed (harvest),2105,45.11,39.228,51.852,31.31,753
+ecoregion,Eastern Cascades Slopes and Foothills,default,managed (harvest),2125,32.182,27.511,38.416,22.57,753
+ecoregion,Eastern Corn Belt Plains,default,reserve (no harvest),2030,40.754,25.355,59.559,40.65,168
+ecoregion,Eastern Corn Belt Plains,default,reserve (no harvest),2055,93.779,61.373,135.734,97.1,168
+ecoregion,Eastern Corn Belt Plains,default,reserve (no harvest),2080,136.833,92.287,204.459,142.56,168
+ecoregion,Eastern Corn Belt Plains,default,reserve (no harvest),2105,162.534,92.728,244.931,173.23,168
+ecoregion,Eastern Corn Belt Plains,default,reserve (no harvest),2125,175.88,109.076,261.309,188.54,168
+ecoregion,Eastern Corn Belt Plains,default,managed (harvest),2030,40.754,22.233,59.893,40.65,168
+ecoregion,Eastern Corn Belt Plains,default,managed (harvest),2055,63.202,38.522,86.962,68.89,168
+ecoregion,Eastern Corn Belt Plains,default,managed (harvest),2080,59.194,34.757,86.538,67.21,168
+ecoregion,Eastern Corn Belt Plains,default,managed (harvest),2105,40.782,23.83,60.741,52.4,168
+ecoregion,Eastern Corn Belt Plains,default,managed (harvest),2125,29.991,18.711,43.793,39.81,168
+ecoregion,Eastern Great Lakes Lowlands,default,reserve (no harvest),2030,71.577,50.805,92.79,58.46,197
+ecoregion,Eastern Great Lakes Lowlands,default,reserve (no harvest),2055,141.31,113.83,174.429,121.57,197
+ecoregion,Eastern Great Lakes Lowlands,default,reserve (no harvest),2080,193.27,158.313,243.341,166.19,197
+ecoregion,Eastern Great Lakes Lowlands,default,reserve (no harvest),2105,226.793,181.96,275.852,195.97,197
+ecoregion,Eastern Great Lakes Lowlands,default,reserve (no harvest),2125,243.397,195.661,299.041,211.41,197
+ecoregion,Eastern Great Lakes Lowlands,default,managed (harvest),2030,71.577,54.098,95.335,58.46,197
+ecoregion,Eastern Great Lakes Lowlands,default,managed (harvest),2055,112.093,93.197,138.258,97.61,197
+ecoregion,Eastern Great Lakes Lowlands,default,managed (harvest),2080,118.207,96.573,150.853,102.17,197
+ecoregion,Eastern Great Lakes Lowlands,default,managed (harvest),2105,103.565,82.584,126.113,90.27,197
+ecoregion,Eastern Great Lakes Lowlands,default,managed (harvest),2125,86.497,70.063,105.838,76.33,197
+ecoregion,Edwards Plateau,default,reserve (no harvest),2030,15.807,10.322,24.984,27.26,521
+ecoregion,Edwards Plateau,default,reserve (no harvest),2055,54.242,38.888,74.054,83.07,521
+ecoregion,Edwards Plateau,default,reserve (no harvest),2080,110.813,75.698,137.741,156.58,521
+ecoregion,Edwards Plateau,default,reserve (no harvest),2105,165.623,122.896,203.675,223.49,521
+ecoregion,Edwards Plateau,default,reserve (no harvest),2125,194.822,146.16,254.854,258.44,521
+ecoregion,Edwards Plateau,default,managed (harvest),2030,15.807,9.799,23.269,27.26,521
+ecoregion,Edwards Plateau,default,managed (harvest),2055,42.247,31.462,54.4,62.39,521
+ecoregion,Edwards Plateau,default,managed (harvest),2080,66.758,48.711,84.752,88.56,521
+ecoregion,Edwards Plateau,default,managed (harvest),2105,70.914,50.398,90.117,88.31,521
+ecoregion,Edwards Plateau,default,managed (harvest),2125,57.148,44.266,73.435,69.73,521
+ecoregion,Erie Drift Plain,default,reserve (no harvest),2030,32.053,22.231,45.192,44.34,98
+ecoregion,Erie Drift Plain,default,reserve (no harvest),2055,71.944,48.826,96.03,105.26,98
+ecoregion,Erie Drift Plain,default,reserve (no harvest),2080,100.95,72.03,129.63,152.52,98
+ecoregion,Erie Drift Plain,default,reserve (no harvest),2105,118.62,83.443,153.28,183.32,98
+ecoregion,Erie Drift Plain,default,reserve (no harvest),2125,127.305,93.108,169.019,198.31,98
+ecoregion,Erie Drift Plain,default,managed (harvest),2030,32.053,22.362,41.574,44.34,98
+ecoregion,Erie Drift Plain,default,managed (harvest),2055,50.904,35.73,66.019,75.68,98
+ecoregion,Erie Drift Plain,default,managed (harvest),2080,47.408,33.259,64.569,74.19,98
+ecoregion,Erie Drift Plain,default,managed (harvest),2105,35.534,24.35,51.229,58.4,98
+ecoregion,Erie Drift Plain,default,managed (harvest),2125,27.024,17.191,38.467,44.98,98
+ecoregion,Flint Hills,default,reserve (no harvest),2030,0.328,0.096,0.563,31.04,13
+ecoregion,Flint Hills,default,reserve (no harvest),2055,1.068,0.334,2.214,75.66,13
+ecoregion,Flint Hills,default,reserve (no harvest),2080,1.496,0.514,2.737,104.01,13
+ecoregion,Flint Hills,default,reserve (no harvest),2105,1.821,0.657,3.364,124.38,13
+ecoregion,Flint Hills,default,reserve (no harvest),2125,1.979,0.604,3.664,134.83,13
+ecoregion,Flint Hills,default,managed (harvest),2030,0.328,0.101,0.666,31.04,13
+ecoregion,Flint Hills,default,managed (harvest),2055,0.777,0.207,1.822,48.57,13
+ecoregion,Flint Hills,default,managed (harvest),2080,0.515,0.223,0.923,34.69,13
+ecoregion,Flint Hills,default,managed (harvest),2105,0.392,0.16,0.681,25.69,13
+ecoregion,Flint Hills,default,managed (harvest),2125,0.283,0.116,0.463,19.21,13
+ecoregion,High Plains,default,reserve (no harvest),2030,2.321,0.915,4.03,19.39,49
+ecoregion,High Plains,default,reserve (no harvest),2055,6.016,2.856,10.064,62.9,49
+ecoregion,High Plains,default,reserve (no harvest),2080,8.895,4.799,15.196,111.62,49
+ecoregion,High Plains,default,reserve (no harvest),2105,10.842,5.637,16.372,148.23,49
+ecoregion,High Plains,default,reserve (no harvest),2125,11.824,6.299,19.432,166.31,49
+ecoregion,High Plains,default,managed (harvest),2030,2.321,1.055,3.844,19.39,49
+ecoregion,High Plains,default,managed (harvest),2055,3.669,2.046,5.776,45.28,49
+ecoregion,High Plains,default,managed (harvest),2080,2.826,1.575,4.327,55.33,49
+ecoregion,High Plains,default,managed (harvest),2105,1.915,0.977,2.933,46.83,49
+ecoregion,High Plains,default,managed (harvest),2125,1.344,0.706,2.185,34.78,49
+ecoregion,Huron/Erie Lake Plains,default,reserve (no harvest),2030,12.018,6.752,18.418,52.21,85
+ecoregion,Huron/Erie Lake Plains,default,reserve (no harvest),2055,29.434,17.723,42.493,108.95,85
+ecoregion,Huron/Erie Lake Plains,default,reserve (no harvest),2080,41.841,25.029,62.1,147.66,85
+ecoregion,Huron/Erie Lake Plains,default,reserve (no harvest),2105,49.375,26.912,76.82,173.91,85
+ecoregion,Huron/Erie Lake Plains,default,reserve (no harvest),2125,54.339,27.792,83.373,187.5,85
+ecoregion,Huron/Erie Lake Plains,default,managed (harvest),2030,12.018,6.367,20.017,52.21,85
+ecoregion,Huron/Erie Lake Plains,default,managed (harvest),2055,24.639,14.359,36.315,87.43,85
+ecoregion,Huron/Erie Lake Plains,default,managed (harvest),2080,27.097,15.175,40.191,90.69,85
+ecoregion,Huron/Erie Lake Plains,default,managed (harvest),2105,23.954,12.079,36.19,80.67,85
+ecoregion,Huron/Erie Lake Plains,default,managed (harvest),2125,21.439,10.983,36.612,68.71,85
+ecoregion,Idaho Batholith,default,reserve (no harvest),2030,46.458,40.667,51.795,23.48,734
+ecoregion,Idaho Batholith,default,reserve (no harvest),2055,117.535,103.274,131.286,54.71,734
+ecoregion,Idaho Batholith,default,reserve (no harvest),2080,171.516,151.626,196.057,78.9,734
+ecoregion,Idaho Batholith,default,reserve (no harvest),2105,210.76,188.197,238.206,97.56,734
+ecoregion,Idaho Batholith,default,reserve (no harvest),2125,235.407,205.98,257.801,109.52,734
+ecoregion,Idaho Batholith,default,managed (harvest),2030,46.458,40.227,53.022,23.48,734
+ecoregion,Idaho Batholith,default,managed (harvest),2055,75.935,65.91,85.113,33.76,734
+ecoregion,Idaho Batholith,default,managed (harvest),2080,61.627,53.573,71.177,27.68,734
+ecoregion,Idaho Batholith,default,managed (harvest),2105,45.616,40.143,52.026,21.59,734
+ecoregion,Idaho Batholith,default,managed (harvest),2125,37.69,32.316,42.976,18.14,734
+ecoregion,Interior Plateau,default,reserve (no harvest),2030,250.091,214.319,287.254,45.02,896
+ecoregion,Interior Plateau,default,reserve (no harvest),2055,522.376,447.483,584.192,102.28,896
+ecoregion,Interior Plateau,default,reserve (no harvest),2080,729.186,637.155,826.18,146.52,896
+ecoregion,Interior Plateau,default,reserve (no harvest),2105,860.19,755.054,963.66,174.32,896
+ecoregion,Interior Plateau,default,reserve (no harvest),2125,925.647,809.794,1028.765,188.05,896
+ecoregion,Interior Plateau,default,managed (harvest),2030,250.091,213.815,286.597,45.02,896
+ecoregion,Interior Plateau,default,managed (harvest),2055,384.104,340.583,435.447,77.14,896
+ecoregion,Interior Plateau,default,managed (harvest),2080,378.87,333.295,420.233,78.09,896
+ecoregion,Interior Plateau,default,managed (harvest),2105,302.496,267.295,347.417,62.35,896
+ecoregion,Interior Plateau,default,managed (harvest),2125,236.623,205.685,265.953,48.46,896
+ecoregion,Interior River Valleys and Hills,default,reserve (no harvest),2030,110.004,87.705,133.663,42.34,421
+ecoregion,Interior River Valleys and Hills,default,reserve (no harvest),2055,245.492,208.921,293.042,97.0,421
+ecoregion,Interior River Valleys and Hills,default,reserve (no harvest),2080,339.477,277.047,407.996,137.46,421
+ecoregion,Interior River Valleys and Hills,default,reserve (no harvest),2105,392.517,321.876,480.453,162.33,421
+ecoregion,Interior River Valleys and Hills,default,reserve (no harvest),2125,416.924,340.178,511.115,173.93,421
+ecoregion,Interior River Valleys and Hills,default,managed (harvest),2030,110.004,88.603,133.662,42.34,421
+ecoregion,Interior River Valleys and Hills,default,managed (harvest),2055,181.522,153.054,216.202,72.67,421
+ecoregion,Interior River Valleys and Hills,default,managed (harvest),2080,170.455,140.005,204.767,71.33,421
+ecoregion,Interior River Valleys and Hills,default,managed (harvest),2105,125.314,106.948,146.791,55.33,421
+ecoregion,Interior River Valleys and Hills,default,managed (harvest),2125,92.267,77.298,111.879,41.78,421
+ecoregion,Klamath Mountains,default,reserve (no harvest),2030,106.375,85.731,126.773,50.04,687
+ecoregion,Klamath Mountains,default,reserve (no harvest),2055,333.414,285.44,381.307,149.81,687
+ecoregion,Klamath Mountains,default,reserve (no harvest),2080,557.048,471.036,652.597,245.76,687
+ecoregion,Klamath Mountains,default,reserve (no harvest),2105,709.965,623.684,846.732,312.48,687
+ecoregion,Klamath Mountains,default,reserve (no harvest),2125,798.471,692.659,921.734,351.91,687
+ecoregion,Klamath Mountains,default,managed (harvest),2030,106.375,88.336,128.913,50.04,687
+ecoregion,Klamath Mountains,default,managed (harvest),2055,235.565,208.279,276.368,103.52,687
+ecoregion,Klamath Mountains,default,managed (harvest),2080,241.024,209.531,282.094,103.07,687
+ecoregion,Klamath Mountains,default,managed (harvest),2105,171.86,141.396,203.884,74.55,687
+ecoregion,Klamath Mountains,default,managed (harvest),2125,134.743,111.902,164.611,59.24,687
+ecoregion,Lake Manitoba and Lake Agassiz Plain,default,reserve (no harvest),2030,6.744,4.838,8.868,61.03,50
+ecoregion,Lake Manitoba and Lake Agassiz Plain,default,reserve (no harvest),2055,16.62,11.901,20.731,133.21,50
+ecoregion,Lake Manitoba and Lake Agassiz Plain,default,reserve (no harvest),2080,23.469,16.398,29.993,183.91,50
+ecoregion,Lake Manitoba and Lake Agassiz Plain,default,reserve (no harvest),2105,26.516,18.674,32.654,208.87,50
+ecoregion,Lake Manitoba and Lake Agassiz Plain,default,reserve (no harvest),2125,28.018,20.644,36.366,220.64,50
+ecoregion,Lake Manitoba and Lake Agassiz Plain,default,managed (harvest),2030,6.744,4.816,9.245,61.03,50
+ecoregion,Lake Manitoba and Lake Agassiz Plain,default,managed (harvest),2055,14.241,10.431,18.35,110.14,50
+ecoregion,Lake Manitoba and Lake Agassiz Plain,default,managed (harvest),2080,16.198,11.47,20.062,120.88,50
+ecoregion,Lake Manitoba and Lake Agassiz Plain,default,managed (harvest),2105,13.704,10.464,17.202,102.45,50
+ecoregion,Lake Manitoba and Lake Agassiz Plain,default,managed (harvest),2125,11.466,8.726,14.782,85.16,50
+ecoregion,Madrean Archipelago,default,reserve (no harvest),2030,0.902,0.197,1.882,4.89,83
+ecoregion,Madrean Archipelago,default,reserve (no harvest),2055,3.304,0.637,7.187,13.91,83
+ecoregion,Madrean Archipelago,default,reserve (no harvest),2080,7.518,1.531,15.606,27.48,83
+ecoregion,Madrean Archipelago,default,reserve (no harvest),2105,12.88,2.177,28.204,42.48,83
+ecoregion,Madrean Archipelago,default,reserve (no harvest),2125,16.588,2.612,35.277,51.37,83
+ecoregion,Madrean Archipelago,default,managed (harvest),2030,0.902,0.199,1.923,4.89,83
+ecoregion,Madrean Archipelago,default,managed (harvest),2055,2.862,0.505,6.75,11.51,83
+ecoregion,Madrean Archipelago,default,managed (harvest),2080,5.673,1.438,10.672,19.44,83
+ecoregion,Madrean Archipelago,default,managed (harvest),2105,8.253,1.609,17.858,24.9,83
+ecoregion,Madrean Archipelago,default,managed (harvest),2125,8.724,1.623,21.049,24.03,83
+ecoregion,Middle Atlantic Coastal Plain,default,reserve (no harvest),2030,203.927,170.6,237.598,56.65,966
+ecoregion,Middle Atlantic Coastal Plain,default,reserve (no harvest),2055,436.154,377.892,494.783,119.5,966
+ecoregion,Middle Atlantic Coastal Plain,default,reserve (no harvest),2080,588.941,519.785,679.858,159.33,966
+ecoregion,Middle Atlantic Coastal Plain,default,reserve (no harvest),2105,677.622,591.211,767.56,181.91,966
+ecoregion,Middle Atlantic Coastal Plain,default,reserve (no harvest),2125,720.243,627.738,819.035,192.45,966
+ecoregion,Middle Atlantic Coastal Plain,default,managed (harvest),2030,203.927,171.343,231.811,56.65,966
+ecoregion,Middle Atlantic Coastal Plain,default,managed (harvest),2055,320.958,276.043,370.763,87.86,966
+ecoregion,Middle Atlantic Coastal Plain,default,managed (harvest),2080,292.402,253.027,336.921,78.62,966
+ecoregion,Middle Atlantic Coastal Plain,default,managed (harvest),2105,216.151,186.66,245.209,57.42,966
+ecoregion,Middle Atlantic Coastal Plain,default,managed (harvest),2125,161.827,139.512,190.351,42.56,966
+ecoregion,Middle Rockies,default,reserve (no harvest),2030,174.262,154.435,195.127,28.89,2469
+ecoregion,Middle Rockies,default,reserve (no harvest),2055,343.949,314.461,371.734,54.8,2469
+ecoregion,Middle Rockies,default,reserve (no harvest),2080,510.915,475.867,541.193,79.66,2469
+ecoregion,Middle Rockies,default,reserve (no harvest),2105,665.331,628.79,702.1,101.65,2469
+ecoregion,Middle Rockies,default,reserve (no harvest),2125,772.776,721.287,826.784,116.23,2469
+ecoregion,Middle Rockies,default,managed (harvest),2030,174.262,155.491,198.682,28.89,2469
+ecoregion,Middle Rockies,default,managed (harvest),2055,181.832,170.422,192.979,28.18,2469
+ecoregion,Middle Rockies,default,managed (harvest),2080,181.486,171.658,194.851,26.71,2469
+ecoregion,Middle Rockies,default,managed (harvest),2105,171.551,160.296,183.07,23.88,2469
+ecoregion,Middle Rockies,default,managed (harvest),2125,157.058,146.609,169.381,20.99,2469
+ecoregion,Mississippi Alluvial Plain,default,reserve (no harvest),2030,74.686,62.645,86.946,38.0,520
+ecoregion,Mississippi Alluvial Plain,default,reserve (no harvest),2055,178.031,152.813,200.415,89.0,520
+ecoregion,Mississippi Alluvial Plain,default,reserve (no harvest),2080,239.58,205.654,266.26,120.52,520
+ecoregion,Mississippi Alluvial Plain,default,reserve (no harvest),2105,265.734,228.959,299.843,134.18,520
+ecoregion,Mississippi Alluvial Plain,default,reserve (no harvest),2125,278.702,239.619,321.92,140.64,520
+ecoregion,Mississippi Alluvial Plain,default,managed (harvest),2030,74.686,65.721,85.224,38.0,520
+ecoregion,Mississippi Alluvial Plain,default,managed (harvest),2055,138.463,120.038,160.757,68.71,520
+ecoregion,Mississippi Alluvial Plain,default,managed (harvest),2080,126.676,110.244,145.558,63.63,520
+ecoregion,Mississippi Alluvial Plain,default,managed (harvest),2105,85.806,74.09,98.761,43.44,520
+ecoregion,Mississippi Alluvial Plain,default,managed (harvest),2125,62.984,51.428,74.681,31.66,520
+ecoregion,Mississippi Valley Loess Plains,default,reserve (no harvest),2030,97.359,79.955,117.864,51.17,387
+ecoregion,Mississippi Valley Loess Plains,default,reserve (no harvest),2055,204.439,165.018,247.683,108.99,387
+ecoregion,Mississippi Valley Loess Plains,default,reserve (no harvest),2080,277.818,226.47,340.929,148.56,387
+ecoregion,Mississippi Valley Loess Plains,default,reserve (no harvest),2105,318.544,266.48,375.233,170.51,387
+ecoregion,Mississippi Valley Loess Plains,default,reserve (no harvest),2125,337.874,282.902,407.697,181.3,387
+ecoregion,Mississippi Valley Loess Plains,default,managed (harvest),2030,97.359,78.553,118.233,51.17,387
+ecoregion,Mississippi Valley Loess Plains,default,managed (harvest),2055,153.108,127.625,182.427,81.94,387
+ecoregion,Mississippi Valley Loess Plains,default,managed (harvest),2080,145.941,118.579,185.068,78.31,387
+ecoregion,Mississippi Valley Loess Plains,default,managed (harvest),2105,110.042,90.787,131.413,59.03,387
+ecoregion,Mississippi Valley Loess Plains,default,managed (harvest),2125,83.321,66.815,103.259,45.02,387
+ecoregion,Mojave Basin and Range,default,reserve (no harvest),2030,0.256,0.022,0.547,3.28,63
+ecoregion,Mojave Basin and Range,default,reserve (no harvest),2055,1.499,0.099,3.994,8.71,63
+ecoregion,Mojave Basin and Range,default,reserve (no harvest),2080,2.822,0.157,7.901,14.75,63
+ecoregion,Mojave Basin and Range,default,reserve (no harvest),2105,4.098,0.272,11.332,21.0,63
+ecoregion,Mojave Basin and Range,default,reserve (no harvest),2125,4.883,0.159,14.852,24.01,63
+ecoregion,Mojave Basin and Range,default,managed (harvest),2030,0.256,0.014,0.577,3.28,63
+ecoregion,Mojave Basin and Range,default,managed (harvest),2055,1.34,0.063,3.675,5.7,63
+ecoregion,Mojave Basin and Range,default,managed (harvest),2080,1.969,0.077,5.674,7.24,63
+ecoregion,Mojave Basin and Range,default,managed (harvest),2105,2.244,0.138,6.235,8.01,63
+ecoregion,Mojave Basin and Range,default,managed (harvest),2125,2.124,0.085,5.946,6.27,63
+ecoregion,Nebraska Sand Hills,default,reserve (no harvest),2030,0.451,0.206,0.881,16.69,5
+ecoregion,Nebraska Sand Hills,default,reserve (no harvest),2055,1.381,0.614,2.111,46.06,5
+ecoregion,Nebraska Sand Hills,default,reserve (no harvest),2080,2.346,0.876,3.887,73.98,5
+ecoregion,Nebraska Sand Hills,default,reserve (no harvest),2105,3.231,1.176,5.363,99.26,5
+ecoregion,Nebraska Sand Hills,default,reserve (no harvest),2125,3.881,1.16,6.935,116.54,5
+ecoregion,Nebraska Sand Hills,default,managed (harvest),2030,0.451,0.174,0.889,16.69,5
+ecoregion,Nebraska Sand Hills,default,managed (harvest),2055,0.913,0.42,1.475,28.73,5
+ecoregion,Nebraska Sand Hills,default,managed (harvest),2080,0.93,0.242,1.861,26.82,5
+ecoregion,Nebraska Sand Hills,default,managed (harvest),2105,0.849,0.21,1.769,24.25,5
+ecoregion,Nebraska Sand Hills,default,managed (harvest),2125,0.794,0.137,1.844,21.39,5
+ecoregion,North Cascades,default,reserve (no harvest),2030,29.225,23.114,36.781,30.94,389
+ecoregion,North Cascades,default,reserve (no harvest),2055,79.0,61.869,97.178,73.35,389
+ecoregion,North Cascades,default,reserve (no harvest),2080,127.448,103.73,156.865,115.02,389
+ecoregion,North Cascades,default,reserve (no harvest),2105,165.782,130.616,198.843,147.89,389
+ecoregion,North Cascades,default,reserve (no harvest),2125,189.196,152.896,231.588,167.05,389
+ecoregion,North Cascades,default,managed (harvest),2030,29.225,23.652,36.32,30.94,389
+ecoregion,North Cascades,default,managed (harvest),2055,57.122,46.796,69.531,50.18,389
+ecoregion,North Cascades,default,managed (harvest),2080,62.808,51.377,76.351,54.3,389
+ecoregion,North Cascades,default,managed (harvest),2105,54.216,43.859,65.823,46.53,389
+ecoregion,North Cascades,default,managed (harvest),2125,45.229,35.852,56.516,37.85,389
+ecoregion,North Central Appalachians,default,reserve (no harvest),2030,111.254,91.867,131.659,51.7,490
+ecoregion,North Central Appalachians,default,reserve (no harvest),2055,252.237,215.621,292.764,114.75,490
+ecoregion,North Central Appalachians,default,reserve (no harvest),2080,360.248,304.837,422.596,164.04,490
+ecoregion,North Central Appalachians,default,reserve (no harvest),2105,444.538,373.808,510.73,202.11,490
+ecoregion,North Central Appalachians,default,reserve (no harvest),2125,487.516,396.662,565.526,221.78,490
+ecoregion,North Central Appalachians,default,managed (harvest),2030,111.254,91.17,130.248,51.7,490
+ecoregion,North Central Appalachians,default,managed (harvest),2055,195.328,161.815,229.826,87.69,490
+ecoregion,North Central Appalachians,default,managed (harvest),2080,203.119,166.297,236.386,91.28,490
+ecoregion,North Central Appalachians,default,managed (harvest),2105,183.428,152.178,215.614,81.89,490
+ecoregion,North Central Appalachians,default,managed (harvest),2125,151.517,123.365,180.883,67.55,490
+ecoregion,North Central Hardwood Forests,default,reserve (no harvest),2030,129.386,116.929,143.544,54.27,737
+ecoregion,North Central Hardwood Forests,default,reserve (no harvest),2055,272.245,247.84,296.251,112.73,737
+ecoregion,North Central Hardwood Forests,default,reserve (no harvest),2080,374.326,341.45,416.078,154.24,737
+ecoregion,North Central Hardwood Forests,default,reserve (no harvest),2105,442.363,403.4,482.036,182.39,737
+ecoregion,North Central Hardwood Forests,default,reserve (no harvest),2125,477.294,434.997,520.887,196.93,737
+ecoregion,North Central Hardwood Forests,default,managed (harvest),2030,129.386,116.012,143.015,54.27,737
+ecoregion,North Central Hardwood Forests,default,managed (harvest),2055,225.591,205.813,247.409,93.05,737
+ecoregion,North Central Hardwood Forests,default,managed (harvest),2080,246.33,223.441,275.358,100.83,737
+ecoregion,North Central Hardwood Forests,default,managed (harvest),2105,225.441,206.118,247.448,92.42,737
+ecoregion,North Central Hardwood Forests,default,managed (harvest),2125,195.256,176.561,214.554,80.15,737
+ecoregion,Northeastern Coastal Zone,default,reserve (no harvest),2030,57.79,49.02,66.403,41.49,301
+ecoregion,Northeastern Coastal Zone,default,reserve (no harvest),2055,144.085,124.626,162.364,102.52,301
+ecoregion,Northeastern Coastal Zone,default,reserve (no harvest),2080,204.526,176.827,229.136,145.11,301
+ecoregion,Northeastern Coastal Zone,default,reserve (no harvest),2105,244.025,209.503,275.175,173.62,301
+ecoregion,Northeastern Coastal Zone,default,reserve (no harvest),2125,263.352,226.238,294.913,187.47,301
+ecoregion,Northeastern Coastal Zone,default,managed (harvest),2030,57.79,48.901,66.47,41.49,301
+ecoregion,Northeastern Coastal Zone,default,managed (harvest),2055,117.36,102.367,132.207,82.81,301
+ecoregion,Northeastern Coastal Zone,default,managed (harvest),2080,124.44,106.568,141.24,86.58,301
+ecoregion,Northeastern Coastal Zone,default,managed (harvest),2105,107.789,92.624,122.25,74.89,301
+ecoregion,Northeastern Coastal Zone,default,managed (harvest),2125,88.438,77.384,102.059,61.19,301
+ecoregion,Northern Allegheny Plateau,default,reserve (no harvest),2030,57.193,45.071,69.014,48.48,312
+ecoregion,Northern Allegheny Plateau,default,reserve (no harvest),2055,134.129,108.201,162.999,104.93,312
+ecoregion,Northern Allegheny Plateau,default,reserve (no harvest),2080,188.821,155.01,230.857,148.37,312
+ecoregion,Northern Allegheny Plateau,default,reserve (no harvest),2105,228.149,183.974,280.33,181.25,312
+ecoregion,Northern Allegheny Plateau,default,reserve (no harvest),2125,248.098,191.892,306.503,197.97,312
+ecoregion,Northern Allegheny Plateau,default,managed (harvest),2030,57.193,46.532,72.438,48.48,312
+ecoregion,Northern Allegheny Plateau,default,managed (harvest),2055,107.846,87.386,137.873,83.56,312
+ecoregion,Northern Allegheny Plateau,default,managed (harvest),2080,113.772,92.088,133.623,90.61,312
+ecoregion,Northern Allegheny Plateau,default,managed (harvest),2105,102.007,81.159,122.294,84.2,312
+ecoregion,Northern Allegheny Plateau,default,managed (harvest),2125,85.548,66.637,102.849,71.78,312
+ecoregion,Northern Appalachian and Atlantic Maritime Highlands,default,reserve (no harvest),2030,675.81,632.45,720.617,71.54,2903
+ecoregion,Northern Appalachian and Atlantic Maritime Highlands,default,reserve (no harvest),2055,1361.978,1270.915,1450.228,143.16,2903
+ecoregion,Northern Appalachian and Atlantic Maritime Highlands,default,reserve (no harvest),2080,1868.871,1747.865,1975.355,197.33,2903
+ecoregion,Northern Appalachian and Atlantic Maritime Highlands,default,reserve (no harvest),2105,2233.495,2117.17,2374.245,237.1,2903
+ecoregion,Northern Appalachian and Atlantic Maritime Highlands,default,reserve (no harvest),2125,2408.347,2281.339,2546.823,255.86,2903
+ecoregion,Northern Appalachian and Atlantic Maritime Highlands,default,managed (harvest),2030,675.81,630.497,721.736,71.54,2903
+ecoregion,Northern Appalachian and Atlantic Maritime Highlands,default,managed (harvest),2055,1047.15,991.389,1105.986,110.14,2903
+ecoregion,Northern Appalachian and Atlantic Maritime Highlands,default,managed (harvest),2080,1076.495,1018.727,1130.877,114.62,2903
+ecoregion,Northern Appalachian and Atlantic Maritime Highlands,default,managed (harvest),2105,956.719,896.94,1017.984,103.41,2903
+ecoregion,Northern Appalachian and Atlantic Maritime Highlands,default,managed (harvest),2125,791.375,752.538,832.101,85.86,2903
+ecoregion,Northern Basin and Range,default,reserve (no harvest),2030,5.996,3.496,8.567,15.94,164
+ecoregion,Northern Basin and Range,default,reserve (no harvest),2055,14.03,9.254,19.113,37.39,164
+ecoregion,Northern Basin and Range,default,reserve (no harvest),2080,20.704,14.977,29.464,54.07,164
+ecoregion,Northern Basin and Range,default,reserve (no harvest),2105,26.246,17.74,38.104,66.63,164
+ecoregion,Northern Basin and Range,default,reserve (no harvest),2125,29.733,20.473,40.51,74.09,164
+ecoregion,Northern Basin and Range,default,managed (harvest),2030,5.996,3.652,8.967,15.94,164
+ecoregion,Northern Basin and Range,default,managed (harvest),2055,8.915,6.488,12.22,24.67,164
+ecoregion,Northern Basin and Range,default,managed (harvest),2080,8.082,5.642,11.145,21.26,164
+ecoregion,Northern Basin and Range,default,managed (harvest),2105,6.997,4.43,10.221,16.81,164
+ecoregion,Northern Basin and Range,default,managed (harvest),2125,6.038,3.85,8.485,13.8,164
+ecoregion,Northern Lakes and Forests,default,reserve (no harvest),2030,822.615,779.914,877.382,60.94,5675
+ecoregion,Northern Lakes and Forests,default,reserve (no harvest),2055,1624.02,1552.498,1705.505,120.94,5675
+ecoregion,Northern Lakes and Forests,default,reserve (no harvest),2080,2212.707,2100.359,2315.792,165.57,5675
+ecoregion,Northern Lakes and Forests,default,reserve (no harvest),2105,2614.836,2505.816,2736.853,197.24,5675
+ecoregion,Northern Lakes and Forests,default,reserve (no harvest),2125,2825.474,2688.867,2964.004,213.82,5675
+ecoregion,Northern Lakes and Forests,default,managed (harvest),2030,822.615,781.507,867.812,60.94,5675
+ecoregion,Northern Lakes and Forests,default,managed (harvest),2055,1326.951,1271.895,1399.405,98.53,5675
+ecoregion,Northern Lakes and Forests,default,managed (harvest),2080,1437.033,1375.872,1510.085,106.9,5675
+ecoregion,Northern Lakes and Forests,default,managed (harvest),2105,1320.983,1260.314,1390.937,99.24,5675
+ecoregion,Northern Lakes and Forests,default,managed (harvest),2125,1150.403,1100.38,1196.261,86.61,5675
+ecoregion,Northern Minnesota Wetlands,default,reserve (no harvest),2030,120.786,97.93,143.713,84.31,418
+ecoregion,Northern Minnesota Wetlands,default,reserve (no harvest),2055,205.351,171.753,232.027,145.61,418
+ecoregion,Northern Minnesota Wetlands,default,reserve (no harvest),2080,273.732,229.992,320.2,193.87,418
+ecoregion,Northern Minnesota Wetlands,default,reserve (no harvest),2105,317.219,266.114,366.371,225.23,418
+ecoregion,Northern Minnesota Wetlands,default,reserve (no harvest),2125,338.581,291.825,399.279,241.24,418
+ecoregion,Northern Minnesota Wetlands,default,managed (harvest),2030,120.786,102.357,143.383,84.31,418
+ecoregion,Northern Minnesota Wetlands,default,managed (harvest),2055,165.518,142.012,190.267,117.8,418
+ecoregion,Northern Minnesota Wetlands,default,managed (harvest),2080,179.314,154.556,208.174,127.21,418
+ecoregion,Northern Minnesota Wetlands,default,managed (harvest),2105,163.665,137.192,187.56,116.63,418
+ecoregion,Northern Minnesota Wetlands,default,managed (harvest),2125,141.848,122.554,165.801,101.87,418
+ecoregion,Northern Piedmont,default,reserve (no harvest),2030,33.482,17.075,63.73,40.39,124
+ecoregion,Northern Piedmont,default,reserve (no harvest),2055,68.363,38.039,122.21,96.29,124
+ecoregion,Northern Piedmont,default,reserve (no harvest),2080,90.715,54.747,138.706,136.69,124
+ecoregion,Northern Piedmont,default,reserve (no harvest),2105,102.542,60.121,157.247,160.65,124
+ecoregion,Northern Piedmont,default,reserve (no harvest),2125,108.522,68.839,171.037,171.71,124
+ecoregion,Northern Piedmont,default,managed (harvest),2030,33.482,15.739,59.106,40.39,124
+ecoregion,Northern Piedmont,default,managed (harvest),2055,51.604,31.07,81.983,75.69,124
+ecoregion,Northern Piedmont,default,managed (harvest),2080,47.816,30.303,72.687,77.21,124
+ecoregion,Northern Piedmont,default,managed (harvest),2105,35.353,22.932,52.61,61.58,124
+ecoregion,Northern Piedmont,default,managed (harvest),2125,26.956,18.491,36.656,47.43,124
+ecoregion,Northwestern Glaciated Plains,default,reserve (no harvest),2030,1.418,0.564,2.445,23.3,18
+ecoregion,Northwestern Glaciated Plains,default,reserve (no harvest),2055,3.157,1.298,4.954,41.08,18
+ecoregion,Northwestern Glaciated Plains,default,reserve (no harvest),2080,4.954,2.176,8.076,59.14,18
+ecoregion,Northwestern Glaciated Plains,default,reserve (no harvest),2105,6.941,3.528,10.697,80.55,18
+ecoregion,Northwestern Glaciated Plains,default,reserve (no harvest),2125,8.506,3.05,13.48,98.14,18
+ecoregion,Northwestern Glaciated Plains,default,managed (harvest),2030,1.418,0.59,2.532,23.3,18
+ecoregion,Northwestern Glaciated Plains,default,managed (harvest),2055,1.808,0.63,2.946,20.81,18
+ecoregion,Northwestern Glaciated Plains,default,managed (harvest),2080,1.955,0.749,3.727,20.75,18
+ecoregion,Northwestern Glaciated Plains,default,managed (harvest),2105,2.223,0.709,3.676,24.39,18
+ecoregion,Northwestern Glaciated Plains,default,managed (harvest),2125,2.227,0.764,3.859,25.33,18
+ecoregion,Northwestern Great Plains,default,reserve (no harvest),2030,10.687,8.253,12.714,12.14,337
+ecoregion,Northwestern Great Plains,default,reserve (no harvest),2055,40.232,31.012,54.112,32.07,337
+ecoregion,Northwestern Great Plains,default,reserve (no harvest),2080,77.026,56.415,106.267,53.35,337
+ecoregion,Northwestern Great Plains,default,reserve (no harvest),2105,115.043,80.344,157.561,73.14,337
+ecoregion,Northwestern Great Plains,default,reserve (no harvest),2125,144.529,98.786,215.391,87.46,337
+ecoregion,Northwestern Great Plains,default,managed (harvest),2030,10.687,8.364,12.979,12.14,337
+ecoregion,Northwestern Great Plains,default,managed (harvest),2055,31.445,21.796,41.442,21.93,337
+ecoregion,Northwestern Great Plains,default,managed (harvest),2080,42.882,27.252,62.73,25.11,337
+ecoregion,Northwestern Great Plains,default,managed (harvest),2105,46.944,30.682,69.77,24.36,337
+ecoregion,Northwestern Great Plains,default,managed (harvest),2125,47.222,31.532,71.45,22.84,337
+ecoregion,Ouachita Mountains,default,reserve (no harvest),2030,79.286,68.778,92.403,43.63,422
+ecoregion,Ouachita Mountains,default,reserve (no harvest),2055,183.616,157.761,207.455,99.89,422
+ecoregion,Ouachita Mountains,default,reserve (no harvest),2080,256.896,225.246,288.382,139.46,422
+ecoregion,Ouachita Mountains,default,reserve (no harvest),2105,302.37,258.854,338.198,164.08,422
+ecoregion,Ouachita Mountains,default,reserve (no harvest),2125,323.146,280.208,370.202,175.62,422
+ecoregion,Ouachita Mountains,default,managed (harvest),2030,79.286,68.342,88.522,43.63,422
+ecoregion,Ouachita Mountains,default,managed (harvest),2055,142.017,125.519,162.012,77.03,422
+ecoregion,Ouachita Mountains,default,managed (harvest),2080,141.115,119.142,162.496,76.35,422
+ecoregion,Ouachita Mountains,default,managed (harvest),2105,113.051,97.06,129.544,61.14,422
+ecoregion,Ouachita Mountains,default,managed (harvest),2125,86.823,74.797,101.303,47.21,422
+ecoregion,Ozark Highlands,default,reserve (no harvest),2030,292.482,272.182,318.352,49.96,1503
+ecoregion,Ozark Highlands,default,reserve (no harvest),2055,605.24,563.609,649.868,104.83,1503
+ecoregion,Ozark Highlands,default,reserve (no harvest),2080,844.444,797.195,913.256,146.12,1503
+ecoregion,Ozark Highlands,default,reserve (no harvest),2105,1008.833,948.248,1094.56,174.4,1503
+ecoregion,Ozark Highlands,default,reserve (no harvest),2125,1093.631,1018.987,1178.895,189.03,1503
+ecoregion,Ozark Highlands,default,managed (harvest),2030,292.482,267.14,323.16,49.96,1503
+ecoregion,Ozark Highlands,default,managed (harvest),2055,454.031,427.635,489.743,78.98,1503
+ecoregion,Ozark Highlands,default,managed (harvest),2080,458.587,429.346,491.575,79.42,1503
+ecoregion,Ozark Highlands,default,managed (harvest),2105,385.883,356.472,421.47,66.62,1503
+ecoregion,Ozark Highlands,default,managed (harvest),2125,311.032,290.229,339.09,53.68,1503
+ecoregion,Piedmont,default,reserve (no harvest),2030,349.385,302.421,391.622,53.9,1540
+ecoregion,Piedmont,default,reserve (no harvest),2055,694.841,615.073,769.063,108.04,1540
+ecoregion,Piedmont,default,reserve (no harvest),2080,932.994,837.382,1049.991,145.34,1540
+ecoregion,Piedmont,default,reserve (no harvest),2105,1082.675,979.241,1193.309,168.32,1540
+ecoregion,Piedmont,default,reserve (no harvest),2125,1161.517,1028.453,1291.905,180.29,1540
+ecoregion,Piedmont,default,managed (harvest),2030,349.385,310.314,396.673,53.9,1540
+ecoregion,Piedmont,default,managed (harvest),2055,501.254,455.247,564.101,77.69,1540
+ecoregion,Piedmont,default,managed (harvest),2080,461.108,411.608,517.459,71.23,1540
+ecoregion,Piedmont,default,managed (harvest),2105,356.01,319.287,399.129,54.32,1540
+ecoregion,Piedmont,default,managed (harvest),2125,278.655,241.844,318.193,42.2,1540
+ecoregion,Ridge and Valley,default,reserve (no harvest),2030,257.397,232.273,284.808,42.79,1311
+ecoregion,Ridge and Valley,default,reserve (no harvest),2055,548.066,495.53,599.936,98.67,1311
+ecoregion,Ridge and Valley,default,reserve (no harvest),2080,754.496,686.389,820.664,139.53,1311
+ecoregion,Ridge and Valley,default,reserve (no harvest),2105,887.515,810.913,970.369,166.07,1311
+ecoregion,Ridge and Valley,default,reserve (no harvest),2125,952.033,869.613,1036.925,179.04,1311
+ecoregion,Ridge and Valley,default,managed (harvest),2030,257.397,225.044,284.653,42.79,1311
+ecoregion,Ridge and Valley,default,managed (harvest),2055,409.01,377.398,457.586,75.47,1311
+ecoregion,Ridge and Valley,default,managed (harvest),2080,395.139,357.2,434.095,75.54,1311
+ecoregion,Ridge and Valley,default,managed (harvest),2105,316.626,290.147,346.493,61.49,1311
+ecoregion,Ridge and Valley,default,managed (harvest),2125,246.212,223.413,266.907,48.13,1311
+ecoregion,Sierra Nevada,default,reserve (no harvest),2030,38.247,32.812,44.359,28.64,516
+ecoregion,Sierra Nevada,default,reserve (no harvest),2055,158.7,139.478,181.569,100.88,516
+ecoregion,Sierra Nevada,default,reserve (no harvest),2080,302.3,259.639,351.275,184.12,516
+ecoregion,Sierra Nevada,default,reserve (no harvest),2105,419.951,366.434,492.302,253.56,516
+ecoregion,Sierra Nevada,default,reserve (no harvest),2125,492.585,429.2,560.512,297.37,516
+ecoregion,Sierra Nevada,default,managed (harvest),2030,38.247,32.441,44.537,28.64,516
+ecoregion,Sierra Nevada,default,managed (harvest),2055,120.951,104.206,138.266,72.71,516
+ecoregion,Sierra Nevada,default,managed (harvest),2080,145.521,121.557,166.91,84.64,516
+ecoregion,Sierra Nevada,default,managed (harvest),2105,120.464,105.238,137.995,71.34,516
+ecoregion,Sierra Nevada,default,managed (harvest),2125,99.077,85.25,116.223,59.58,516
+ecoregion,Snake River Plain,default,reserve (no harvest),2030,0.25,0.111,0.41,25.24,15
+ecoregion,Snake River Plain,default,reserve (no harvest),2055,0.752,0.221,1.461,51.87,15
+ecoregion,Snake River Plain,default,reserve (no harvest),2080,1.131,0.304,2.179,72.45,15
+ecoregion,Snake River Plain,default,reserve (no harvest),2105,1.437,0.408,2.714,88.87,15
+ecoregion,Snake River Plain,default,reserve (no harvest),2125,1.678,0.418,3.711,100.15,15
+ecoregion,Snake River Plain,default,managed (harvest),2030,0.25,0.104,0.417,25.24,15
+ecoregion,Snake River Plain,default,managed (harvest),2055,0.52,0.124,1.132,28.61,15
+ecoregion,Snake River Plain,default,managed (harvest),2080,0.418,0.097,0.887,22.52,15
+ecoregion,Snake River Plain,default,managed (harvest),2105,0.34,0.083,0.673,17.79,15
+ecoregion,Snake River Plain,default,managed (harvest),2125,0.331,0.034,0.78,15.76,15
+ecoregion,Sonoran Desert,default,reserve (no harvest),2030,0.013,0.0,0.039,3.02,3
+ecoregion,Sonoran Desert,default,reserve (no harvest),2055,0.066,0.0,0.197,15.39,3
+ecoregion,Sonoran Desert,default,reserve (no harvest),2080,0.18,0.0,0.54,42.2,3
+ecoregion,Sonoran Desert,default,reserve (no harvest),2105,0.324,0.0,0.971,75.84,3
+ecoregion,Sonoran Desert,default,reserve (no harvest),2125,0.383,0.0,0.766,89.78,3
+ecoregion,Sonoran Desert,default,managed (harvest),2030,0.013,0.0,0.039,3.02,3
+ecoregion,Sonoran Desert,default,managed (harvest),2055,0.053,0.0,0.159,12.39,3
+ecoregion,Sonoran Desert,default,managed (harvest),2080,0.115,0.0,0.344,26.9,3
+ecoregion,Sonoran Desert,default,managed (harvest),2105,0.144,0.0,0.433,33.83,3
+ecoregion,Sonoran Desert,default,managed (harvest),2125,0.089,0.0,0.267,20.89,3
+ecoregion,South Central Plains,default,reserve (no harvest),2030,420.619,375.682,464.375,44.59,1911
+ecoregion,South Central Plains,default,reserve (no harvest),2055,918.481,833.062,993.254,99.06,1911
+ecoregion,South Central Plains,default,reserve (no harvest),2080,1224.927,1132.539,1349.057,132.82,1911
+ecoregion,South Central Plains,default,reserve (no harvest),2105,1374.789,1263.973,1504.831,149.67,1911
+ecoregion,South Central Plains,default,reserve (no harvest),2125,1440.231,1337.661,1546.986,157.18,1911
+ecoregion,South Central Plains,default,managed (harvest),2030,420.619,382.749,468.426,44.59,1911
+ecoregion,South Central Plains,default,managed (harvest),2055,653.801,592.435,713.561,71.02,1911
+ecoregion,South Central Plains,default,managed (harvest),2080,554.282,509.139,595.07,60.63,1911
+ecoregion,South Central Plains,default,managed (harvest),2105,365.867,337.465,396.802,40.42,1911
+ecoregion,South Central Plains,default,managed (harvest),2125,258.431,233.564,280.209,28.61,1911
+ecoregion,Southeastern Plains,default,reserve (no harvest),2030,1048.687,976.259,1113.023,50.83,3519
+ecoregion,Southeastern Plains,default,reserve (no harvest),2055,2111.087,1985.449,2255.715,104.5,3519
+ecoregion,Southeastern Plains,default,reserve (no harvest),2080,2806.214,2648.273,3000.512,140.21,3519
+ecoregion,Southeastern Plains,default,reserve (no harvest),2105,3187.043,2977.676,3359.903,159.88,3519
+ecoregion,Southeastern Plains,default,reserve (no harvest),2125,3369.989,3140.76,3556.132,169.49,3519
+ecoregion,Southeastern Plains,default,managed (harvest),2030,1048.687,975.698,1130.248,50.83,3519
+ecoregion,Southeastern Plains,default,managed (harvest),2055,1510.977,1429.648,1605.512,75.14,3519
+ecoregion,Southeastern Plains,default,managed (harvest),2080,1344.977,1262.807,1422.777,67.61,3519
+ecoregion,Southeastern Plains,default,managed (harvest),2105,966.12,905.452,1032.171,48.78,3519
+ecoregion,Southeastern Plains,default,managed (harvest),2125,718.179,663.742,772.454,36.51,3519
+ecoregion,Southeastern Wisconsin Till Plains,default,reserve (no harvest),2030,21.719,15.219,30.169,45.31,103
+ecoregion,Southeastern Wisconsin Till Plains,default,reserve (no harvest),2055,50.768,35.29,64.786,101.13,103
+ecoregion,Southeastern Wisconsin Till Plains,default,reserve (no harvest),2080,70.114,53.181,89.971,138.88,103
+ecoregion,Southeastern Wisconsin Till Plains,default,reserve (no harvest),2105,81.608,62.234,106.621,162.51,103
+ecoregion,Southeastern Wisconsin Till Plains,default,reserve (no harvest),2125,87.684,67.093,110.01,175.49,103
+ecoregion,Southeastern Wisconsin Till Plains,default,managed (harvest),2030,21.719,14.842,28.708,45.31,103
+ecoregion,Southeastern Wisconsin Till Plains,default,managed (harvest),2055,42.501,31.974,54.378,84.18,103
+ecoregion,Southeastern Wisconsin Till Plains,default,managed (harvest),2080,45.793,35.435,59.177,90.51,103
+ecoregion,Southeastern Wisconsin Till Plains,default,managed (harvest),2105,40.068,29.849,48.607,80.49,103
+ecoregion,Southeastern Wisconsin Till Plains,default,managed (harvest),2125,34.136,26.017,43.094,69.6,103
+ecoregion,Southern Coastal Plain,default,reserve (no harvest),2030,249.922,205.858,297.849,49.8,1099
+ecoregion,Southern Coastal Plain,default,reserve (no harvest),2055,554.148,474.373,634.997,112.26,1099
+ecoregion,Southern Coastal Plain,default,reserve (no harvest),2080,724.686,601.362,823.836,148.67,1099
+ecoregion,Southern Coastal Plain,default,reserve (no harvest),2105,800.361,690.612,905.394,165.53,1099
+ecoregion,Southern Coastal Plain,default,reserve (no harvest),2125,829.066,728.45,954.743,171.98,1099
+ecoregion,Southern Coastal Plain,default,managed (harvest),2030,249.922,208.608,296.524,49.8,1099
+ecoregion,Southern Coastal Plain,default,managed (harvest),2055,357.73,315.288,408.596,73.5,1099
+ecoregion,Southern Coastal Plain,default,managed (harvest),2080,247.757,220.601,285.255,52.99,1099
+ecoregion,Southern Coastal Plain,default,managed (harvest),2105,135.414,116.139,154.997,30.29,1099
+ecoregion,Southern Coastal Plain,default,managed (harvest),2125,88.386,72.975,102.492,19.83,1099
+ecoregion,Southern Florida Coastal Plain,default,reserve (no harvest),2030,23.305,14.748,35.966,57.8,63
+ecoregion,Southern Florida Coastal Plain,default,reserve (no harvest),2055,47.603,31.196,67.516,121.82,63
+ecoregion,Southern Florida Coastal Plain,default,reserve (no harvest),2080,54.59,36.022,74.235,140.62,63
+ecoregion,Southern Florida Coastal Plain,default,reserve (no harvest),2105,52.807,32.584,75.437,139.19,63
+ecoregion,Southern Florida Coastal Plain,default,reserve (no harvest),2125,50.934,31.052,72.651,134.2,63
+ecoregion,Southern Florida Coastal Plain,default,managed (harvest),2030,23.305,15.373,33.145,57.8,63
+ecoregion,Southern Florida Coastal Plain,default,managed (harvest),2055,27.351,17.569,38.388,71.6,63
+ecoregion,Southern Florida Coastal Plain,default,managed (harvest),2080,10.758,6.149,15.862,28.73,63
+ecoregion,Southern Florida Coastal Plain,default,managed (harvest),2105,2.934,1.068,5.319,9.76,63
+ecoregion,Southern Florida Coastal Plain,default,managed (harvest),2125,1.465,0.461,2.769,5.0,63
+ecoregion,Southern Michigan/Northern Indiana Drift Plains,default,reserve (no harvest),2030,28.753,18.739,44.754,43.4,242
+ecoregion,Southern Michigan/Northern Indiana Drift Plains,default,reserve (no harvest),2055,68.97,42.055,98.47,100.84,242
+ecoregion,Southern Michigan/Northern Indiana Drift Plains,default,reserve (no harvest),2080,97.58,63.92,139.968,142.31,242
+ecoregion,Southern Michigan/Northern Indiana Drift Plains,default,reserve (no harvest),2105,115.122,74.1,163.585,169.85,242
+ecoregion,Southern Michigan/Northern Indiana Drift Plains,default,reserve (no harvest),2125,123.625,82.661,175.779,183.47,242
+ecoregion,Southern Michigan/Northern Indiana Drift Plains,default,managed (harvest),2030,28.753,16.7,42.517,43.4,242
+ecoregion,Southern Michigan/Northern Indiana Drift Plains,default,managed (harvest),2055,54.948,39.432,74.504,83.1,242
+ecoregion,Southern Michigan/Northern Indiana Drift Plains,default,managed (harvest),2080,58.947,41.682,83.759,90.98,242
+ecoregion,Southern Michigan/Northern Indiana Drift Plains,default,managed (harvest),2105,50.659,36.005,70.744,82.01,242
+ecoregion,Southern Michigan/Northern Indiana Drift Plains,default,managed (harvest),2125,41.679,28.868,52.41,69.47,242
+ecoregion,Southern Rockies,default,reserve (no harvest),2030,173.228,152.845,200.468,24.11,2170
+ecoregion,Southern Rockies,default,reserve (no harvest),2055,392.9,363.304,424.845,53.93,2170
+ecoregion,Southern Rockies,default,reserve (no harvest),2080,607.399,555.882,650.797,83.22,2170
+ecoregion,Southern Rockies,default,reserve (no harvest),2105,773.51,716.938,841.82,105.75,2170
+ecoregion,Southern Rockies,default,reserve (no harvest),2125,857.0,782.922,927.787,116.95,2170
+ecoregion,Southern Rockies,default,managed (harvest),2030,173.228,151.694,198.646,24.11,2170
+ecoregion,Southern Rockies,default,managed (harvest),2055,248.357,230.247,268.822,34.08,2170
+ecoregion,Southern Rockies,default,managed (harvest),2080,265.971,246.101,287.456,36.36,2170
+ecoregion,Southern Rockies,default,managed (harvest),2105,226.108,208.138,245.435,30.7,2170
+ecoregion,Southern Rockies,default,managed (harvest),2125,172.21,157.983,188.168,23.23,2170
+ecoregion,Southern Texas Plains/Interior Plains and Hills with Xerophytic Shrub and Oak Forest,default,reserve (no harvest),2030,1.199,0.36,2.335,28.29,10
+ecoregion,Southern Texas Plains/Interior Plains and Hills with Xerophytic Shrub and Oak Forest,default,reserve (no harvest),2055,4.886,1.47,8.608,100.17,10
+ecoregion,Southern Texas Plains/Interior Plains and Hills with Xerophytic Shrub and Oak Forest,default,reserve (no harvest),2080,9.784,3.323,17.331,186.13,10
+ecoregion,Southern Texas Plains/Interior Plains and Hills with Xerophytic Shrub and Oak Forest,default,reserve (no harvest),2105,13.45,4.542,23.773,253.9,10
+ecoregion,Southern Texas Plains/Interior Plains and Hills with Xerophytic Shrub and Oak Forest,default,reserve (no harvest),2125,15.014,4.243,26.817,287.12,10
+ecoregion,Southern Texas Plains/Interior Plains and Hills with Xerophytic Shrub and Oak Forest,default,managed (harvest),2030,1.199,0.413,2.238,28.29,10
+ecoregion,Southern Texas Plains/Interior Plains and Hills with Xerophytic Shrub and Oak Forest,default,managed (harvest),2055,3.976,0.622,6.955,78.7,10
+ecoregion,Southern Texas Plains/Interior Plains and Hills with Xerophytic Shrub and Oak Forest,default,managed (harvest),2080,5.857,1.595,10.609,104.93,10
+ecoregion,Southern Texas Plains/Interior Plains and Hills with Xerophytic Shrub and Oak Forest,default,managed (harvest),2105,5.077,1.604,8.671,93.08,10
+ecoregion,Southern Texas Plains/Interior Plains and Hills with Xerophytic Shrub and Oak Forest,default,managed (harvest),2125,3.559,1.287,6.988,69.78,10
+ecoregion,Southern and Baja California Pine-Oak Mountains,default,reserve (no harvest),2030,0.198,0.068,0.405,13.59,28
+ecoregion,Southern and Baja California Pine-Oak Mountains,default,reserve (no harvest),2055,1.065,0.273,2.116,37.58,28
+ecoregion,Southern and Baja California Pine-Oak Mountains,default,reserve (no harvest),2080,1.839,0.504,3.794,60.33,28
+ecoregion,Southern and Baja California Pine-Oak Mountains,default,reserve (no harvest),2105,2.441,0.566,5.029,81.74,28
+ecoregion,Southern and Baja California Pine-Oak Mountains,default,reserve (no harvest),2125,2.824,0.67,5.641,97.56,28
+ecoregion,Southern and Baja California Pine-Oak Mountains,default,managed (harvest),2030,0.198,0.06,0.429,13.59,28
+ecoregion,Southern and Baja California Pine-Oak Mountains,default,managed (harvest),2055,0.87,0.147,1.684,24.51,28
+ecoregion,Southern and Baja California Pine-Oak Mountains,default,managed (harvest),2080,0.78,0.13,1.585,22.92,28
+ecoregion,Southern and Baja California Pine-Oak Mountains,default,managed (harvest),2105,0.608,0.149,1.306,21.57,28
+ecoregion,Southern and Baja California Pine-Oak Mountains,default,managed (harvest),2125,0.508,0.12,0.987,20.26,28
+ecoregion,Southwestern Appalachians,default,reserve (no harvest),2030,126.541,105.71,151.625,56.39,438
+ecoregion,Southwestern Appalachians,default,reserve (no harvest),2055,244.848,210.423,294.348,113.48,438
+ecoregion,Southwestern Appalachians,default,reserve (no harvest),2080,333.876,268.875,390.55,154.9,438
+ecoregion,Southwestern Appalachians,default,reserve (no harvest),2105,389.502,327.456,461.497,180.62,438
+ecoregion,Southwestern Appalachians,default,reserve (no harvest),2125,418.91,347.752,507.923,193.68,438
+ecoregion,Southwestern Appalachians,default,managed (harvest),2030,126.541,106.484,152.139,56.39,438
+ecoregion,Southwestern Appalachians,default,managed (harvest),2055,179.623,153.258,211.902,84.28,438
+ecoregion,Southwestern Appalachians,default,managed (harvest),2080,176.365,143.812,202.507,82.24,438
+ecoregion,Southwestern Appalachians,default,managed (harvest),2105,141.855,117.645,171.715,65.76,438
+ecoregion,Southwestern Appalachians,default,managed (harvest),2125,113.641,90.124,136.239,52.0,438
+ecoregion,Southwestern Tablelands,default,reserve (no harvest),2030,1.577,0.735,2.822,4.99,208
+ecoregion,Southwestern Tablelands,default,reserve (no harvest),2055,4.529,2.377,7.01,15.81,208
+ecoregion,Southwestern Tablelands,default,reserve (no harvest),2080,7.555,3.492,11.54,29.37,208
+ecoregion,Southwestern Tablelands,default,reserve (no harvest),2105,9.786,5.629,14.78,40.65,208
+ecoregion,Southwestern Tablelands,default,reserve (no harvest),2125,10.891,5.373,17.829,46.55,208
+ecoregion,Southwestern Tablelands,default,managed (harvest),2030,1.577,0.736,2.592,4.99,208
+ecoregion,Southwestern Tablelands,default,managed (harvest),2055,3.298,1.745,5.454,12.02,208
+ecoregion,Southwestern Tablelands,default,managed (harvest),2080,3.863,1.96,5.718,16.6,208
+ecoregion,Southwestern Tablelands,default,managed (harvest),2105,3.307,1.627,5.061,15.62,208
+ecoregion,Southwestern Tablelands,default,managed (harvest),2125,2.539,1.346,4.13,12.36,208
+ecoregion,Strait of Georgia/Puget Lowland,default,reserve (no harvest),2030,15.561,5.261,27.903,64.61,28
+ecoregion,Strait of Georgia/Puget Lowland,default,reserve (no harvest),2055,51.306,19.035,103.844,199.72,28
+ecoregion,Strait of Georgia/Puget Lowland,default,reserve (no harvest),2080,80.861,36.299,151.41,327.79,28
+ecoregion,Strait of Georgia/Puget Lowland,default,reserve (no harvest),2105,99.245,44.908,169.961,413.05,28
+ecoregion,Strait of Georgia/Puget Lowland,default,reserve (no harvest),2125,107.944,50.837,186.321,452.23,28
+ecoregion,Strait of Georgia/Puget Lowland,default,managed (harvest),2030,15.561,6.822,26.175,64.61,28
+ecoregion,Strait of Georgia/Puget Lowland,default,managed (harvest),2055,39.657,14.732,70.645,151.35,28
+ecoregion,Strait of Georgia/Puget Lowland,default,managed (harvest),2080,39.525,15.197,67.029,166.12,28
+ecoregion,Strait of Georgia/Puget Lowland,default,managed (harvest),2105,28.321,14.438,46.044,127.03,28
+ecoregion,Strait of Georgia/Puget Lowland,default,managed (harvest),2125,20.059,9.218,32.563,90.14,28
+ecoregion,Texas Blackland Prairies,default,reserve (no harvest),2030,6.551,4.514,9.11,41.81,51
+ecoregion,Texas Blackland Prairies,default,reserve (no harvest),2055,18.16,13.031,24.61,95.22,51
+ecoregion,Texas Blackland Prairies,default,reserve (no harvest),2080,26.812,17.415,38.162,129.26,51
+ecoregion,Texas Blackland Prairies,default,reserve (no harvest),2105,31.872,21.044,46.961,143.98,51
+ecoregion,Texas Blackland Prairies,default,reserve (no harvest),2125,33.598,20.21,46.21,148.96,51
+ecoregion,Texas Blackland Prairies,default,managed (harvest),2030,6.551,4.69,8.92,41.81,51
+ecoregion,Texas Blackland Prairies,default,managed (harvest),2055,13.189,7.987,18.135,63.48,51
+ecoregion,Texas Blackland Prairies,default,managed (harvest),2080,11.832,7.168,17.019,49.35,51
+ecoregion,Texas Blackland Prairies,default,managed (harvest),2105,7.914,3.682,14.184,26.85,51
+ecoregion,Texas Blackland Prairies,default,managed (harvest),2125,4.854,2.286,8.467,15.77,51
+ecoregion,Unknown,default,reserve (no harvest),2030,1141.974,1066.922,1243.89,49.87,4824
+ecoregion,Unknown,default,reserve (no harvest),2055,2407.938,2242.437,2586.653,109.38,4824
+ecoregion,Unknown,default,reserve (no harvest),2080,3373.013,3148.728,3626.421,156.19,4824
+ecoregion,Unknown,default,reserve (no harvest),2105,4028.151,3751.14,4356.951,188.46,4824
+ecoregion,Unknown,default,reserve (no harvest),2125,4384.149,4097.101,4695.626,206.11,4824
+ecoregion,Unknown,default,managed (harvest),2030,1141.974,1068.047,1238.199,49.87,4824
+ecoregion,Unknown,default,managed (harvest),2055,1722.219,1618.635,1872.459,78.77,4824
+ecoregion,Unknown,default,managed (harvest),2080,1638.519,1553.004,1749.11,77.63,4824
+ecoregion,Unknown,default,managed (harvest),2105,1302.24,1218.053,1400.368,62.96,4824
+ecoregion,Unknown,default,managed (harvest),2125,1033.912,970.084,1112.901,50.42,4824
+ecoregion,Wasatch and Uinta Mountains,default,reserve (no harvest),2030,30.716,25.472,38.416,17.14,619
+ecoregion,Wasatch and Uinta Mountains,default,reserve (no harvest),2055,58.789,51.198,67.515,31.91,619
+ecoregion,Wasatch and Uinta Mountains,default,reserve (no harvest),2080,85.34,75.041,95.042,45.74,619
+ecoregion,Wasatch and Uinta Mountains,default,reserve (no harvest),2105,109.606,95.728,123.507,57.84,619
+ecoregion,Wasatch and Uinta Mountains,default,reserve (no harvest),2125,127.053,111.459,144.107,66.18,619
+ecoregion,Wasatch and Uinta Mountains,default,managed (harvest),2030,30.716,25.932,36.583,17.14,619
+ecoregion,Wasatch and Uinta Mountains,default,managed (harvest),2055,42.968,37.043,49.332,22.96,619
+ecoregion,Wasatch and Uinta Mountains,default,managed (harvest),2080,47.469,41.502,53.494,24.88,619
+ecoregion,Wasatch and Uinta Mountains,default,managed (harvest),2105,47.352,41.154,53.243,24.08,619
+ecoregion,Wasatch and Uinta Mountains,default,managed (harvest),2125,45.374,40.196,51.292,22.48,619
+ecoregion,Water,default,reserve (no harvest),2030,17.695,14.258,21.001,63.6,172
+ecoregion,Water,default,reserve (no harvest),2055,32.544,26.309,38.51,116.7,172
+ecoregion,Water,default,reserve (no harvest),2080,43.368,35.135,52.344,154.34,172
+ecoregion,Water,default,reserve (no harvest),2105,51.588,43.309,61.9,182.7,172
+ecoregion,Water,default,reserve (no harvest),2125,56.079,45.608,69.688,198.84,172
+ecoregion,Water,default,managed (harvest),2030,17.695,14.772,21.831,63.6,172
+ecoregion,Water,default,managed (harvest),2055,25.904,22.297,30.566,92.55,172
+ecoregion,Water,default,managed (harvest),2080,27.011,21.84,32.252,95.07,172
+ecoregion,Water,default,managed (harvest),2105,25.113,21.022,29.967,87.4,172
+ecoregion,Water,default,managed (harvest),2125,22.075,17.967,26.493,77.04,172
+ecoregion,Western Allegheny Plateau,default,reserve (no harvest),2030,189.95,162.7,229.298,42.81,689
+ecoregion,Western Allegheny Plateau,default,reserve (no harvest),2055,414.832,366.025,487.345,100.33,689
+ecoregion,Western Allegheny Plateau,default,reserve (no harvest),2080,581.155,502.773,677.476,144.12,689
+ecoregion,Western Allegheny Plateau,default,reserve (no harvest),2105,696.821,598.764,802.167,174.57,689
+ecoregion,Western Allegheny Plateau,default,reserve (no harvest),2125,758.672,646.772,875.681,190.18,689
+ecoregion,Western Allegheny Plateau,default,managed (harvest),2030,189.95,158.9,221.47,42.81,689
+ecoregion,Western Allegheny Plateau,default,managed (harvest),2055,287.124,252.667,323.461,72.18,689
+ecoregion,Western Allegheny Plateau,default,managed (harvest),2080,262.359,231.254,298.397,68.74,689
+ecoregion,Western Allegheny Plateau,default,managed (harvest),2105,205.585,178.313,239.111,54.77,689
+ecoregion,Western Allegheny Plateau,default,managed (harvest),2125,160.288,135.621,182.424,42.33,689
+ecoregion,Western Corn Belt Plains,default,reserve (no harvest),2030,20.864,13.886,29.345,40.36,95
+ecoregion,Western Corn Belt Plains,default,reserve (no harvest),2055,46.339,34.909,59.643,91.11,95
+ecoregion,Western Corn Belt Plains,default,reserve (no harvest),2080,64.522,48.664,83.235,126.06,95
+ecoregion,Western Corn Belt Plains,default,reserve (no harvest),2105,75.317,58.307,94.506,147.08,95
+ecoregion,Western Corn Belt Plains,default,reserve (no harvest),2125,80.165,61.829,104.167,156.85,95
+ecoregion,Western Corn Belt Plains,default,managed (harvest),2030,20.864,13.907,29.66,40.36,95
+ecoregion,Western Corn Belt Plains,default,managed (harvest),2055,35.847,27.319,46.099,70.11,95
+ecoregion,Western Corn Belt Plains,default,managed (harvest),2080,35.153,26.677,44.798,68.09,95
+ecoregion,Western Corn Belt Plains,default,managed (harvest),2105,27.467,20.794,34.206,53.64,95
+ecoregion,Western Corn Belt Plains,default,managed (harvest),2125,20.91,16.125,27.042,41.69,95
+ecoregion,Western Gulf Coastal Plain,default,reserve (no harvest),2030,11.742,5.594,18.386,49.42,62
+ecoregion,Western Gulf Coastal Plain,default,reserve (no harvest),2055,25.946,15.36,41.044,103.23,62
+ecoregion,Western Gulf Coastal Plain,default,reserve (no harvest),2080,34.174,16.501,55.965,137.41,62
+ecoregion,Western Gulf Coastal Plain,default,reserve (no harvest),2105,37.429,21.026,55.719,152.09,62
+ecoregion,Western Gulf Coastal Plain,default,reserve (no harvest),2125,38.426,20.677,56.377,157.61,62
+ecoregion,Western Gulf Coastal Plain,default,managed (harvest),2030,11.742,6.541,18.524,49.42,62
+ecoregion,Western Gulf Coastal Plain,default,managed (harvest),2055,17.932,10.154,26.559,71.16,62
+ecoregion,Western Gulf Coastal Plain,default,managed (harvest),2080,14.096,8.767,21.22,58.64,62
+ecoregion,Western Gulf Coastal Plain,default,managed (harvest),2105,7.852,4.799,11.428,34.63,62
+ecoregion,Western Gulf Coastal Plain,default,managed (harvest),2125,4.632,2.779,6.554,22.03,62
+ecoregion,Willamette Valley,default,reserve (no harvest),2030,1.707,0.457,3.707,54.57,7
+ecoregion,Willamette Valley,default,reserve (no harvest),2055,7.381,1.451,16.746,191.48,7
+ecoregion,Willamette Valley,default,reserve (no harvest),2080,11.4,2.331,26.419,286.03,7
+ecoregion,Willamette Valley,default,reserve (no harvest),2105,13.41,3.044,29.707,335.47,7
+ecoregion,Willamette Valley,default,reserve (no harvest),2125,14.152,3.1,30.846,361.12,7
+ecoregion,Willamette Valley,default,managed (harvest),2030,1.707,0.426,3.664,54.57,7
+ecoregion,Willamette Valley,default,managed (harvest),2055,6.028,1.221,13.799,146.2,7
+ecoregion,Willamette Valley,default,managed (harvest),2080,5.322,0.869,12.633,121.24,7
+ecoregion,Willamette Valley,default,managed (harvest),2105,3.204,0.515,7.793,72.39,7
+ecoregion,Willamette Valley,default,managed (harvest),2125,1.96,0.486,4.181,51.13,7
+ecoregion,Wyoming Basin,default,reserve (no harvest),2030,6.264,3.83,9.883,18.27,139
+ecoregion,Wyoming Basin,default,reserve (no harvest),2055,15.27,8.554,23.535,39.7,139
+ecoregion,Wyoming Basin,default,reserve (no harvest),2080,22.816,11.962,38.826,58.2,139
+ecoregion,Wyoming Basin,default,reserve (no harvest),2105,27.44,14.556,42.621,73.16,139
+ecoregion,Wyoming Basin,default,reserve (no harvest),2125,30.369,16.767,45.828,82.27,139
+ecoregion,Wyoming Basin,default,managed (harvest),2030,6.264,3.64,9.307,18.27,139
+ecoregion,Wyoming Basin,default,managed (harvest),2055,8.911,4.176,14.437,20.89,139
+ecoregion,Wyoming Basin,default,managed (harvest),2080,7.25,3.733,12.721,17.87,139
+ecoregion,Wyoming Basin,default,managed (harvest),2105,4.394,2.91,6.318,14.45,139
+ecoregion,Wyoming Basin,default,managed (harvest),2125,3.711,2.445,5.448,11.66,139
+state,AL,default,reserve (no harvest),2030,507.389,460.967,557.753,53.74,1892
+state,AL,default,reserve (no harvest),2055,999.514,929.319,1093.196,108.4,1892
+state,AL,default,reserve (no harvest),2080,1327.473,1225.021,1430.639,144.69,1892
+state,AL,default,reserve (no harvest),2105,1514.57,1402.695,1645.412,165.43,1892
+state,AL,default,reserve (no harvest),2125,1603.01,1468.663,1724.95,175.28,1892
+state,AL,default,managed (harvest),2030,507.389,466.289,563.206,53.74,1892
+state,AL,default,managed (harvest),2055,723.945,676.289,779.125,79.21,1892
+state,AL,default,managed (harvest),2080,658.753,612.623,706.387,72.49,1892
+state,AL,default,managed (harvest),2105,488.083,447.024,532.83,53.86,1892
+state,AL,default,managed (harvest),2125,364.89,333.166,400.842,40.37,1892
+state,AR,default,reserve (no harvest),2030,305.473,274.56,339.595,45.01,1430
+state,AR,default,reserve (no harvest),2055,680.646,626.663,746.776,101.92,1430
+state,AR,default,reserve (no harvest),2080,923.278,841.022,1007.592,139.0,1430
+state,AR,default,reserve (no harvest),2105,1060.77,975.804,1151.35,159.86,1430
+state,AR,default,reserve (no harvest),2125,1123.551,1033.866,1209.438,169.54,1430
+state,AR,default,managed (harvest),2030,305.473,276.44,333.786,45.01,1430
+state,AR,default,managed (harvest),2055,531.212,481.134,578.074,79.9,1430
+state,AR,default,managed (harvest),2080,513.979,477.333,555.05,77.89,1430
+state,AR,default,managed (harvest),2105,400.302,365.021,431.651,60.66,1430
+state,AR,default,managed (harvest),2125,306.879,283.518,329.165,46.62,1430
+state,AZ,default,reserve (no harvest),2030,21.441,16.247,26.228,4.95,1140
+state,AZ,default,reserve (no harvest),2055,56.459,44.126,70.71,12.43,1140
+state,AZ,default,reserve (no harvest),2080,95.159,69.017,123.763,19.93,1140
+state,AZ,default,reserve (no harvest),2105,133.673,94.847,176.786,26.22,1140
+state,AZ,default,reserve (no harvest),2125,158.583,103.13,230.717,29.43,1140
+state,AZ,default,managed (harvest),2030,21.441,16.844,26.708,4.95,1140
+state,AZ,default,managed (harvest),2055,45.947,35.12,58.975,10.01,1140
+state,AZ,default,managed (harvest),2080,62.139,45.374,84.578,12.61,1140
+state,AZ,default,managed (harvest),2105,70.227,44.353,110.827,12.73,1140
+state,AZ,default,managed (harvest),2125,67.619,38.383,115.6,10.96,1140
+state,CA,default,reserve (no harvest),2030,177.602,156.657,200.234,42.47,1657
+state,CA,default,reserve (no harvest),2055,638.407,571.071,709.547,127.74,1657
+state,CA,default,reserve (no harvest),2080,1104.459,981.912,1215.311,213.14,1657
+state,CA,default,reserve (no harvest),2105,1457.565,1306.347,1629.671,278.91,1657
+state,CA,default,reserve (no harvest),2125,1681.944,1522.315,1864.994,321.07,1657
+state,CA,default,managed (harvest),2030,177.602,156.317,199.791,42.47,1657
+state,CA,default,managed (harvest),2055,462.029,412.81,510.629,85.57,1657
+state,CA,default,managed (harvest),2080,469.433,417.537,530.494,86.02,1657
+state,CA,default,managed (harvest),2105,357.707,316.141,404.438,66.64,1657
+state,CA,default,managed (harvest),2125,299.448,257.355,338.185,56.09,1657
+state,CO,default,reserve (no harvest),2030,126.718,114.205,140.428,20.72,1861
+state,CO,default,reserve (no harvest),2055,293.652,269.478,319.973,46.78,1861
+state,CO,default,reserve (no harvest),2080,458.058,415.855,495.109,72.64,1861
+state,CO,default,reserve (no harvest),2105,585.698,543.933,627.334,92.51,1861
+state,CO,default,reserve (no harvest),2125,649.303,598.286,702.886,102.37,1861
+state,CO,default,managed (harvest),2030,126.718,114.678,137.768,20.72,1861
+state,CO,default,managed (harvest),2055,188.479,174.021,202.787,29.58,1861
+state,CO,default,managed (harvest),2080,196.458,180.857,210.635,30.89,1861
+state,CO,default,managed (harvest),2105,161.063,149.08,174.428,25.13,1861
+state,CO,default,managed (harvest),2125,117.755,107.034,128.545,18.33,1861
+state,CT,default,reserve (no harvest),2030,17.651,13.192,22.403,39.85,106
+state,CT,default,reserve (no harvest),2055,47.496,34.013,62.622,98.16,106
+state,CT,default,reserve (no harvest),2080,66.718,51.925,89.229,140.51,106
+state,CT,default,reserve (no harvest),2105,80.263,62.687,103.983,170.26,106
+state,CT,default,reserve (no harvest),2125,87.348,68.976,111.35,185.12,106
+state,CT,default,managed (harvest),2030,17.651,13.5,23.01,39.85,106
+state,CT,default,managed (harvest),2055,37.543,27.405,51.634,75.69,106
+state,CT,default,managed (harvest),2080,35.594,27.08,48.924,75.35,106
+state,CT,default,managed (harvest),2105,29.067,22.328,36.078,62.61,106
+state,CT,default,managed (harvest),2125,23.039,17.633,27.971,49.23,106
+state,DE,default,reserve (no harvest),2030,18.668,11.601,28.071,50.15,48
+state,DE,default,reserve (no harvest),2055,48.179,31.625,67.514,115.52,48
+state,DE,default,reserve (no harvest),2080,69.559,43.351,97.134,156.68,48
+state,DE,default,reserve (no harvest),2105,82.684,44.592,123.855,179.88,48
+state,DE,default,reserve (no harvest),2125,89.861,52.953,136.578,192.47,48
+state,DE,default,managed (harvest),2030,18.668,11.869,28.239,50.15,48
+state,DE,default,managed (harvest),2055,35.551,21.722,51.569,81.6,48
+state,DE,default,managed (harvest),2080,32.883,20.217,48.299,67.57,48
+state,DE,default,managed (harvest),2105,23.764,11.838,35.126,45.06,48
+state,DE,default,managed (harvest),2125,18.081,9.871,26.95,33.26,48
+state,FL,default,reserve (no harvest),2030,279.643,242.059,323.556,49.29,1175
+state,FL,default,reserve (no harvest),2055,635.674,566.459,734.91,111.35,1175
+state,FL,default,reserve (no harvest),2080,839.248,732.688,935.439,147.15,1175
+state,FL,default,reserve (no harvest),2105,926.667,808.709,1106.685,163.27,1175
+state,FL,default,reserve (no harvest),2125,958.536,833.307,1071.216,169.27,1175
+state,FL,default,managed (harvest),2030,279.643,231.789,330.684,49.29,1175
+state,FL,default,managed (harvest),2055,392.667,346.241,448.091,68.52,1175
+state,FL,default,managed (harvest),2080,255.57,219.97,284.465,44.83,1175
+state,FL,default,managed (harvest),2105,126.993,107.928,147.219,23.04,1175
+state,FL,default,managed (harvest),2125,78.0,66.008,89.718,14.24,1175
+state,GA,default,reserve (no harvest),2030,383.183,336.654,427.969,46.92,1648
+state,GA,default,reserve (no harvest),2055,789.359,708.425,869.682,100.83,1648
+state,GA,default,reserve (no harvest),2080,1048.38,931.028,1162.318,136.49,1648
+state,GA,default,reserve (no harvest),2105,1185.259,1066.746,1312.21,155.74,1648
+state,GA,default,reserve (no harvest),2125,1249.927,1112.406,1374.416,164.86,1648
+state,GA,default,managed (harvest),2030,383.183,339.62,433.797,46.92,1648
+state,GA,default,managed (harvest),2055,533.137,484.519,587.354,69.46,1648
+state,GA,default,managed (harvest),2080,435.691,389.666,483.837,58.67,1648
+state,GA,default,managed (harvest),2105,282.324,250.313,310.998,38.82,1648
+state,GA,default,managed (harvest),2125,198.591,176.758,219.301,27.56,1648
+state,IA,default,reserve (no harvest),2030,38.185,28.91,50.561,40.13,141
+state,IA,default,reserve (no harvest),2055,86.816,68.95,102.585,93.65,141
+state,IA,default,reserve (no harvest),2080,121.538,96.949,152.417,131.32,141
+state,IA,default,reserve (no harvest),2105,142.643,114.573,171.775,154.34,141
+state,IA,default,reserve (no harvest),2125,152.24,123.004,188.202,164.4,141
+state,IA,default,managed (harvest),2030,38.185,29.646,48.525,40.13,141
+state,IA,default,managed (harvest),2055,64.967,52.373,80.371,70.69,141
+state,IA,default,managed (harvest),2080,62.518,50.297,75.365,67.91,141
+state,IA,default,managed (harvest),2105,47.853,39.807,56.295,52.08,141
+state,IA,default,managed (harvest),2125,35.584,28.614,43.232,38.57,141
+state,ID,default,reserve (no harvest),2030,137.106,126.016,149.014,25.32,1738
+state,ID,default,reserve (no harvest),2055,388.602,358.915,419.63,63.45,1738
+state,ID,default,reserve (no harvest),2080,591.109,545.45,644.789,94.88,1738
+state,ID,default,reserve (no harvest),2105,753.981,693.965,814.83,120.94,1738
+state,ID,default,reserve (no harvest),2125,859.194,787.259,920.353,137.93,1738
+state,ID,default,managed (harvest),2030,137.106,124.945,150.779,25.32,1738
+state,ID,default,managed (harvest),2055,263.692,237.36,284.449,40.47,1738
+state,ID,default,managed (harvest),2080,225.878,202.418,246.01,35.09,1738
+state,ID,default,managed (harvest),2105,182.997,168.976,201.279,29.24,1738
+state,ID,default,managed (harvest),2125,155.017,141.335,169.784,24.97,1738
+state,IL,default,reserve (no harvest),2030,65.326,49.204,80.493,42.8,264
+state,IL,default,reserve (no harvest),2055,146.668,113.696,179.203,97.68,264
+state,IL,default,reserve (no harvest),2080,204.099,164.802,266.036,136.79,264
+state,IL,default,reserve (no harvest),2105,239.042,188.385,307.165,161.38,264
+state,IL,default,reserve (no harvest),2125,254.485,205.719,324.744,172.42,264
+state,IL,default,managed (harvest),2030,65.326,50.897,83.899,42.8,264
+state,IL,default,managed (harvest),2055,106.094,84.392,136.828,71.09,264
+state,IL,default,managed (harvest),2080,97.63,73.867,126.7,66.06,264
+state,IL,default,managed (harvest),2105,71.935,56.946,88.017,49.61,264
+state,IL,default,managed (harvest),2125,51.671,40.263,65.52,36.1,264
+state,IN,default,reserve (no harvest),2030,128.558,101.929,164.547,37.47,531
+state,IN,default,reserve (no harvest),2055,270.824,216.393,322.333,91.26,531
+state,IN,default,reserve (no harvest),2080,373.955,313.429,450.276,133.49,531
+state,IN,default,reserve (no harvest),2105,441.382,361.519,535.115,161.81,531
+state,IN,default,reserve (no harvest),2125,477.903,392.877,584.17,176.18,531
+state,IN,default,managed (harvest),2030,128.558,100.433,159.418,37.47,531
+state,IN,default,managed (harvest),2055,182.06,144.631,220.348,65.39,531
+state,IN,default,managed (harvest),2080,159.486,129.155,185.976,62.48,531
+state,IN,default,managed (harvest),2105,116.795,96.682,142.984,47.68,531
+state,IN,default,managed (harvest),2125,88.802,72.507,107.222,35.73,531
+state,KS,default,reserve (no harvest),2030,21.997,13.524,32.232,38.93,86
+state,KS,default,reserve (no harvest),2055,46.944,31.985,64.315,92.01,86
+state,KS,default,reserve (no harvest),2080,65.371,48.004,87.819,130.03,86
+state,KS,default,reserve (no harvest),2105,79.724,62.32,105.735,157.08,86
+state,KS,default,reserve (no harvest),2125,87.498,62.927,116.286,169.74,86
+state,KS,default,managed (harvest),2030,21.997,13.232,32.334,38.93,86
+state,KS,default,managed (harvest),2055,27.004,19.841,33.115,56.72,86
+state,KS,default,managed (harvest),2080,20.952,14.824,27.286,43.33,86
+state,KS,default,managed (harvest),2105,16.312,10.885,22.484,31.1,86
+state,KS,default,managed (harvest),2125,12.257,8.5,17.181,21.41,86
+state,KY,default,reserve (no harvest),2030,332.276,300.56,370.429,48.79,975
+state,KY,default,reserve (no harvest),2055,671.453,604.584,741.45,107.25,975
+state,KY,default,reserve (no harvest),2080,941.084,855.169,1038.106,154.5,975
+state,KY,default,reserve (no harvest),2105,1110.331,1014.316,1221.491,184.51,975
+state,KY,default,reserve (no harvest),2125,1197.664,1086.462,1309.558,199.84,975
+state,KY,default,managed (harvest),2030,332.276,293.753,372.652,48.79,975
+state,KY,default,managed (harvest),2055,488.077,444.841,533.934,80.32,975
+state,KY,default,managed (harvest),2080,488.349,437.51,529.197,83.25,975
+state,KY,default,managed (harvest),2105,388.087,348.71,430.215,67.31,975
+state,KY,default,managed (harvest),2125,304.088,272.953,333.783,52.94,975
+state,LA,default,reserve (no harvest),2030,205.176,181.188,229.079,45.64,1083
+state,LA,default,reserve (no harvest),2055,455.297,415.64,496.093,99.28,1083
+state,LA,default,reserve (no harvest),2080,604.707,550.666,667.225,132.48,1083
+state,LA,default,reserve (no harvest),2105,674.339,610.81,735.672,148.39,1083
+state,LA,default,reserve (no harvest),2125,706.753,626.133,774.161,155.71,1083
+state,LA,default,managed (harvest),2030,205.176,180.551,228.404,45.64,1083
+state,LA,default,managed (harvest),2055,341.298,313.278,373.178,73.93,1083
+state,LA,default,managed (harvest),2080,301.076,277.319,324.732,66.05,1083
+state,LA,default,managed (harvest),2105,203.431,185.504,229.174,45.26,1083
+state,LA,default,managed (harvest),2125,145.895,129.734,160.859,32.55,1083
+state,MA,default,reserve (no harvest),2030,35.284,27.773,44.052,38.61,210
+state,MA,default,reserve (no harvest),2055,89.186,72.242,107.431,98.55,210
+state,MA,default,reserve (no harvest),2080,125.944,100.54,147.551,140.7,210
+state,MA,default,reserve (no harvest),2105,148.326,124.425,178.441,167.83,210
+state,MA,default,reserve (no harvest),2125,159.889,130.699,191.744,181.56,210
+state,MA,default,managed (harvest),2030,35.284,28.29,43.125,38.61,210
+state,MA,default,managed (harvest),2055,72.08,58.059,85.614,79.83,210
+state,MA,default,managed (harvest),2080,73.895,61.282,90.95,83.28,210
+state,MA,default,managed (harvest),2105,60.454,50.399,71.264,70.04,210
+state,MA,default,managed (harvest),2125,48.572,39.351,57.509,56.61,210
+state,MD,default,reserve (no harvest),2030,47.928,28.641,66.882,44.38,159
+state,MD,default,reserve (no harvest),2055,105.394,74.319,142.381,102.31,159
+state,MD,default,reserve (no harvest),2080,140.778,100.401,188.597,140.02,159
+state,MD,default,reserve (no harvest),2105,162.047,108.05,223.068,163.62,159
+state,MD,default,reserve (no harvest),2125,174.174,121.359,246.976,176.53,159
+state,MD,default,managed (harvest),2030,47.928,29.615,69.998,44.38,159
+state,MD,default,managed (harvest),2055,77.297,50.453,103.494,76.29,159
+state,MD,default,managed (harvest),2080,67.368,46.208,87.714,69.34,159
+state,MD,default,managed (harvest),2105,49.145,36.486,68.635,52.29,159
+state,MD,default,managed (harvest),2125,38.224,27.011,54.447,40.68,159
+state,ME,default,reserve (no harvest),2030,616.141,564.649,650.11,94.53,1977
+state,ME,default,reserve (no harvest),2055,1172.168,1097.793,1257.727,178.02,1977
+state,ME,default,reserve (no harvest),2080,1574.598,1466.35,1681.689,238.85,1977
+state,ME,default,reserve (no harvest),2105,1845.7,1731.464,1972.593,280.55,1977
+state,ME,default,reserve (no harvest),2125,1966.835,1829.895,2083.01,299.42,1977
+state,ME,default,managed (harvest),2030,616.141,570.147,667.604,94.53,1977
+state,ME,default,managed (harvest),2055,826.873,772.571,885.657,125.05,1977
+state,ME,default,managed (harvest),2080,765.91,713.321,819.752,115.8,1977
+state,ME,default,managed (harvest),2105,607.785,567.805,649.577,92.6,1977
+state,ME,default,managed (harvest),2125,456.527,426.527,489.911,69.96,1977
+state,MI,default,reserve (no harvest),2030,392.292,363.34,423.278,56.61,3861
+state,MI,default,reserve (no harvest),2055,797.424,744.36,857.826,114.79,3861
+state,MI,default,reserve (no harvest),2080,1099.123,1035.605,1163.657,158.35,3861
+state,MI,default,reserve (no harvest),2105,1311.411,1233.367,1395.967,190.02,3861
+state,MI,default,reserve (no harvest),2125,1424.826,1331.08,1530.868,206.86,3861
+state,MI,default,managed (harvest),2030,392.292,364.213,423.97,56.61,3861
+state,MI,default,managed (harvest),2055,647.196,602.769,697.401,93.12,3861
+state,MI,default,managed (harvest),2080,701.053,655.737,747.597,101.01,3861
+state,MI,default,managed (harvest),2105,644.874,605.569,685.763,94.01,3861
+state,MI,default,managed (harvest),2125,560.726,522.723,592.001,82.04,3861
+state,MN,default,reserve (no harvest),2030,454.895,413.887,487.486,67.93,1853
+state,MN,default,reserve (no harvest),2055,878.402,818.758,938.095,129.15,1853
+state,MN,default,reserve (no harvest),2080,1180.247,1093.836,1260.977,173.68,1853
+state,MN,default,reserve (no harvest),2105,1369.176,1267.674,1497.595,202.02,1853
+state,MN,default,reserve (no harvest),2125,1464.738,1355.072,1577.766,216.3,1853
+state,MN,default,managed (harvest),2030,454.895,421.575,495.241,67.93,1853
+state,MN,default,managed (harvest),2055,728.384,677.843,784.585,106.75,1853
+state,MN,default,managed (harvest),2080,790.019,724.043,844.595,116.07,1853
+state,MN,default,managed (harvest),2105,718.411,668.064,774.649,106.14,1853
+state,MN,default,managed (harvest),2125,624.436,587.308,671.38,92.42,1853
+state,MO,default,reserve (no harvest),2030,338.576,308.731,364.567,48.94,1688
+state,MO,default,reserve (no harvest),2055,711.558,662.673,764.199,103.06,1688
+state,MO,default,reserve (no harvest),2080,988.286,921.911,1050.004,143.87,1688
+state,MO,default,reserve (no harvest),2105,1176.537,1098.958,1252.982,172.15,1688
+state,MO,default,reserve (no harvest),2125,1272.793,1200.406,1358.018,186.71,1688
+state,MO,default,managed (harvest),2030,338.576,312.14,362.788,48.94,1688
+state,MO,default,managed (harvest),2055,535.517,499.882,576.689,77.61,1688
+state,MO,default,managed (harvest),2080,533.806,497.547,566.483,78.07,1688
+state,MO,default,managed (harvest),2105,444.506,416.039,473.303,65.76,1688
+state,MO,default,managed (harvest),2125,355.867,328.152,381.469,52.96,1688
+state,MS,default,reserve (no harvest),2030,350.267,314.283,382.981,49.99,1374
+state,MS,default,reserve (no harvest),2055,704.906,642.86,758.237,103.92,1374
+state,MS,default,reserve (no harvest),2080,934.791,868.53,1015.741,140.41,1374
+state,MS,default,reserve (no harvest),2105,1058.109,964.494,1173.571,160.63,1374
+state,MS,default,reserve (no harvest),2125,1116.375,1017.709,1220.305,170.59,1374
+state,MS,default,managed (harvest),2030,350.267,313.756,390.572,49.99,1374
+state,MS,default,managed (harvest),2055,515.859,474.526,564.338,76.94,1374
+state,MS,default,managed (harvest),2080,467.323,427.863,505.31,71.9,1374
+state,MS,default,managed (harvest),2105,338.458,304.923,366.999,53.32,1374
+state,MS,default,managed (harvest),2125,250.989,227.84,274.49,40.32,1374
+state,MT,default,reserve (no harvest),2030,168.489,154.354,183.921,27.91,2315
+state,MT,default,reserve (no harvest),2055,400.953,373.294,433.963,53.4,2315
+state,MT,default,reserve (no harvest),2080,618.592,575.272,659.373,77.46,2315
+state,MT,default,reserve (no harvest),2105,818.858,747.554,883.42,99.85,2315
+state,MT,default,reserve (no harvest),2125,963.626,897.3,1031.632,115.9,2315
+state,MT,default,managed (harvest),2030,168.489,153.054,183.782,27.91,2315
+state,MT,default,managed (harvest),2055,265.602,241.984,288.674,31.26,2315
+state,MT,default,managed (harvest),2080,269.828,251.255,291.985,30.35,2315
+state,MT,default,managed (harvest),2105,253.281,232.359,272.765,28.36,2315
+state,MT,default,managed (harvest),2125,235.373,215.822,251.201,26.19,2315
+state,NC,default,reserve (no harvest),2030,419.283,361.606,470.855,57.53,1508
+state,NC,default,reserve (no harvest),2055,815.122,732.993,903.713,118.11,1508
+state,NC,default,reserve (no harvest),2080,1103.15,981.9,1212.599,161.17,1508
+state,NC,default,reserve (no harvest),2105,1293.137,1155.247,1429.941,188.88,1508
+state,NC,default,reserve (no harvest),2125,1391.781,1246.591,1522.808,203.21,1508
+state,NC,default,managed (harvest),2030,419.283,372.853,473.119,57.53,1508
+state,NC,default,managed (harvest),2055,590.454,522.29,645.386,87.28,1508
+state,NC,default,managed (harvest),2080,562.096,502.7,614.114,83.58,1508
+state,NC,default,managed (harvest),2105,450.892,407.035,505.09,66.5,1508
+state,NC,default,managed (harvest),2125,356.259,311.69,404.474,52.37,1508
+state,ND,default,reserve (no harvest),2030,3.537,2.012,5.535,31.13,46
+state,ND,default,reserve (no harvest),2055,10.283,4.913,17.847,62.35,46
+state,ND,default,reserve (no harvest),2080,19.112,7.064,35.055,93.07,46
+state,ND,default,reserve (no harvest),2105,31.051,9.797,65.72,122.03,46
+state,ND,default,reserve (no harvest),2125,41.524,13.336,88.611,143.2,46
+state,ND,default,managed (harvest),2030,3.537,1.985,5.299,31.13,46
+state,ND,default,managed (harvest),2055,7.922,3.442,15.682,41.57,46
+state,ND,default,managed (harvest),2080,11.462,3.713,23.126,44.54,46
+state,ND,default,managed (harvest),2105,15.749,3.722,43.803,43.77,46
+state,ND,default,managed (harvest),2125,17.811,3.997,45.226,41.56,46
+state,NE,default,reserve (no harvest),2030,7.057,4.096,10.237,23.34,46
+state,NE,default,reserve (no harvest),2055,19.681,11.53,28.245,58.6,46
+state,NE,default,reserve (no harvest),2080,28.91,18.422,43.998,86.56,46
+state,NE,default,reserve (no harvest),2105,35.851,22.211,51.848,106.34,46
+state,NE,default,reserve (no harvest),2125,40.545,24.296,64.305,117.7,46
+state,NE,default,managed (harvest),2030,7.057,4.48,10.465,23.34,46
+state,NE,default,managed (harvest),2055,12.354,7.391,18.498,34.36,46
+state,NE,default,managed (harvest),2080,8.755,5.646,13.248,26.65,46
+state,NE,default,managed (harvest),2105,6.673,2.848,11.043,18.79,46
+state,NE,default,managed (harvest),2125,5.921,2.484,9.803,14.6,46
+state,NH,default,reserve (no harvest),2030,124.167,106.008,143.63,69.0,622
+state,NH,default,reserve (no harvest),2055,257.585,229.296,287.476,139.79,622
+state,NH,default,reserve (no harvest),2080,349.078,306.504,389.941,191.03,622
+state,NH,default,reserve (no harvest),2105,410.164,367.994,465.661,227.28,622
+state,NH,default,reserve (no harvest),2125,440.139,388.134,486.4,243.9,622
+state,NH,default,managed (harvest),2030,124.167,110.489,142.878,69.0,622
+state,NH,default,managed (harvest),2055,215.734,190.511,245.512,116.53,622
+state,NH,default,managed (harvest),2080,234.512,206.455,266.262,128.5,622
+state,NH,default,managed (harvest),2105,216.554,194.237,239.991,121.43,622
+state,NH,default,managed (harvest),2125,188.137,166.863,207.128,105.31,622
+state,NJ,default,reserve (no harvest),2030,32.496,22.813,42.18,39.01,178
+state,NJ,default,reserve (no harvest),2055,79.788,60.979,102.311,97.08,178
+state,NJ,default,reserve (no harvest),2080,112.385,89.026,143.841,140.55,178
+state,NJ,default,reserve (no harvest),2105,133.27,102.616,167.229,166.9,178
+state,NJ,default,reserve (no harvest),2125,144.595,113.975,188.286,180.12,178
+state,NJ,default,managed (harvest),2030,32.496,22.079,45.324,39.01,178
+state,NJ,default,managed (harvest),2055,62.744,46.324,81.316,76.62,178
+state,NJ,default,managed (harvest),2080,62.43,49.328,76.358,79.9,178
+state,NJ,default,managed (harvest),2105,50.571,39.898,62.776,64.37,178
+state,NJ,default,managed (harvest),2125,40.676,30.572,53.442,50.6,178
+state,NM,default,reserve (no harvest),2030,25.343,20.287,31.671,5.96,1467
+state,NM,default,reserve (no harvest),2055,71.695,56.792,90.303,15.63,1467
+state,NM,default,reserve (no harvest),2080,119.488,97.951,143.845,25.85,1467
+state,NM,default,reserve (no harvest),2105,157.226,124.314,192.565,34.06,1467
+state,NM,default,reserve (no harvest),2125,176.266,142.35,213.759,38.28,1467
+state,NM,default,managed (harvest),2030,25.343,19.34,32.629,5.96,1467
+state,NM,default,managed (harvest),2055,59.215,48.684,74.536,12.69,1467
+state,NM,default,managed (harvest),2080,77.888,62.668,94.547,16.67,1467
+state,NM,default,managed (harvest),2105,77.333,65.743,93.104,16.68,1467
+state,NM,default,managed (harvest),2125,65.936,54.924,83.046,14.34,1467
+state,NV,default,reserve (no harvest),2030,2.074,1.331,2.904,2.07,731
+state,NV,default,reserve (no harvest),2055,7.375,4.405,10.76,5.02,731
+state,NV,default,reserve (no harvest),2080,12.937,8.064,20.51,7.91,731
+state,NV,default,reserve (no harvest),2105,18.308,9.883,28.223,10.46,731
+state,NV,default,reserve (no harvest),2125,21.607,11.807,32.298,12.13,731
+state,NV,default,managed (harvest),2030,2.074,1.428,2.85,2.07,731
+state,NV,default,managed (harvest),2055,6.433,3.568,9.787,4.08,731
+state,NV,default,managed (harvest),2080,9.076,5.276,13.354,5.12,731
+state,NV,default,managed (harvest),2105,10.328,5.542,17.725,5.34,731
+state,NV,default,managed (harvest),2125,9.877,4.977,15.503,5.07,731
+state,NY,default,reserve (no harvest),2030,325.791,292.953,355.322,53.41,1386
+state,NY,default,reserve (no harvest),2055,687.317,627.93,752.412,114.89,1386
+state,NY,default,reserve (no harvest),2080,954.709,866.887,1038.027,161.6,1386
+state,NY,default,reserve (no harvest),2105,1146.155,1058.73,1250.869,196.13,1386
+state,NY,default,reserve (no harvest),2125,1242.423,1135.506,1362.578,213.45,1386
+state,NY,default,managed (harvest),2030,325.791,294.112,363.296,53.41,1386
+state,NY,default,managed (harvest),2055,555.587,503.041,619.317,93.29,1386
+state,NY,default,managed (harvest),2080,598.331,544.196,652.387,102.28,1386
+state,NY,default,managed (harvest),2105,547.847,507.272,598.863,95.45,1386
+state,NY,default,managed (harvest),2125,466.901,429.752,509.152,81.9,1386
+state,OH,default,reserve (no harvest),2030,179.755,147.153,219.709,44.48,500
+state,OH,default,reserve (no harvest),2055,400.277,333.049,465.99,104.69,500
+state,OH,default,reserve (no harvest),2080,561.307,458.525,650.26,149.09,500
+state,OH,default,reserve (no harvest),2105,664.608,574.359,767.347,178.93,500
+state,OH,default,reserve (no harvest),2125,719.649,602.643,817.617,194.1,500
+state,OH,default,managed (harvest),2030,179.755,146.77,217.741,44.48,500
+state,OH,default,managed (harvest),2055,259.91,221.504,302.309,69.96,500
+state,OH,default,managed (harvest),2080,217.981,184.262,252.21,59.73,500
+state,OH,default,managed (harvest),2105,151.066,121.072,177.615,42.95,500
+state,OH,default,managed (harvest),2125,111.765,93.396,131.938,31.3,500
+state,OK,default,reserve (no harvest),2030,127.473,111.445,146.58,45.58,646
+state,OK,default,reserve (no harvest),2055,323.445,289.669,371.452,104.99,646
+state,OK,default,reserve (no harvest),2080,461.868,396.999,520.225,147.32,646
+state,OK,default,reserve (no harvest),2105,540.736,466.191,611.034,172.45,646
+state,OK,default,reserve (no harvest),2125,578.809,514.806,657.316,184.51,646
+state,OK,default,managed (harvest),2030,127.473,108.082,144.498,45.58,646
+state,OK,default,managed (harvest),2055,251.447,219.908,286.734,79.25,646
+state,OK,default,managed (harvest),2080,247.851,217.47,289.005,76.82,646
+state,OK,default,managed (harvest),2105,186.782,158.567,214.487,58.57,646
+state,OK,default,managed (harvest),2125,140.562,118.177,159.21,44.26,646
+state,OR,default,reserve (no harvest),2030,208.57,186.085,234.719,33.99,2448
+state,OR,default,reserve (no harvest),2055,640.638,560.866,711.657,92.5,2448
+state,OR,default,reserve (no harvest),2080,1050.789,940.123,1159.08,148.17,2448
+state,OR,default,reserve (no harvest),2105,1351.424,1198.966,1525.199,189.34,2448
+state,OR,default,reserve (no harvest),2125,1523.882,1374.24,1753.882,213.05,2448
+state,OR,default,managed (harvest),2030,208.57,186.189,230.048,33.99,2448
+state,OR,default,managed (harvest),2055,462.608,411.304,536.92,63.49,2448
+state,OR,default,managed (harvest),2080,477.895,424.602,541.656,64.97,2448
+state,OR,default,managed (harvest),2105,370.623,326.741,428.742,50.69,2448
+state,OR,default,managed (harvest),2125,290.012,253.066,333.426,39.79,2448
+state,PA,default,reserve (no harvest),2030,337.221,298.633,371.225,49.64,1317
+state,PA,default,reserve (no harvest),2055,757.471,691.28,826.87,111.05,1317
+state,PA,default,reserve (no harvest),2080,1062.521,958.876,1156.643,156.43,1317
+state,PA,default,reserve (no harvest),2105,1271.763,1163.427,1366.545,188.49,1317
+state,PA,default,reserve (no harvest),2125,1376.604,1252.109,1503.218,204.74,1317
+state,PA,default,managed (harvest),2030,337.221,309.413,366.789,49.64,1317
+state,PA,default,managed (harvest),2055,577.421,531.523,629.086,84.54,1317
+state,PA,default,managed (harvest),2080,574.172,520.824,624.986,84.79,1317
+state,PA,default,managed (harvest),2105,476.851,438.949,514.166,71.58,1317
+state,PA,default,managed (harvest),2125,378.01,343.634,409.492,57.25,1317
+state,RI,default,reserve (no harvest),2030,10.897,3.539,21.858,40.25,39
+state,RI,default,reserve (no harvest),2055,25.006,10.782,49.218,98.27,39
+state,RI,default,reserve (no harvest),2080,36.724,14.956,69.699,140.32,39
+state,RI,default,reserve (no harvest),2105,44.856,19.532,79.901,167.25,39
+state,RI,default,reserve (no harvest),2125,48.64,24.686,87.394,179.79,39
+state,RI,default,managed (harvest),2030,10.897,3.75,23.123,40.25,39
+state,RI,default,managed (harvest),2055,20.109,9.179,40.456,80.18,39
+state,RI,default,managed (harvest),2080,22.791,10.036,38.289,86.2,39
+state,RI,default,managed (harvest),2105,20.681,9.186,40.197,74.4,39
+state,RI,default,managed (harvest),2125,17.031,7.187,30.728,60.19,39
+state,SC,default,reserve (no harvest),2030,237.736,201.9,276.091,51.27,1153
+state,SC,default,reserve (no harvest),2055,495.919,430.272,561.147,107.89,1153
+state,SC,default,reserve (no harvest),2080,657.807,576.066,743.403,143.73,1153
+state,SC,default,reserve (no harvest),2105,743.341,662.187,831.102,162.91,1153
+state,SC,default,reserve (no harvest),2125,783.039,686.673,882.463,171.76,1153
+state,SC,default,managed (harvest),2030,237.736,204.844,279.609,51.27,1153
+state,SC,default,managed (harvest),2055,356.89,314.238,399.965,77.9,1153
+state,SC,default,managed (harvest),2080,310.066,274.706,347.902,68.19,1153
+state,SC,default,managed (harvest),2105,214.298,188.17,247.229,47.5,1153
+state,SC,default,managed (harvest),2125,153.983,133.053,172.823,34.22,1153
+state,SD,default,reserve (no harvest),2030,7.659,5.329,10.485,24.81,181
+state,SD,default,reserve (no harvest),2055,18.467,13.528,23.862,57.15,181
+state,SD,default,reserve (no harvest),2080,27.15,21.081,34.919,84.76,181
+state,SD,default,reserve (no harvest),2105,34.132,26.688,43.354,106.93,181
+state,SD,default,reserve (no harvest),2125,37.761,29.07,48.402,118.07,181
+state,SD,default,managed (harvest),2030,7.659,5.561,10.471,24.81,181
+state,SD,default,managed (harvest),2055,11.162,8.091,14.26,33.47,181
+state,SD,default,managed (harvest),2080,9.203,7.068,11.976,29.17,181
+state,SD,default,managed (harvest),2105,7.415,5.493,9.465,23.53,181
+state,SD,default,managed (harvest),2125,5.394,4.087,7.2,16.73,181
+state,TN,default,reserve (no harvest),2030,325.945,293.813,362.454,47.56,1241
+state,TN,default,reserve (no harvest),2055,633.674,574.937,684.391,101.47,1241
+state,TN,default,reserve (no harvest),2080,875.521,780.589,977.783,144.24,1241
+state,TN,default,reserve (no harvest),2105,1041.921,943.191,1168.866,172.28,1241
+state,TN,default,reserve (no harvest),2125,1128.392,1037.37,1244.026,186.73,1241
+state,TN,default,managed (harvest),2030,325.945,289.203,366.882,47.56,1241
+state,TN,default,managed (harvest),2055,484.434,441.823,534.451,79.69,1241
+state,TN,default,managed (harvest),2080,504.475,461.009,556.998,85.97,1241
+state,TN,default,managed (harvest),2105,439.899,388.7,490.467,74.65,1241
+state,TN,default,managed (harvest),2125,365.238,326.443,402.08,61.76,1241
+state,TX,default,reserve (no harvest),2030,319.425,283.179,358.713,38.06,2578
+state,TX,default,reserve (no harvest),2055,799.232,715.828,879.542,95.78,2578
+state,TX,default,reserve (no harvest),2080,1182.3,1075.876,1305.346,148.29,2578
+state,TX,default,reserve (no harvest),2105,1428.395,1298.046,1566.805,186.28,2578
+state,TX,default,reserve (no harvest),2125,1540.129,1407.83,1674.925,204.78,2578
+state,TX,default,managed (harvest),2030,319.425,277.743,362.383,38.06,2578
+state,TX,default,managed (harvest),2055,556.829,511.988,605.595,66.89,2578
+state,TX,default,managed (harvest),2080,517.336,473.232,573.887,68.64,2578
+state,TX,default,managed (harvest),2105,371.468,331.134,407.199,54.61,2578
+state,TX,default,managed (harvest),2125,260.704,233.974,285.157,40.18,2578
+state,UT,default,reserve (no harvest),2030,33.002,26.584,39.923,9.38,1244
+state,UT,default,reserve (no harvest),2055,65.321,56.025,75.4,17.82,1244
+state,UT,default,reserve (no harvest),2080,95.788,83.444,111.07,25.63,1244
+state,UT,default,reserve (no harvest),2105,123.041,107.023,140.221,32.42,1244
+state,UT,default,reserve (no harvest),2125,142.661,125.531,160.666,37.12,1244
+state,UT,default,managed (harvest),2030,33.002,25.801,39.341,9.38,1244
+state,UT,default,managed (harvest),2055,48.712,42.775,55.132,13.1,1244
+state,UT,default,managed (harvest),2080,54.664,47.42,62.438,14.32,1244
+state,UT,default,managed (harvest),2105,54.408,47.491,62.116,13.9,1244
+state,UT,default,managed (harvest),2125,52.126,46.103,59.613,13.02,1244
+state,VA,default,reserve (no harvest),2030,345.41,298.48,390.537,47.48,1538
+state,VA,default,reserve (no harvest),2055,683.207,591.676,781.034,100.73,1538
+state,VA,default,reserve (no harvest),2080,925.507,814.071,1039.736,140.48,1538
+state,VA,default,reserve (no harvest),2105,1082.413,940.345,1232.847,166.62,1538
+state,VA,default,reserve (no harvest),2125,1168.663,1044.05,1333.092,180.57,1538
+state,VA,default,managed (harvest),2030,345.41,298.72,390.439,47.48,1538
+state,VA,default,managed (harvest),2055,514.712,449.404,580.312,77.57,1538
+state,VA,default,managed (harvest),2080,505.931,445.176,567.731,79.49,1538
+state,VA,default,managed (harvest),2105,416.054,370.049,466.191,66.85,1538
+state,VA,default,managed (harvest),2125,340.042,303.723,374.531,54.73,1538
+state,VT,default,reserve (no harvest),2030,98.756,86.334,114.547,54.5,573
+state,VT,default,reserve (no harvest),2055,210.953,186.2,244.823,116.07,573
+state,VT,default,reserve (no harvest),2080,296.637,261.193,330.925,164.08,573
+state,VT,default,reserve (no harvest),2105,359.85,316.603,408.898,201.07,573
+state,VT,default,reserve (no harvest),2125,392.386,343.804,437.679,219.81,573
+state,VT,default,managed (harvest),2030,98.756,86.054,114.35,54.5,573
+state,VT,default,managed (harvest),2055,170.314,147.74,195.857,93.64,573
+state,VT,default,managed (harvest),2080,185.912,162.345,213.565,103.12,573
+state,VT,default,managed (harvest),2105,172.621,149.748,194.739,97.67,573
+state,VT,default,managed (harvest),2125,148.328,130.411,171.533,84.26,573
+state,WA,default,reserve (no harvest),2030,185.906,136.261,254.195,33.4,1478
+state,WA,default,reserve (no harvest),2055,561.82,432.465,734.449,86.91,1478
+state,WA,default,reserve (no harvest),2080,913.597,754.143,1103.163,137.92,1478
+state,WA,default,reserve (no harvest),2105,1187.226,978.102,1485.876,177.62,1478
+state,WA,default,reserve (no harvest),2125,1347.973,1117.345,1604.094,200.69,1478
+state,WA,default,managed (harvest),2030,185.906,147.548,244.511,33.4,1478
+state,WA,default,managed (harvest),2055,422.663,338.704,530.932,61.92,1478
+state,WA,default,managed (harvest),2080,458.043,382.689,555.119,66.59,1478
+state,WA,default,managed (harvest),2105,388.93,315.868,482.615,56.52,1478
+state,WA,default,managed (harvest),2125,316.845,243.746,373.822,45.78,1478
+state,WI,default,reserve (no harvest),2030,414.46,384.291,444.149,58.91,2451
+state,WI,default,reserve (no harvest),2055,844.185,799.901,888.026,119.0,2451
+state,WI,default,reserve (no harvest),2080,1160.299,1089.914,1217.898,162.53,2451
+state,WI,default,reserve (no harvest),2105,1373.87,1292.095,1439.799,192.65,2451
+state,WI,default,reserve (no harvest),2125,1485.629,1407.716,1567.32,208.47,2451
+state,WI,default,managed (harvest),2030,414.46,392.546,446.797,58.91,2451
+state,WI,default,managed (harvest),2055,691.675,656.858,731.443,97.32,2451
+state,WI,default,managed (harvest),2080,753.271,715.246,795.328,105.04,2451
+state,WI,default,managed (harvest),2105,689.657,648.984,726.376,96.5,2451
+state,WI,default,managed (harvest),2125,598.395,567.963,634.723,83.92,2451
+state,WV,default,reserve (no harvest),2030,218.907,189.467,246.892,42.86,1241
+state,WV,default,reserve (no harvest),2055,459.966,400.483,510.381,99.88,1241
+state,WV,default,reserve (no harvest),2080,627.575,572.036,702.961,142.18,1241
+state,WV,default,reserve (no harvest),2105,742.969,651.518,836.736,172.62,1241
+state,WV,default,reserve (no harvest),2125,801.8,715.523,895.765,188.12,1241
+state,WV,default,managed (harvest),2030,218.907,186.191,255.469,42.86,1241
+state,WV,default,managed (harvest),2055,323.227,281.008,365.561,73.11,1241
+state,WV,default,managed (harvest),2080,288.933,254.166,324.276,69.74,1241
+state,WV,default,managed (harvest),2105,223.845,198.596,248.148,56.61,1241
+state,WV,default,managed (harvest),2125,170.817,155.234,188.201,43.83,1241
+state,WY,default,reserve (no harvest),2030,122.746,102.747,148.72,29.66,1452
+state,WY,default,reserve (no harvest),2055,236.56,209.331,270.184,60.78,1452
+state,WY,default,reserve (no harvest),2080,335.648,302.551,375.965,88.42,1452
+state,WY,default,reserve (no harvest),2105,411.114,370.614,460.539,110.16,1452
+state,WY,default,reserve (no harvest),2125,454.709,413.816,512.16,122.73,1452
+state,WY,default,managed (harvest),2030,122.746,99.301,154.87,29.66,1452
+state,WY,default,managed (harvest),2055,108.468,95.762,121.381,29.63,1452
+state,WY,default,managed (harvest),2080,93.206,83.478,105.227,26.03,1452
+state,WY,default,managed (harvest),2105,70.411,63.814,77.335,20.34,1452
+state,WY,default,managed (harvest),2125,54.659,49.319,59.493,15.78,1452

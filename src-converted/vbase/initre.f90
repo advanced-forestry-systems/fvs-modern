@@ -6351,10 +6351,25 @@ GO TO 10
 !
 !  ==========  OPTION NUMBER 150: MORTDRVR  =======================MORTDRVR
 15000 CONTINUE
-!  MORTDRVR: select Greg mortality site driver; default bgi(3).
-IMORTDRV = 3
+!  MORTDRVR (MORTDRIVER, 8-char keyword form): select the Greg gompit mortality
+!  coefficient TIER. This is an additive extension of the crown-only GOMPSURV
+!  form (crown-only -> +size -> +size+BGI), NOT a swappable site-driver family
+!  (that 0-5 elev/cspi/bgi/esi/emt scheme belongs to DGDRIVER only and does not
+!  apply here):
+!     0 = crown-only  (default; same as no keyword; greg_mortality_coefficients.csv)
+!     1 = size         (+log(DBH) term; available, not recommended standalone)
+!     2 = size+BGI     (+BGI term on top of size; recommended opt-in upgrade)
+!  Bare keyword (no argument) defaults to the recommended tier, size+BGI(2).
+!  Records the choice reproducibly in the keyfile; GOMPLOAD logs IMORTDRV for
+!  reproducibility only -- actual tier selection still happens by which
+!  coefficient file is passed to FVS_GOMPIT_COEF (deliberately downstream,
+!  matching the DGDRIVER precedent). In-Fortran file-path resolution is out of
+!  scope for this pass.
+IMORTDRV = 2
 IF (LNOTBK(1)) IMORTDRV = INT(ARRAY(1))
-IF(LKECHO)WRITE(JOSTND,9999) KEYWRD
+IF(LKECHO)WRITE(JOSTND,15001) KEYWRD,IMORTDRV
+15001 FORMAT (/A8,'   MORTALITY COEFFICIENT TIER =',I3, &
+     '  (0=CROWN-ONLY,1=SIZE,2=SIZE+BGI)')
 GO TO 10
 
 14700 CONTINUE

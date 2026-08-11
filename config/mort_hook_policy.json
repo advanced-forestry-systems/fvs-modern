@@ -1,0 +1,117 @@
+{
+  "_meta": {
+    "title": "Per-variant Greg gompit mortality tier policy (MORTDRIVER)",
+    "description": "Source of truth mapping each confirmed FVS-modern variant to the recommended Greg gompit mortality coefficient tier. Decided from a per-variant 4-arm A/B on held-out FIA remeasurement pairs (native FVS vs crown-only gompit vs size-extended gompit vs size+BGI gompit; log-loss, AUC, bias). Unlike DGDRIVER, this is NOT a swappable site-driver family: the merged GOMPSURV form is an additive TIER structure, crown-only (5 coef) -> +size (6 coef, adds log(DBH)) -> +size+BGI (7 coef, adds BGI on top of size). The MORTDRVR keyword is a reproducibility-logging device only for now; actual tier selection happens by which coefficient file is passed to FVS_GOMPIT_COEF.",
+    "keyword": "MORTDRIVER",
+    "keyword_8char_form": "MORTDRVR",
+    "codes": {
+      "0": "crown-only gompit (default, config/greg_mortality_coefficients.csv)",
+      "1": "size-extended gompit, available but not recommended standalone (config/greg_mortality_coefficients_size.csv)",
+      "2": "size+BGI gompit, recommended (config/greg_mortality_coefficients_size_bgi.csv)"
+    },
+    "policy_date": "2026-07-05",
+    "basis": "in-engine per-variant 4-arm A/B on held-out FIA remeasurement pairs (native FVS, crown-only gompit, size-extended gompit, size+BGI gompit), 2026-07",
+    "verdict": "size+BGI is a strict win on both log-loss and AUC in all six confirmed variants (ne, cs, ls, wc, ie, ak); the cleanest, most general result of this effort. Size-only is NOT reliably better than crown-only: it hurts AUC in ie (0.638 vs 0.654) and ak (0.615 vs 0.622), and hurts log-loss outright in ak (0.577 vs 0.561, worse than native). Policy: crown-only stays the engine's byte-identical default (unset keyword / MORTDRIVER code 0); size+BGI (code 2) is the recommended opt-in upgrade for all six confirmed variants; size-only (code 1) is retained as an available/diagnostic tier but is not the recommended choice anywhere. ak carries a lower-confidence flag due to a thin sample (33 plots) but size+BGI still wins there so it is included in the recommended set, annotated as lower confidence.",
+    "backward_compatible": "Emitting MORTDRVR is opt-in. A generate_keywords()-style call or the mortdriver_keyword() helper must be called explicitly; default engine behavior (no keyword, crown-only gompit) and the v2026.07-calibrated tag are unaffected.",
+    "confirmed_variants": ["ne", "cs", "ls", "wc", "ie", "ak"],
+    "unscreened_note": "Other CONUS variants are unscreened for mortality tiers (no 4-arm A/B run yet). Extending this screen to the remaining variants is a natural next step and is out of scope for this pass."
+  },
+  "variants": {
+    "ne": {
+      "recommended_tier": "size_bgi",
+      "mortdriver_code": 2,
+      "log_loss": 0.422,
+      "auc": 0.662,
+      "bias": 0.030,
+      "n_trees": 12296,
+      "confidence": "high",
+      "note": "",
+      "tiers": {
+        "native_fvs": {"log_loss": 0.755, "auc": 0.555, "bias": -0.089},
+        "crown_only": {"log_loss": 0.451, "auc": 0.606, "bias": -0.043},
+        "size": {"log_loss": 0.434, "auc": 0.615, "bias": 0.033},
+        "size_bgi": {"log_loss": 0.422, "auc": 0.662, "bias": 0.030}
+      }
+    },
+    "cs": {
+      "recommended_tier": "size_bgi",
+      "mortdriver_code": 2,
+      "log_loss": 0.504,
+      "auc": 0.627,
+      "bias": -0.002,
+      "n_trees": 9251,
+      "confidence": "high",
+      "note": "",
+      "tiers": {
+        "native_fvs": {"log_loss": 0.995, "auc": 0.539, "bias": -0.089},
+        "crown_only": {"log_loss": 0.526, "auc": 0.586, "bias": -0.057},
+        "size": {"log_loss": 0.510, "auc": 0.588, "bias": -0.004},
+        "size_bgi": {"log_loss": 0.504, "auc": 0.627, "bias": -0.002}
+      }
+    },
+    "ls": {
+      "recommended_tier": "size_bgi",
+      "mortdriver_code": 2,
+      "log_loss": 0.375,
+      "auc": 0.742,
+      "bias": 0.011,
+      "n_trees": 9687,
+      "confidence": "high",
+      "note": "",
+      "tiers": {
+        "native_fvs": {"log_loss": 0.821, "auc": 0.517, "bias": -0.126},
+        "crown_only": {"log_loss": 0.439, "auc": 0.684, "bias": -0.068},
+        "size": {"log_loss": 0.405, "auc": 0.681, "bias": 0.014},
+        "size_bgi": {"log_loss": 0.375, "auc": 0.742, "bias": 0.011}
+      }
+    },
+    "wc": {
+      "recommended_tier": "size_bgi",
+      "mortdriver_code": 2,
+      "log_loss": 0.395,
+      "auc": 0.696,
+      "bias": 0.001,
+      "n_trees": 11116,
+      "confidence": "high",
+      "note": "19/92 species matched",
+      "tiers": {
+        "native_fvs": {"log_loss": 0.598, "auc": 0.588, "bias": -0.103},
+        "crown_only": {"log_loss": 0.429, "auc": 0.620, "bias": -0.039},
+        "size": {"log_loss": 0.428, "auc": 0.621, "bias": 0.035},
+        "size_bgi": {"log_loss": 0.395, "auc": 0.696, "bias": 0.001}
+      }
+    },
+    "ie": {
+      "recommended_tier": "size_bgi",
+      "mortdriver_code": 2,
+      "log_loss": 0.444,
+      "auc": 0.765,
+      "bias": 0.001,
+      "n_trees": 9207,
+      "confidence": "high",
+      "note": "13/92 species matched",
+      "tiers": {
+        "native_fvs": {"log_loss": 0.589, "auc": 0.590, "bias": -0.104},
+        "crown_only": {"log_loss": 0.523, "auc": 0.654, "bias": -0.068},
+        "size": {"log_loss": 0.514, "auc": 0.638, "bias": 0.033},
+        "size_bgi": {"log_loss": 0.444, "auc": 0.765, "bias": 0.001}
+      }
+    },
+    "ak": {
+      "recommended_tier": "size_bgi",
+      "mortdriver_code": 2,
+      "log_loss": 0.532,
+      "auc": 0.677,
+      "bias": -0.029,
+      "n_trees": 1332,
+      "confidence": "low",
+      "note": "thin sample: 33 plots, 13/92 species matched; size-only tier is worse than crown-only and native on log-loss, but size+BGI still wins here, so included in the recommended set with a low-confidence flag",
+      "tiers": {
+        "native_fvs": {"log_loss": 0.560, "auc": 0.645, "bias": -0.111},
+        "crown_only": {"log_loss": 0.561, "auc": 0.622, "bias": -0.080},
+        "size": {"log_loss": 0.577, "auc": 0.615, "bias": 0.018},
+        "size_bgi": {"log_loss": 0.532, "auc": 0.677, "bias": -0.029}
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+variant,region,sdimax_source,ingrowth_rate_pct_per_decade,inject_ingrowth,baimult,htdbh_correction,notes
+ne,Northeast,brms_plot_level,30.5,yes,0.90,per_species_ratios,
+acd,Acadian(NE+customR),brms_plot_level,36.1,yes,0.90,per_species_ratios,NE sub-variant
+adk,Adirondacks(NE+customR),brms_plot_level,33.0,yes,0.90,per_species_ratios,NE sub-variant
+sn,Southern,brms_plot_level,60.7,yes,0.90,per_species_ratios,
+ls,Lake States,brms_plot_level,23.5,no,0.90,per_species_ratios,TPH already ~unbiased
+cs,Central States,brms_plot_level,30.0,no,0.90,per_species_ratios,TPH over-predicted; no injection
+ie,Inland Empire,brms_plot_level,25.0,yes,0.90,per_species_ratios,HT-DBH strongly over
+kt,Kootenai/Kaniksu,brms_plot_level,69.8,yes,0.90,per_species_ratios,HT-DBH over ~10%
+ci,Central Idaho,brms_plot_level,33.1,yes,0.90,per_species_ratios,
+cr,Central Rockies,brms_plot_level,30.0,no,0.90,per_species_ratios,TPH over-predicted; no injection
+ut,Utah,brms_plot_level,30.0,yes,0.90,per_species_ratios,
+ca,Inland CA/S.Cascades,brms_plot_level,30.0,no,0.90,per_species_ratios,TPH over-predicted; no injection
+nc,Klamath,brms_plot_level,16.9,yes,0.90,per_species_ratios,
+ec,East Cascades,brms_plot_level,21.7,yes,0.90,per_species_ratios,
+wc,West Cascades,brms_plot_level,21.7,yes,0.90,per_species_ratios,
+oc,Oregon Coast,brms_plot_level,21.7,yes,0.90,per_species_ratios,
+pn,PNW Coast,brms_plot_level,21.7,yes,0.90,per_species_ratios,HT-DBH wrong shape

@@ -1,0 +1,9 @@
+maxsp=108 NSAMP=40; native SDI head=[655.0, 387.0, 412.0, 506.0, 412.0]
+n_run=30
+arm           mean final TPH    median
+default                862.6     838.3  (n=29)
+sdi_x0.6               492.3     400.2  (n=29)
+sdi_x1.0               755.7     733.7  (n=29)
+sdi_x1.6              1221.6    1215.1  (n=29)
+BINDING
+DONE_BIND

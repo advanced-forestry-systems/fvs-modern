@@ -1,0 +1,35 @@
+{
+  "title": "fvs-modern: Modernized Forest Vegetation Simulator with Bayesian Calibration",
+  "upload_type": "software",
+  "publication_date": "2026-06-18",
+  "version": "2026.06.1",
+  "language": "eng",
+  "access_right": "open",
+  "license": "mit",
+  "creators": [
+    {
+      "name": "Weiskittel, Aaron R.",
+      "affiliation": "University of Maine, Center for Research on Sustainable Forests",
+      "orcid": "0000-0002-9249-1686"
+    }
+  ],
+  "keywords": [
+    "forest growth and yield",
+    "Forest Vegetation Simulator",
+    "FVS",
+    "Bayesian calibration",
+    "Forest Inventory and Analysis",
+    "FIA",
+    "diameter growth",
+    "mortality",
+    "stand projection",
+    "forest type",
+    "ecoregion"
+  ],
+  "communities": [{"identifier": "forestry"}],
+  "related_identifiers": [
+    {"identifier": "https://github.com/holoros/fvs-modern", "relation": "isSupplementTo", "scheme": "url"}
+  ],
+  "description": "<p>A modernized fork of the USDA Forest Vegetation Simulator (FVS): Fortran 77 to Fortran 90 source conversion across all 25 geographic variants, turnkey deployment (Docker, platform installers, Python and REST wrappers), and Bayesian hierarchical calibration of the growth, mortality, height-diameter, crown, and recruitment components against national FIA remeasurement data, with posterior-predictive uncertainty.</p><p><strong>This version (2026.06.1)</strong> adds the disturbance-aware FIA benchmark (the FVS over-prediction is shown to be largely a benchmark-design artifact of unsimulated harvest, not a growth-equation bias), an out-of-sample-validated keyword adjustment layer (brms site-specific maximum SDI, density-dependent recruitment, per-species basal area increment), the single-framework four-arm comparison of default, keyword-calibrated, and fvs-conus species-free equations, a CONUS-consistent crown-width (MCW) consensus recovered from the variant CCF coefficients, and the fvs-conus component models extended so every component depends on both forest type and ecoregion in species-dependent and species-free forms. Released after a full all-variant build and regression test.</p>",
+  "notes": "Dual-licensed: MIT for original Python, R, and deployment code; CC0-1.0 for the USDA FVS Fortran source inherited from upstream (see LICENSE). New version of concept DOI 10.5281/zenodo.19802673."
+}

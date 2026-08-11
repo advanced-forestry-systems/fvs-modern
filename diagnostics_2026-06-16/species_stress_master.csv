@@ -1,0 +1,7 @@
+component,label,link,n_species,sigma_sp,sigma_sp_sd,species_mult,pct_dev,identified_ratio,frac_species_nonzero,residual_scale
+mort,Mortality,logit,36,0.424,0.059,1.528,52.8,7.1,0.78,
+htdbh,Height-diameter,log,8,0.269,0.253,1.308,30.8,1.1,0,0.389
+cr,Crown recession,log,24,0.258,0.05,1.294,29.4,5.1,0.58,2.391
+dg,Diameter growth,log,75,0.207,0.019,1.23,23,10.9,0.41,1.913
+hg,Height growth,log,9,0.16,0.073,1.173,17.3,2.2,0,2.174
+hcb,Height to crown base,log,8,0.132,0.118,1.141,14.1,1.1,0.25,8.375

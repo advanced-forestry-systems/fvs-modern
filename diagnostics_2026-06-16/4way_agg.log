@@ -1,0 +1,13 @@
+per-condition rows: 951  variants: 15 
+  match t1 via PLT_CN_cond1 : 12.9 %
+  match t1 via CN_cond1 : 0 %
+  match t1 via plot_key : 0 %
+using CN column: PLT_CN_cond1 ( 12.9 % match)
+joined rows with keys: 123 of 951 
+wrote calib_4way_margins.csv
+wrote fig_4way_landowner.png
+wrote fig_4way_ecoregion.png
+            used   (Mb) gc trigger   (Mb)  max used   (Mb)
+Ncells   1295161   69.2    2691378  143.8   2691378  143.8
+Vcells 172194686 1313.8  370565272 2827.2 366068334 2792.9
+DONE_4WAY_AGG

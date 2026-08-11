@@ -370,3 +370,29 @@ calibration/output/comparisons_overstory/*.png
 calibration/output/comparisons_overstory/*.jpg
 calibration/output/comparisons_overstory/*.pdf
 calibration/output/comparisons_overstory/*.pptx
+# Script-accident dirs (unexpanded shell vars)
+\$O/
+\$OUTDIR/
+\$HOME_OUT/
+# Timestamped calibration config backups
+config/calibrated/*.pre_conus_*
+# SF integration preview configs (intermediate)
+config/calibrated/*.sf_preview.json
+
+# SF preview configs anywhere
+*.sf_preview.json
+# pre_sf timestamped config backups
+config/calibrated/*.pre_sf_*
+# ephemeral build log + manuscript edit-backup
+build_ne_magfix.log
+manuscript/*.pre_edits*.docx
+# --- Cowork autopilot hygiene 2026-07-03 ---
+*.orig
+*.pre_greg*
+*.pre_arm*
+*.pre_fix*
+*.pre_sdimaxfmt
+*.pre_fiajsp
+bin-test/
+config/greg_emt_td_lookup.csv
+*.pre_mod_*

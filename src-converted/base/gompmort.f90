@@ -158,8 +158,8 @@ ENDIF
 ETA = B0 + B1*(CRC+0.01)**B2 + B3*CTERM
 IF (ETA.GT.30.0)  ETA = 30.0
 IF (ETA.LT.-30.0) ETA = -30.0
-HZ = EXP(ETA)
-SURV = EXP(-HZ*FINTL)
+HZ = 1.0 - EXP(-EXP(ETA))   ! Greg gompit: annual SURVIVAL (high eta -> high survival)
+SURV = MAX(0.0,MIN(1.0,HZ)) ** FINTL   ! compound annual survival over the cycle
 RETURN
 END
 

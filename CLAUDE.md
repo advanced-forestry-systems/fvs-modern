@@ -1,122 +1,191 @@
 # CLAUDE.md: AI Assistant Conventions for fvs-modern
 
+This file orients an AI assistant (or a new contributor) to the repository. For
+the user-facing project narrative, the build walkthrough, and the compiler
+policy, read `README.md` first; this file covers conventions and the parts of
+the tree that the README does not map.
+
 ## Project Overview
 
-fvs-modern is a modernized community-maintained fork of the USDA Forest Vegetation Simulator (FVS), extended with Bayesian calibration of 25 regional variants against national FIA remeasurement data. The project provides:
+fvs-modern is a community-maintained fork of the USDA Forest Vegetation
+Simulator (FVS), converted from fixed-form Fortran 77 to free-form Fortran 90+
+and extended with a Bayesian calibration pipeline that fits regional variants
+against national FIA remeasurement data. The project provides:
 
-1. Fortran 90 free-form conversion of the FVS codebase (2,247 files)
-2. Turnkey deployment infrastructure (Docker, AWS, platform-specific installers)
-3. Python/REST API wrappers (fvs2py ctypes binding, microfvs REST interface)
-4. Bayesian calibration pipeline producing posterior distributions for 7 component models per variant
-5. Uncertainty quantification system (500 posterior draws per component, ensemble projections)
+1. A free-form Fortran 90 conversion of the FVS engine and its regional variants
+   (the converted tree lives under `src-converted/`).
+2. Deployment infrastructure: Docker, AWS (Packer AMI), and platform install
+   scripts for Linux, macOS, and Windows/WSL, plus an automated upstream-sync
+   workflow that tracks the USFS repositories.
+3. Python and REST wrappers: `fvs2py` (ctypes binding) and `microfvs` (FastAPI).
+4. A Bayesian calibration pipeline (Stan + R) producing posterior distributions
+   for the component growth/mortality models per variant.
+5. An uncertainty-quantification layer that samples posterior draws for ensemble
+   projections.
 
-The codebase spans three major software ecosystems: Fortran (simulation engine), R (Bayesian calibration), and Python (APIs and post-processing).
+The codebase spans three ecosystems: Fortran (the simulation engine), R (Bayesian
+calibration), and Python (APIs, configuration, and post-processing).
 
-## Directory Structure
+## Repository Map
+
+The repository is large (~6,000 tracked files) and has accumulated working
+documents at the root. The authoritative source tree is `src-converted/`;
+most other top-level items are calibration assets, deployment code, or
+project documentation.
 
 ```
-src-converted/               Fortran 90 free-form source (2,247 files, all variants)
-  base/                      Core simulation engine (253 files)
-  ne/, ie/, acd/, ...        25 US + Canadian regional variants
-  fire/, estb/, volume/      Optional extension modules
+src-converted/        Converted FVS source. THIS is the build input.
+  base/               Core simulation engine
+  vbase/              Virtual base includes
+  ne/ ie/ cr/ acd/    Regional variants (~23 US + Canadian variants; see README)
+    ... and others
+  fire/ estb/ volume/ Extension modules
+  volume/NVEL/        VENDORED NVEL volume library (mixed .f / .f90 / .c) -- do not "modernize"
+  dbsqlite/ dbs/      VENDORED SQLite amalgamation (sqlite3.c/.h) -- do not edit by hand
+  archive/            Retired variants and experiments (still fixed-form .f in places)
+  stubs/              Generated stub sources used by the build
+  tests/              Regression tests (test.py, comparison scripts)
 
 deployment/
-  scripts/                   Build and deployment automation
-    build_fvs_libraries.sh   Compile all variants to .so shared libraries
-    run_regression_tests.sh  Full test suite (66/67 passing)
-    deploy_laptop.sh         Fedora/RHEL install with systemd services
-    setup_macos.sh           Homebrew installation
-    setup_wsl.sh             Windows WSL2 setup
-    add_variant.sh           Scaffolding for new regional variants
-  docker/                    Dockerfile + compose (Ubuntu 24.04, Shiny + R)
-  fvs2py/                    Python ctypes wrapper (load .so, ctypes bindings)
-  microfvs/                  FastAPI REST interface (subprocess management, JSON I/O)
-  patches/                   Auto-applied diffs for upstream compatibility
+  scripts/            Build + install automation
+    build_fvs_libraries.sh   Compile variants to .so shared libraries
+    run_regression_tests.sh  Full regression suite
+    add_variant.sh           Scaffold a new variant
+    setup_macos.sh / setup_wsl.sh / deploy_laptop.sh   Platform installers
+    setup_ssl.sh, check_upstream.sh, sync_upstream.sh
+  docker/             Dockerfile + compose (Ubuntu 24.04, Shiny + R)
+  aws/                Packer HCL for AMI + EC2 user-data
+  fvs2py/             Python ctypes wrapper
+  microfvs/           FastAPI REST interface
+  patches/            Auto-applied diffs for upstream compatibility
+  config/, services/, fedora/, hosting-guide/   Install support
 
 calibration/
-  R/                         Bayesian fitting scripts (01 through 09)
-  python/                    Python projection engines and aggregators
-  osc/                       SLURM submission templates for OSC Cardinal
-  output/variants/{variant}/ Posterior draws, diagnostics, convergence checks
-  data/                      FIA remeasurement pairs, processed by component
-  stan/                      Stan model specifications (diameter growth, mortality, etc.)
+  R/                  Bayesian fitting scripts
+  stan/               Stan model specifications (diameter growth, mortality, ...)
+  python/             Projection engines and aggregators
+  osc/, slurm/        SLURM submission templates for OSC Cardinal (historical)
+  data/               FIA remeasurement pairs, processed by component
+  output/             Posterior draws, diagnostics, figures, benchmark reports
+  analysis/, stress/, figshare/   Analysis notebooks, stress tests, archive bundles
 
 config/
-  *.json                     Default parameters for 25 variants
-  calibrated/                Posterior medians for calibrated variants
-  config_loader.py           Runtime parameter switching (default/calibrated/custom)
-  uncertainty.py             Bayesian posterior draw sampling and aggregation
+  *.json              Default parameters per variant
+  calibrated/         Posterior medians for calibrated variants
+  config_loader.py    Runtime parameter switching (default/calibrated/custom)
+  uncertainty.py      Posterior-draw sampling and aggregation
+  fvs-modern.env.example   Template for the FVS_* environment variables
 
-src-converted/tests/         Regression tests (test.py, comparison scripts)
+docs/                 Getting-started, verification reports, roadmap, lifecycle
+variant-tools/        Templates and helpers for new variants
+modernization/        Conversion tooling and conversion reports
 ```
+
+### Root-level documents
+
+Several Markdown design/handoff documents currently live at the repository root
+rather than under `docs/`: `CALIBRATION.md`, `KNOWN_ISSUES.md`, `STOP_CODES.md`,
+`CHANGELOG.md`, and the CONUS-variant set (`CONUS_BLOCK_SCHEMA.md`,
+`CONUS_DEVELOPMENT_NOTES.md`, `CONUS_MODEL_SPECIFICATION.md`,
+`FVS_CONUS_INTEGRATION_PLAN.md`, `HANDOFF_CONUS_PROJECTION.md`). Treat these as
+authoritative for their topics. Consolidating them into `docs/` is a pending
+cleanup; until then, check the root before assuming a topic is undocumented.
+
+Note: the working tree may also contain untracked scratch (build artifacts such
+as `*.mod`, generated `perseus_*` figures, a local `package.json` / `node_modules`
+for an ad-hoc document generator). None of that is tracked or part of the build --
+ignore it, and never `git add -A` blindly.
 
 ## Build Instructions
 
-Build all FVS variant shared libraries in one command:
+Build all variant shared libraries from the converted tree:
 
 ```bash
-bash deployment/scripts/build_fvs_libraries.sh src-converted ./lib
+env FC=gfortran CC=gcc bash deployment/scripts/build_fvs_libraries.sh src-converted ./lib
 ```
 
-This compiles src-converted/ into 25 .so files (FVSne.so, FVSie.so, etc.), placing them in ./lib/. The script takes SOURCE_DIR (the converted source tree) and OUTPUT_DIR as required arguments. It:
+The script takes SOURCE_DIR and OUTPUT_DIR as required arguments and produces
+per-variant `.so` files (`FVSne.so`, `FVSie.so`, ...) in `./lib`. It checks
+dependencies, compiles `base/` to objects, links variant modules against base,
+generates the required stub libraries, and builds position-independent shared
+libraries for ctypes/fvs2py.
 
-1. Checks for gfortran, gcc dependencies
-2. Compiles base/ into object files
-3. Links variant-specific modules against base
-4. Creates position-independent shared libraries for ctypes/fvs2py
-
-Subset builds are supported:
+Subset builds:
 
 ```bash
 bash deployment/scripts/build_fvs_libraries.sh src-converted ./lib ne ak ie
 ```
 
+**Compiler policy: gfortran only.** Intel `ifort` is not supported. The
+`!DEC$ ATTRIBUTES ALIAS` decorators (e.g. in `src-converted/base/fvs.f90`) emit
+uppercase symbol exports under ifort that do not match the lowercase-plus-
+underscore name mangling expected by downstream Fortran callers and the Python
+ctypes wrappers. The build scripts force `FC=gfortran` and warn on anything else.
+
 ## Key Conventions
 
-Fortran 90 Free Form: All source is free-form (column-independent, ! comments). No fixed-form carryover (column 6 punch card notation). Modern declaration style: `integer, parameter :: MAX_TREES = 10000`.
+**Fortran:** The converted FVS engine under `src-converted/` is free-form
+Fortran 90 (column-independent, `!` comments, `SELECT CASE` in place of computed
+GOTOs, modern declarations like `integer, parameter :: MAX_TREES = 10000`).
+Exceptions you must not "modernize": the vendored SQLite amalgamation
+(`dbsqlite/sqlite3.c`), the vendored NVEL volume library (`volume/NVEL/`, which
+retains fixed-form `.f` and C sources), and retired sources under
+`src-converted/archive/`. Some `rd/` files are INCLUDE-only declaration units
+despite a `.f90` extension -- the build script deliberately skips compiling them
+as standalone units (see `KNOWN_ISSUES.md`).
 
-Python 3.9+: Type hints preferred for new code. Path operations use pathlib.Path. Environment variable access via os.environ.get() with sensible defaults.
+**Python 3.9+:** Type hints preferred for new code. Use `pathlib.Path` for path
+operations and `os.environ.get()` with sensible defaults for configuration.
 
-R Tidyverse Style: Pipe operators (%>%), tidy data frames (one observation per row). No global assignments except for data loading. Use readr for I/O.
+**R (tidyverse):** Pipe operators, tidy data frames (one observation per row),
+`readr` for I/O. Avoid global assignment except for data loading.
 
-No Hardcoded HPC Paths in New Code: Cardinal paths (/users/PUOM0008/, /scratch/) are confined to calibration/osc/ SLURM scripts. Production code reads FVS_PROJECT_ROOT, FVS_LIB_DIR, FVS_FIA_DATA_DIR from environment.
+**No hardcoded HPC paths in new code.** Cardinal paths (`/users/PUOM0008/`,
+`/scratch/`) are confined to `calibration/osc/` and `calibration/slurm/` SLURM
+templates, kept for reproducibility of past runs. Production code reads
+`FVS_PROJECT_ROOT`, `FVS_LIB_DIR`, and `FVS_FIA_DATA_DIR` from the environment
+(see `config/fvs-modern.env.example`). Do not extend the hardcoded-path pattern.
 
-Parameter Versioning: All FVS instances accept version="default|calibrated|custom". Runtime switching via config/config_loader.py ensures consistency.
+**Parameter versioning.** FVS instances accept `version="default|calibrated|custom"`.
+Runtime switching goes through `config/config_loader.py` so parameter sources stay
+consistent. The uncertainty layer (`config/uncertainty.py`) samples complete
+posterior parameter vectors per draw, preserving within-draw parameter
+correlations while allowing ensemble spread across draws.
 
 ## Testing
-
-Run the full test suite:
 
 ```bash
 bash deployment/scripts/run_regression_tests.sh
 ```
 
-This executes:
+This runs library-load tests (ctypes import in Python, `gctorture` in R),
+standalone keyword-file simulations, rFVS `.Fortran()` API tests, and
+comparative benchmarks (default vs. calibrated parameters). For the live
+pass/fail count, rely on the CI badge in `README.md` rather than a number
+hardcoded here -- the suite changes as variants are added. The one long-standing
+failure is the `FVSie` `iet03` standalone segfault (tracked as issue #5).
 
-1. Library load tests (gctorture in R, ctypes import in Python)
-2. Standalone keyword-file simulations (41/42 passing; 1 known segfault in iet03)
-3. rFVS API tests via R's .Fortran() interface
-4. Comparative benchmarks (original vs. calibrated parameters)
-
-Current status: 66/67 tests passing (98.5%).
-
-Unit tests for Python modules:
+Python unit tests:
 
 ```bash
-cd deployment/fvs2py
-pytest
+cd deployment/fvs2py && pytest
 ```
 
-## Special Notes
+## Working With This Repo
 
-Calibration OSC Scripts: calibration/osc/ contains historical SLURM submission templates (submit_cardinal.sh, submit_dg_24h.sh, etc.) with hardcoded Cardinal paths and account numbers. These are kept for reproducibility of past calibration runs. Do not extend these patterns; new workflows should read paths from environment variables.
-
-Uncertainty Quantification: The UncertaintyEngine (config/uncertainty.py) manages 500 posterior draws per component. Each draw is a complete parameter vector (e.g., B0[1..max_species] for diameter growth). This preserves parameter correlations within a draw while allowing ensemble spread across draws.
-
-Variant Deployment: New variants are scaffolded via add_variant.sh, which creates variant directory, species mapping template, and parameter JSON stub. Parameters are calibrated offline (calibration/R/) and merged into config/calibrated/.
+- The default branch is `main`. Feature work happens on topic branches; an
+  automated workflow opens dated `upstream-sync/YYYYMMDD` PRs when the USFS
+  repositories change -- those are bot PRs, not human work.
+- Do not commit large binaries (`.docx`, `.pptx`, `.xlsx`, `.pdf`, large `.png`,
+  data dumps). Manuscripts, slide decks, and generated figures belong in a
+  release asset, Zenodo deposit, or Git LFS -- not in version history. (See the
+  history-size note in `docs/HISTORY_REWRITE_PLAN.md`.)
+- Releases are tagged `vYYYY.MM.N` with notes; `CHANGELOG.md` is maintained.
 
 ## Licensing
 
-Fortran source code (src-converted/): USDA public domain (inherits from original FVS).
-New Python/R/deployment code: MIT license.
-See LICENSE file at repo root.
+The original FVS Fortran source is a USDA Forest Service work and is in the U.S.
+public domain (17 U.S.C. section 105); see `NOTICE`. New contributions in this
+repository -- the calibration pipeline, analysis and visualization scripts, CONUS
+variant equations, and associated documentation -- are MIT licensed; see
+`LICENSE`.

@@ -1,0 +1,38 @@
+fvs-modern -- NOTICE
+====================
+
+This repository combines material under two distinct legal regimes. The split
+exists because the project is a fork of a U.S. Government work extended with new,
+independently authored contributions.
+
+1. Original FVS source (public domain)
+---------------------------------------
+The Forest Vegetation Simulator (FVS) was originally developed by the USDA
+Forest Service. As a work of the United States Government, the original FVS
+source code is not subject to copyright protection in the United States under
+17 U.S.C. section 105. The Fortran source in this repository that is derived
+from that codebase -- principally the converted engine and regional variants
+under `src-converted/` -- inherits that public-domain status.
+
+For the original USDA FVS source, see:
+  https://github.com/USDAForestService/ForestVegetationSimulator
+  https://github.com/USDAForestService/ForestVegetationSimulator-Interface
+
+2. New contributions (MIT License)
+----------------------------------
+All original contributions in this repository -- including but not limited to
+the Bayesian calibration pipeline in `calibration/`, the analysis and
+visualization scripts, the CONUS variant equations, the deployment
+infrastructure, and the associated documentation -- are licensed under the MIT
+License. The full MIT text and copyright line are in the `LICENSE` file.
+
+3. Vendored third-party components
+----------------------------------
+This repository vendors third-party code that carries its own terms:
+  - SQLite amalgamation (`src-converted/dbsqlite/sqlite3.c`, `sqlite3.h`):
+    public domain (see https://www.sqlite.org/copyright.html).
+  - NVEL National Volume Estimator Library (`src-converted/volume/NVEL/`):
+    USDA Forest Service work; see upstream for terms.
+
+When in doubt about a specific file, prefer the most restrictive applicable
+notice and consult the upstream source.

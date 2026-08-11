@@ -5,7 +5,12 @@ import functools
 import logging
 import os
 from collections.abc import Callable
-from typing import ParamSpec, TypeVar, cast
+from typing import TypeVar, cast
+
+try:  # ParamSpec moved into typing in 3.10; fall back for 3.9 runtimes (e.g. OSC default)
+    from typing import ParamSpec
+except ImportError:
+    from typing_extensions import ParamSpec
 
 P = ParamSpec("P")
 T = TypeVar("T")

@@ -1,0 +1,8 @@
+# Species mapping for custom variant
+# FIA_CODE, VARIANT_INDEX, COMMON_NAME, SCIENTIFIC_NAME, FVS_ALPHA
+# Edit this file then update spdecd.f and PRGPRM.f MAXSP accordingly
+#
+# Example (NE variant species):
+# 12, 1, balsam fir, Abies balsamea, BF
+# 71, 2, tamarack, Larix laricina, TL
+# 95, 3, black spruce, Picea mariana, BS

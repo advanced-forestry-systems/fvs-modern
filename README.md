@@ -20,6 +20,38 @@ FVS is the most widely used individual tree growth and yield model in North Amer
 
 3. **Upstream tracking and variant extensibility.** This fork automatically monitors the USFS GitHub repos for new releases, provides a one-command sync workflow, and includes scaffolding tools for creating new regional variants with calibration templates.
 
+## Calibration and validation
+
+Beyond the Fortran modernization, this fork carries a Bayesian recalibration of the regional variants against
+national FIA remeasurement data, with component models (diameter growth, mortality, crown ratio,
+height-diameter, height growth) fit using hierarchical models with species, functional-trait, forest-type-group,
+and EPA ecoregion (Levels 1 to 3) random effects. Posterior-median multiplier sets per variant live under
+`config/calibrated/` and are applied at runtime via `config/config_loader.py` (`version="calibrated"`).
+
+Independent international validation against the Canadian National Forest Inventory (MAGPlot): the Acadian
+variant projects basal area on New Brunswick essentially without bias (R^2 = 0.88); the Alaska variant
+under-predicts growth in productive coastal British Columbia (its Marine West Coast Forest analog) and an
+ecoregion-dependent diameter-growth multiplier (about 2x coastal, 1x dry interior) removes most of the bias,
+encoded in `config/calibrated/ak.json`. The calibrated parameter posteriors and validation outputs are archived
+at Zenodo: data DOI [10.5281/zenodo.20760580](https://doi.org/10.5281/zenodo.20760580).
+
+## Testing and platform support
+
+- Linux: validated. The full regression suite passes (42 of 42), and the standalone executables and the fvs2py
+  shared libraries build and load via the CI (`.github/workflows/ci.yml`) and the Docker image
+  (`.github/workflows/docker-publish.yml`, the recommended reproducible build).
+- Cross-platform CI (`.github/workflows/cross-platform.yml`) builds and load-tests on Ubuntu, macOS, and
+  Windows (MSYS2/MinGW). **Linux and macOS build and load from source** (the matrix gates on both); a
+  self-contained-library pass stubs the few harmless unresolved internal NVEL symbols so the libraries load on
+  macOS, whose loader cannot defer them. Native-Windows (MSYS2) from-source builds are in progress and tracked
+  in issue #72; Windows users should use WSL2 (Linux) or the Docker image, which are fully supported.
+- Verification: a default-vs-calibrated FVS-NE projection over 30 years on remeasured stands confirms the
+  calibrated configs load and apply (they trim the default basal-area over-prediction by a few percent, the
+  expected direction); the standalone regression suite passes 42 of 42.
+- fvs2py / ctypes note: the FVS shared libraries carry a few harmless unresolved internal NVEL symbols, so load
+  them lazily (the default ctypes behavior, RTLD_LAZY); the simulation API entry points (`fvssetcmdline_`,
+  `fvssummary_`, `fvsdimsizes_`, ...) are fully resolved and callable.
+
 ## Repository structure
 
 ```

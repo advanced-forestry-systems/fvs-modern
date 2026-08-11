@@ -1,23 +1,6 @@
-PUBLIC DOMAIN NOTICE (Original FVS Source)
-
-The Forest Vegetation Simulator (FVS) was originally developed by the USDA
-Forest Service. As a work of the United States Government, the original FVS
-source code is not subject to copyright protection in the United States under
-17 U.S.C. § 105. The Fortran source in this repository is derived from that
-public domain codebase.
-
-For the original USDA FVS source, see:
-https://github.com/USDAForestService/ForestVegetationSimulator
-
-
-MIT License (Calibration Code, Analysis Scripts, and New Equations)
+MIT License
 
 Copyright (c) 2024-2026 Aaron R. Weiskittel, Greg Johnson, David Marshall
-
-All original contributions in this repository (including but not limited to
-the Bayesian calibration pipeline in calibration/, analysis and visualization
-scripts, CONUS variant equations, and associated documentation) are licensed
-under the MIT License:
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

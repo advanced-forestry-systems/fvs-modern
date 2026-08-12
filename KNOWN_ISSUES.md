@@ -59,6 +59,40 @@ growth was adopted for 7 variants and height increment for 6, while the authorit
 height increment TRUE for 6. The emitted configurations follow neither. Someone has to decide whether
 18 variants are missing calibration they should have, or 7 received calibration they should not.
 
+**Resolved 12 August 2026.** The adoption record does not actually contradict itself once the CSV
+and the comment are read as design intent versus achieved state rather than as two competing claims
+of intent. `calibration/data/equation_availability_full.csv` was read in full: diameter growth is
+TRUE for all 25 of 25 variants, height increment TRUE for 6 (`bc`, `ci`, `em`, `ie`, `kt`, `ws`). The
+`R/multipliers.R` header comment previously read "DG for 7; HI for 6" as though that were the design.
+It was not; it was an accurate count of what the serializer actually managed to emit, mistakenly
+written into the file as if it were policy. The correct statement is that **18 of 25 variants are
+missing diameter growth calibration the pipeline believes and reports they have.** Only 7 variants
+(`acd`, `ca`, `cs`, `kt`, `ls`, `nc`, `on`) carry genuinely non-unity per species diameter growth
+multipliers; the other 18, including `ne`, silently run default diameter growth while their
+provenance and the availability table both assert otherwise. This is a materially larger finding
+than the Northeast only framing above: it is a pipeline wide gap between declared and delivered
+calibration, not a single variant defect. The `R/multipliers.R` comment has been corrected in the
+`fvs-conus` repository (commit `86e612c`, not yet pushed pending Aaron's GitHub credential) to state
+this plainly rather than describing the gap as though it were intended scope.
+
+**Recommendation, not yet actioned in this release.** Repairing the dense index crosswalk for the
+remaining 18 variants stays out of v1, per the same reasoning given above: it needs a recovered or
+refitted crosswalk per variant plus re derivation of every downstream configuration and gate number,
+and the Northeast case alone shows the diagnostics that would need re running (Reineke, Eichhorn) are
+sensitive to exactly the species composition a repair would change. This is now sized as a follow on
+effort of up to 18 variants rather than a single file fix, and should be scoped as its own tracked
+piece of work rather than folded into general hygiene.
+
+**Mortality hook setting, decided 12 August 2026.** No setting is adopted in v1. The 11 August
+validation found the level fix (`FVS_MORT_HALVE=2.675`) closes most of the volume and basal area
+gate overprediction and sharply cuts BAMAX ceiling pinning, but drives the Reineke slope past the
+accepted band in the opposite direction and does not improve the Eichhorn coefficient of variation,
+and the crown ratio aware allocator (`vm_lvl05`) does not distinguish itself from the level only fix
+on any of the four measured relations. Since no candidate clears all three diagnostics and the
+release bar accepted for v1 is a documented limitation rather than a forced fix, the hooks ship
+present and environment gated, defaulting to frozen behaviour, with adoption left for a future pass
+once a setting exists that does not trade one diagnostic failure for another.
+
 What this changes for the release is a labelling matter and it is material. The `fvs_regional` gate
 numbers already published come from a model calibrated on height diameter, crown ratio and mortality
 only, running default diameter growth and default height growth. Any claim about regional calibration

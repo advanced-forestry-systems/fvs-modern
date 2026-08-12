@@ -1,5 +1,8 @@
 SUBROUTINE GRINIT
 IMPLICIT NONE
+CHARACTER*32 MFPCV
+REAL MFPTMP
+INTEGER MFPIOS
 !----------
 ! NE $Id$
 !----------
@@ -240,6 +243,19 @@ SDIBC = 0.
 SDIAC = 0.
 ISISP = 0
 PMSDIL = 55.
+!----------
+!  MORTFIX 2026-08-04 (Track C): the lower SDI gate is the single parameter
+!  that decides whether the density-dependent rate RN ever substitutes for the
+!  background rate RI in MORTS.  At the shipped 55 percent only a minority of
+!  the NE benchmark cohort ever crosses it.  Made runtime-settable so the gate
+!  can be profiled; unset reproduces 55.
+!----------
+CALL GETENV('FVS_MORT_PMSDIL', MFPCV)
+IF (MFPCV .NE. ' ') THEN
+  READ(MFPCV,*,IOSTAT=MFPIOS) MFPTMP
+  IF (MFPIOS .EQ. 0 .AND. MFPTMP .GT. 0.0 .AND. MFPTMP .LE. 100.0) &
+      PMSDIL = MFPTMP
+ENDIF
 PMSDIU = 85.
 SLPMRT = 0.0
 CEPMRT = 0.0

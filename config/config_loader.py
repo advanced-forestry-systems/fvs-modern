@@ -1158,7 +1158,25 @@ class FvsConfigLoader:
         for i, mult in enumerate(multipliers):
             if abs(mult - 1.0) > 0.01:  # Only include if meaningfully different from 1.0
                 # MORTMULT fields: species  proportion  lower_dbh  upper_dbh
-                lines.append(f"MORTMULT        {i + 1:10d}{mult:10.4f}       0.0     999.0")
+                # FVS keyword records are fixed width: cols 1-10 keyword, then
+                # 10-column numeric fields (keyrdr.f90: KEYWRD=RECORD(1:8),
+                # KARD(i)=RECORD(11+10*(i-1) : 20+10*(i-1))).  MORTMULT is a
+                # SCHEDULED activity (activity code 94, read via OPFIND/OPGET in
+                # vls/morts.f90:147-156), so field 1 is the schedule date and the
+                # option parameters begin at field 2:
+                #   f1 cols 11-20 date (blank -> cycle 1)
+                #   f2 cols 21-30 species (0 = all)
+                #   f3 cols 31-40 multiplier
+                #   f4 cols 41-50 lower DBH   f5 cols 51-60 upper DBH
+                # The previous form padded "MORTMULT" to 16 columns and omitted
+                # the date field, shifting every value 6 columns right.  FVS then
+                # read species=0, multiplier=1.0, lower DBH=<the multiplier>,
+                # upper DBH=0.0, so the test D>=D1 .AND. D<D2 was never true and
+                # the multiplier silently did nothing.  Fixed 2026-08-04.
+                lines.append(
+                    f"{'MORTMULT':<10}{'':10}{i + 1:10d}{mult:10.4f}"
+                    f"{0.0:10.1f}{999.0:10.1f}"
+                )
         return "\n".join(lines)
 
     def _format_baimult_keywords(self, multipliers: np.ndarray, comments: bool) -> str:

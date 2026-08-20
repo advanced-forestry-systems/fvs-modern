@@ -94,6 +94,24 @@ REAL TMMSB,T85MSB,TMORE,TEMEFF,TPACLS,DBHEND,BADEAD
 REAL DIA0,D10,DR0,DR10,SUMDR0,SUMDR10,SUMDR10N,DR10N,D10N,SDQ0
 DATA MYACTS/94,97/
 !----------
+!  MORTFIX 2026-08-04 (Track C).  Runtime-settable background mortality
+!  parameters.  Defaults reproduce legacy behaviour exactly.
+!    MFHALV -- replaces the undocumented hardcoded 0.5 halving of RI.
+!    MFCRB  -- crown-ratio coefficient added to the background logit.  The
+!              background rate is RI = 1/(1+EXP(B0+B1*D)); adding
+!              MFCRB*(CR-MFCRREF) to that exponent keeps the Hamilton logistic
+!              form and makes the rate sensitive to suppression.  MFCRB > 0
+!              lowers mortality for well-crowned trees and raises it for
+!              short-crowned ones.  At CR = MFCRREF the rate is unchanged.
+!    MFCRRF -- crown-ratio centring constant, percent.
+!----------
+REAL MFHALV,MFCRB,MFCRRF,XCRT,RIEXP
+LOGICAL MFINIT
+CHARACTER*32 MFCVAL
+INTEGER MFIOS
+SAVE MFHALV,MFCRB,MFCRRF,MFINIT
+DATA MFINIT/.FALSE./
+!----------
 !  DATA STATEMENTS.
 !----------
 !
@@ -141,6 +159,26 @@ IF(DEBUG)WRITE(JOSTND,9000)ICYC
 !----------
 TREEIT= 0.
 KNT=0
+!-----------
+!  MORTFIX: read runtime background-mortality parameters once.
+!-----------
+IF (.NOT. MFINIT) THEN
+  MFINIT = .TRUE.
+  MFHALV = 0.5
+  MFCRB  = 0.0
+  MFCRRF = 45.0
+  MFCVAL = ' '
+  CALL GETENV('FVS_MORT_HALVE', MFCVAL)
+  IF (MFCVAL .NE. ' ') READ(MFCVAL,*,IOSTAT=MFIOS) MFHALV
+  MFCVAL = ' '
+  CALL GETENV('FVS_MORT_CRB', MFCVAL)
+  IF (MFCVAL .NE. ' ') READ(MFCVAL,*,IOSTAT=MFIOS) MFCRB
+  MFCVAL = ' '
+  CALL GETENV('FVS_MORT_CRREF', MFCVAL)
+  IF (MFCVAL .NE. ' ') READ(MFCVAL,*,IOSTAT=MFIOS) MFCRRF
+  IF (MFHALV .LT. 0.0) MFHALV = 0.5
+  IF (MFCRRF .LE. 0.0) MFCRRF = 45.0
+ENDIF
 !-----------
 !  PROCESS MORTMULT KEYWORD.
 !-----------
@@ -505,11 +543,28 @@ D=DBH(I)
 !----------
 !  COMPUTE BACKGROUND MORTALITY RATE RI
 !----------
-RI=(1.0/(1.0+EXP(B0+B1*D)))
 !----------
-! TEST RUNS SHOW BACKGROUND MORTALITY RATE IS HIGH, CUT IT IN HALF.
+!  MORTFIX: Hamilton background logit, optionally with a crown-ratio term.
+!  ICR is crown length as a percent of total height (ARRAYS.f90).  Trees with
+!  a missing or zero crown ratio are held at the centring constant so they are
+!  neither penalised nor credited.
 !----------
-RI = 0.5 * RI
+RIEXP = B0 + B1*D
+IF (MFCRB .NE. 0.0) THEN
+  XCRT = FLOAT(ICR(I))
+  IF (XCRT .LE. 0.0) XCRT = MFCRRF
+  IF (XCRT .GT. 100.0) XCRT = 100.0
+  RIEXP = RIEXP + MFCRB*(XCRT - MFCRRF)
+ENDIF
+IF (RIEXP .GT. 60.0) RIEXP = 60.0
+IF (RIEXP .LT. -60.0) RIEXP = -60.0
+RI=(1.0/(1.0+EXP(RIEXP)))
+!----------
+! LEGACY: TEST RUNS SHOW BACKGROUND MORTALITY RATE IS HIGH, CUT IT IN HALF.
+! MORTFIX: the halving is now the runtime parameter MFHALV (FVS_MORT_HALVE),
+! default 0.5 so that unset behaviour is identical to legacy.
+!----------
+RI = MFHALV * RI
 !----------
 !  MERGE ESTIMATES OF RI AND RN.
 !----------

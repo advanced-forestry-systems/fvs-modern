@@ -79,7 +79,7 @@ _HG_BASE: dict[str, str] = {
 }
 
 _DG_ENV: dict[str, str] = {
-    "FVS_GREGDG":      "1",
+    "FVS_GREGDG":      "0",
     "FVS_GREGDG_COEF": f"{_CONF_DG}/greg_dg_coefficients.csv",
     "FVS_GREG_DD0":    "1600",
     "FVS_GREG_TD":     "28",

@@ -52,8 +52,12 @@ FIA_DIR      = "/fs/scratch/PUOM0008/crsfaaron/FIA"
 
 _CONF_DG = "/fs/scratch/PUOM0008/crsfaaron/wt-ne-dg/config"
 
+# ARM: the NE binary is the Track C mortfix build.  Overridable with $FVS_EXE
+# or --exe.  With no arm env vars set this binary reproduces legacy behaviour.
+DEFAULT_NE_EXE = "/users/PUOM0008/crsfaaron/fvs-modern/bin-mortfix_20260804/FVSne"
+
 VARIANT_BINS: dict[str, str] = {
-    "ne": "/users/PUOM0008/crsfaaron/fvs-modern/bin-gompsize/FVSne",
+    "ne": os.environ.get("FVS_EXE", DEFAULT_NE_EXE),
     "sn": "/users/PUOM0008/crsfaaron/fvs-modern/src-converted/bin/FVSsn",
     "wc": "/users/PUOM0008/crsfaaron/fvs-modern/src-converted/bin/FVSwc",
     "em": "/users/PUOM0008/crsfaaron/fvs-modern/src-converted/bin/FVSem",
@@ -174,6 +178,62 @@ STANDALONE_MODELS: dict[str, dict] = {
 
 MODEL_ORDER = ["fvs_base", "fvs_regional", "organon", "conus_spdep", "conus_climate"]
 
+# ARM: the MORTMULT sweep registry is retained only as an inert stub.  Arms are
+# driven purely by environment variables; no MORTMULT card is ever emitted.
+MM_BY_MODEL: dict = {}
+
+# ARM_ENV holds the current arm's environment variables.  They are injected ONLY
+# into the FVS subprocess environment inside run_stand(); this process's own
+# os.environ is never mutated.
+ARM_ENV: dict[str, str] = {}
+ARM_NAME: str = "base"
+
+# KWPROOF: literal extra keyword records spliced into the keyfile at exactly
+# the position the old MORTMULT card used to occupy (right after htg_kw).
+# Empty by default -> no change to any existing behaviour.
+EXTRA_KW: str = ""
+
+
+def parse_env_spec(spec: str) -> dict:
+    """Parse 'K=V,K=V,...' into a dict.  Blank entries ignored."""
+    out: dict[str, str] = {}
+    for item in (spec or "").split(","):
+        item = item.strip()
+        if not item:
+            continue
+        if "=" not in item:
+            raise SystemExit("--env entry %r is not K=V" % item)
+        k, v = item.split("=", 1)
+        k = k.strip()
+        if not k:
+            raise SystemExit("--env entry %r has an empty key" % item)
+        out[k] = v.strip()
+    return out
+
+def _mmkw(mult: float) -> str:
+    """Canonical FVS keyword record: cols 1-10 keyword, then 10-col numeric fields.
+    field1 = date/cycle (blank -> cycle 1), field2 = species (0 = all),
+    field3 = multiplier, field4 = DBH lower, field5 = DBH upper."""
+    return ("%-10s%10s%10.0f%10.4f%10.1f%10.1f"
+            % ("MORTMULT", "", 0, float(mult), 0.0, 999.0))
+
+
+
+# CYCLEFIX: the projection is now a SINGLE cycle whose length equals the
+# plot remeasurement interval (TIMEINT 0 ncyc / NUMCYCLE 1).  Anything that
+# used to iterate over cycles must iterate over N_CYCLES, not over ncyc.
+N_CYCLES = 1
+
+# FINALRUN: cycle convention switch.
+#   "single" = TIMEINT 0 <interval>, NUMCYCLE 1   (primary convention)
+#   "annual" = TIMEINT 0 1,          NUMCYCLE <interval>  (sensitivity arm)
+CYCLE_MODE = "single"
+
+def build_cycle_kw(ncyc: int) -> str:
+    if CYCLE_MODE == "annual":
+        return "TIMEINT            0         1\nNUMCYCLE  {n:>10d}".format(n=ncyc)
+    return "TIMEINT            0{n:>10d}\nNUMCYCLE           1".format(n=ncyc)
+
 # ---------------------------------------------------------------------------
 # KEYFILE template
 # ---------------------------------------------------------------------------
@@ -194,9 +254,12 @@ ENDSQL
 END
 DATABASE
 SUMMARY            2
+TREELIDB           2
 END
-TIMEINT            0         1
-NUMCYCLE          {ncyc}
+FIAVBC
+TREELIST           0
+{cycle_kw}
+{htg_kw}
 {calib_kw}
 PROCESS
 STOP
@@ -210,6 +273,7 @@ def build_standinit(
     inv_year: int,
     variant:  str,
     cond_row: dict | None = None,
+    ecoregion: str | None = None,
 ) -> pd.DataFrame:
     state_cd = 23
     elev     = 1000
@@ -255,6 +319,7 @@ def build_standinit(
         "county":            0,
         "forest_type":       121,
         "sam_wt":            1.0,
+        "ecoregion":         (ecoregion if ecoregion else ""),
     }])
 
 
@@ -292,6 +357,11 @@ def build_treeinit(tree_df: pd.DataFrame, sid: str) -> pd.DataFrame:
             "diameter":   round(dbh, 2),
             "ht":         round(ht, 1),
             "crratio":    cr,
+            # FIA CN carried for the treelist join; DROPPED before the table
+            # is written to sqlite.  It cannot go into tree_id itself:
+            # dbstreesin.f90 reads TREE_ID with fsql3_colint (32-bit int) and
+            # a 14-digit FIA CN overflows that.
+            "_cn":        str(r.get("CN")),
         })
     return pd.DataFrame(rows)
 
@@ -416,22 +486,27 @@ def run_stand(
     *,
     extra_env_override: dict | None = None,
     calib_override=None,
-) -> tuple[pd.DataFrame | None, str | None]:
+    htg_kw: str = "",
+) -> tuple[pd.DataFrame | None, pd.DataFrame | None, str | None]:
     mdl    = STANDALONE_MODELS[model_name]
     binary = VARIANT_BINS.get(variant.lower())
     if binary is None:
-        return None, f"no binary registered for variant {variant}"
+        return None, None, f"no binary registered for variant {variant}"
     if not os.path.exists(binary):
-        return None, f"binary not found: {binary}"
+        return None, None, f"binary not found: {binary}"
     if len(tree_df) == 0:
-        return None, "empty tree list"
+        return None, None, "empty tree list"
 
     eff_extra_env = extra_env_override if extra_env_override is not None else mdl["extra_env"]
     eff_calib     = calib_override     if calib_override     is not None else mdl["calib_components"]
     calib_kw      = get_calib_kw(variant, eff_calib)
 
+    # ARM: MORTMULT keyword injection REMOVED.  The keyfile is the plain sweep
+    # keyfile with no MORTMULT card, so the base arm is directly comparable to
+    # the MM = 1 sweep point (MORTMULT 1.0 is an identity multiplier).
     env = os.environ.copy()
     env.update(eff_extra_env)
+    env.update(ARM_ENV)          # arm vars: subprocess-scoped only
 
     tmp = tempfile.mkdtemp(prefix="fvs5mdl_")
     try:
@@ -441,10 +516,22 @@ def run_stand(
         tree_df.to_sql("fvs_treeinit",   con, if_exists="replace", index=False)
         con.close()
 
+        # KWPROOF: splice literal extra keyword records in the slot the old
+        # MORTMULT card occupied.  No-op when EXTRA_KW is "" (the default).
+        if EXTRA_KW:
+            htg_kw = (htg_kw + "\n" + EXTRA_KW) if htg_kw else EXTRA_KW
         key = os.path.join(tmp, "run.key")
         with open(key, "w") as fh:
-            fh.write(KEYFILE.format(sid=sid, db=db, ncyc=ncyc, calib_kw=calib_kw))
+            fh.write(KEYFILE.format(sid=sid, db=db,
+                                    cycle_kw=build_cycle_kw(ncyc),
+                                    calib_kw=calib_kw, htg_kw=htg_kw))
 
+        _kd = os.environ.get("MM_KEYDUMP", "")
+        if _kd:
+            import shutil as _sh
+            _dst = _kd + "." + model_name + ".key"
+            if not os.path.exists(_dst):
+                _sh.copy(key, _dst)
         subprocess.run(
             [binary, f"--keywordfile={key}"],
             cwd=tmp,
@@ -454,15 +541,47 @@ def run_stand(
             timeout=120,
         )
 
+        # KWPROOF: preserve the whole FVS run directory (run.key, FVS_Data.db
+        # and the .out listing) for the FIRST stand only, when MM_KEEPDIR is
+        # set.  Off by default.
+        _kp = os.environ.get("MM_KEEPDIR", "")
+        if _kp and not os.path.exists(_kp):
+            import shutil as _sh2
+            try:
+                _sh2.copytree(tmp, _kp)
+            except Exception as _e:
+                print("[kwproof] keepdir failed: %s" % _e)
+
         con = sqlite3.connect(db)
         df  = pd.read_sql_query("SELECT * FROM FVS_Summary2", con)
+        try:
+            # ARM: schema-aware select so crown ratio is always carried through
+            # whatever the build calls it, then normalised to CRATIO (percent).
+            have = {r[1] for r in con.execute("PRAGMA table_info(FVS_TreeList)")}
+            want = ["StandID", "Year", "TreeId", "TreeIndex", "SpeciesFIA",
+                    "SpeciesPLANTS", "TPA", "DBH", "DG", "Ht", "HtG",
+                    "PctCr", "CrRatio", "CrWidth", "PtBAL", "MCuFt"]
+            cols = [c for c in want if c in have]
+            tl = pd.read_sql_query(
+                "SELECT %s FROM FVS_TreeList" % ",".join(cols), con)
+            cr_src = ("PctCr"   if "PctCr"   in tl.columns else
+                      "CrRatio" if "CrRatio" in tl.columns else None)
+            if cr_src is not None:
+                _cr = pd.to_numeric(tl[cr_src], errors="coerce")
+                if _cr.notna().any() and float(_cr.max()) <= 1.5:
+                    _cr = _cr * 100.0        # fraction -> percent
+                tl["CRATIO"] = _cr
+            else:
+                tl["CRATIO"] = float("nan")
+        except Exception:
+            tl = None
         con.close()
-        return df, None
+        return df, tl, None
 
     except subprocess.TimeoutExpired:
-        return None, "timeout"
+        return None, None, "timeout"
     except Exception as exc:
-        return None, str(exc)
+        return None, None, str(exc)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
@@ -481,6 +600,62 @@ _COND_COLS = {"PLT_CN", "STATECD", "COUNTYCD", "INVYR", "COND_STATUS_CD",
 # CN-family columns are read as strings to preserve full 64-bit precision
 # (float64 loses precision above 2^53, which would break CN matching).
 _TREE_DTYPES = {"CN": "string", "PLT_CN": "string", "PREV_TRE_CN": "string"}
+
+
+# --- NSVB ecodivision support -------------------------------------------
+# FVS NVB_REGION_CHECK validates ECOREG against 19 Bailey divisions and
+# silently resets anything else to "0000".  The per-state FIA PLOT/COND CSVs
+# carry no ecoregion field, so ECOSUBCD is pulled from ENTIRE_PLOTGEOM.csv
+# and reduced to a division: keep a leading M, first two digits, trailing 0.
+PLOTGEOM_CSV = "ENTIRE_PLOTGEOM.csv"
+
+VALID_DIVISIONS = {
+    "130", "210", "220", "230", "240", "250", "260", "310", "330", "340",
+    "M130", "M210", "M220", "M230", "M240", "M260", "M310", "M330", "M340",
+}
+
+
+def ecosubcd_to_division(raw):
+    """231Ab -> 230 ;  M242Bc -> M240 ;  returns None if underivable."""
+    if raw is None:
+        return None
+    s = str(raw).strip()
+    if not s or s.lower() == "nan":
+        return None
+    pre = ""
+    if s[0] in ("M", "m"):
+        pre = "M"
+        s = s[1:]
+    digits = ""
+    for ch in s:
+        if ch.isdigit():
+            digits += ch
+        else:
+            break
+    if len(digits) < 2:
+        return None
+    div = pre + digits[:2] + "0"
+    return div if div in VALID_DIVISIONS else None
+
+
+def load_ecoregion_map(cns: set) -> dict:
+    """CN (int) -> Bailey division string, from FIA PLOTGEOM."""
+    f = os.path.join(FIA_DIR, PLOTGEOM_CSV)
+    if not os.path.exists(f):
+        print("[nsvb] WARNING: %s not found; no ecoregion available" % f)
+        return {}
+    want = {int(c) for c in cns}
+    df = pd.read_csv(f, usecols=lambda c: c in ("CN", "ECOSUBCD"),
+                     low_memory=False)
+    df = df.dropna(subset=["CN"])
+    df["CN"] = df["CN"].astype("int64")
+    df = df.loc[df["CN"].isin(want)]
+    out = {}
+    for cn, sub in zip(df["CN"].tolist(), df["ECOSUBCD"].tolist()):
+        d = ecosubcd_to_division(sub)
+        if d:
+            out[int(cn)] = d
+    return out
 
 
 def load_pairs(variant: str, max_pairs: int = 200, seed: int = 42) -> pd.DataFrame:
@@ -699,7 +874,7 @@ def print_stratum_table(df: pd.DataFrame, active_models: list[str], label: str) 
 # Main
 # ---------------------------------------------------------------------------
 def main() -> None:
-    global FIA_DIR
+    global FIA_DIR, ARM_ENV, ARM_NAME, EXTRA_KW
     ap = argparse.ArgumentParser(
         description="Cohort-matched forest-type-stratified 5-model FVS scorecard"
     )
@@ -707,23 +882,84 @@ def main() -> None:
     ap.add_argument("--max-pairs", type=int, default=200)
     ap.add_argument("--seed",      type=int, default=42)
     ap.add_argument(
-        "--outdir",
-        default="/users/PUOM0008/crsfaaron/fvs-modern/calibration/output/fia_scorecard",
+        "--outdir", default=None,
+        help="output dir (default $ARM_W/out_<ARM>; ARM_W defaults to "
+             "/fs/scratch/PUOM0008/crsfaaron/mortfix_20260804)",
     )
     ap.add_argument(
         "--fia-dir",
         default=FIA_DIR,
         help="Root directory containing per-state FIA CSV files (default: %(default)s)",
     )
+    ap.add_argument("--models", default="fvs_base",
+                    help="comma list of models to run (default fvs_base)")
+    ap.add_argument("--arm", default="base",
+                    help="arm NAME.  Selects the output dir out_<ARM> and the "
+                         "output file suffix, so arms never overwrite.")
+    ap.add_argument("--env", action="append", default=[],
+                    help="comma list K=V,K=V of environment variables injected "
+                         "into the FVS subprocess ONLY.  Repeatable.")
+    ap.add_argument("--exe", default=None,
+                    help="FVS executable (overrides $FVS_EXE and the default)")
+    ap.add_argument("--htg-arm", dest="htg_arm", default="A", choices=["A", "B"],
+                    help="legacy height-growth arm: A = no HTGMULT (sweep "
+                         "convention), B = HTGMULT 0")
+    ap.add_argument("--plot-list", default=None,
+                    help="CSV with a PLOT column; restrict to those T1 CNs")
+    ap.add_argument("--shard",  type=int, default=0)
+    ap.add_argument("--nshard", type=int, default=1)
+    ap.add_argument("--tag", default="htg")
+    ap.add_argument("--mm-sweep", default="",
+                    help="comma list of MORTMULT background multipliers, e.g. 1.0,2.0,4.0")
+    ap.add_argument("--keydump", default="",
+                    help="if set, write the first generated keyfile here and exit after 1 stand")
+    ap.add_argument("--extra-kw", dest="extra_kw", action="append", default=[],
+                    help="KWPROOF: literal FVS keyword record(s) spliced into "
+                         "the keyfile where the old MORTMULT card went. "
+                         "Repeatable; embedded \\n is honoured.")
+    ap.add_argument("--cycle-mode", default="single", choices=["single","annual"],
+                    help="single = TIMEINT 0 interval/NUMCYCLE 1; annual = TIMEINT 0 1/NUMCYCLE interval")
     args = ap.parse_args()
     FIA_DIR = args.fia_dir
+
+    # ---------------------------- ARM wiring ----------------------------
+    ARM_NAME = args.arm
+    ARM_ENV = parse_env_spec(",".join(args.env) if args.env else "")
+    EXTRA_KW = "\n".join(
+        ln for blk in (args.extra_kw or []) for ln in blk.split("\\n"))
+    if EXTRA_KW:
+        print("[arm] EXTRA_KW records spliced into the keyfile:")
+        for _ln in EXTRA_KW.split("\n"):
+            print("[arm]   |%s|  (len=%d)" % (_ln, len(_ln)))
+    if args.exe:
+        VARIANT_BINS[args.variant.lower()] = args.exe
+    if args.outdir is None:
+        _wroot = os.environ.get(
+            "ARM_W", "/fs/scratch/PUOM0008/crsfaaron/mortfix_20260804")
+        args.outdir = os.path.join(_wroot, "out_%s" % ARM_NAME)
+    os.makedirs(args.outdir, exist_ok=True)
+    print("[arm] ARM=%s" % ARM_NAME)
+    print("[arm] exe=%s" % VARIANT_BINS.get(args.variant.lower()))
+    print("[arm] outdir=%s" % args.outdir)
+    if ARM_ENV:
+        for _k in sorted(ARM_ENV):
+            print("[arm]   env %s=%s" % (_k, ARM_ENV[_k]))
+    else:
+        print("[arm]   env (none): legacy / default behaviour")
+    print("[arm] MORTMULT injection DISABLED (no MORTMULT card in the keyfile)")
+    sys.stdout.flush()
+
+    if args.mm_sweep:
+        sys.exit("[arm] --mm-sweep is disabled in arm_driver.py.  Arms are "
+                 "driven by environment variables; use --env instead.")
 
     variant = args.variant
     states  = VARIANTS[variant]["states"]
 
+    want_models = [m.strip() for m in args.models.split(",") if m.strip()]
     active_models: list[str] = []
     skipped_models: list[str] = []
-    for m in MODEL_ORDER:
+    for m in [x for x in MODEL_ORDER if x in want_models]:
         vc = STANDALONE_MODELS[m]["variant_compatible"]
         if vc is None or variant in vc:
             active_models.append(m)
@@ -733,6 +969,11 @@ def main() -> None:
     if skipped_models:
         print(f"[cohort] NOTE: skipping {skipped_models} "
               f"(not variant-compatible with {variant})")
+    global CYCLE_MODE
+    CYCLE_MODE = args.cycle_mode
+    print(f"[finalrun] CYCLE_MODE={CYCLE_MODE}  binary={VARIANT_BINS['ne']}")
+    print("[cyclefix] CYCLE CONFIG: single cycle, TIMEINT 0 <interval>, "
+          "NUMCYCLE 1  (was: TIMEINT 0 1, NUMCYCLE <interval>)")
     print(f"[cohort] variant={variant}  states={states}")
     print(f"[cohort] active models={active_models}")
     sys.stdout.flush()
@@ -743,11 +984,33 @@ def main() -> None:
         sys.exit(1)
     print(f"[cohort] found {len(pairs)} pairs (interval 5-15 yr), "
           f"sampling up to {args.max_pairs}")
+
+    if args.plot_list:
+        keep = set(pd.read_csv(args.plot_list, usecols=["PLOT"])["PLOT"]
+                   .astype("int64").tolist())
+        before = len(pairs)
+        pairs = pairs.loc[pairs["PREV_PLT_CN"].astype("int64").isin(keep)]
+        pairs = pairs.reset_index(drop=True)
+        print(f"[cohort] plot-list filter: {before} -> {len(pairs)} pairs "
+              f"({len(keep)} T1 CNs requested)")
+
+    if args.nshard > 1:
+        pairs = pairs.iloc[args.shard::args.nshard].reset_index(drop=True)
+        print(f"[cohort] shard {args.shard}/{args.nshard}: {len(pairs)} pairs")
     sys.stdout.flush()
 
     all_cns = set(pairs["PREV_PLT_CN"].tolist()) | set(pairs["CN"].tolist())
     trees   = load_trees_for_cns(states, all_cns)
     conds   = load_cond_for_cns(states, all_cns)
+    t1_cns  = {int(c) for c in pairs["PREV_PLT_CN"].tolist()}
+    ecomap  = load_ecoregion_map(t1_cns)
+    n_eco   = sum(1 for c in t1_cns if c in ecomap)
+    print("[nsvb] ecodivision resolved for %d/%d T1 plots; divisions=%s"
+          % (n_eco, len(t1_cns), sorted(set(ecomap.values()))))
+    if n_eco < len(t1_cns):
+        print("[nsvb] WARNING: %d T1 plots have no valid division and will "
+              "fall back to FVS default 0000" % (len(t1_cns) - n_eco))
+    sys.stdout.flush()
     print(f"[cohort] loaded {len(trees)} tree recs, {len(conds)} cond recs "
           f"for {len(all_cns)} plot CNs")
     has_prev = "PREV_TRE_CN" in trees.columns and trees["PREV_TRE_CN"].notna().any()
@@ -756,6 +1019,11 @@ def main() -> None:
     sys.stdout.flush()
 
     rows: list[dict] = []
+    tl_frames: list[pd.DataFrame] = []
+    map_rows:  list[dict] = []
+    # Arm B: drive XHMULT (htgf.f90 line 100/148) to 0 for every species and
+    # every cycle.  htgf.f90 applies the 0.1 ft floor at line 147 BEFORE the
+    # XHT multiply at line 148, so HTG becomes exactly 0.
     n_mdl   = len(active_models)
     n_total = len(pairs) * n_mdl
     n_done  = 0
@@ -796,11 +1064,27 @@ def main() -> None:
         ba_obs_whole       = obs_ba_ft2ac_wholestand(trees, t2_cn_s)
 
         sid      = f"{variant.upper()}_{t1_cn % 10_000_000:07d}"
-        stand_df = build_standinit(sid, measyear1, variant, cond_row)
+        stand_df = build_standinit(sid, measyear1, variant, cond_row,
+                                   ecoregion=ecomap.get(t1_cn))
         tree_df  = build_treeinit(t1, sid)
         if len(tree_df) == 0:
             n_done += n_mdl
             continue
+        cn_map = dict(zip(tree_df["tree_id"].tolist(), tree_df["_cn"].tolist()))
+        for _tid, _cn in cn_map.items():
+            map_rows.append({"PLOT": t1_cn, "StandID": sid,
+                             "tree_id": _tid, "CN": _cn})
+        tree_df = tree_df.drop(columns=["_cn"])
+
+        if args.htg_arm == "B":
+            # CYCLEFIX: one cycle now spans the whole remeasurement
+            # interval, so HTGMULT is emitted for cycle 1 only (previously
+            # one record per one-year cycle, c = 1..ncyc).
+            htg_kw = "\n".join(
+                "HTGMULT   " + f"{c:10d}" + f"{0:10d}" + f"{0.0:10.4f}"
+                for c in range(1, N_CYCLES + 1))
+        else:
+            htg_kw = "** ARM A: NO HTGMULT"
 
         state_abbrev = STATECD_TO_ABBREV.get(state_cd)
 
@@ -819,12 +1103,27 @@ def main() -> None:
                 eff_extra_env = None
                 eff_calib     = None
 
-            result_df, err = run_stand(
+            result_df, tl_df, err = run_stand(
                 sid, stand_df, tree_df, variant, model_name, ncyc,
                 extra_env_override=eff_extra_env,
                 calib_override=eff_calib,
+                htg_kw=htg_kw,
             )
             n_done += 1
+
+            if tl_df is not None and len(tl_df) > 0:
+                # CYCLEFIX: with one cycle there are exactly two treelist
+                # years (measyear1 and measyear1 + ncyc); first-and-last still
+                # selects the right pair and degrades safely if FVS emits more.
+                yrs = sorted(tl_df["Year"].unique().tolist())
+                tl_df = tl_df.loc[tl_df["Year"].isin([yrs[0], yrs[-1]])].copy()
+                tl_df["N_TL_YEARS"] = len(yrs)
+                tl_df["PLOT"]      = t1_cn
+                tl_df["model"]     = model_name
+                tl_df["PERIOD_YR"] = ncyc
+                tl_df["MEASYEAR1"] = measyear1
+                tl_df["MEASYEAR2"] = measyear2
+                tl_frames.append(tl_df)
 
             if err:
                 if n_done % 200 == 0:
@@ -834,6 +1133,15 @@ def main() -> None:
             if result_df is None or len(result_df) == 0:
                 continue
 
+            # CYCLEFIX: under a single cycle FVS_Summary2 carries only the
+            # cycle 0 row and the cycle 1 (= year measyear1 + ncyc) row.  The
+            # end-of-projection row is still iloc[-1], but the year sequence is
+            # no longer annual, so capture it explicitly for auditing instead of
+            # assuming ncyc + 1 rows.
+            _yr_col = "Year" if "Year" in result_df.columns else None
+            _n_sum  = int(len(result_df))
+            _yr_lo  = int(result_df[_yr_col].iloc[0])  if _yr_col else -1
+            _yr_hi  = int(result_df[_yr_col].iloc[-1]) if _yr_col else -1
             last = result_df.iloc[-1]
             rows.append({
                 "PLOT":       t1_cn,
@@ -841,6 +1149,9 @@ def main() -> None:
                 "MEASYEAR1":  measyear1,
                 "MEASYEAR2":  measyear2,
                 "PERIOD_YR":  ncyc,
+                "N_SUM_ROWS": _n_sum,
+                "YEAR_FIRST": _yr_lo,
+                "YEAR_LAST":  _yr_hi,
                 "variant":    variant,
                 "model":      model_name,
                 "FORTYPE":    fortype,
@@ -867,7 +1178,21 @@ def main() -> None:
 
     out_df = pd.DataFrame(rows)
     os.makedirs(args.outdir, exist_ok=True)
-    outfile = os.path.join(args.outdir, f"scorecard_{variant}_5model_cohort.csv")
+
+    sfx = f"{args.tag}_{args.arm}_s{args.shard:02d}"
+    if tl_frames:
+        tl_all = pd.concat(tl_frames, ignore_index=True)
+        tl_out = os.path.join(args.outdir, f"treelist_{sfx}.csv")
+        tl_all.to_csv(tl_out, index=False)
+        print(f"[htg] wrote {len(tl_all)} treelist rows -> {tl_out}")
+    else:
+        print("[htg] WARNING: no treelist rows captured")
+    if map_rows:
+        mp_out = os.path.join(args.outdir, f"treemap_{sfx}.csv")
+        pd.DataFrame(map_rows).to_csv(mp_out, index=False)
+        print(f"[htg] wrote {len(map_rows)} tree_id->CN map rows -> {mp_out}")
+
+    outfile = os.path.join(args.outdir, f"scorecard_{sfx}.csv")
     out_df.to_csv(outfile, index=False)
     print(f"\n[cohort] wrote {len(out_df)} rows -> {outfile}")
     print(f"[cohort] forest-type plot counts (per unique pair): {fortype_counts}")

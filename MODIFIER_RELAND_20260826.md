@@ -168,3 +168,61 @@ Branch `fix/modifier-relanding-20260826`, based on `release/v1-code-20260811` ti
 same commit as the `v1.0.0` tag). `release/v1-code-20260811`, `main`, and the `v1.0.0` tag were
 not modified, moved, or merged into. This branch was not merged anywhere; it is staged for
 Aaron's review.
+
+## Addendum: base species-free block (`categories_conus_sf`) restored for 19 variants
+
+Follow-up to the paragraph above. Two corrections to the record and the fix itself:
+
+**Correction 1 -- `a5e1e11` never wrote `categories_conus_sf`.** `git show a5e1e11 -- config/calibrated/ak.json`
+shows the commit's only change is appending `categories_conus_sf_modifier` after the existing
+`_emit_sdimax` key; `categories_conus_sf` is absent both before and after `a5e1e11` for `ak.json`
+(checked directly against `a5e1e11^`). `a5e1e11` landed the modifier layer only, via
+`62m_modifier_to_variant_json.R`; it is not the base-block landing commit and is not usable as
+structural ground truth for `categories_conus_sf`.
+
+**Correction 2 -- the true base-block landing history.** `categories_conus_sf` was first landed by
+`c1af06d` ("Land categories_conus_sf (Leg B species-free) across 25 variants, 6 components (#83)",
+2 Jul 2026), which ran `62b_speciesfree_to_variant_json.R` (present on Cardinal at
+`calibration/R/62b_speciesfree_to_variant_json.R` and `sf_integration_dev/62b_speciesfree_to_variant_json.R`,
+md5 `924e2c0a75b43e0a1082b4c5f1e90d32` for both copies). This is the script the manifest and prior
+audit call "62c" -- Cardinal's `sf_integration_dev/62c_arms_to_variant_json.R` is a different,
+later (2 Jul, same day) script that lands the unrelated `categories_conus_mod` / `categories_conus_organon`
+arms, not the species-free base block. `586b3cc` ("Gate hybrid source map on per-species reliability,
+shrinkage w>=0.5") re-ran the same landing shortly after and is reflected in every surviving block's
+`metadata.default_policy` string. The block then rode unmodified through `4d276d8`, `8a5c3a5`, `a5e1e11`
+(modifier only), `54bb3b0`, `c2f30c0`, `10c2f82`, `e46f60a`, `2880573`, and `adc372c` ("Reconcile
+three-arm integration into main (union)", the commit `release/v1-code-20260811` and `fix/modifier-relanding-20260826`
+both descend from). For all 19 affected variants, `adc372c` is the last commit in that variant's own
+file history where `categories_conus_sf` is present, confirmed individually per variant by walking
+each file's `git log` and testing every commit for the key's presence. Immediately after `adc372c`,
+each variant's config was rebuilt by its own per-variant "recover / regenerate" commit (`dd088af` for
+`ak`, and an analogous commit per remaining variant) that reconstructed the JSON from an older base
+and silently dropped every `categories_conus_*` key gained since, including `categories_conus_sf`. That
+regeneration pattern, not `a5e1e11`, is the actual defect that produced the 19-variant gap.
+
+**Fix.** For each of the 19 variants (`ak`, `bc`, `bm`, `ci`, `cr`, `ec`, `em`, `ie`, `kt`, `ne`, `oc`,
+`op`, `pn`, `sn`, `so`, `tt`, `ut`, `wc`, `ws`), `categories_conus_sf` was extracted verbatim from that
+variant's own `adc372c` blob (`git show adc372c:config/calibrated/<v>.json`) and spliced into the
+current (post `c71564f`) config as a pure text insertion: parse to locate the file's trailing `}`,
+insert `"categories_conus_sf": {...}` as a new key immediately before it, re-serialize nothing else.
+Verified by structural diff that every other top-level key, including the just-corrected
+`categories_conus_sf_modifier`, is byte-identical before and after (`git diff --stat` shows insertions
+only, zero deletions, across all 19 files). The restored block carries the same schema and
+`metadata.default_policy` (shrinkage-gated hybrid source map) as the six variants that never lost it,
+confirming `acd`/`ca`/`cs`/`ls`/`nc`/`on` and the 19 restored variants now share one lineage for this
+block. Species-specific content (trait tables, per-species hybrid source maps, RE tables) is unique
+per variant, pulled from that variant's own `adc372c` state, not copied across variants.
+
+All 25 configs now carry structurally complete `categories_conus_sf` (diameter_growth, height_growth,
+height_diameter, height_crown_base, crown_recession, mortality, metadata) and
+`categories_conus_sf_modifier` (diameter_growth, height_growth, mortality, ingrowth, height_crown_base,
+crown_recession) blocks, so the corrected modifier coefficients from the section above are no longer
+orphaned in any variant. This restoration does not touch modifier coefficient values; it only restores
+the base scaffolding those coefficients depend on. The still-open item from the section above (add the
+engine modifier hook that reads `categories_conus_sf_modifier` and applies it against
+`categories_conus_sf`, and validate held-out disturbed/treated plots) remains open and is out of scope
+for this commit.
+
+`release/v1-code-20260811`, `main`, and the `v1.0.0` tag are untouched. This restoration lands as a new
+commit on `fix/modifier-relanding-20260826`, on top of `c71564f`, per the same staged-for-review
+convention (not merged).

@@ -23713,10 +23713,10 @@
         "stems",
         "survival"
       ],
-      "note": "Stand-level target that reconciles the summed tree predictions (disaggregation): survival -> M_stand for the kappa hazard solve; bagrowth -> stand BA increment for the tree-DG scale; topht -> Garc\u00eda/GADA H2|H1 target for the tree height-growth scale; stems -> Garc\u00eda N(t) surviving-stems target (reuses the kappa hazard solve). Applied by any arm."
+      "note": "Stand-level target that reconciles the summed tree predictions (disaggregation): survival -> M_stand for the kappa hazard solve; bagrowth -> stand BA increment for the tree-DG scale; topht -> García/GADA H2|H1 target for the tree height-growth scale; stems -> García N(t) surviving-stems target (reuses the kappa hazard solve). Applied by any arm."
     },
     "topht": {
-      "model": "stand-level Garc\u00eda/GADA state-space TOP-HEIGHT transition",
+      "model": "stand-level García/GADA state-space TOP-HEIGHT transition",
       "scale": "Gaussian on r = ln(H2/H1) (log height-growth ratio); H2 = H1*exp(eta_r)",
       "response": "r = ln(H2/H1); H1,H2 = TPH-weighted mean height of tallest top_n_per_ha stems/ha (survivors)",
       "stand_key": "PLT_CN_cond1 x CONDID_cond1 x INVYR1 x INVYR2 (FIA plot-condition-remeasurement)",
@@ -23812,17 +23812,17 @@
         ]
       },
       "seed": 20260702,
-      "notes": "H2 target feeds stand_constraint.py::stand_constrain_topheight to scale tree height growth so stand top height tracks this Garc\u00eda/GADA trajectory."
+      "notes": "H2 target feeds stand_constraint.py::stand_constrain_topheight to scale tree height growth so stand top height tracks this García/GADA trajectory."
     },
     "stems": {
-      "model": "stand-level Garc\u00eda state-space STEM-DENSITY N(t) transition",
+      "model": "stand-level García state-space STEM-DENSITY N(t) transition",
       "scale": "cloglog binomial with centered log(YEARS)-3.9 exposure offset; intercept refolded to raw log(YEARS). Linear predictor eta_h = log stand hazard, SAME scale as 71_fit_stand_survival.R and the tree mortality model",
       "response": "deaths_i | trials(trials_i); trials = round(N1 stems/ha), deaths = round(N1 - N2 survivors)",
       "stand_key": "PLT_CN_cond1 x CONDID_cond1 x INVYR1 x INVYR2 (FIA plot-condition-remeasurement)",
       "top_n_per_ha": 100,
       "offset_center": 3.9,
       "transition": "H_stand = exp(eta_h); S(T)=exp(-H_stand*T); N2_target = N1 * S(T); eta_h = b0 + b_lnN1*ln(N1) + b_topht*top_ht + b_rd*rd + b_lnqmd*ln_qmd + z_L1",
-      "novelty": "No Garc\u00eda-style stem-number transition existed in the repo (only the Reineke SDIMAX line in 09_fit_stand_density.R); this is the newly fitted N(t) state-space transition",
+      "novelty": "No García-style stem-number transition existed in the repo (only the Reineke SDIMAX line in 09_fit_stand_density.R); this is the newly fitted N(t) state-space transition",
       "covariates": {
         "ln_n1": "log start stand stems/ha (current state N1)",
         "top_ht": "stand top height (m), tallest top_n_per_ha stems/ha -- self-thinning driver",
@@ -27482,16 +27482,16 @@
         "cutting",
         "siteprep"
       ],
-      "alpha_0": 0.03956472045,
+      "alpha_0": 0.050696380473,
       "alpha": {
-        "plant": 0.08382382798,
-        "fire": -0.037889920872,
-        "insect": -0.011424695907,
-        "disease": -0.005778978399,
-        "wind": 0.055976906909,
-        "harvest": 0.015998859117,
-        "cutting": 0.21983155475,
-        "siteprep": 0.11632607893
+        "plant": 0.086573442526,
+        "fire": -0.041787105635,
+        "insect": -0.019865239031,
+        "disease": -0.0092773603419,
+        "wind": 0.049405497483,
+        "harvest": 0.015708611619,
+        "cutting": 0.22648450334,
+        "siteprep": 0.11715824761
       },
       "note": "engine multiplier = exp(alpha_0 + alpha[type]); species-independent"
     },
@@ -27508,16 +27508,16 @@
         "cutting",
         "siteprep"
       ],
-      "alpha_0": -0.012554467648,
+      "alpha_0": -0.009047973292,
       "alpha": {
-        "plant": 0.11205400915,
-        "fire": -0.047378148994,
-        "insect": -0.079361304402,
-        "disease": -0.073521946972,
-        "wind": -0.10596740176,
-        "harvest": 0.066095476365,
-        "cutting": -0.023345660359,
-        "siteprep": -0.032763534225
+        "plant": 0.16829775645,
+        "fire": -0.18623017716,
+        "insect": -0.12136700208,
+        "disease": 0.0018085570378,
+        "wind": -0.045421187753,
+        "harvest": 0.02002864767,
+        "cutting": -0.049580092843,
+        "siteprep": 0.018834906938
       },
       "note": "engine multiplier = exp(alpha_0 + alpha[type]); species-independent"
     },
@@ -27586,16 +27586,16 @@
         "cutting",
         "siteprep"
       ],
-      "alpha_0": 0.0041540209585,
+      "alpha_0": 0.011433243912,
       "alpha": {
-        "plant": -0.16263294495,
-        "fire": 0.25458239528,
-        "insect": 0.022462151974,
-        "disease": -0.004438696046,
-        "wind": 0.11834640234,
-        "harvest": 0.012710103563,
-        "cutting": 0.047050827379,
-        "siteprep": -0.10078586263
+        "plant": -0.16443158156,
+        "fire": 0.27789434182,
+        "insect": 0.02889282128,
+        "disease": 0.00092276836618,
+        "wind": 0.11346199496,
+        "harvest": 0.012929420887,
+        "cutting": 0.055731051039,
+        "siteprep": -0.089684424204
       },
       "trait_mediated_types": [
         "plant",
@@ -27605,46 +27605,10 @@
       ],
       "P_trait": 8,
       "trait_gamma_alpha": {
-        "plant": [
-          -0.0054721535929,
-          -0.049589103412,
-          0.13713900927,
-          -0.13588977466,
-          0.0077628564659,
-          -0.019183066828,
-          0.094700685805,
-          -0.064621540539
-        ],
-        "insect": [
-          -0.087638772411,
-          -0.070395256939,
-          -0.0041576060877,
-          0.052388266342,
-          0.069510192009,
-          0.045972869035,
-          0.089936155192,
-          -0.064655080174
-        ],
-        "harvest": [
-          -0.0031046556572,
-          -0.0066568473891,
-          0.00056703923779,
-          -0.1044264314,
-          0.0089470539806,
-          -0.096829649344,
-          -0.018771919629,
-          -0.036607283628
-        ],
-        "cutting": [
-          -0.056407626561,
-          0.072431723028,
-          0.093732211728,
-          -0.14869429317,
-          -0.0063225581744,
-          -0.015102730987,
-          -0.011991262882,
-          0.026783008243
-        ]
+        "plant": [0.039216332946, -0.019345718274, 0.1637766067, -0.16081841966, 0.0024375881372, -0.016382538824, 0.087982594408, -0.067604402735],
+        "insect": [-0.10035385412, -0.079369244847, -0.027336302022, 0.055886866184, 0.071518215904, 0.056344730075, 0.085770532735, -0.069055341597],
+        "harvest": [-0.00325685137, -0.0016105555647, 0.0086361464599, -0.10631084816, 0.0063491849878, -0.10180083226, -0.02427843617, -0.034901459425],
+        "cutting": [-0.065128285326, 0.06787170951, 0.09063965789, -0.14947954855, -0.011786863319, -0.014728799305, -0.020175288497, 0.033955169674]
       },
       "trait_standardization": {
         "trait": [
@@ -27682,7 +27646,7 @@
     },
     "crown_recession": {
       "component": "cr",
-      "form": "traitmed",
+      "form": "common",
       "disturbance_types": [
         "plant",
         "fire",
@@ -27693,99 +27657,18 @@
         "cutting",
         "siteprep"
       ],
-      "alpha_0": 0.0010377777243,
+      "alpha_0": 0.0019899057181,
       "alpha": {
-        "plant": 2.1423585393e-05,
-        "fire": -0.0023705630843,
-        "insect": -0.00067583483699,
-        "disease": -0.0007819681202,
-        "wind": -0.0003735263705,
-        "harvest": 0.00047649533412,
-        "cutting": 0.001155776355,
-        "siteprep": -0.015228611715
+        "plant": -0.0046771774005,
+        "fire": -0.002189322288,
+        "insect": -0.0015993714365,
+        "disease": -0.0025615262121,
+        "wind": 0.0034105096681,
+        "harvest": 0.001944799649,
+        "cutting": 0.00088919460943,
+        "siteprep": -0.0076806582035
       },
-      "trait_mediated_types": [
-        "plant",
-        "insect",
-        "harvest",
-        "cutting"
-      ],
-      "P_trait": 8,
-      "trait_gamma_alpha": {
-        "plant": [
-          -0.0039062803077,
-          -0.00043049321117,
-          -0.0065503809382,
-          0.0029851744959,
-          0.00049482238367,
-          -0.0002441807035,
-          0.0008137607762,
-          -1.3533564401e-05
-        ],
-        "insect": [
-          0.0012989397382,
-          -0.00033886859389,
-          0.00074818169054,
-          0.00097522819618,
-          0.00085312686462,
-          -0.0026040928979,
-          0.00044284671162,
-          -0.00041542244933
-        ],
-        "harvest": [
-          -0.004155705219,
-          0.00017117094317,
-          0.00057663731548,
-          -0.0058325240889,
-          0.0016653273479,
-          0.0070650747306,
-          -0.0031881191111,
-          0.0010848916168
-        ],
-        "cutting": [
-          0.0011937360853,
-          0.0006097879527,
-          0.0015295868455,
-          -0.0005551240869,
-          0.0026405375309,
-          -0.0016221070038,
-          0.0016924683625,
-          0.00074927829631
-        ]
-      },
-      "trait_standardization": {
-        "trait": [
-          "wood_specific_gravity",
-          "shade_tolerance_num",
-          "softwood",
-          "leaf_longevity_months",
-          "max_ht_m",
-          "max_dbh_cm",
-          "vulnerability_score",
-          "sensitivity"
-        ],
-        "scale_mean": [
-          0.49304347826,
-          2.7016521739,
-          0.4,
-          19.389173913,
-          92.2992173913,
-          49.4672608696,
-          37.3586376812,
-          33.4124782609
-        ],
-        "scale_sd": [
-          0.10678042656,
-          1.094017969,
-          0.49204193232,
-          26.0420525383,
-          30.963400017,
-          65.4507520477,
-          9.8246748072,
-          12.2051835834
-        ]
-      },
-      "note": "engine multiplier = exp(alpha_0 + alpha[type] + (type in trait_mediated_types ? W_std . trait_gamma_alpha[type] : 0)); W standardized as in base bundle gamma.csv"
+      "note": "engine multiplier = exp(alpha_0 + alpha[type]); species-independent"
     }
   }
 }

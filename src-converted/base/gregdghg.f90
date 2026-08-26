@@ -133,6 +133,12 @@ IF (Z.GT.5.0)   Z = 5.0
 IF (Z.LT.-30.0) Z = -30.0
 G = EXP(Z); IF (G.LT.0.0) G = 0.0
 !  ---- Size-based deceleration (COR-style plateau) --------------------------
+!  Mechanism re-derived from wt-rescore commit a217eae (reconcile/eval-rescore-fixed,
+!  "DG native hook: add size-deceleration ceiling to fix long-horizon runaway",
+!  7 Jul 2026), which reports 15/20 -> 0/20 runaway NE stands fixed at yr 300
+!  (runaway = topHT>80m | QMD>150cm | BA>120 m2/ha; yr-300 QMD with ceiling:
+!  median 64.5cm, p90 73.2, max 77.7 vs p90 141.6 off) with short-horizon
+!  DBH-increment %RMSE effectively unchanged (174.97 -> 175.95, +0.98pp).
 !  Native NE-TWIGS DG plateaus via a size calibration this hook otherwise omits,
 !  so an unbounded compounding loop runs QMD away over multi-century horizons.
 !  Multiply the annual increment by a logistic that is ~1 until DBH nears the

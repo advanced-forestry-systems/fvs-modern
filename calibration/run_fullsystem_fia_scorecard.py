@@ -51,7 +51,7 @@ _HG_BASE = {
     "FVS_GREG_ELEV": "1000",
 }
 _DG_BASE = {
-    "FVS_GREGDG":      "1",
+    "FVS_GREGDG":      "0",
     "FVS_GREGDG_COEF": f"{_CONF}/greg_dg_coefficients.csv",
     "FVS_GREG_DD0":    "1600",
     "FVS_GREG_TD":     "28",

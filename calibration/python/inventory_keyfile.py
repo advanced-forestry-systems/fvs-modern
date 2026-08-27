@@ -10,17 +10,33 @@ with a Fortran EOF error in errgro.f90 line 55.
 
 This module bypasses the DATABASE path entirely. It generates a
 self-contained keyfile that uses INVENTORY mode (STDIDENT + DESIGN +
-STDINFO + INVYEAR + NUMCYCLE + TREEFMT + TREEDATA) with embedded tree
-records in a simple known-good fixed-width format.
+STDINFO + SITECODE + INVYEAR + NUMCYCLE + TREEDATA) with embedded
+tree records in the FVS DEFAULT tree record layout (the TREFMT
+initialized in each variant's blkdat.f90 and read in
+base/intree.f90), so no custom TREEFMT keyword is emitted:
+  (I4,T1,I7,F6.0,I1,A3,F4.1,F3.1,2F3.0,F4.1,I1,...)
+  cols 1-4:   plot ID
+  cols 5-7:   tree number (tree ID is cols 1-7 combined)
+  cols 8-13:  PROB (trees per acre this record represents, given the
+              per-acre DESIGN emitted below)
+  col 14:     history code (1 = live)
+  cols 15-17: species code (mapped from FIA SPCD)
+  cols 18-21: DBH in inches (F4.1)
+  cols 25-27: total height in feet (F3.0)
+  col 35:     crown ratio code 1-9 (10 percent classes)
 
-The TREEFMT used here is intentionally simple:
-  (I4,T6,A2,T9,F4.1,T14,F3.0,T18,F2.0)
-which encodes per record:
-  cols 1-4:  tree number (I4)
-  cols 6-7:  2-letter species code (A2, mapped from FIA SPCD)
-  cols 9-12: DBH in inches with one decimal (F4.1)
-  cols 14-16: total height in feet (F3.0)
-  cols 18-19: live crown ratio percent (F2.0)
+Patched 2026-08-27: TREEFMT/TREEDATA/STDINFO/SITECODE/DESIGN fixes
+after PN/SN smoke test. Specifically: (1) dropped the custom TREEFMT
+keyword, whose single-line form consumed downstream records as format
+text, in favor of the default layout; (2) TREEDATA now carries 15 in
+field 1 so tree records are read from the keyword file rather than an
+external .tre dataset; (3) tree records follow the default variable
+order (plot, tree, PROB, history, species, DBH, DG, HT, THT, HTG, ICR
+code); (4) STDINFO field 3 now carries stand age (field 2, habitat/PV
+code, is left blank) and site index moved to a SITECODE keyword; (5)
+DESIGN now specifies a single 1-acre fixed plot (expansion 1.0) so
+PROB values are trees per acre, replacing the 11-plot BAF-40 prism
+design copied from test decks that inflated TPA roughly ninefold.
 
 Author: A. Weiskittel
 Date: 2026-04-25
@@ -99,32 +115,40 @@ def format_tree_record(
     dbh: float,
     ht: float,
     cr: float,
+    prob: float = 1.0,
+    plot: int = 1,
 ) -> str:
-    """Return one tree record matching TREEFMT (I4,T6,A2,T9,F4.1,T14,F3.0,T18,F2.0).
+    """Return one tree record in the FVS default TREEFMT layout.
 
-    Layout:
-      cols 1-4:  tree number, right-justified
-      col 5:     blank
-      cols 6-7:  species code (left-justified within 2 chars)
-      col 8:     blank
-      cols 9-12: DBH like " 6.2" or "11.5"
-      col 13:    blank
-      cols 14-16: height like " 30" or "120"
-      col 17:    blank
-      cols 18-19: CR percent like "60"
+    Default format per variant blkdat.f90 / base/intree.f90:
+      (I4,T1,I7,F6.0,I1,A3,F4.1,F3.1,2F3.0,F4.1,I1,...)
+
+    Layout written here:
+      cols 1-4:   plot ID
+      cols 5-7:   tree number within plot
+      cols 8-13:  PROB with explicit decimal (TPA under the per-acre
+                  DESIGN emitted by make_inventory_keyfile)
+      col 14:     history code, 1 = live
+      cols 15-17: species code, left-justified
+      cols 18-21: DBH like " 6.2" or "11.5"
+      cols 22-24: DG, blank
+      cols 25-27: height like " 30" or "120"
+      cols 28-34: THT and HTG, blank
+      col 35:     crown ratio code 1-9 (code n = ((n-1)*10, n*10] pct)
     """
-    sp = (sp_code + "  ")[:2]
-    cr_int = max(0, min(99, int(round(cr))))
+    sp = (sp_code.strip() + "   ")[:3]
+    icr = max(1, min(9, (int(cr) + 9) // 10))
     line = (
-        f"{tree_num:4d}"               # cols 1-4: I4
-        f" "                            # col 5
-        f"{sp:2s}"                      # cols 6-7
-        f" "                            # col 8
-        f"{dbh:4.1f}"                   # cols 9-12: F4.1
-        f" "                            # col 13
-        f"{ht:3.0f}"                    # cols 14-16: F3.0
-        f" "                            # col 17
-        f"{cr_int:2d}"                  # cols 18-19: F2.0 as int
+        f"{plot:4d}"                    # cols 1-4: plot ID
+        f"{tree_num:3d}"                # cols 5-7: tree number
+        f"{prob:6.1f}"                  # cols 8-13: PROB (F6.0)
+        f"1"                            # col 14: history = live
+        f"{sp:3s}"                      # cols 15-17: species (A3)
+        f"{dbh:4.1f}"                   # cols 18-21: DBH (F4.1)
+        f"   "                          # cols 22-24: DG blank
+        f"{ht:3.0f}"                    # cols 25-27: HT (F3.0)
+        f"       "                      # cols 28-34: THT, HTG blank
+        f"{icr:1d}"                     # col 35: ICR code (I1)
     )
     return line
 
@@ -159,23 +183,46 @@ def make_inventory_keyfile(
     slope = float(s.get("slope", 15))
     elev_h = float(s.get("elevft", 1000)) / 100.0  # STDINFO wants elev/100
 
-    # STDINFO line: 6 fields, 10 chars each, fixed width
+    # STDINFO fields are (forest, habitat/PV code, age, aspect, slope,
+    # elev in 100s of feet). Field 2 is left blank; age goes in field 3.
+    # Site index is carried by a separate SITECODE keyword below.
     stdinfo = (
         "STDINFO   "
         f"{forest:>10.0f}"
-        f"{age:>10.0f}"
-        f"{si:>10.1f}"
+        + " " * 10
+        + f"{age:>10.0f}"
         f"{aspect:>10.1f}"
         f"{slope:>10.1f}"
         f"{elev_h:>10.1f}"
+    )
+
+    # SITECODE: field 1 = site species (first tree record's species),
+    # field 2 = site index, field 3 = 1 makes it the site species.
+    site_sp = fia_to_fvs_code(int(tree_df.iloc[0]["species"]), v)
+    sitecode = (
+        "SITECODE  "
+        f"{site_sp:>10s}"
+        f"{si:>10.1f}"
+        f"{1.0:>10.1f}"
     )
 
     lines = []
     lines.append("STDIDENT")
     lines.append(stand_id)
     lines.append("")
-    lines.append("DESIGN                                        11.0       1.0")
+    # DESIGN: BAF = -1 means large trees on a 1-acre fixed plot,
+    # small-tree plot 1 acre, 1 inventory point, 0 nonstocked, so each
+    # record's PROB is trees per acre with expansion 1.0 (base/notre.f90).
+    lines.append(
+        "DESIGN    "
+        f"{-1.0:>10.1f}"
+        f"{1.0:>10.1f}"
+        f"{999.0:>10.1f}"
+        f"{1.0:>10.1f}"
+        f"{0.0:>10.1f}"
+    )
     lines.append(stdinfo)
+    lines.append(sitecode)
     lines.append(f"INVYEAR     {float(inv_year):>10.1f}")
     lines.append(f"NUMCYCLE    {float(num_cycles):>10.1f}")
     lines.append("TIMEINT            0         5")
@@ -187,15 +234,19 @@ def make_inventory_keyfile(
     if calibration_keywords:
         lines.append(calibration_keywords)
 
-    # TREEFMT specifies the column layout of the embedded TREEDATA records.
-    lines.append("TREEFMT          (I4,T6,A2,T9,F4.1,T14,F3.0,T18,F2.0)")
-    lines.append("TREEDATA")
+    # Tree records use the FVS default TREEFMT (no TREEFMT keyword).
+    # TREEDATA field 1 = 15 reads the records from the keyword file
+    # itself; blank would default to dataset unit 2 (external .tre).
+    lines.append("TREEDATA  " + f"{15.0:>10.0f}")
 
-    # Tree records, one per row of tree_df.
+    # Tree records, one per row of tree_df. tree_count is the TPA the
+    # record represents and passes through PROB unchanged under the
+    # per-acre DESIGN above.
     for tree_num, row in enumerate(tree_df.itertuples(), start=1):
         spcd = int(row.species)
         sp_code = fia_to_fvs_code(spcd, v)
-        # tree_count is TPA per record; each record is one expanded tree
+        tpa = getattr(row, "tree_count", None)
+        tpa = 1.0 if tpa is None or pd.isna(tpa) else float(tpa)
         lines.append(
             format_tree_record(
                 tree_num=tree_num,
@@ -203,6 +254,7 @@ def make_inventory_keyfile(
                 dbh=float(row.diameter),
                 ht=float(row.ht),
                 cr=float(row.crratio),
+                prob=tpa,
             )
         )
 

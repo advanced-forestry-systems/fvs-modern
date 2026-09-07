@@ -46,6 +46,7 @@ from __future__ import annotations
 
 import json
 import os
+import warnings
 from pathlib import Path
 from typing import Optional
 
@@ -112,10 +113,12 @@ def _variant_crosswalk(variant: str) -> dict:
     if cfg.exists():
         try:
             sd = json.loads(cfg.read_text())["categories"]["species_definitions"]
-            fia = [int(x) for x in sd["FIAJSP"]]
-            jsp = [str(x).strip() for x in sd["JSP"]]
             table = {}
-            for spcd, code in zip(fia, jsp):
+            for raw, code in zip(sd["FIAJSP"], sd["JSP"]):
+                raw = str(raw).strip(); code = str(code).strip()
+                if not raw.isdigit() or not code:        # blank slots exist in several variants
+                    continue
+                spcd = int(raw)
                 if spcd > 0 and spcd not in table:      # first mapping wins (e.g. ls 125 RN/RP)
                     table[spcd] = code
         except Exception as exc:  # pragma: no cover

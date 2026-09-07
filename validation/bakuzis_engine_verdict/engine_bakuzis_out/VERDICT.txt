@@ -1,0 +1,15 @@
+================ ENGINE BAKUZIS VERDICT (GOMPIT lib, 36 scen x 100 yr) ================
+Bakuzis relation                   Verdict  Evidence
+Monotone top height                PASS     0/36 scenarios decline; topht rises to yr100 (17->72 ft typical)
+Reineke self-thinning              FLAG(3/36>SDImax) median peak SDI/SDImax=0.66; 3 scen >1.05
+Eichhorn (topht~site*age)          PASS     within-(site,age) topht CV across density=0.018
+Site ordering                      FLAG-INCONCLUSIVE SETSITE did not vary SITEAR in this NE build; site axis flat
+Yield-density convergence          PASS     yr100 BA by density Low/Med/High = 264/134/199
+Per-group peak SDI vs engine SDImax:
+       species_group peakSDI engineSDImax ratio
+              <char>   <num>        <num> <num>
+1:        Spruce-Fir     416          506  0.82
+2: Northern-Hardwood     506          560  0.90
+3:              Pine     410          529  0.78
+4:          Oak-Pine     912          560  1.63
+Top-height decline check: scenarios with any decline>0.5ft = 0 of 36 -> ENGINE TOP HEIGHT IS MONOTONE

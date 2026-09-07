@@ -1,0 +1,6 @@
+{
+ "gate3_greg_dg_nonzero": true,
+ "gate3_greg_bal_negative_corr": true,
+ "gate3_greg_bal_monotone": true,
+ "gate3_PASS": true
+}

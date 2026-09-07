@@ -1,0 +1,244 @@
+==============================================================================
+PART 4a. SCORECARD SANITY GATES
+==============================================================================
+[balfix] shards=32 rows=16605 plots=3321 models=5
+[binfixed] shards=32 rows=16605 plots=3321 models=5
+GATE 1  rows==16605 : True (16605)
+GATE 1  plots==3321 : True (3321)
+GATE 1  5 models    : True (['conus_climate', 'conus_spdep', 'fvs_base', 'fvs_regional', 'organon'])
+GATE 1  dup (PLOT,model) pairs : 0  -> True
+GATE 1  shards      : 32
+
+------------------------------------------------------------------------------
+GATE 4. NATIVE-ARM BIT-IDENTITY, SCORECARD, ALL 3,321 PLOTS
+------------------------------------------------------------------------------
+  fvs_base       n=3321  maxabs diff = 0   exact_equal=True
+  fvs_regional   n=3321  maxabs diff = 0   exact_equal=True
+  organon        n=3321  maxabs diff = 11261.1 (BdFt_PRED)  exact_equal=False
+  conus_spdep    n=3321  maxabs diff = 11396.4 (BdFt_PRED)  exact_equal=False
+  conus_climate  n=3321  maxabs diff = 12082.4 (BdFt_PRED)  exact_equal=False
+GATE 4  fvs_base and fvs_regional bit-identical : True
+        Greg arms moved (expected)              : True
+
+==============================================================================
+PART 2a. COHORT CONSTRUCTION AND THE POSITIVITY MASK FIX
+==============================================================================
+corrected observed file rows = 3053   legacy = 3050   clean+loose = 2525
+zero-observed gross plots in corrected file = 3
+  FULL   cohort: NEW mask n=3053   OLD mask n=3050   delta=+3
+  CLEAN  cohort: NEW mask n=2525   OLD mask n=2522   delta=+3
+FULL  n = 3053   CLEAN n = 2525
+cohort sizes match the audit (3053 / 2525): True / True
+
+==============================================================================
+PART 2b. CUBIC GATE
+==============================================================================
+  running C1_binfixed_FULL  n=3053
+  running C2_balfix_FULL  n=3053
+  running C3_balfix_CLEAN  n=2525
+  running C4_binfixed_CLEAN  n=2525
+
+==============================================================================
+PART 2c. BOARD FOOT GATE
+==============================================================================
+  C1_binfixed_FULL board-foot cohort n = 2743
+  C2_balfix_FULL board-foot cohort n = 2743
+  C3_balfix_CLEAN board-foot cohort n = 2264
+  C4_binfixed_CLEAN board-foot cohort n = 2264
+
+==============================================================================
+CONFIG C1_binfixed_FULL
+==============================================================================
+  n plots (cubic) = 3053   n plots (board foot) = 2743
+ARM             QTY            bias%             95% CI    rRMSE%        rRMSE 95% CI
+-------------------------------------------------------------------------------------
+fvs_base        VOL_GROSS     +13.29  ( +12.27,  +14.35)     30.91  (  28.65,   33.14)
+fvs_base        VOL_NET       +30.33  ( +29.14,  +31.59)     45.98  (  43.69,   48.37)
+fvs_base        BDFT_GROSS    +27.97  ( +26.26,  +29.74)     54.49  (  50.91,   58.04)
+fvs_base        BDFT_NET      +46.69  ( +44.75,  +48.70)     75.28  (  71.47,   79.08)
+fvs_base        BA            +10.81  (  +9.94,  +11.74)     25.53  (  23.72,   27.34)
+fvs_base        TPA           +11.48  ( +10.62,  +12.37)     25.71  (  23.37,   28.08)
+fvs_regional    VOL_GROSS     +11.67  ( +10.67,  +12.73)     29.58  (  27.48,   31.71)
+fvs_regional    VOL_NET       +28.47  ( +27.31,  +29.73)     43.30  (  41.08,   45.59)
+fvs_regional    BDFT_GROSS    +26.55  ( +24.84,  +28.26)     52.20  (  48.76,   55.60)
+fvs_regional    BDFT_NET      +45.05  ( +43.17,  +47.01)     72.07  (  68.41,   75.82)
+fvs_regional    BA             +9.05  (  +8.14,   +9.96)     24.73  (  22.96,   26.43)
+fvs_regional    TPA            +9.24  (  +8.33,  +10.15)     25.47  (  23.16,   27.78)
+organon         VOL_GROSS      +8.71  (  +7.68,   +9.81)     29.78  (  27.85,   31.66)
+organon         VOL_NET       +25.07  ( +23.86,  +26.33)     41.51  (  39.37,   43.71)
+organon         BDFT_GROSS    +24.67  ( +22.84,  +26.46)     51.29  (  48.01,   54.28)
+organon         BDFT_NET      +42.89  ( +40.90,  +44.91)     69.57  (  66.02,   72.90)
+organon         BA             +4.65  (  +3.78,   +5.53)     24.05  (  22.43,   25.66)
+organon         TPA            +1.35  (  +0.55,   +2.17)     22.20  (  20.09,   24.26)
+conus_spdep     VOL_GROSS      +7.10  (  +6.09,   +8.14)     28.10  (  26.13,   30.02)
+conus_spdep     VOL_NET       +23.21  ( +22.06,  +24.43)     39.10  (  36.95,   41.26)
+conus_spdep     BDFT_GROSS    +23.89  ( +22.13,  +25.61)     49.81  (  46.54,   52.85)
+conus_spdep     BDFT_NET      +42.01  ( +40.08,  +43.97)     67.93  (  64.41,   71.23)
+conus_spdep     BA             +4.65  (  +3.78,   +5.53)     24.05  (  22.43,   25.66)
+conus_spdep     TPA            +1.35  (  +0.55,   +2.17)     22.20  (  20.09,   24.26)
+conus_climate   VOL_GROSS      +6.70  (  +5.71,   +7.74)     28.25  (  26.29,   30.13)
+conus_climate   VOL_NET       +22.76  ( +21.62,  +23.98)     39.22  (  37.08,   41.38)
+conus_climate   BDFT_GROSS    +23.16  ( +21.42,  +24.87)     49.53  (  46.33,   52.58)
+conus_climate   BDFT_NET      +41.17  ( +39.24,  +43.12)     67.44  (  63.89,   70.76)
+conus_climate   BA             +4.65  (  +3.78,   +5.53)     24.05  (  22.43,   25.66)
+conus_climate   TPA            +1.35  (  +0.55,   +2.17)     22.20  (  20.09,   24.26)
+
+  agreement ratios (predicted / observed, aggregate)
+    fvs_base        BA 1.1081 (1.0994, 1.1174)   stem retention 1.1148 (1.1062, 1.1237)
+    fvs_regional    BA 1.0905 (1.0814, 1.0996)   stem retention 1.0924 (1.0833, 1.1015)
+    organon         BA 1.0465 (1.0378, 1.0553)   stem retention 1.0135 (1.0055, 1.0217)
+    conus_spdep     BA 1.0465 (1.0378, 1.0553)   stem retention 1.0135 (1.0055, 1.0217)
+    conus_climate   BA 1.0465 (1.0378, 1.0553)   stem retention 1.0135 (1.0055, 1.0217)
+
+==============================================================================
+CONFIG C2_balfix_FULL
+==============================================================================
+  n plots (cubic) = 3053   n plots (board foot) = 2743
+ARM             QTY            bias%             95% CI    rRMSE%        rRMSE 95% CI
+-------------------------------------------------------------------------------------
+fvs_base        VOL_GROSS     +13.29  ( +12.27,  +14.35)     30.91  (  28.65,   33.14)
+fvs_base        VOL_NET       +30.33  ( +29.14,  +31.59)     45.98  (  43.69,   48.37)
+fvs_base        BDFT_GROSS    +27.97  ( +26.26,  +29.74)     54.49  (  50.91,   58.04)
+fvs_base        BDFT_NET      +46.69  ( +44.75,  +48.70)     75.28  (  71.47,   79.08)
+fvs_base        BA            +10.81  (  +9.94,  +11.74)     25.53  (  23.72,   27.34)
+fvs_base        TPA           +11.48  ( +10.62,  +12.37)     25.71  (  23.37,   28.08)
+fvs_regional    VOL_GROSS     +11.67  ( +10.67,  +12.73)     29.58  (  27.48,   31.71)
+fvs_regional    VOL_NET       +28.47  ( +27.31,  +29.73)     43.30  (  41.08,   45.59)
+fvs_regional    BDFT_GROSS    +26.55  ( +24.84,  +28.26)     52.20  (  48.76,   55.60)
+fvs_regional    BDFT_NET      +45.05  ( +43.17,  +47.01)     72.07  (  68.41,   75.82)
+fvs_regional    BA             +9.05  (  +8.14,   +9.96)     24.73  (  22.96,   26.43)
+fvs_regional    TPA            +9.24  (  +8.33,  +10.15)     25.47  (  23.16,   27.78)
+organon         VOL_GROSS      +6.14  (  +5.14,   +7.19)     28.07  (  26.15,   29.98)
+organon         VOL_NET       +22.11  ( +20.97,  +23.34)     38.47  (  36.30,   40.60)
+organon         BDFT_GROSS    +21.35  ( +19.62,  +23.06)     48.33  (  45.10,   51.41)
+organon         BDFT_NET      +39.09  ( +37.20,  +41.03)     65.51  (  62.02,   68.95)
+organon         BA             +2.10  (  +1.28,   +2.96)     23.20  (  21.58,   24.79)
+organon         TPA            +1.67  (  +0.87,   +2.49)     22.09  (  19.96,   24.14)
+conus_spdep     VOL_GROSS      +4.69  (  +3.72,   +5.70)     26.98  (  25.04,   28.93)
+conus_spdep     VOL_NET       +20.44  ( +19.31,  +21.64)     36.65  (  34.48,   38.82)
+conus_spdep     BDFT_GROSS    +20.78  ( +19.09,  +22.44)     47.36  (  44.16,   50.47)
+conus_spdep     BDFT_NET      +38.44  ( +36.59,  +40.39)     64.42  (  60.94,   67.83)
+conus_spdep     BA             +2.10  (  +1.28,   +2.96)     23.20  (  21.58,   24.79)
+conus_spdep     TPA            +1.67  (  +0.87,   +2.49)     22.09  (  19.96,   24.14)
+conus_climate   VOL_GROSS      +4.28  (  +3.33,   +5.28)     27.16  (  25.23,   29.10)
+conus_climate   VOL_NET       +19.97  ( +18.87,  +21.18)     36.78  (  34.62,   38.93)
+conus_climate   BDFT_GROSS    +20.01  ( +18.33,  +21.69)     47.19  (  43.99,   50.30)
+conus_climate   BDFT_NET      +37.56  ( +35.74,  +39.47)     63.98  (  60.55,   67.34)
+conus_climate   BA             +2.10  (  +1.28,   +2.96)     23.20  (  21.58,   24.79)
+conus_climate   TPA            +1.67  (  +0.87,   +2.49)     22.09  (  19.96,   24.14)
+
+  agreement ratios (predicted / observed, aggregate)
+    fvs_base        BA 1.1081 (1.0994, 1.1174)   stem retention 1.1148 (1.1062, 1.1237)
+    fvs_regional    BA 1.0905 (1.0814, 1.0996)   stem retention 1.0924 (1.0833, 1.1015)
+    organon         BA 1.0210 (1.0128, 1.0296)   stem retention 1.0167 (1.0087, 1.0249)
+    conus_spdep     BA 1.0210 (1.0128, 1.0296)   stem retention 1.0167 (1.0087, 1.0249)
+    conus_climate   BA 1.0210 (1.0128, 1.0296)   stem retention 1.0167 (1.0087, 1.0249)
+
+==============================================================================
+CONFIG C3_balfix_CLEAN
+==============================================================================
+  n plots (cubic) = 2525   n plots (board foot) = 2264
+ARM             QTY            bias%             95% CI    rRMSE%        rRMSE 95% CI
+-------------------------------------------------------------------------------------
+fvs_base        VOL_GROSS      +6.99  (  +6.33,   +7.66)     18.22  (  17.02,   19.46)
+fvs_base        VOL_NET       +23.18  ( +22.37,  +23.99)     33.69  (  32.34,   35.12)
+fvs_base        BDFT_GROSS    +21.11  ( +19.64,  +22.65)     42.85  (  40.15,   45.66)
+fvs_base        BDFT_NET      +38.89  ( +37.22,  +40.61)     63.04  (  60.02,   66.11)
+fvs_base        BA             +4.85  (  +4.35,   +5.35)     13.37  (  12.30,   14.46)
+fvs_base        TPA            +5.73  (  +5.25,   +6.16)     12.48  (  11.65,   13.26)
+fvs_regional    VOL_GROSS      +5.50  (  +4.84,   +6.17)     17.42  (  16.28,   18.56)
+fvs_regional    VOL_NET       +21.46  ( +20.66,  +22.28)     31.13  (  29.90,   32.38)
+fvs_regional    BDFT_GROSS    +19.81  ( +18.34,  +21.37)     40.90  (  38.33,   43.60)
+fvs_regional    BDFT_NET      +37.39  ( +35.78,  +39.12)     60.11  (  57.22,   63.07)
+fvs_regional    BA             +3.21  (  +2.70,   +3.76)     13.28  (  12.30,   14.24)
+fvs_regional    TPA            +3.64  (  +3.12,   +4.15)     13.25  (  12.47,   14.05)
+organon         VOL_GROSS      +0.16  (  -0.56,   +0.82)     17.54  (  16.29,   18.72)
+organon         VOL_NET       +15.31  ( +14.44,  +16.13)     26.47  (  25.17,   27.78)
+organon         BDFT_GROSS    +14.68  ( +13.25,  +16.22)     37.74  (  35.34,   40.29)
+organon         BDFT_NET      +31.51  ( +29.86,  +33.23)     53.78  (  51.00,   56.84)
+organon         BA             -3.45  (  -3.97,   -2.96)     13.72  (  12.78,   14.65)
+organon         TPA            -3.62  (  -4.03,   -3.21)     11.56  (  10.95,   12.18)
+conus_spdep     VOL_GROSS      -1.13  (  -1.80,   -0.52)     16.56  (  15.29,   17.83)
+conus_spdep     VOL_NET       +13.82  ( +13.00,  +14.61)     24.57  (  23.30,   25.88)
+conus_spdep     BDFT_GROSS    +14.21  ( +12.81,  +15.68)     36.66  (  34.31,   39.16)
+conus_spdep     BDFT_NET      +30.97  ( +29.36,  +32.64)     52.67  (  49.95,   55.53)
+conus_spdep     BA             -3.45  (  -3.97,   -2.96)     13.72  (  12.78,   14.65)
+conus_spdep     TPA            -3.62  (  -4.03,   -3.21)     11.56  (  10.95,   12.18)
+conus_climate   VOL_GROSS      -1.53  (  -2.21,   -0.91)     16.92  (  15.63,   18.20)
+conus_climate   VOL_NET       +13.36  ( +12.52,  +14.17)     24.82  (  23.49,   26.15)
+conus_climate   BDFT_GROSS    +13.47  ( +12.06,  +14.97)     36.56  (  34.16,   39.12)
+conus_climate   BDFT_NET      +30.12  ( +28.51,  +31.79)     52.28  (  49.53,   55.17)
+conus_climate   BA             -3.45  (  -3.97,   -2.96)     13.72  (  12.78,   14.65)
+conus_climate   TPA            -3.62  (  -4.03,   -3.21)     11.56  (  10.95,   12.18)
+
+  agreement ratios (predicted / observed, aggregate)
+    fvs_base        BA 1.0485 (1.0435, 1.0535)   stem retention 1.0573 (1.0525, 1.0616)
+    fvs_regional    BA 1.0321 (1.0270, 1.0376)   stem retention 1.0364 (1.0312, 1.0415)
+    organon         BA 0.9655 (0.9603, 0.9704)   stem retention 0.9638 (0.9597, 0.9679)
+    conus_spdep     BA 0.9655 (0.9603, 0.9704)   stem retention 0.9638 (0.9597, 0.9679)
+    conus_climate   BA 0.9655 (0.9603, 0.9704)   stem retention 0.9638 (0.9597, 0.9679)
+
+==============================================================================
+CONFIG C4_binfixed_CLEAN
+==============================================================================
+  n plots (cubic) = 2525   n plots (board foot) = 2264
+ARM             QTY            bias%             95% CI    rRMSE%        rRMSE 95% CI
+-------------------------------------------------------------------------------------
+fvs_base        VOL_GROSS      +6.99  (  +6.33,   +7.66)     18.22  (  17.02,   19.46)
+fvs_base        VOL_NET       +23.18  ( +22.37,  +23.99)     33.69  (  32.34,   35.12)
+fvs_base        BDFT_GROSS    +21.11  ( +19.64,  +22.65)     42.85  (  40.15,   45.66)
+fvs_base        BDFT_NET      +38.89  ( +37.22,  +40.61)     63.04  (  60.02,   66.11)
+fvs_base        BA             +4.85  (  +4.35,   +5.35)     13.37  (  12.30,   14.46)
+fvs_base        TPA            +5.73  (  +5.25,   +6.16)     12.48  (  11.65,   13.26)
+fvs_regional    VOL_GROSS      +5.50  (  +4.84,   +6.17)     17.42  (  16.28,   18.56)
+fvs_regional    VOL_NET       +21.46  ( +20.66,  +22.28)     31.13  (  29.90,   32.38)
+fvs_regional    BDFT_GROSS    +19.81  ( +18.34,  +21.37)     40.90  (  38.33,   43.60)
+fvs_regional    BDFT_NET      +37.39  ( +35.78,  +39.12)     60.11  (  57.22,   63.07)
+fvs_regional    BA             +3.21  (  +2.70,   +3.76)     13.28  (  12.30,   14.24)
+fvs_regional    TPA            +3.64  (  +3.12,   +4.15)     13.25  (  12.47,   14.05)
+organon         VOL_GROSS      +2.60  (  +1.81,   +3.34)     19.08  (  17.86,   20.24)
+organon         VOL_NET       +18.12  ( +17.15,  +19.01)     29.71  (  28.43,   31.09)
+organon         BDFT_GROSS    +17.84  ( +16.29,  +19.52)     40.81  (  38.27,   43.50)
+organon         BDFT_NET      +35.14  ( +33.40,  +36.98)     57.97  (  55.05,   61.18)
+organon         BA             -1.02  (  -1.59,   -0.48)     13.98  (  12.98,   14.96)
+organon         TPA            -3.90  (  -4.32,   -3.50)     11.90  (  11.29,   12.51)
+conus_spdep     VOL_GROSS      +1.15  (  +0.44,   +1.81)     17.30  (  16.04,   18.51)
+conus_spdep     VOL_NET       +16.45  ( +15.59,  +17.30)     27.15  (  25.90,   28.48)
+conus_spdep     BDFT_GROSS    +17.20  ( +15.71,  +18.79)     39.21  (  36.74,   41.87)
+conus_spdep     BDFT_NET      +34.40  ( +32.75,  +36.18)     56.33  (  53.55,   59.35)
+conus_spdep     BA             -1.02  (  -1.59,   -0.48)     13.98  (  12.98,   14.96)
+conus_spdep     TPA            -3.90  (  -4.32,   -3.50)     11.90  (  11.29,   12.51)
+conus_climate   VOL_GROSS      +0.76  (  +0.04,   +1.46)     17.63  (  16.35,   18.85)
+conus_climate   VOL_NET       +16.00  ( +15.12,  +16.86)     27.38  (  26.06,   28.74)
+conus_climate   BDFT_GROSS    +16.50  ( +15.05,  +18.09)     39.09  (  36.60,   41.77)
+conus_climate   BDFT_NET      +33.60  ( +31.98,  +35.37)     55.96  (  53.15,   58.98)
+conus_climate   BA             -1.02  (  -1.59,   -0.48)     13.98  (  12.98,   14.96)
+conus_climate   TPA            -3.90  (  -4.32,   -3.50)     11.90  (  11.29,   12.51)
+
+  agreement ratios (predicted / observed, aggregate)
+    fvs_base        BA 1.0485 (1.0435, 1.0535)   stem retention 1.0573 (1.0525, 1.0616)
+    fvs_regional    BA 1.0321 (1.0270, 1.0376)   stem retention 1.0364 (1.0312, 1.0415)
+    organon         BA 0.9898 (0.9841, 0.9952)   stem retention 0.9610 (0.9568, 0.9650)
+    conus_spdep     BA 0.9898 (0.9841, 0.9952)   stem retention 0.9610 (0.9568, 0.9650)
+    conus_climate   BA 0.9898 (0.9841, 0.9952)   stem retention 0.9610 (0.9568, 0.9650)
+
+==============================================================================
+PART 3. THREE-CONFIGURATION COMPARISON, GROSS CUBIC VOLUME BIAS (pct)
+==============================================================================
+ARM                       C1 binfixed FULL             C2 balfix FULL            C3 balfix CLEAN
+fvs_base           +13.29 (+12.27,+14.35)   +13.29 (+12.27,+14.35)    +6.99 ( +6.33, +7.66)
+fvs_regional       +11.67 (+10.67,+12.73)   +11.67 (+10.67,+12.73)    +5.50 ( +4.84, +6.17)
+organon             +8.71 ( +7.68, +9.81)    +6.14 ( +5.14, +7.19)    +0.16 ( -0.56, +0.82)
+conus_spdep         +7.10 ( +6.09, +8.14)    +4.69 ( +3.72, +5.70)    -1.13 ( -1.80, -0.52)
+conus_climate       +6.70 ( +5.71, +7.74)    +4.28 ( +3.33, +5.28)    -1.53 ( -2.21, -0.91)
+
+non-overlap tests, gross cubic
+  fvs_base        C1 vs C2 separated: False    C2 vs C3 separated: True 
+  fvs_regional    C1 vs C2 separated: False    C2 vs C3 separated: True 
+  organon         C1 vs C2 separated: True     C2 vs C3 separated: True 
+  conus_spdep     C1 vs C2 separated: True     C2 vs C3 separated: True 
+  conus_climate   C1 vs C2 separated: True     C2 vs C3 separated: True 
+
+SANITY (scorecard side): {'rows_16605': True, 'plots_3321': True, 'models_5': True, 'no_dup_plot_model': True, 'shards_32': True, 'native_bit_identical': True, 'greg_moved': True, 'full_3053': True, 'clean_2525': True}
+
+WROTE: /fs/scratch/PUOM0008/crsfaaron/balfix_gate_20260805/gate_balfix_all.csv

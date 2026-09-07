@@ -1,0 +1,7 @@
+{
+ "gate2_cycle0_invariant": true,
+ "gate4b_native_identical": true,
+ "gate4b_greg_moved": true,
+ "gate3_greg_dg_nonzero": true,
+ "gate3_greg_bal_negative": false
+}

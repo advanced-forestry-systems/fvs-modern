@@ -56,6 +56,9 @@ import pandas as pd
 # These come from the calibrated JSON files' species_definitions.JSP
 # array. We only need the species used by the bakuzis SPECIES_GROUPS_*
 # definitions in bakuzis_uncertainty_comparison.py.
+_CONFIG_DIR = Path(__file__).resolve().parents[2] / "config" / "calibrated"
+_XW_CACHE: dict = {}
+
 FIA_TO_FVS_SP = {
     "pn": {
         15:  "WF", 17:  "GF", 19:  "AF", 98:  "SS",
@@ -90,23 +93,69 @@ STDINFO_DEFAULTS = {
     "pn": {"forest": 612, "fortyp_default": 201},   # Willamette NF
     "sn": {"forest": 803, "fortyp_default": 161},   # Talladega NF
     "ie": {"forest": 110, "fortyp_default": 201},   # Idaho Panhandle NF
-    "ne": {"forest": 902, "fortyp_default": 504},   # White Mountain NF
-    "acd": {"forest": 902, "fortyp_default": 504},
+    "ne": {"forest": 919, "fortyp_default": 504},   # White Mountain NF (919 per ne/blkdat.f90; 902 unrecognised)
+    "ls": {"forest": 904, "fortyp_default": 805},   # Huron-Manistee NF; northern hardwoods
+    "acd": {"forest": 919, "fortyp_default": 504},
 }
 
 
-def fia_to_fvs_code(spcd: int, variant: str) -> str:
+def _variant_crosswalk(variant: str) -> dict:
+    """FIA SPCD -> FVS 2-letter code for a variant, read from the variant's
+    calibrated config (categories/species_definitions FIAJSP -> JSP), which is
+    the full species list the compiled variant recognises. Falls back to the
+    hand table above only when the config is absent. Cached per variant."""
+    v = variant.lower()
+    if v in _XW_CACHE:
+        return _XW_CACHE[v]
+    table = None
+    cfg = _CONFIG_DIR / f"{v}.json"
+    if cfg.exists():
+        try:
+            sd = json.loads(cfg.read_text())["categories"]["species_definitions"]
+            fia = [int(x) for x in sd["FIAJSP"]]
+            jsp = [str(x).strip() for x in sd["JSP"]]
+            table = {}
+            for spcd, code in zip(fia, jsp):
+                if spcd > 0 and spcd not in table:      # first mapping wins (e.g. ls 125 RN/RP)
+                    table[spcd] = code
+        except Exception as exc:  # pragma: no cover
+            warnings.warn(f"inventory_keyfile: could not read crosswalk from {cfg}: {exc}")
+            table = None
+    if table is None:
+        table = FIA_TO_FVS_SP.get(v, FIA_TO_FVS_SP["pn"])
+    _XW_CACHE[v] = table
+    return table
+
+
+def fia_to_fvs_code(spcd: int, variant: str, strict: bool = True):
     """Return the FVS 2-letter species code for an FIA species code.
 
-    Falls back to the first entry in the variant's table if not found,
-    so that synthetic stands always have valid records even for
-    species codes that slipped past the SPECIES_GROUPS_* curation.
+    Reads the variant's full crosswalk from config/calibrated/<variant>.json.
+    With strict=True (default) an unmapped SPCD raises KeyError so callers
+    pre-filter stems rather than silently relabelling them; strict=False
+    returns None. The pre-September-2026 behaviour (fall back to the first
+    entry in a 10 to 13 species hand table, which on real Northeast data
+    relabelled most stems as balsam fir) is gone.
     """
-    table = FIA_TO_FVS_SP.get(variant.lower(), FIA_TO_FVS_SP["pn"])
+    table = _variant_crosswalk(variant)
     if spcd in table:
         return table[spcd]
-    # Fallback to the first species in the table
-    return list(table.values())[0]
+    if strict:
+        raise KeyError(f"FIA SPCD {spcd} has no FVS code in variant {variant!r} crosswalk ({len(table)} entries)")
+    return None
+
+
+def filter_mapped_species(spcds, variant: str):
+    """Return (kept_index_list, dropped_spcd_counter) for a sequence of SPCDs."""
+    from collections import Counter
+    table = _variant_crosswalk(variant)
+    keep, dropped = [], Counter()
+    for i, s in enumerate(spcds):
+        if s in table:
+            keep.append(i)
+        else:
+            dropped[s] += 1
+    return keep, dropped
 
 
 def format_tree_record(

@@ -113,6 +113,37 @@ config/<variant>.json categories.species_definitions (FIAJSP[i] ->
 JSP[i]), which is the blkdat.f90 table as extracted, and were checked
 identical between config/ and config/calibrated/ on 2026-09-06.
 
+Patched 2026-09-07 (NCASI Model Evaluation Phase II, session 13):
+SPCTRN second-stage species resolution. FVS itself resolves an input
+species code in two stages (base/intree.f90). Stage one is the
+variant's FIAJSP table, which is what FIA_TO_FVS_SP reproduces. Stage
+two, called whenever stage one misses, is SPCTRN in
+src-converted/vls/spctrn.f90, a 562-row translation table (ASPT) whose
+columns are FVS alpha code, FIA code, USDA PLANTS symbol, and the
+target alpha code for the CS, LS, NE and SN variants respectively; a
+code with no row at all lands on the variant's "other" slot (CS 85,
+LS 49 OH, NE 98 OH, SN 90 OT). The state-scope runners pre-translated
+to alpha codes through this module and so bypassed stage two, which
+is why FVS-SN dropped 4.35 to 6.73 percent of Southeastern stems
+(hickories recorded at species level, eastern redcedar 068, willow
+oak 831) that the engine would have resolved: the SN FIAJSP table
+keys several aggregate slots by FIA genus code (HI 400, JU 057) that
+field crews never record. See active-projects/ncasi-modeleval/fvs-se/
+se-unmapped-stems-diagnosis_DRAFT_2026-09-06.md.
+  The table is parsed from the Fortran source at import time
+  (SPCTRN_SOURCE, SPCTRN_ROW_COUNT), never retyped. Resolution order
+  per stem is FIAJSP, then the matching variant's SPCTRN column, then
+  drop with a count (or, with spctrn_other_fallback=True, the variant's
+  own "other" slot, which is what the engine does). Only the matching
+  variant's column is applied; the CS column is parsed but unused
+  since this module has no CS table. Per-variant counts of stems
+  resolved by each stage and dropped are kept in the same counters as
+  before and are returned by get_species_resolution_counts().
+  fia_to_fvs_code() is unchanged (FIAJSP only, raises on a miss);
+  resolve_fvs_code() is the two-stage lookup. make_inventory_keyfile()
+  takes use_spctrn (default False, so existing callers and tests see
+  identical output) and the runners should pass use_spctrn=True.
+
 Author: A. Weiskittel
 Date: 2026-04-25
 """
@@ -121,6 +152,9 @@ from __future__ import annotations
 
 import json
 import os
+import re
+from collections import Counter
+from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 
@@ -372,42 +406,215 @@ def fia_to_fvs_code(spcd: int, variant: str) -> str:
     )
 
 
+# ---------------------------------------------------------------------
+# SPCTRN: FVS's second-stage species translation table.
+#
+# src-converted/vls/spctrn.f90 (linked into FVSne, FVSls and FVSsn by
+# src-converted/bin/FVS*_sourceList.txt) declares CHARACTER*8
+# ASPT(562,7) and fills it from DATA statements, one row per line:
+#   'FR ','010','ABIES   ','OS ','BF ','BF ','FR ',   !Abies
+# column 1 FVS alpha code, 2 FIA code (three characters, zero padded,
+# blank when the row is a PLANTS-symbol-only entry), 3 USDA PLANTS
+# symbol, 4 CS target, 5 LS target, 6 NE target, 7 SN target. The
+# routine walks rows in order and takes the first row whose column 1,
+# 2 or 3 equals the input code, so first occurrence wins (there are no
+# duplicate FIA codes in the table as of 2026-09-07). It then looks the
+# target alpha up in the variant's NSP list; a target absent from the
+# variant leaves ISPC1 = 0 and the 2026-05-16 fork guard drops the tree
+# silently, so this module treats such a row as unresolved too. A code
+# with no row at all becomes the variant's "other" index (CS 85, LS 49,
+# NE 98, SN 90), which is the SPCTRN_OTHER_FALLBACK alpha below.
+# ---------------------------------------------------------------------
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+SPCTRN_SOURCE = _REPO_ROOT / "src-converted" / "vls" / "spctrn.f90"
+SPCTRN_ROW_COUNT = 562          # MAXASPT in spctrn.f90; parse asserts it
+SPCTRN_FIA_ROW_COUNT = 291      # rows carrying a non-blank FIA code
+SPCTRN_COLUMNS = ("alpha", "fia", "plants", "cs", "ls", "ne", "sn")
+SPCTRN_VARIANT_COLUMNS = {"cs": "cs", "ls": "ls", "ne": "ne", "sn": "sn"}
+# The alpha code of the "other" slot SPCTRN returns for a code with no
+# table row, per variant (JSP index 85 CS, 49 LS = OH, 98 NE = OH,
+# 90 SN = OT). CS is listed for completeness; there is no CS table here.
+SPCTRN_OTHER_FALLBACK = {"ls": "OH", "ne": "OH", "sn": "OT"}
+# Alpha codes the variant's JSP list carries that FIA_TO_FVS_SP cannot,
+# because the same FIA code appears twice in FIAJSP and the later slot
+# wins. LS slot 3 RN and slot 7 RP are both FIA 125 (red pine); the
+# crosswalk keeps RP, but SPCTRN sends the southern pines (110, 111,
+# 121, 125, 131, 136, 144) to RN, which the engine models at slot 3.
+# Checked against config/<variant>.json on 2026-09-07: NE and SN have
+# no such slot.
+VARIANT_ALPHAS_NOT_IN_CROSSWALK = {"ls": {"RN"}}
+
+_SPCTRN_ROW_RE = re.compile(
+    r"^\s*'([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)'",
+    re.M,
+)
+
+
+@lru_cache(maxsize=None)
+def _parse_spctrn(path: str = str(SPCTRN_SOURCE)) -> tuple:
+    """Parse the ASPT DATA rows out of spctrn.f90.
+
+    Returns a tuple of 7-tuples in table order (see SPCTRN_COLUMNS),
+    every field stripped. Asserts the row count equals SPCTRN_ROW_COUNT
+    so a future edit to the Fortran that changes the table size fails
+    loudly here rather than silently shifting the mapping.
+    """
+    text = Path(path).read_text(encoding="utf-8", errors="replace")
+    rows = tuple(tuple(f.strip() for f in m) for m in _SPCTRN_ROW_RE.findall(text))
+    if len(rows) != SPCTRN_ROW_COUNT:
+        raise RuntimeError(
+            f"SPCTRN parse of {path} found {len(rows)} ASPT rows, expected "
+            f"{SPCTRN_ROW_COUNT} (MAXASPT); the Fortran table changed or the "
+            "regex missed rows. Update SPCTRN_ROW_COUNT deliberately."
+        )
+    return rows
+
+
+@lru_cache(maxsize=None)
+def spctrn_table(variant: str) -> dict:
+    """Return the SPCTRN FIA SPCD -> target alpha map for one variant.
+
+    Only rows with a numeric FIA code are kept (first occurrence wins,
+    matching the Fortran loop), only the matching variant's target
+    column is read, and a target alpha that the variant's own FIAJSP
+    table does not carry is omitted because the engine would drop that
+    tree at the ISPC1 guard rather than model it. Raises KeyError for a
+    variant SPCTRN does not translate (anything but cs, ls, ne, sn).
+    """
+    v = variant.lower()
+    if v not in SPCTRN_VARIANT_COLUMNS:
+        raise KeyError(
+            f"SPCTRN translates only {sorted(SPCTRN_VARIANT_COLUMNS)}; variant "
+            f"{variant!r} has no target column in spctrn.f90."
+        )
+    col = SPCTRN_COLUMNS.index(SPCTRN_VARIANT_COLUMNS[v])
+    known = None
+    if v in FIA_TO_FVS_SP:
+        known = set(species_table(v).values()) | VARIANT_ALPHAS_NOT_IN_CROSSWALK.get(v, set())
+    out: dict = {}
+    for row in _parse_spctrn():
+        fia = row[1]
+        if not fia.isdigit():
+            continue
+        code = int(fia)
+        if code in out:
+            continue                      # first row wins, as in the loop
+        target = row[col]
+        if not target or target == "XX":
+            continue
+        if known is not None and target not in known:
+            continue                      # engine would hit the ISPC1 guard
+        out[code] = target
+    return out
+
+
+def resolve_fvs_code(
+    spcd: int,
+    variant: str,
+    use_spctrn: bool = True,
+    other_fallback: bool = False,
+) -> tuple:
+    """Two-stage species resolution, the way base/intree.f90 does it.
+
+    Returns (alpha, stage) where stage is "fiajsp" when the variant's
+    own crosswalk carries the code, "spctrn" when the translation table
+    supplied it, "other" when nothing matched and other_fallback is set
+    (the variant's OH/OT slot, which is what the engine assigns), or
+    None with alpha None when the stem must be dropped. FIAJSP always
+    wins, so any code fia_to_fvs_code() already maps resolves exactly
+    as before.
+    """
+    v = variant.lower()
+    table = species_table(v)              # raises for an unknown variant
+    spcd = int(spcd)
+    if spcd in table:
+        return table[spcd], "fiajsp"
+    if use_spctrn and v in SPCTRN_VARIANT_COLUMNS:
+        hit = spctrn_table(v).get(spcd)
+        if hit is not None:
+            return hit, "spctrn"
+        if other_fallback and v in SPCTRN_OTHER_FALLBACK:
+            return SPCTRN_OTHER_FALLBACK[v], "other"
+    return None, None
+
+
 # Module-level counters so a batch driver can report how many stems
-# were dropped from keyfiles as unmapped, per variant, instead of that
-# happening silently. Reset with reset_unmapped_stem_counts() between
-# batch runs. Mirrors the per-state counts the state-scope runners log.
+# each resolution stage handled and how many were dropped, per variant,
+# instead of that happening silently. Reset with
+# reset_unmapped_stem_counts() between batch runs. Mirrors the per-state
+# counts the state-scope runners log.
 _UNMAPPED_STEM_COUNTS: dict = {}
+_STAGE_KEYS = ("fiajsp", "spctrn", "other")
 
 
 def reset_unmapped_stem_counts() -> None:
-    """Reset the unmapped-stem counters before a batch run."""
+    """Reset the per-variant species resolution counters."""
     _UNMAPPED_STEM_COUNTS.clear()
 
 
+def _new_counter() -> dict:
+    return {
+        "stands": 0,
+        "total_stems": 0,
+        "fiajsp_stems": 0,
+        "spctrn_stems": 0,
+        "other_stems": 0,
+        "dropped_stems": 0,
+        "spctrn_by_spcd": Counter(),   # SPCD -> stems the table rescued
+        "dropped_by_spcd": Counter(),  # SPCD -> stems dropped
+    }
+
+
+def get_species_resolution_counts(variant: Optional[str] = None) -> dict:
+    """Return the per-variant species resolution counts.
+
+    With variant=None returns {variant: counts}; with a variant returns
+    that variant's counts (an empty counter if nothing was logged).
+    Each counts dict carries stands, total_stems, fiajsp_stems,
+    spctrn_stems, other_stems, dropped_stems, and the Counters
+    spctrn_by_spcd and dropped_by_spcd keyed by FIA SPCD. Copies are
+    returned, so a caller cannot corrupt the running totals.
+    """
+    def _copy(c: dict) -> dict:
+        return {k: (Counter(v) if isinstance(v, Counter) else v) for k, v in c.items()}
+    if variant is None:
+        return {v: _copy(c) for v, c in _UNMAPPED_STEM_COUNTS.items()}
+    return _copy(_UNMAPPED_STEM_COUNTS.get(variant.lower(), _new_counter()))
+
+
 def get_unmapped_stem_summary() -> str:
-    """Return a human-readable per-variant count of stems dropped from
-    keyfiles because their FIA SPCD is not in the variant crosswalk."""
+    """Return a human-readable per-variant count of stems resolved by
+    each stage and dropped from keyfiles."""
     if not _UNMAPPED_STEM_COUNTS:
         return "No stands logged yet (make_inventory_keyfile records per call)."
     parts = []
     for v, c in sorted(_UNMAPPED_STEM_COUNTS.items()):
         n, d = c["total_stems"], c["dropped_stems"]
         pct = 100.0 * d / n if n else 0.0
+        extra = ""
+        if c["spctrn_stems"] or c["other_stems"]:
+            extra = (
+                f", {c['fiajsp_stems']} via FIAJSP, {c['spctrn_stems']} via "
+                f"SPCTRN, {c['other_stems']} to the variant other slot"
+            )
         parts.append(
             f"{v}: {d} of {n} stems ({pct:.2f}%) dropped as SPCD not in the "
-            f"variant species list (never relabelled), across {c['stands']} "
-            "stand(s)"
+            f"variant species list (never relabelled){extra}, across "
+            f"{c['stands']} stand(s)"
         )
     return "; ".join(parts) + "."
 
 
-def _record_unmapped(variant: str, n_total: int, n_dropped: int) -> None:
-    c = _UNMAPPED_STEM_COUNTS.setdefault(
-        variant, {"stands": 0, "total_stems": 0, "dropped_stems": 0}
-    )
+def _record_resolution(variant: str, stages: pd.Series, spcds: pd.Series) -> None:
+    c = _UNMAPPED_STEM_COUNTS.setdefault(variant, _new_counter())
     c["stands"] += 1
-    c["total_stems"] += int(n_total)
-    c["dropped_stems"] += int(n_dropped)
+    c["total_stems"] += int(len(stages))
+    for key in _STAGE_KEYS:
+        c[f"{key}_stems"] += int((stages == key).sum())
+    dropped = stages.isna()
+    c["dropped_stems"] += int(dropped.sum())
+    c["dropped_by_spcd"].update(spcds[dropped].astype(int).tolist())
+    c["spctrn_by_spcd"].update(spcds[stages == "spctrn"].astype(int).tolist())
 
 
 def format_tree_record(
@@ -462,6 +669,8 @@ def make_inventory_keyfile(
     inv_year: int = 2000,
     num_cycles: int = 20,
     calibration_keywords: str = "",
+    use_spctrn: bool = False,
+    spctrn_other_fallback: bool = False,
 ) -> str:
     """Generate an FVS keyfile in INVENTORY mode for the given stand.
 
@@ -471,6 +680,16 @@ def make_inventory_keyfile(
     The stand_df is expected to have at least: site_index, age,
     aspect, slope, elevft, forest_type. The tree_df is expected to
     have: tree_count (TPA), species (FIA SPCD), diameter, ht, crratio.
+
+    Species resolution is FIAJSP first (FIA_TO_FVS_SP), then, when
+    use_spctrn is True, the variant's column of FVS's own SPCTRN table
+    (see resolve_fvs_code), then drop with a count. With
+    spctrn_other_fallback=True a code with no SPCTRN row goes to the
+    variant's OH/OT slot instead of being dropped, which is exactly what
+    the engine does when handed the FIA code directly. The default,
+    use_spctrn=False, reproduces the 2026-09-06 behaviour byte for byte.
+    The state-scope runners should pass use_spctrn=True and read the
+    per-variant counts back with get_species_resolution_counts().
     """
     v = variant.lower()
     s = stand_df.iloc[0]
@@ -479,17 +698,26 @@ def make_inventory_keyfile(
     fortyp_default = defaults["fortyp_default"]
     fortyp = int(s.get("forest_type", fortyp_default) or fortyp_default)
 
-    # Pre-filter tree records to SPCDs the variant crosswalk maps, the
-    # same guard the NE, LS and SN state-scope runners applied at run
-    # time. Unmapped stems are counted and dropped, never relabelled.
-    # A stand with no mapped stems at all is an error, not a keyfile.
-    table = species_table(v)
+    # Resolve every tree record's SPCD up front, count the stage that
+    # resolved it, and drop the rest. Unresolved stems are counted and
+    # dropped, never relabelled. A stand with no resolvable stems at all
+    # is an error, not a keyfile.
+    species_table(v)                        # raises for an unknown variant
     n_total = len(tree_df)
-    mapped_mask = tree_df["species"].astype(int).isin(table.keys())
+    spcds = tree_df["species"].astype(int)
+    resolved = [
+        resolve_fvs_code(c, v, use_spctrn=use_spctrn,
+                         other_fallback=spctrn_other_fallback)
+        for c in spcds
+    ]
+    alphas = pd.Series([r[0] for r in resolved], index=tree_df.index, dtype=object)
+    stages = pd.Series([r[1] for r in resolved], index=tree_df.index, dtype=object)
+    _record_resolution(v, stages, spcds)
+    mapped_mask = alphas.notna()
     n_dropped = int(n_total - mapped_mask.sum())
-    _record_unmapped(v, n_total, n_dropped)
     if n_dropped:
         tree_df = tree_df.loc[mapped_mask]
+        alphas = alphas.loc[mapped_mask]
     if len(tree_df) == 0:
         raise ValueError(
             f"Stand {stand_id}: none of its {n_total} tree records carry an "
@@ -531,7 +759,7 @@ def make_inventory_keyfile(
 
     # SITECODE: field 1 = site species (first tree record's species),
     # field 2 = site index, field 3 = 1 makes it the site species.
-    site_sp = fia_to_fvs_code(int(tree_df.iloc[0]["species"]), v)
+    site_sp = str(alphas.iloc[0])
     sitecode = (
         "SITECODE  "
         f"{site_sp:>10s}"
@@ -575,9 +803,7 @@ def make_inventory_keyfile(
     # Tree records, one per row of tree_df. tree_count is the TPA the
     # record represents and passes through PROB unchanged under the
     # per-acre DESIGN above.
-    for tree_num, row in enumerate(tree_df.itertuples(), start=1):
-        spcd = int(row.species)
-        sp_code = fia_to_fvs_code(spcd, v)
+    for tree_num, (row, sp_code) in enumerate(zip(tree_df.itertuples(), alphas), start=1):
         tpa = getattr(row, "tree_count", None)
         tpa = 1.0 if tpa is None or pd.isna(tpa) else float(tpa)
         lines.append(
@@ -601,6 +827,13 @@ def make_inventory_keyfile(
 
 __all__ = [
     "fia_to_fvs_code",
+    "resolve_fvs_code",
+    "spctrn_table",
+    "get_species_resolution_counts",
+    "SPCTRN_SOURCE",
+    "SPCTRN_ROW_COUNT",
+    "SPCTRN_FIA_ROW_COUNT",
+    "SPCTRN_OTHER_FALLBACK",
     "species_table",
     "stdinfo_defaults",
     "format_tree_record",

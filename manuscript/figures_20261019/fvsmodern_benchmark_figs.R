@@ -82,16 +82,39 @@ p5 <- ggplot(f5, aes(metric, VARIANT, fill = R2)) +
   scale_fill_viridis_c(option = "D", limits = c(0, 1), na.value = "grey90", direction = -1,
                        name = expression(italic(R)^2)) +
   facet_wrap(~approach) + labs(x = NULL, y = "Variant") + theme_j +
-  theme(axis.text.x = element_text(angle = 40, hjust = 1), legend.position = "right",
+  theme(axis.text.x = element_text(angle = 40, hjust = 1), legend.position = "right", legend.title = element_text(size = 9),
         axis.line = element_blank(), panel.grid.major.x = element_blank())
 ggsave(file.path(out, "fig5_r2_heatmap.png"), p5, width = 6.5, height = 5.0, dpi = 600)
 ggsave(file.path(out, "fig5_r2_heatmap.pdf"), p5, width = 6.5, height = 5.0)
+
+
+# ---------- Figure 3: percent BA RMSE reduction with 95% interval, grouped by region ----------
+reg <- list(Pacific = c("AK", "PN", "WC", "NC", "CA", "SO", "WS"),
+            `Interior West` = c("BM", "EC", "IE", "CI", "EM", "UT", "CR", "TT"), East = c("SN", "CS", "LS", "NE"))
+stopifnot(setequal(unlist(reg), v$VARIANT))
+f3 <- v[, .(VARIANT, red = 100 * (BA_RMSE_default - BA_RMSE_calib) / BA_RMSE_default,
+             lo = 100 * (BA_RMSE_default - BA_RMSE_hi_calib) / BA_RMSE_default,
+             hi = 100 * (BA_RMSE_default - BA_RMSE_lo_calib) / BA_RMSE_default)]
+f3[, region := factor(names(reg)[sapply(VARIANT, function(x) which(sapply(reg, function(r) x %in% r)))], levels = names(reg))]
+f3[, inc0 := lo <= 0]
+f3[, VARIANT := factor(VARIANT, levels = f3[order(red), VARIANT])]
+p3 <- ggplot(f3, aes(y = VARIANT, colour = inc0)) +
+  geom_vline(xintercept = 0, colour = "grey60", linewidth = 0.3) +
+  geom_errorbarh(aes(xmin = lo, xmax = hi), height = 0, linewidth = 0.5) +
+  geom_point(aes(x = red), size = 1.8) +
+  scale_colour_manual(values = c(`FALSE` = col_cal, `TRUE` = col_def), guide = "none") +
+  facet_grid(region ~ ., scales = "free_y", space = "free_y") +
+  labs(x = "Reduction in basal area RMSE (%), 95% bootstrap interval", y = NULL) + theme_j +
+  theme(strip.text.y = element_text(angle = 0, face = "bold", hjust = 0))
+ggsave(file.path(out, "fig3_ba_rmse_reduction_by_region.png"), p3, width = 6.5, height = 5.6, dpi = 600)
+ggsave(file.path(out, "fig3_ba_rmse_reduction_by_region.pdf"), p3, width = 6.5, height = 5.6)
 
 # ---------- Plotted values ----------
 fwrite(rbind(
   f2[, .(figure = "2", VARIANT, panel = as.character(panel), default, calib, lo, hi, n)],
   f4[, .(figure = "4", VARIANT, panel = "composite_pct", default = comp_default, calib = comp_calib, lo = NA, hi = NA, n = NA)],
   f5[, .(figure = "5", VARIANT, panel = paste(metric, approach), default = NA, calib = R2, lo = NA, hi = NA, n = NA)],
+  f3[, .(figure = "3", VARIANT, panel = as.character(region), default = NA, calib = red, lo, hi, n = NA)],
   fill = TRUE), file.path(out, "fig_data_20261019.csv"))
 cat("worse composite:", paste(f4[worse == TRUE, as.character(VARIANT)], collapse = ","), "\n")
 print(f4[order(comp_calib - comp_default)])

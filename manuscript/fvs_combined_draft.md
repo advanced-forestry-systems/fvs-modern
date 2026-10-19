@@ -550,44 +550,41 @@ modern workstation is 10 to 20 minutes.
 
 All 25 variants calibrated successfully for all seven components.
 Height to diameter models achieved R squared values ranging from
-0.74 (Alaska) to 0.90 (Klamath Mountains) with a mean of 0.85,
-compared to baseline models with mean R squared of 0.82. Wykoff
+0.75 (Eastern Montana) to 0.90 (Inland California and Southern
+Cascades) with a mean of 0.84, compared to baseline models with mean
+R squared of 0.81. Wykoff
 diameter growth fits achieved a mean R squared of 0.56 (SD 0.10,
 range 0.31 to 0.69), with the strongest fits in the Acadian (0.69),
 Klamath Mountains (0.68), Westside Cascades (0.68), ORGANON Pacific
 Northwest (0.66), and Northeast (0.65) variants and the weakest in the more
 arid and topographically variable variants (BC 0.31, PN as a value
 of 0.34 reflects the subset retained after the 5K subsample fallback,
-UT 0.40, CR 0.41, BM 0.45). Mortality AUC values ranged from 0.66
-(Southern Old Growth) to 0.93 (British Columbia, Ontario, Acadian)
-with a mean of 0.78, with 15 of 25 variants exceeding 0.85. These
-v2 figures are computed on the full FIA dataset with posterior
-median coefficients and are not directly comparable to the v1
-internal AUC of 0.766 reported in an earlier draft, which was
-evaluated on a balanced subsample with 1:1 alive-to-dead matching.
-The v2 numbers are the more conservative and operationally
-relevant: balanced-subsample AUC overstates the prevalence-corrected
-discriminatory ability when applied to whole-stand projections,
-where dead trees are the minority class. Per-variant v1 vs v2
-deltas computed on the common holdout set range from -0.020 to
-+0.004 AUC, confirming that the apparent regression in the headline
-figure is entirely a sampling-protocol artifact rather than a
-genuine loss of model quality. Crown
-ratio change R squared averaged 0.23 under the v1 delta model and
-0.53 under the v2 Beta regression on crown ratio level, a 142
-percent relative improvement that holds across all 25 variants;
-the v2 specification is consistent with the inherently bounded
-nature of crown ratio as a level rather than as a change. The
-largest gains accrued to the western and arid variants. UT, EM,
-CR, KT, and AK each saw v2 R squared above 0.60 (relative
-improvements ranging from 237 to 346 percent), confirming that
-the bounded Beta likelihood is particularly informative where
+UT 0.40, CR 0.41, BM 0.45). Mortality AUC, evaluated on a
+balanced subsample with 1:1 alive-to-dead matching (v1), ranged
+from 0.66 (Inland California and Southern Cascades) to 0.93
+(Acadian) with a mean of 0.77, and 7 of 25 variants exceeded 0.85
+(Alaska, Pacific Northwest Coast, Central States, Lake States,
+Ontario, Northeast, and Acadian). Balanced-subsample AUC overstates
+discrimination in whole-stand projections, where dead trees are the
+minority class, so seven western variants were also scored on the
+full FIA data with posterior median coefficients (v2). Their AUC
+ranged from 0.64 to 0.71 (mean 0.67), between 0.001 and 0.020 below
+the v1 values for the same variants, so the change in protocol
+lowers AUC only slightly. Crown
+ratio change R squared averaged 0.24 under the v1 delta model and
+0.53 under the v2 Beta regression on crown ratio level. R squared
+rose in all 25 variants, by 142 percent on average across variants,
+consistent with the inherently bounded nature of crown ratio as a
+level rather than as a change. The largest gains accrued to western
+variants. AK, WS, EM, KT, UT, and CR reached v2 R squared above
+0.60, with relative improvements from 159 to 347 percent, consistent
+with the bounded Beta likelihood is particularly informative where
 inter-tree crown ratio variance is high and the v1 normal-on-delta
 specification was furthest from the response support. Figure 6a
 visualizes the per-variant v1 to v2 improvement as a dumbbell plot;
 no variant moved backward.
 
-![Figure 6a. Crown ratio R squared by variant under the v1 delta-CR Normal regression (open marker) and the v2 level-CR Beta regression (filled marker). The v2 specification improves R squared in every variant; the largest gains occur in the arid and high-elevation variants (UT, EM, CR, KT, AK) where the bounded support of the response is most informative.](../calibration/output/comparisons/manuscript_figures/fig_cr_v1_v2_comparison.png){width=6in} Stand
+![Figure 6a. Crown ratio R squared by variant under the v1 delta-CR Normal regression (open marker) and the v2 level-CR Beta regression (filled marker). The v2 specification improves R squared in every variant; the largest relative gains occur in AK, WS, EM, and KT.](../calibration/output/comparisons/manuscript_figures/fig_cr_v1_v2_comparison.png){width=6in} Stand
 density index maximum estimates were 10 to 43 percent lower than
 defaults across variants, suggesting that prior parameter sets
 systematically overestimated carrying capacity. Height increment
@@ -600,10 +597,10 @@ Table 3. Calibration quality summary by component across variants.
 
 | Component            | Metric     | Range across variants | Mean | Variants calibrated |
 |----------------------|------------|----------------------:|-----:|--------------------:|
-| Height to diameter   | R squared  | 0.74 to 0.90          | 0.85 | 25                  |
+| Height to diameter   | R squared  | 0.75 to 0.90          | 0.84 | 25                  |
 | Diameter growth      | R squared  | 0.31 to 0.69          | 0.56 | 25                  |
-| Mortality            | AUC        | 0.66 to 0.93          | 0.78 | 25                  |
-| Crown ratio change   | R squared  | 0.14 to 0.38          | 0.23 | 25                  |
+| Mortality            | AUC (v1)   | 0.66 to 0.93          | 0.77 | 25                  |
+| Crown ratio change   | R squared  | 0.14 to 0.38          | 0.24 | 25                  |
 | Stand density max    | SDI delta  | 10 to 43 percent lower| 22   | 25                  |
 | Height increment     | R squared  | 0.22 to 0.30          | 0.25 | 6                   |
 | Self thinning slope  | b departure| -0.12 to +0.09        | -0.04| 25                  |
@@ -660,13 +657,14 @@ Table 1. FIA national benchmark results summary (19 variants).
 
 Figure 2 shows basal area and gross cubic foot volume RMSE per
 variant under default and calibrated parameters, with 95 percent
-bootstrap intervals on the calibrated RMSE. Figure 3 is the accompanying
-geographic view: a hex binned CONUS map of composite RMSE reduction
-after calibration, showing that improvement is widespread but
-strongest in the Westside Cascades (WC) and Alaska, followed by the
-Klamath Mountains and portions of the Inland West. The Pacific
-Northwest Coast (PN) gain is small, and its bootstrap interval
-includes zero. Figure 4 compares a composite percent RMSE, the
+bootstrap intervals on the calibrated RMSE. Figure 3 groups the
+percent reduction in basal area RMSE by region. Improvement is
+strongest in Alaska and the Westside Cascades (WC), followed by Utah,
+with the Klamath and Blue Mountains near 10 percent, and is small in
+the eastern variants. The
+interval includes zero in nine variants, among them the Pacific
+Northwest Coast (PN), where the reduction cannot be distinguished
+from no change. Figure 4 compares a composite percent RMSE, the
 equally weighted mean of percent RMSE for basal area, stand density
 index, quadratic mean diameter, and gross cubic foot volume. The
 composite fell in all 19 variants, by 8.5 percentage points in Alaska
@@ -676,7 +674,7 @@ parameter sets.
 
 ![Figure 2. Internal FIA benchmark RMSE by variant for (a) basal area (ft² ac⁻¹) and (b) gross cubic foot volume (ft³ ac⁻¹) under default (open circles) and calibrated (filled circles) parameters. Bars are 95 percent percentile intervals from 1,000 bootstrap resamples of conditions on the calibrated RMSE. Variants are ordered by percent reduction in basal area RMSE. Values are in sample (see §3.1).](figures_20261019/fig2_benchmark_rmse.png){width=6.5in}
 
-![Figure 3. CONUS spatial distribution of percent RMSE reduction after Bayesian calibration, hex binned over FIA plot locations. Blue indicates larger reductions; red indicates the small number of plots where default outperformed calibrated. Largest improvements appear in the Westside Cascades, Alaska proxy, and portions of the Northeast. The Pacific Northwest Coast (PN) gain is small, and its bootstrap interval includes zero.](../calibration/output/comparisons/manuscript_figures/pctrmse_reduction_spatial.png){width=6.5in}
+![Figure 3. Percent reduction in basal area RMSE after calibration by variant, grouped by region, with 95 percent percentile intervals from 1,000 bootstrap resamples of conditions on the calibrated RMSE. Grey marks variants whose interval includes zero. Values are in sample (see §3.1).](figures_20261019/fig3_ba_rmse_reduction_by_region.png){width=6.5in}
 
 ![Figure 4. Composite percent RMSE by variant under default (open circles) and calibrated (filled circles) parameters. The composite is the equally weighted mean of percent RMSE (RMSE as a percentage of the observed mean) for basal area, stand density index, quadratic mean diameter, and gross cubic foot volume. Composite error was lower after calibration in all 19 variants, and variants are ordered by the size of the reduction.](figures_20261019/fig4_composite_pctrmse_dumbbell.png){width=6.5in}
 
@@ -981,7 +979,8 @@ The Chapman Richards height to diameter model contributes the next
 largest share, largely by reducing systematic negative bias in tree
 height estimates that otherwise propagate into volume calculations.
 The mortality calibration delivered high classification accuracy
-(mean AUC 0.78, with 15 variants above 0.85) primarily through
+(mean AUC 0.77 on balanced subsamples, with 7 variants above 0.85)
+primarily through
 species random intercepts and competition covariates rather than
 through the full 13 covariate specification, suggesting that
 relative competitive position is a more portable predictor of tree

@@ -54,8 +54,8 @@ treelist snapshot extraction.
 diameter growth, height to diameter allometry, height increment
 (applicable to six variants), mortality, crown ratio change, stand
 density index maximum, and the self thinning slope. The national
-benchmark improved basal area R squared from 0.672 to 0.704 and
-volume R squared from 0.783 to 0.818. The Bakuzis matrix exposes
+benchmark improved basal area R squared from 0.704 to 0.721 and
+volume R squared from 0.799 to 0.819. The Bakuzis matrix exposes
 where calibrated parameters change long horizon behavior most, and
 the posterior ensemble provides year by year credible bands.
 
@@ -347,7 +347,7 @@ Table 2. FVS geographic variants supported in fvs-modern.
 
 | Code | Name | Country | MAXSP |
 |------|------|---------|------:|
-| AK   | Southeast Alaska and Coastal British Columbia | US   | 23  |
+| AK   | Alaska                                        | US   | 23  |
 | BM   | Blue Mountains                                 | US   | 18  |
 | CA   | Inland California and Southern Cascades        | US   | 50  |
 | CI   | Central Idaho                                  | US   | 19  |
@@ -356,15 +356,15 @@ Table 2. FVS geographic variants supported in fvs-modern.
 | EC   | East Cascades                                  | US   | 32  |
 | EM   | Eastern Montana                                | US   | 19  |
 | IE   | Inland Empire                                  | US   | 23  |
-| KT   | Klamath Mountains                              | US   | 11  |
+| KT   | Kootenai, Kaniksu, and Tally Lake              | US   | 11  |
 | LS   | Lake States                                    | US   | 68  |
-| NC   | Klamath (North Central carry over)             | US   | 12  |
+| NC   | Klamath Mountains                              | US   | 12  |
 | NE   | Northeast                                      | US   | 108 |
-| OC   | Oregon Coast                                   | US   | 50  |
-| OP   | Ozark Ouachita                                 | US   | 39  |
+| OC   | ORGANON Southwest                              | US   | 50  |
+| OP   | ORGANON Pacific Northwest                      | US   | 39  |
 | PN   | Pacific Northwest Coast                        | US   | 39  |
 | SN   | Southern                                       | US   | 90  |
-| SO   | South Central Oregon                           | US   | 33  |
+| SO   | South Central Oregon and Northeast California  | US   | 33  |
 | TT   | Tetons                                         | US   | 18  |
 | UT   | Utah                                           | US   | 24  |
 | WC   | Westside Cascades                              | US   | 39  |
@@ -550,11 +550,11 @@ modern workstation is 10 to 20 minutes.
 
 All 25 variants calibrated successfully for all seven components.
 Height to diameter models achieved R squared values ranging from
-0.74 (Alaska) to 0.90 (North Carolina) with a mean of 0.85,
+0.74 (Alaska) to 0.90 (Klamath Mountains) with a mean of 0.85,
 compared to baseline models with mean R squared of 0.82. Wykoff
 diameter growth fits achieved a mean R squared of 0.56 (SD 0.10,
 range 0.31 to 0.69), with the strongest fits in the Acadian (0.69),
-North Carolina (0.68), West Coast (0.68), Inland Empire (0.61),
+Klamath Mountains (0.68), Westside Cascades (0.68), Inland Empire (0.61),
 and Pacific Northwest (0.61) variants and the weakest in the more
 arid and topographically variable variants (BC 0.31, PN as a value
 of 0.34 reflects the subset retained after the 5K subsample fallback,
@@ -578,9 +578,9 @@ ratio change R squared averaged 0.23 under the v1 delta model and
 percent relative improvement that holds across all 25 variants;
 the v2 specification is consistent with the inherently bounded
 nature of crown ratio as a level rather than as a change. The
-largest gains accrued to the western and arid variants — UT, EM,
+largest gains accrued to the western and arid variants. UT, EM,
 CR, KT, and AK each saw v2 R squared above 0.60 (relative
-improvements ranging from 237 to 346 percent) — confirming that
+improvements ranging from 237 to 346 percent), confirming that
 the bounded Beta likelihood is particularly informative where
 inter-tree crown ratio variance is high and the v1 normal-on-delta
 specification was furthest from the response support. Figure 6a
@@ -592,7 +592,7 @@ density index maximum estimates were 10 to 43 percent lower than
 defaults across variants, suggesting that prior parameter sets
 systematically overestimated carrying capacity. Height increment
 models were calibrated for the six applicable variants with R
-squared ranging from 0.22 (Central Interior) to 0.30 (British
+squared ranging from 0.22 (Central Idaho) to 0.30 (British
 Columbia) and bias values near zero. Table 3 summarizes calibration
 quality across components.
 
@@ -617,47 +617,70 @@ for inference.
 
 Table 1 summarizes the internal benchmark results on 433,291 FIA
 remeasurement pairs (see §3.1 for the internal-validation
-qualification). Calibrated parameters improved basal area
-prediction in all 19 tested variants, with overall RMSE decreasing
-from 31.8 to 30.2 ft2/ac (4.9 percent reduction) and R squared
-increasing from 0.672 to 0.704. Gross cubic foot volume predictions
-improved in 17 of 19 variants, with R squared increasing from 0.783
-to 0.818. The equivalence metric (percent of conditions within 20
-percent of observed BA) improved from 48.2 to 54.4 percent. The
-strongest improvements appeared in the Alaska variant (BA R squared
-0.914 versus 0.796), West Coast (0.818 versus 0.663), North Carolina
-(0.808 versus 0.705), Inland Empire (0.762 versus 0.691), and
-Pacific Northwest (0.642 versus 0.554), where species composition
-and topographic effects are most pronounced.
+qualification). Calibrated parameters reduced basal area RMSE in 18
+of 19 tested variants, with overall RMSE decreasing from 30.2 to
+29.3 ft2/ac (2.9 percent reduction) and R squared increasing from
+0.704 to 0.721. The one exception was Lake States, where calibrated
+BA RMSE rose from 20.0 to 20.1 ft2/ac and R squared fell from 0.833
+to 0.832. Gross cubic foot volume RMSE decreased in 18 of 19
+variants, with overall R squared increasing from 0.799 to 0.819. The
+exception was Southern, where volume RMSE rose by 4.3 percent and R
+squared fell from 0.693 to 0.666. The equivalence metric (percent of
+conditions within 20 percent of observed BA) changed little overall,
+from 58.0 to 58.2 percent. It improved in 18 variants but fell from
+53.1 to 49.7 percent in Southern, which contributes 55 percent of
+the benchmark conditions. Measured as percent reduction in BA RMSE,
+the strongest improvements appeared in the Alaska variant (32.8
+percent, 95 percent bootstrap interval 25.3 to 39.7), Westside
+Cascades (21.8 percent, 17.9 to 25.5), and Utah (14.5 percent, 9.2
+to 19.8), followed by Klamath Mountains and Blue Mountains (10.2
+percent each). Intervals are 95 percent percentile intervals from
+1,000 bootstrap resamples of conditions on the calibrated RMSE,
+expressed as a reduction from the default RMSE. For the Pacific
+Northwest Coast variant the reduction was 4.7 percent with an
+interval of -0.8 to 10.0 percent, which includes zero, so the
+improvement there cannot be distinguished from no change. The
+interval also includes zero for CA, CI, CR, CS, EM, LS, NC, and TT.
+An alternate configuration that uses climate site index gives
+similar overall results (BA RMSE 29.5 ft2/ac, R squared 0.717) but
+differs materially in Central Rockies, where calibrated BA RMSE
+rises 5.9 percent above default, and in Utah, where the reduction
+falls from 14.5 to 0.8 percent. Under that configuration BA R
+squared also declines slightly in Central States and Lake States.
 
 Table 1. FIA national benchmark results summary (19 variants).
 
 | Metric | Default | Calibrated | Change |
 |--------|--------:|-----------:|-------:|
-| BA RMSE (ft2/ac) | 31.8 | 30.2 | -4.9% |
-| BA R squared | 0.672 | 0.704 | +4.8% |
-| Volume RMSE | baseline | 17 of 19 lower | |
-| Volume R squared | 0.783 | 0.818 | +4.5% |
-| Within 20% of observed BA | 48.2% | 54.4% | +6.2 pts |
+| BA RMSE (ft2/ac) | 30.2 | 29.3 | -2.9% |
+| BA R squared | 0.704 | 0.721 | +2.4% |
+| Volume RMSE (ft3/ac) | 792 | 752 | -5.1% |
+| Volume R squared | 0.799 | 0.819 | +2.5% |
+| Within 20% of observed BA | 58.0% | 58.2% | +0.2 pts |
 
-Figure 2 summarizes the basal area and volume RMSE per variant
-across the 19 tested variants. Figure 3 is the accompanying
+Figure 2 shows basal area and gross cubic foot volume RMSE per
+variant under default and calibrated parameters, with 95 percent
+bootstrap intervals on the calibrated RMSE. Figure 3 is the accompanying
 geographic view: a hex binned CONUS map of composite RMSE reduction
 after calibration, showing that improvement is widespread but
-strongest across the Pacific Northwest (PN, WC), Alaska, North
-Carolina, and portions of the Inland West. Figure 4 is the per
-variant composite RMSE dumbbell, making the default vs calibrated
-shift legible at a glance for every variant. Figure 5 is the
-component by variant R squared heatmap, showing which components
-contribute most to improvement in each geographic region.
+strongest in the Westside Cascades (WC) and Alaska, followed by the
+Klamath Mountains and portions of the Inland West. The Pacific
+Northwest Coast (PN) gain is small, and its bootstrap interval
+includes zero. Figure 4 compares a composite percent RMSE, the
+equally weighted mean of percent RMSE for basal area, stand density
+index, quadratic mean diameter, and gross cubic foot volume. The
+composite fell in all 19 variants, by 8.5 percentage points in Alaska
+and 6.1 in the Westside Cascades but by only 0.2 in Southern. Figure 5
+reports R squared by variant for eight stand attributes under both
+parameter sets.
 
-![Figure 2. FIA national benchmark results across 19 variants: basal area and gross cubic foot volume RMSE for default (baseline) and calibrated configurations, grouped by geographic variant.](../calibration/output/comparisons/manuscript_figures/fig2_fia_benchmark.png){width=6.5in}
+![Figure 2. Internal FIA benchmark RMSE by variant for (a) basal area (ft² ac⁻¹) and (b) gross cubic foot volume (ft³ ac⁻¹) under default (open circles) and calibrated (filled circles) parameters. Bars are 95 percent percentile intervals from 1,000 bootstrap resamples of conditions on the calibrated RMSE. Variants are ordered by percent reduction in basal area RMSE. Values are in sample (see §3.1).](figures_20261019/fig2_benchmark_rmse.png){width=6.5in}
 
-![Figure 3. CONUS spatial distribution of percent RMSE reduction after Bayesian calibration, hex binned over FIA plot locations. Blue indicates larger reductions; red indicates the small number of plots where default outperformed calibrated. Largest improvements appear in the Pacific Northwest, Alaska proxy, and portions of the Northeast.](../calibration/output/comparisons/manuscript_figures/pctrmse_reduction_spatial.png){width=6.5in}
+![Figure 3. CONUS spatial distribution of percent RMSE reduction after Bayesian calibration, hex binned over FIA plot locations. Blue indicates larger reductions; red indicates the small number of plots where default outperformed calibrated. Largest improvements appear in the Westside Cascades, Alaska proxy, and portions of the Northeast. The Pacific Northwest Coast (PN) gain is small, and its bootstrap interval includes zero.](../calibration/output/comparisons/manuscript_figures/pctrmse_reduction_spatial.png){width=6.5in}
 
-![Figure 4. Per variant composite RMSE dumbbell comparing default (open) and calibrated (filled) configurations. The leftward shift at calibrated is the per variant improvement; variants where the calibrated dot is to the right of the default dot are flagged for closer inspection.](../calibration/output/comparisons/manuscript_figures/pctrmse_composite_dumbbell.png){width=6.5in}
+![Figure 4. Composite percent RMSE by variant under default (open circles) and calibrated (filled circles) parameters. The composite is the equally weighted mean of percent RMSE (RMSE as a percentage of the observed mean) for basal area, stand density index, quadratic mean diameter, and gross cubic foot volume. Composite error was lower after calibration in all 19 variants, and variants are ordered by the size of the reduction.](figures_20261019/fig4_composite_pctrmse_dumbbell.png){width=6.5in}
 
-![Figure 5. Component by variant R squared heatmap. Rows are the seven calibrated components (HT-DBH, DG, MORT, CR, SDImax, height increment where applicable, self thinning slope); columns are the 25 variants. Darker cells indicate higher calibrated R squared.](../calibration/output/comparisons/manuscript_figures/13_r2_heatmap.png){width=6.5in}
+![Figure 5. R squared between predicted and observed end of interval values by variant for eight stand attributes under default and calibrated parameters (TPA, trees per acre; QMD, quadratic mean diameter; SDI, stand density index; net board, net board foot volume). Darker cells indicate higher R squared. Variants are ordered by calibrated basal area R squared.](figures_20261019/fig5_r2_heatmap.png){width=6.5in}
 
 ## 4.4 Stand level trajectory envelopes
 
@@ -673,7 +696,7 @@ p_period)^(1/years)` and re-fitting, projected trajectories are
 realistic across all 25 variants (mean final BA 74.9 ft²/ac, SD
 18.7; 25 of 25 stands above the 30 ft²/ac realism floor; mean BA
 growth 0.294 ft²/ac/yr). Figure 5a shows three side-by-side 100-year
-BA trajectories — default, period-level fit, and annualized fit — on
+BA trajectories (default, period-level fit, and annualized fit) on
 a representative NE stand: the period-level trajectory plummets
 below 20 ft²/ac by year 30 while default and annualized agree on
 the long-run envelope. The annualized correction is a foundational
@@ -684,7 +707,7 @@ in annual steps.
 ![Figure 5a. 100-year basal area trajectories for the Northeast variant under three configurations: default FVS parameters (gray), period-level calibrated posterior (red, demonstrating the catastrophic collapse from applying a five-year mortality rate in one step), and annualized calibrated posterior (blue, the corrected specification used throughout the rest of the paper). The annualized fit preserves the calibration benefit on shorter horizons while restoring biological realism over 100 years.](../calibration/output/comparisons/manuscript_figures/fig_ba_3scenarios.png){width=6.5in}
 
 Figure 5b extends the comparison across all six stand state
-variables — BA, TPA, QMD, SDI, mean DBH, top height — for the
+variables (BA, TPA, QMD, SDI, mean DBH, top height) for the
 calibrated annualized model versus default, again on the NE
 representative stand. Calibrated trajectories track or slightly
 exceed default across the first 30 to 50 years, then diverge
@@ -1031,7 +1054,7 @@ input data are identical), but the projection consequences are
 profound. We document the fix because we expect this pattern to
 arise in other Bayesian forest model recalibrations that use FIA or
 analogous remeasurement data, and the failure mode is not visible in
-the fit diagnostics — it surfaces only at projection time.
+the fit diagnostics. It surfaces only at projection time.
 
 Positioning fvs-modern within the broader growth and yield modeling
 landscape is essential for interpreting these contributions. Joo et

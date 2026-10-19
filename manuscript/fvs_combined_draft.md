@@ -554,8 +554,8 @@ Height to diameter models achieved R squared values ranging from
 compared to baseline models with mean R squared of 0.82. Wykoff
 diameter growth fits achieved a mean R squared of 0.56 (SD 0.10,
 range 0.31 to 0.69), with the strongest fits in the Acadian (0.69),
-Klamath Mountains (0.68), Westside Cascades (0.68), Inland Empire (0.61),
-and Pacific Northwest (0.61) variants and the weakest in the more
+Klamath Mountains (0.68), Westside Cascades (0.68), ORGANON Pacific
+Northwest (0.66), and Northeast (0.65) variants and the weakest in the more
 arid and topographically variable variants (BC 0.31, PN as a value
 of 0.34 reflects the subset retained after the 5K subsample fallback,
 UT 0.40, CR 0.41, BM 0.45). Mortality AUC values ranged from 0.66

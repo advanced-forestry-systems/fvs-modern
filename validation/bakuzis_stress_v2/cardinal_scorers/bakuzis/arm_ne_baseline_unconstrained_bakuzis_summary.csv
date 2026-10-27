@@ -1,0 +1,2 @@
+arm,n_stand_cycle_rows,realism_index,sign_match_rate,self_thin_score,arm_reineke_slope,obs_reineke_slope,arm_sdi_ceiling,obs_sdimax,agb_cell_score
+ne_baseline_unconstrained,4284,0.745879761090654,0.857142857142857,0.633723592419511,-1.71593201118026,-1.57908929306697,2704.80764138454,935.27950994347,

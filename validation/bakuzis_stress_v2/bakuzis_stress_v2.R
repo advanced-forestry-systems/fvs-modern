@@ -164,6 +164,8 @@ for (tr in unique(d$traj)) for (am in unique(d[traj == tr, arm])) {
   add(key, relation = "T4 peak SDI / SDImax", status = ifelse(is.na(smx), "NOT EVALUATED", ifelse(pk / smx > 1.05, "FLAG", "PASS")), value = ifelse(is.na(smx), NA_real_, pk / smx),
       detail = ifelse(is.na(smx), "no SDImax supplied for this group (--sdimax=)", sprintf("peak SDI %.0f vs SDImax %.0f (ratio %.2f)", pk, smx, pk / smx)))
   bmx <- max(g$BAPH, na.rm = TRUE)
+  add(key, relation = "T4 max BA vs observed p99", status = ifelse(is.na(OBS99), "NOT EVALUATED", ifelse(bmx > OBS99, "FLAG", "PASS")), value = bmx,
+      detail = ifelse(is.na(OBS99), sprintf("max BA %.1f m2 ha-1; no observed p99 supplied (--obs_ba_p99=)", bmx), sprintf("max BA %.1f vs observed p99 %.1f m2 ha-1", bmx, OBS99)))
   add(key, relation = "T4 max BA vs observed p99.9", status = ifelse(is.na(OBS999), "NOT EVALUATED", ifelse(bmx > OBS999, "FLAG", "PASS")), value = bmx,
       detail = ifelse(is.na(OBS999), sprintf("max BA %.1f m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)", bmx), sprintf("max BA %.1f vs observed p99.9 %.1f m2 ha-1", bmx, OBS999)))
 }

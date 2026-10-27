@@ -1,0 +1,224 @@
+========================================================================== 
+MODIFIED BAKUZIS MATRIX (Leary 1997) -- FVS NE, repaired binary
+bin-fixed_20260804/FVSne ; 440 plots ; 15 cycles x 10 yr = 150 yr
+Aggregated to age grid 70 - 190 by 10 yr, min n = 20 
+========================================================================== 
+
+
+############ ARM: fvs_base ############
+
+[1] SITE CURVES (HT-age)
+  HT non-monotone groups: 0/8
+  HT site-ordering inversions: 0/26 age points
+  mean HT separation S4-S1: 14.28 m
+
+[2] HEIGHT-DIAMETER
+  HT non-monotone in QMD: 0/8 groups
+  QMD site-ordering inversions (REDPINE flaw test): 0/26
+
+[3] SUKACHEV (stems-age)
+  TPH non-monotone groups: 0 
+  fractional stem loss over window by site:  S1=0.365  S2=0.501  S3=0.559  S4=0.614 
+  better-site-thins-faster: TRUE (spread 0.248)
+
+[4] REINEKE (log TPH ~ log QMD), target -1.605, accept -2.2..-1.2
+  site 1 high: slope=-0.793  [-0.892,-0.695]  R2=0.966  FLAG
+  site 2 high: slope=-1.246  [-1.398,-1.094]  R2=0.967  OK
+  site 3 high: slope=-1.397  [-1.561,-1.233]  R2=0.970  OK
+  site 4 high: slope=-1.620  [-1.765,-1.476]  R2=0.982  OK
+  site 1 low : slope=-0.589  [-0.654,-0.524]  R2=0.973  FLAG
+  site 2 low : slope=-0.669  [-0.772,-0.566]  R2=0.949  FLAG
+  site 3 low : slope=-0.836  [-0.978,-0.693]  R2=0.938  FLAG
+  site 4 low : slope=-0.906  [-1.068,-0.745]  R2=0.933  FLAG
+  ARM MEAN REINEKE SLOPE = -1.007  (deviation from -1.605: +0.598)
+  relative density SDI/SDImax: start 0.385, end 0.559, max 0.666
+
+[5] SPACING PERCENT (stems-height)
+  reversals in TPH vs HT: 0/8 groups
+
+[6] STOCKING GUIDE (BA-stems)
+  max BAPH by site x origin (m2/ha):
+  high  low
+1 50.2 27.2
+2 48.4 37.8
+3 47.2 42.5
+4 45.1 43.1
+  peak BAPH overall = 50.2 m2/ha; points > 60 m2/ha = 0/104
+  groups collapsing >25% below own BA peak: 0/8
+
+[7] VOLUME-AGE (site ordering)
+  VOL site-ordering inversions: 0/26 age points
+  VOL non-monotone (declining standing volume): 0 groups
+
+[8] EICHHORN (volume-height site independence)
+  ARM MEAN Eichhorn CV = NA% (threshold 15%)
+
+[9] YIELD-DENSITY (volume-stems)
+  mean d log VOL / d log TPH = -1.693 (self-thinning line ~ -0.5)
+
+
+############ ARM: fvs_regional ############
+
+[1] SITE CURVES (HT-age)
+  HT non-monotone groups: 0/8
+  HT site-ordering inversions: 0/26 age points
+  mean HT separation S4-S1: 14.43 m
+
+[2] HEIGHT-DIAMETER
+  HT non-monotone in QMD: 0/8 groups
+  QMD site-ordering inversions (REDPINE flaw test): 0/26
+
+[3] SUKACHEV (stems-age)
+  TPH non-monotone groups: 0 
+  fractional stem loss over window by site:  S1=0.429  S2=0.566  S3=0.611  S4=0.657 
+  better-site-thins-faster: TRUE (spread 0.228)
+
+[4] REINEKE (log TPH ~ log QMD), target -1.605, accept -2.2..-1.2
+  site 1 high: slope=-0.970  [-1.072,-0.868]  R2=0.976  FLAG
+  site 2 high: slope=-1.478  [-1.609,-1.346]  R2=0.982  OK
+  site 3 high: slope=-1.570  [-1.686,-1.454]  R2=0.988  OK
+  site 4 high: slope=-1.779  [-1.883,-1.675]  R2=0.992  OK
+  site 1 low : slope=-0.749  [-0.825,-0.673]  R2=0.977  FLAG
+  site 2 low : slope=-0.862  [-0.976,-0.748]  R2=0.962  FLAG
+  site 3 low : slope=-1.054  [-1.215,-0.893]  R2=0.949  FLAG
+  site 4 low : slope=-1.115  [-1.276,-0.953]  R2=0.954  FLAG
+  ARM MEAN REINEKE SLOPE = -1.197  (deviation from -1.605: +0.408)
+  relative density SDI/SDImax: start 0.446, end 0.563, max 0.684
+
+[5] SPACING PERCENT (stems-height)
+  reversals in TPH vs HT: 0/8 groups
+
+[6] STOCKING GUIDE (BA-stems)
+  max BAPH by site x origin (m2/ha):
+  high  low
+1 44.4 24.3
+2 40.5 32.7
+3 40.2 36.5
+4 38.3 36.8
+  peak BAPH overall = 44.4 m2/ha; points > 60 m2/ha = 0/104
+  groups collapsing >25% below own BA peak: 0/8
+
+[7] VOLUME-AGE (site ordering)
+  VOL site-ordering inversions: 0/26 age points
+  VOL non-monotone (declining standing volume): 0 groups
+
+[8] EICHHORN (volume-height site independence)
+  ARM MEAN Eichhorn CV = NA% (threshold 15%)
+
+[9] YIELD-DENSITY (volume-stems)
+  mean d log VOL / d log TPH = -1.230 (self-thinning line ~ -0.5)
+
+
+############ ARM: organon ############
+
+[1] SITE CURVES (HT-age)
+  HT non-monotone groups: 0/8
+  HT site-ordering inversions: 20/26 age points
+  mean HT separation S4-S1: 2.03 m
+
+[2] HEIGHT-DIAMETER
+  HT non-monotone in QMD: 0/8 groups
+  QMD site-ordering inversions (REDPINE flaw test): 9/26
+
+[3] SUKACHEV (stems-age)
+  TPH non-monotone groups: 0 
+  fractional stem loss over window by site:  S1=0.842  S2=0.811  S3=0.805  S4=0.799 
+  better-site-thins-faster: FALSE (spread 0.042)
+
+[4] REINEKE (log TPH ~ log QMD), target -1.605, accept -2.2..-1.2
+  site 1 high: slope=-1.932  [-2.038,-1.825]  R2=0.993  OK
+  site 2 high: slope=-1.848  [-1.964,-1.732]  R2=0.991  OK
+  site 3 high: slope=-1.829  [-1.914,-1.745]  R2=0.995  OK
+  site 4 high: slope=-1.953  [-2.058,-1.849]  R2=0.993  OK
+  site 1 low : slope=-1.596  [-1.705,-1.487]  R2=0.989  OK
+  site 2 low : slope=-1.537  [-1.670,-1.405]  R2=0.983  OK
+  site 3 low : slope=-1.672  [-1.809,-1.534]  R2=0.985  OK
+  site 4 low : slope=-1.754  [-1.887,-1.621]  R2=0.987  OK
+  ARM MEAN REINEKE SLOPE = -1.765  (deviation from -1.605: -0.160)
+  relative density SDI/SDImax: start 0.411, end 0.341, max 0.600
+
+[5] SPACING PERCENT (stems-height)
+  reversals in TPH vs HT: 0/8 groups
+
+[6] STOCKING GUIDE (BA-stems)
+  max BAPH by site x origin (m2/ha):
+  high  low
+1 23.9 15.8
+2 32.9 22.9
+3 31.9 24.6
+4 32.7 22.9
+  peak BAPH overall = 32.9 m2/ha; points > 60 m2/ha = 0/104
+  groups collapsing >25% below own BA peak: 0/8
+
+[7] VOLUME-AGE (site ordering)
+  VOL site-ordering inversions: 20/26 age points
+  VOL non-monotone (declining standing volume): 5 groups
+
+[8] EICHHORN (volume-height site independence)
+  high: HT window 25.4-38.3 m, mean CV = 14.0%
+  low : HT window 23.4-36.6 m, mean CV = 15.5%
+  ARM MEAN Eichhorn CV = 14.7% (threshold 15%)
+
+[9] YIELD-DENSITY (volume-stems)
+  mean d log VOL / d log TPH = -0.444 (self-thinning line ~ -0.5)
+
+
+==========================================================================
+SUMMARY MATRIX
+==========================================================================
+   arm          relation                        
+1  fvs_base     1 Site curves (HT-age)          
+2  fvs_base     2 Height-diameter               
+3  fvs_base     3 Sukachev (stems-age)          
+4  fvs_base     4 Reineke self-thinning         
+5  fvs_base     5 Spacing percent (stems-height)
+6  fvs_base     6 Stocking guide (BA-stems)     
+7  fvs_base     7 Volume-age                    
+8  fvs_base     8 Eichhorn (volume-height)      
+9  fvs_base     9 Yield-density (volume-stems)  
+10 fvs_regional 1 Site curves (HT-age)          
+11 fvs_regional 2 Height-diameter               
+12 fvs_regional 3 Sukachev (stems-age)          
+13 fvs_regional 4 Reineke self-thinning         
+14 fvs_regional 5 Spacing percent (stems-height)
+15 fvs_regional 6 Stocking guide (BA-stems)     
+16 fvs_regional 7 Volume-age                    
+17 fvs_regional 8 Eichhorn (volume-height)      
+18 fvs_regional 9 Yield-density (volume-stems)  
+19 organon      1 Site curves (HT-age)          
+20 organon      2 Height-diameter               
+21 organon      3 Sukachev (stems-age)          
+22 organon      4 Reineke self-thinning         
+23 organon      5 Spacing percent (stems-height)
+24 organon      6 Stocking guide (BA-stems)     
+25 organon      7 Volume-age                    
+26 organon      8 Eichhorn (volume-height)      
+27 organon      9 Yield-density (volume-stems)  
+   statistic                                                        decision  
+1  inversions 0/26; non-monotone 0; S4-S1 gap 14.28 m               PASS      
+2  HT non-monotone 0/8; QMD site inversions 0/26                    PASS      
+3  non-monotone 0; loss S1=0.365 S4=0.614; spread 0.248             PASS      
+4  mean slope -1.007 (target -1.605); 5/8 groups outside -2.2..-1.2 FLAG      
+5  reversals 0/8 groups                                             PASS      
+6  peak BA 50.2 m2/ha; >60 m2/ha 0 pts; BA collapse 0/8 groups      PASS      
+7  site inversions 0/26; declining-volume groups 0                  PASS      
+8  mean CV of VOL at matched HT = NA% (threshold 15%)               <NA>      
+9  mean dlogV/dlogN = -1.693                                        SUPPORTING
+10 inversions 0/26; non-monotone 0; S4-S1 gap 14.43 m               PASS      
+11 HT non-monotone 0/8; QMD site inversions 0/26                    PASS      
+12 non-monotone 0; loss S1=0.429 S4=0.657; spread 0.228             PASS      
+13 mean slope -1.197 (target -1.605); 5/8 groups outside -2.2..-1.2 FLAG      
+14 reversals 0/8 groups                                             PASS      
+15 peak BA 44.4 m2/ha; >60 m2/ha 0 pts; BA collapse 0/8 groups      PASS      
+16 site inversions 0/26; declining-volume groups 0                  PASS      
+17 mean CV of VOL at matched HT = NA% (threshold 15%)               <NA>      
+18 mean dlogV/dlogN = -1.230                                        SUPPORTING
+19 inversions 20/26; non-monotone 0; S4-S1 gap 2.03 m               FLAG      
+20 HT non-monotone 0/8; QMD site inversions 9/26                    FLAG      
+21 non-monotone 0; loss S1=0.842 S4=0.799; spread 0.042             FLAG      
+22 mean slope -1.765 (target -1.605); 0/8 groups outside -2.2..-1.2 PASS      
+23 reversals 0/8 groups                                             PASS      
+24 peak BA 32.9 m2/ha; >60 m2/ha 0 pts; BA collapse 0/8 groups      PASS      
+25 site inversions 20/26; declining-volume groups 5                 FLAG      
+26 mean CV of VOL at matched HT = 14.7% (threshold 15%)             PASS      
+27 mean dlogV/dlogN = -0.444                                        SUPPORTING

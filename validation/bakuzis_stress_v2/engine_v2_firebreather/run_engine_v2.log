@@ -1,0 +1,221 @@
+== gompit arm Tue 27 Oct 2026 07:15:36 PM ADT
+OK   gompit BK01 Spruce-Fir/Low/Low tpa0=151/150 ba0=60/60 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK02 Spruce-Fir/Low/Medium tpa0=241/250 ba0=116/120 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK03 Spruce-Fir/Low/High tpa0=396/400 ba0=179/180 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK04 Spruce-Fir/Medium/Low tpa0=151/150 ba0=60/60 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK05 Spruce-Fir/Medium/Medium tpa0=241/250 ba0=116/120 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK06 Spruce-Fir/Medium/High tpa0=396/400 ba0=178/180 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK07 Spruce-Fir/High/Low tpa0=151/150 ba0=60/60 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK08 Spruce-Fir/High/Medium tpa0=241/250 ba0=115/120 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK09 Spruce-Fir/High/High tpa0=396/400 ba0=178/180 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK10 Northern-Hardwood/Low/Low tpa0=152/150 ba0=61/60 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK11 Northern-Hardwood/Low/Medium tpa0=240/250 ba0=115/120 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK12 Northern-Hardwood/Low/High tpa0=390/400 ba0=176/180 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK13 Northern-Hardwood/Medium/Low tpa0=152/150 ba0=61/60 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK14 Northern-Hardwood/Medium/Medium tpa0=240/250 ba0=115/120 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK15 Northern-Hardwood/Medium/High tpa0=390/400 ba0=175/180 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK16 Northern-Hardwood/High/Low tpa0=152/150 ba0=60/60 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK17 Northern-Hardwood/High/Medium tpa0=240/250 ba0=115/120 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK18 Northern-Hardwood/High/High tpa0=390/400 ba0=175/180 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK19 Pine/Low/Low tpa0=145/150 ba0=58/60 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK20 Pine/Low/Medium tpa0=247/250 ba0=118/120 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK21 Pine/Low/High tpa0=402/400 ba0=181/180 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK22 Pine/Medium/Low tpa0=145/150 ba0=58/60 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK23 Pine/Medium/Medium tpa0=247/250 ba0=118/120 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK24 Pine/Medium/High tpa0=402/400 ba0=181/180 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK25 Pine/High/Low tpa0=145/150 ba0=59/60 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK26 Pine/High/Medium tpa0=247/250 ba0=119/120 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK27 Pine/High/High tpa0=402/400 ba0=181/180 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK28 Oak-Pine/Low/Low tpa0=152/150 ba0=61/60 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK29 Oak-Pine/Low/Medium tpa0=240/250 ba0=115/120 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK30 Oak-Pine/Low/High tpa0=390/400 ba0=176/180 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK31 Oak-Pine/Medium/Low tpa0=152/150 ba0=61/60 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK32 Oak-Pine/Medium/Medium tpa0=240/250 ba0=115/120 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK33 Oak-Pine/Medium/High tpa0=390/400 ba0=176/180 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK34 Oak-Pine/High/Low tpa0=152/150 ba0=61/60 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK35 Oak-Pine/High/Medium tpa0=240/250 ba0=115/120 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   gompit BK36 Oak-Pine/High/High tpa0=390/400 ba0=176/180 si=75.0/75
+WROTE /home/aaron/jobs/bakuzis_fvsconus_20261027/engine_v2/engine_bakuzis_100yr_gompit.csv rows 756
+GATE SUMMARY gompit: 36 of 36 scenarios pass seeding and site gates; 0 SEED_FAIL, 0 SITE_FAIL
+BAKUZIS_ENGINE_V2_DONE
+== native arm Tue 27 Oct 2026 07:16:33 PM ADT
+OK   native BK01 Spruce-Fir/Low/Low tpa0=151/150 ba0=60/60 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK02 Spruce-Fir/Low/Medium tpa0=241/250 ba0=116/120 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK03 Spruce-Fir/Low/High tpa0=396/400 ba0=179/180 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK04 Spruce-Fir/Medium/Low tpa0=151/150 ba0=60/60 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK05 Spruce-Fir/Medium/Medium tpa0=241/250 ba0=116/120 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK06 Spruce-Fir/Medium/High tpa0=396/400 ba0=178/180 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK07 Spruce-Fir/High/Low tpa0=151/150 ba0=60/60 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK08 Spruce-Fir/High/Medium tpa0=241/250 ba0=115/120 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK09 Spruce-Fir/High/High tpa0=396/400 ba0=178/180 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK10 Northern-Hardwood/Low/Low tpa0=152/150 ba0=61/60 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK11 Northern-Hardwood/Low/Medium tpa0=240/250 ba0=115/120 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK12 Northern-Hardwood/Low/High tpa0=390/400 ba0=176/180 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK13 Northern-Hardwood/Medium/Low tpa0=152/150 ba0=61/60 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK14 Northern-Hardwood/Medium/Medium tpa0=240/250 ba0=115/120 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK15 Northern-Hardwood/Medium/High tpa0=390/400 ba0=175/180 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK16 Northern-Hardwood/High/Low tpa0=152/150 ba0=60/60 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK17 Northern-Hardwood/High/Medium tpa0=240/250 ba0=115/120 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK18 Northern-Hardwood/High/High tpa0=390/400 ba0=175/180 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK19 Pine/Low/Low tpa0=145/150 ba0=58/60 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK20 Pine/Low/Medium tpa0=247/250 ba0=118/120 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK21 Pine/Low/High tpa0=402/400 ba0=181/180 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK22 Pine/Medium/Low tpa0=145/150 ba0=58/60 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK23 Pine/Medium/Medium tpa0=247/250 ba0=118/120 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK24 Pine/Medium/High tpa0=402/400 ba0=181/180 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK25 Pine/High/Low tpa0=145/150 ba0=59/60 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK26 Pine/High/Medium tpa0=247/250 ba0=119/120 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK27 Pine/High/High tpa0=402/400 ba0=181/180 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK28 Oak-Pine/Low/Low tpa0=152/150 ba0=61/60 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK29 Oak-Pine/Low/Medium tpa0=240/250 ba0=115/120 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK30 Oak-Pine/Low/High tpa0=390/400 ba0=176/180 si=45.0/45
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK31 Oak-Pine/Medium/Low tpa0=152/150 ba0=61/60 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK32 Oak-Pine/Medium/Medium tpa0=240/250 ba0=115/120 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK33 Oak-Pine/Medium/High tpa0=390/400 ba0=176/180 si=60.0/60
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK34 Oak-Pine/High/Low tpa0=152/150 ba0=61/60 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK35 Oak-Pine/High/Medium tpa0=240/250 ba0=115/120 si=75.0/75
+/home/aaron/jobs/bakuzis_fvsconus_20261027/repos/fvs-modern/deployment/fvs2py/fvs2py/_base.py:416: UserWarning: FVS had not completed the previous simulation. Outputs from that simulation may be incomplete.
+  warnings.warn(msg)
+OK   native BK36 Oak-Pine/High/High tpa0=390/400 ba0=176/180 si=75.0/75
+WROTE /home/aaron/jobs/bakuzis_fvsconus_20261027/engine_v2/engine_bakuzis_100yr_native.csv rows 756
+GATE SUMMARY native: 36 of 36 scenarios pass seeding and site gates; 0 SEED_FAIL, 0 SITE_FAIL
+BAKUZIS_ENGINE_V2_DONE
+== done Tue 27 Oct 2026 07:17:29 PM ADT

@@ -1,0 +1,160 @@
+Warning message:
+NAs introduced by coercion 
+========================================================================
+BAKUZIS STRESS TEST v2  engine_v2_gompit
+  input: engine_v2/engine_bakuzis_100yr_gompit.csv
+  source: engine   qmd_rate: 0.1 cm yr-1   form factor: 0.4
+========================================================================
+
+SUMMARY (evaluated / not evaluated / flagged), median age step 5 yr
+       arm                                      relation evaluated
+    <char>                                        <char>     <int>
+ 1: engine                         T0 initial-step shock        36
+ 2: engine                            T1 monotone HT_dom        36
+ 3: engine                               T1 monotone QMD        36
+ 4: engine                           T2 site ordering HT         4
+ 5: engine                          T2 site ordering VOL         4
+ 6: engine             T3 Reineke slope (trajectory OLS)        20
+ 7: engine T3b frontier slope (rq tau 0.95, pooled limb)         4
+ 8: engine                     T4 max BA vs observed p99        36
+ 9: engine                   T4 max BA vs observed p99.9         0
+10: engine                          T4 peak SDI / SDImax        36
+11: engine          T5 Eichhorn VOL~HT site independence         4
+12: engine   T6 Sukachev per-tree VOL falls with density         4
+13: engine  T7 yield-density final BA vs initial density         4
+14: engine                          T8 pinned BA plateau         4
+15: engine             T9 BA inversions (>10% step drop)        36
+16: engine            T9 VOL inversions (>10% step drop)        36
+    not_evaluated not_applicable flagged       verdict
+            <int>          <int>   <int>        <char>
+ 1:             0              0       0          PASS
+ 2:             0              0       0          PASS
+ 3:             0              0       0          PASS
+ 4:             0              0       0          PASS
+ 5:             0              0       0          PASS
+ 6:             0             16       3          FLAG
+ 7:             0              0       0          PASS
+ 8:             0              0       0          PASS
+ 9:            36              0       0 NOT EVALUATED
+10:             0              0       0          PASS
+11:             0              0       0          PASS
+12:             0              0       4    FLAG (all)
+13:             0              0       0          PASS
+14:             0              0       0          PASS
+15:             0              0       0          PASS
+16:             0              0       0          PASS
+
+FLAGGED DETAIL
+      arm                                    relation             group   site
+   <char>                                      <char>            <char> <char>
+1: engine           T3 Reineke slope (trajectory OLS)              Pine   High
+2: engine           T3 Reineke slope (trajectory OLS)              Pine    Low
+3: engine           T3 Reineke slope (trajectory OLS)        Spruce-Fir   High
+4: engine T6 Sukachev per-tree VOL falls with density Northern-Hardwood    all
+5: engine T6 Sukachev per-tree VOL falls with density          Oak-Pine    all
+6: engine T6 Sukachev per-tree VOL falls with density              Pine    all
+7: engine T6 Sukachev per-tree VOL falls with density        Spruce-Fir    all
+   density
+    <char>
+1:     Low
+2:  Medium
+3:  Medium
+4:     all
+5:     all
+6:     all
+7:     all
+                                                                             detail
+                                                                             <char>
+1:  slope -0.73 on 5 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.61)
+2: slope -0.93 on 12 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.66)
+3: slope -1.10 on 11 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.63)
+4:                                                       1 of 3 site levels ordered
+5:                                                       0 of 3 site levels ordered
+6:                                                       1 of 3 site levels ordered
+7:                                                       0 of 3 site levels ordered
+
+NOT EVALUATED DETAIL
+       arm                    relation             group   site density
+    <char>                      <char>            <char> <char>  <char>
+ 1: engine T4 max BA vs observed p99.9 Northern-Hardwood   High    High
+ 2: engine T4 max BA vs observed p99.9 Northern-Hardwood   High     Low
+ 3: engine T4 max BA vs observed p99.9 Northern-Hardwood   High  Medium
+ 4: engine T4 max BA vs observed p99.9 Northern-Hardwood    Low    High
+ 5: engine T4 max BA vs observed p99.9 Northern-Hardwood    Low     Low
+ 6: engine T4 max BA vs observed p99.9 Northern-Hardwood    Low  Medium
+ 7: engine T4 max BA vs observed p99.9 Northern-Hardwood Medium    High
+ 8: engine T4 max BA vs observed p99.9 Northern-Hardwood Medium     Low
+ 9: engine T4 max BA vs observed p99.9 Northern-Hardwood Medium  Medium
+10: engine T4 max BA vs observed p99.9          Oak-Pine   High    High
+11: engine T4 max BA vs observed p99.9          Oak-Pine   High     Low
+12: engine T4 max BA vs observed p99.9          Oak-Pine   High  Medium
+13: engine T4 max BA vs observed p99.9          Oak-Pine    Low    High
+14: engine T4 max BA vs observed p99.9          Oak-Pine    Low     Low
+15: engine T4 max BA vs observed p99.9          Oak-Pine    Low  Medium
+16: engine T4 max BA vs observed p99.9          Oak-Pine Medium    High
+17: engine T4 max BA vs observed p99.9          Oak-Pine Medium     Low
+18: engine T4 max BA vs observed p99.9          Oak-Pine Medium  Medium
+19: engine T4 max BA vs observed p99.9              Pine   High    High
+20: engine T4 max BA vs observed p99.9              Pine   High     Low
+21: engine T4 max BA vs observed p99.9              Pine   High  Medium
+22: engine T4 max BA vs observed p99.9              Pine    Low    High
+23: engine T4 max BA vs observed p99.9              Pine    Low     Low
+24: engine T4 max BA vs observed p99.9              Pine    Low  Medium
+25: engine T4 max BA vs observed p99.9              Pine Medium    High
+26: engine T4 max BA vs observed p99.9              Pine Medium     Low
+27: engine T4 max BA vs observed p99.9              Pine Medium  Medium
+28: engine T4 max BA vs observed p99.9        Spruce-Fir   High    High
+29: engine T4 max BA vs observed p99.9        Spruce-Fir   High     Low
+30: engine T4 max BA vs observed p99.9        Spruce-Fir   High  Medium
+31: engine T4 max BA vs observed p99.9        Spruce-Fir    Low    High
+32: engine T4 max BA vs observed p99.9        Spruce-Fir    Low     Low
+33: engine T4 max BA vs observed p99.9        Spruce-Fir    Low  Medium
+34: engine T4 max BA vs observed p99.9        Spruce-Fir Medium    High
+35: engine T4 max BA vs observed p99.9        Spruce-Fir Medium     Low
+36: engine T4 max BA vs observed p99.9        Spruce-Fir Medium  Medium
+       arm                    relation             group   site density
+    <char>                      <char>            <char> <char>  <char>
+                                                              detail
+                                                              <char>
+ 1: max BA 40.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 2: max BA 35.6 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 3: max BA 39.9 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 4: max BA 40.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 5: max BA 25.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 6: max BA 39.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 7: max BA 40.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 8: max BA 29.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 9: max BA 39.9 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+10: max BA 48.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+11: max BA 47.8 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+12: max BA 49.6 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+13: max BA 47.8 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+14: max BA 34.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+15: max BA 48.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+16: max BA 48.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+17: max BA 43.6 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+18: max BA 48.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+19: max BA 57.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+20: max BA 53.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+21: max BA 56.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+22: max BA 55.8 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+23: max BA 35.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+24: max BA 53.9 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+25: max BA 56.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+26: max BA 45.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+27: max BA 56.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+28: max BA 56.9 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+29: max BA 32.1 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+30: max BA 49.6 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+31: max BA 50.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+32: max BA 22.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+33: max BA 35.1 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+34: max BA 55.8 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+35: max BA 25.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+36: max BA 42.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+                                                              detail
+                                                              <char>
+
+Reineke axis: 20 trajectories evaluated, 0 not evaluated, 3 flagged. A zero flag count rests only on the evaluated count.
+This test falsifies; a pass is not a confirmation of accuracy.
+Wrote outputs to score_engine_v2_gompit

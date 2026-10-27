@@ -86,7 +86,7 @@ def parse_site_index(outfile):
     """Return the site index the engine reports in the .out, or None if no .out / no match."""
     if not os.path.exists(outfile): return None
     txt=open(outfile,errors='replace').read()
-    m=re.search(r'SITE\s+INDEX[^0-9\n]*([0-9]+\.?[0-9]*)',txt,re.I)
+    m=re.search(r'SITE CODE FOR LARGE AND SMALL TREES=\s*([0-9]+\.?[0-9]*)',txt)
     return float(m.group(1)) if m else None
 
 def run_one(FVS, lib, cfg, rundir, sid, label, spp, ba, tpa, si, sitesp, rng):
@@ -119,6 +119,16 @@ def main():
     if len(tags)!=len(a.lib): sys.exit('one --tag per --lib')
     sys.path.insert(0, os.path.join(a.wt,'deployment','fvs2py'))
     from fvs2py import FVS
+    # glibc < 2.34 keeps dlclose in libdl.so.2, which the FVS .so does not list as NEEDED, so fvs2py's
+    # unload (dll.dlclose looked up on the FVS handle) fails on the second scenario. Route it through libdl.
+    import ctypes as _ct, fvs2py._core as _core
+    try:
+        _libdl=_ct.CDLL('libdl.so.2')
+        def _unload(dll):
+            f=_libdl.dlclose; f.argtypes=(_ct.c_void_p,); f.restype=_ct.c_int; f(dll._handle)
+        _core.unload_dll=_unload
+    except OSError:
+        pass
     cfg=os.path.join(a.wt,'config'); os.makedirs(a.out, exist_ok=True)
     for lib,tag in zip(a.lib,tags):
         rng=np.random.default_rng(a.seed)          # identical stands for every lib

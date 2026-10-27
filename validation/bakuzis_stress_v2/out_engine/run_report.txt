@@ -1,0 +1,382 @@
+Warning message:
+NAs introduced by coercion 
+Warning message:
+NAs introduced by coercion 
+========================================================================
+BAKUZIS STRESS TEST v2  fvsmodern_engine_20260907
+  input: repos/fvs-modern/validation/bakuzis_engine_verdict/engine_bakuzis_out/engine_bakuzis_100yr.csv
+  source: engine   qmd_rate: 0.1 cm yr-1   form factor: 0.4
+========================================================================
+
+SUMMARY (evaluated / not evaluated / flagged), median age step 5 yr
+       arm                                      relation evaluated
+    <char>                                        <char>     <int>
+ 1: engine                         T0 initial-step shock        36
+ 2: engine                            T1 monotone HT_dom        36
+ 3: engine                               T1 monotone QMD        36
+ 4: engine                           T2 site ordering HT         4
+ 5: engine                          T2 site ordering VOL         4
+ 6: engine             T3 Reineke slope (trajectory OLS)        14
+ 7: engine T3b frontier slope (rq tau 0.95, pooled limb)         2
+ 8: engine                   T4 max BA vs observed p99.9         0
+ 9: engine                          T4 peak SDI / SDImax        36
+10: engine          T5 Eichhorn VOL~HT site independence         4
+11: engine   T6 Sukachev per-tree VOL falls with density         4
+12: engine  T7 yield-density final BA vs initial density         4
+13: engine                          T8 pinned BA plateau         4
+14: engine             T9 BA inversions (>10% step drop)        36
+15: engine            T9 VOL inversions (>10% step drop)        36
+    not_evaluated not_applicable flagged       verdict
+            <int>          <int>   <int>        <char>
+ 1:             0              0      15          FLAG
+ 2:             0              0       0          PASS
+ 3:             0              0       8          FLAG
+ 4:             0              0       4    FLAG (all)
+ 5:             0              0       4    FLAG (all)
+ 6:             0             22      11          FLAG
+ 7:             0              2       1          FLAG
+ 8:            36              0       0 NOT EVALUATED
+ 9:             0              0       3          FLAG
+10:             0              0       1          FLAG
+11:             0              0       4    FLAG (all)
+12:             0              0       0          PASS
+13:             0              0       1          FLAG
+14:             0              0      15          FLAG
+15:             0              0      12          FLAG
+
+FLAGGED DETAIL
+       arm                                      relation             group
+    <char>                                        <char>            <char>
+ 1: engine                         T0 initial-step shock              Pine
+ 2: engine                         T0 initial-step shock              Pine
+ 3: engine                         T0 initial-step shock              Pine
+ 4: engine                         T0 initial-step shock              Pine
+ 5: engine                         T0 initial-step shock              Pine
+ 6: engine                         T0 initial-step shock              Pine
+ 7: engine                         T0 initial-step shock        Spruce-Fir
+ 8: engine                         T0 initial-step shock        Spruce-Fir
+ 9: engine                         T0 initial-step shock        Spruce-Fir
+10: engine                         T0 initial-step shock        Spruce-Fir
+11: engine                         T0 initial-step shock        Spruce-Fir
+12: engine                         T0 initial-step shock        Spruce-Fir
+13: engine                         T0 initial-step shock        Spruce-Fir
+14: engine                         T0 initial-step shock        Spruce-Fir
+15: engine                         T0 initial-step shock        Spruce-Fir
+16: engine                               T1 monotone QMD        Spruce-Fir
+17: engine                               T1 monotone QMD        Spruce-Fir
+18: engine                               T1 monotone QMD        Spruce-Fir
+19: engine                               T1 monotone QMD        Spruce-Fir
+20: engine                               T1 monotone QMD        Spruce-Fir
+21: engine                               T1 monotone QMD        Spruce-Fir
+22: engine                               T1 monotone QMD        Spruce-Fir
+23: engine                               T1 monotone QMD        Spruce-Fir
+24: engine                           T2 site ordering HT Northern-Hardwood
+25: engine                           T2 site ordering HT          Oak-Pine
+26: engine                           T2 site ordering HT              Pine
+27: engine                           T2 site ordering HT        Spruce-Fir
+28: engine                          T2 site ordering VOL Northern-Hardwood
+29: engine                          T2 site ordering VOL          Oak-Pine
+30: engine                          T2 site ordering VOL              Pine
+31: engine                          T2 site ordering VOL        Spruce-Fir
+32: engine             T3 Reineke slope (trajectory OLS) Northern-Hardwood
+33: engine             T3 Reineke slope (trajectory OLS) Northern-Hardwood
+34: engine             T3 Reineke slope (trajectory OLS) Northern-Hardwood
+35: engine             T3 Reineke slope (trajectory OLS)          Oak-Pine
+36: engine             T3 Reineke slope (trajectory OLS)          Oak-Pine
+37: engine             T3 Reineke slope (trajectory OLS)          Oak-Pine
+38: engine             T3 Reineke slope (trajectory OLS)          Oak-Pine
+39: engine             T3 Reineke slope (trajectory OLS)          Oak-Pine
+40: engine             T3 Reineke slope (trajectory OLS)          Oak-Pine
+41: engine             T3 Reineke slope (trajectory OLS)          Oak-Pine
+42: engine             T3 Reineke slope (trajectory OLS)          Oak-Pine
+43: engine T3b frontier slope (rq tau 0.95, pooled limb)          Oak-Pine
+44: engine                          T4 peak SDI / SDImax          Oak-Pine
+45: engine                          T4 peak SDI / SDImax          Oak-Pine
+46: engine                          T4 peak SDI / SDImax          Oak-Pine
+47: engine          T5 Eichhorn VOL~HT site independence        Spruce-Fir
+48: engine   T6 Sukachev per-tree VOL falls with density Northern-Hardwood
+49: engine   T6 Sukachev per-tree VOL falls with density          Oak-Pine
+50: engine   T6 Sukachev per-tree VOL falls with density              Pine
+51: engine   T6 Sukachev per-tree VOL falls with density        Spruce-Fir
+52: engine                          T8 pinned BA plateau              Pine
+53: engine             T9 BA inversions (>10% step drop)              Pine
+54: engine             T9 BA inversions (>10% step drop)              Pine
+55: engine             T9 BA inversions (>10% step drop)              Pine
+56: engine             T9 BA inversions (>10% step drop)              Pine
+57: engine             T9 BA inversions (>10% step drop)              Pine
+58: engine             T9 BA inversions (>10% step drop)              Pine
+59: engine             T9 BA inversions (>10% step drop)        Spruce-Fir
+60: engine             T9 BA inversions (>10% step drop)        Spruce-Fir
+61: engine             T9 BA inversions (>10% step drop)        Spruce-Fir
+62: engine             T9 BA inversions (>10% step drop)        Spruce-Fir
+63: engine             T9 BA inversions (>10% step drop)        Spruce-Fir
+64: engine             T9 BA inversions (>10% step drop)        Spruce-Fir
+65: engine             T9 BA inversions (>10% step drop)        Spruce-Fir
+66: engine             T9 BA inversions (>10% step drop)        Spruce-Fir
+67: engine             T9 BA inversions (>10% step drop)        Spruce-Fir
+68: engine            T9 VOL inversions (>10% step drop)              Pine
+69: engine            T9 VOL inversions (>10% step drop)              Pine
+70: engine            T9 VOL inversions (>10% step drop)              Pine
+71: engine            T9 VOL inversions (>10% step drop)        Spruce-Fir
+72: engine            T9 VOL inversions (>10% step drop)        Spruce-Fir
+73: engine            T9 VOL inversions (>10% step drop)        Spruce-Fir
+74: engine            T9 VOL inversions (>10% step drop)        Spruce-Fir
+75: engine            T9 VOL inversions (>10% step drop)        Spruce-Fir
+76: engine            T9 VOL inversions (>10% step drop)        Spruce-Fir
+77: engine            T9 VOL inversions (>10% step drop)        Spruce-Fir
+78: engine            T9 VOL inversions (>10% step drop)        Spruce-Fir
+79: engine            T9 VOL inversions (>10% step drop)        Spruce-Fir
+       arm                                      relation             group
+    <char>                                        <char>            <char>
+      site density
+    <char>  <char>
+ 1:   High    High
+ 2:   High  Medium
+ 3:    Low    High
+ 4:    Low  Medium
+ 5: Medium    High
+ 6: Medium  Medium
+ 7:   High    High
+ 8:   High     Low
+ 9:   High  Medium
+10:    Low    High
+11:    Low     Low
+12:    Low  Medium
+13: Medium    High
+14: Medium     Low
+15: Medium  Medium
+16:   High    High
+17:   High     Low
+18:   High  Medium
+19:    Low    High
+20:    Low  Medium
+21: Medium    High
+22: Medium     Low
+23: Medium  Medium
+24:    all     all
+25:    all     all
+26:    all     all
+27:    all     all
+28:    all     all
+29:    all     all
+30:    all     all
+31:    all     all
+32:   High  Medium
+33:    Low  Medium
+34: Medium  Medium
+35:   High    High
+36:   High     Low
+37:   High  Medium
+38:    Low    High
+39:    Low  Medium
+40: Medium    High
+41: Medium     Low
+42: Medium  Medium
+43:    all     all
+44:   High    High
+45:    Low    High
+46: Medium    High
+47:    all     all
+48:    all     all
+49:    all     all
+50:    all     all
+51:    all     all
+52:    all     all
+53:   High    High
+54:   High  Medium
+55:    Low    High
+56:    Low  Medium
+57: Medium    High
+58: Medium  Medium
+59:   High    High
+60:   High     Low
+61:   High  Medium
+62:    Low    High
+63:    Low     Low
+64:    Low  Medium
+65: Medium    High
+66: Medium     Low
+67: Medium  Medium
+68:   High    High
+69:    Low    High
+70: Medium    High
+71:   High    High
+72:   High     Low
+73:   High  Medium
+74:    Low    High
+75:    Low     Low
+76:    Low  Medium
+77: Medium    High
+78: Medium     Low
+79: Medium  Medium
+      site density
+    <char>  <char>
+                                                                              detail
+                                                                              <char>
+ 1:                                                  first 5 yr: stems -69%, BA -42%
+ 2:                                                  first 5 yr: stems -39%, BA -20%
+ 3:                                                  first 5 yr: stems -58%, BA -35%
+ 4:                                                  first 5 yr: stems -55%, BA -26%
+ 5:                                                  first 5 yr: stems -60%, BA -41%
+ 6:                                                  first 5 yr: stems -38%, BA -18%
+ 7:                                                  first 5 yr: stems -98%, BA -94%
+ 8:                                                  first 5 yr: stems -93%, BA -83%
+ 9:                                                  first 5 yr: stems -97%, BA -92%
+10:                                                  first 5 yr: stems -97%, BA -93%
+11:                                                  first 5 yr: stems -89%, BA -81%
+12:                                                  first 5 yr: stems -97%, BA -91%
+13:                                                  first 5 yr: stems -98%, BA -94%
+14:                                                  first 5 yr: stems -97%, BA -84%
+15:                                                  first 5 yr: stems -97%, BA -92%
+16:                                           QMD declines -1.99 cm with no ingrowth
+17:                                           QMD declines -2.43 cm with no ingrowth
+18:                                           QMD declines -2.43 cm with no ingrowth
+19:                                           QMD declines -2.18 cm with no ingrowth
+20:                                           QMD declines -2.43 cm with no ingrowth
+21:                                           QMD declines -2.81 cm with no ingrowth
+22:                                           QMD declines -2.81 cm with no ingrowth
+23:                                           QMD declines -2.43 cm with no ingrowth
+24:                                            16 of 63 density x age cells inverted
+25:                                             6 of 63 density x age cells inverted
+26:                                            18 of 63 density x age cells inverted
+27:                                             1 of 63 density x age cells inverted
+28:                                            28 of 63 density x age cells inverted
+29:                                            63 of 63 density x age cells inverted
+30:                                            12 of 63 density x age cells inverted
+31:                                            24 of 63 density x age cells inverted
+32: slope -0.52 on 12 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.73)
+33: slope -0.67 on 16 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.75)
+34: slope -0.61 on 14 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.74)
+35: slope -0.34 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 1.49)
+36:  slope -0.56 on 3 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.58)
+37: slope -0.40 on 15 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.93)
+38: slope -0.35 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 1.52)
+39: slope -0.41 on 18 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.98)
+40: slope -0.41 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 1.63)
+41:  slope -0.59 on 8 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.65)
+42: slope -0.41 on 18 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.98)
+43:                               slope -0.41 on 124 limb points from 9 trajectories
+44:                                        peak SDI 2058 vs SDImax 1384 (ratio 1.49)
+45:                                        peak SDI 2100 vs SDImax 1384 (ratio 1.52)
+46:                                        peak SDI 2253 vs SDImax 1384 (ratio 1.63)
+47:                                  mean CV of VOL across sites at matched HT 15.3%
+48:                                                       0 of 3 site levels ordered
+49:                                                       2 of 3 site levels ordered
+50:                                                       1 of 3 site levels ordered
+51:                                                       0 of 3 site levels ordered
+52:                  final BA CV 1.7% across 9 trajectories that started with CV 42%
+53:                                                                    1 of 20 steps
+54:                                                                    1 of 20 steps
+55:                                                                    1 of 20 steps
+56:                                                                    1 of 20 steps
+57:                                                                    1 of 20 steps
+58:                                                                    1 of 20 steps
+59:                                                                    1 of 20 steps
+60:                                                                    1 of 20 steps
+61:                                                                    1 of 20 steps
+62:                                                                    1 of 20 steps
+63:                                                                    1 of 20 steps
+64:                                                                    1 of 20 steps
+65:                                                                    1 of 20 steps
+66:                                                                    1 of 20 steps
+67:                                                                    1 of 20 steps
+68:                                                                    1 of 20 steps
+69:                                                                    1 of 20 steps
+70:                                                                    1 of 20 steps
+71:                                                                    1 of 20 steps
+72:                                                                    1 of 20 steps
+73:                                                                    1 of 20 steps
+74:                                                                    1 of 20 steps
+75:                                                                    1 of 20 steps
+76:                                                                    1 of 20 steps
+77:                                                                    1 of 20 steps
+78:                                                                    1 of 20 steps
+79:                                                                    1 of 20 steps
+                                                                              detail
+                                                                              <char>
+
+NOT EVALUATED DETAIL
+       arm                    relation             group   site density
+    <char>                      <char>            <char> <char>  <char>
+ 1: engine T4 max BA vs observed p99.9 Northern-Hardwood   High    High
+ 2: engine T4 max BA vs observed p99.9 Northern-Hardwood   High     Low
+ 3: engine T4 max BA vs observed p99.9 Northern-Hardwood   High  Medium
+ 4: engine T4 max BA vs observed p99.9 Northern-Hardwood    Low    High
+ 5: engine T4 max BA vs observed p99.9 Northern-Hardwood    Low     Low
+ 6: engine T4 max BA vs observed p99.9 Northern-Hardwood    Low  Medium
+ 7: engine T4 max BA vs observed p99.9 Northern-Hardwood Medium    High
+ 8: engine T4 max BA vs observed p99.9 Northern-Hardwood Medium     Low
+ 9: engine T4 max BA vs observed p99.9 Northern-Hardwood Medium  Medium
+10: engine T4 max BA vs observed p99.9          Oak-Pine   High    High
+11: engine T4 max BA vs observed p99.9          Oak-Pine   High     Low
+12: engine T4 max BA vs observed p99.9          Oak-Pine   High  Medium
+13: engine T4 max BA vs observed p99.9          Oak-Pine    Low    High
+14: engine T4 max BA vs observed p99.9          Oak-Pine    Low     Low
+15: engine T4 max BA vs observed p99.9          Oak-Pine    Low  Medium
+16: engine T4 max BA vs observed p99.9          Oak-Pine Medium    High
+17: engine T4 max BA vs observed p99.9          Oak-Pine Medium     Low
+18: engine T4 max BA vs observed p99.9          Oak-Pine Medium  Medium
+19: engine T4 max BA vs observed p99.9              Pine   High    High
+20: engine T4 max BA vs observed p99.9              Pine   High     Low
+21: engine T4 max BA vs observed p99.9              Pine   High  Medium
+22: engine T4 max BA vs observed p99.9              Pine    Low    High
+23: engine T4 max BA vs observed p99.9              Pine    Low     Low
+24: engine T4 max BA vs observed p99.9              Pine    Low  Medium
+25: engine T4 max BA vs observed p99.9              Pine Medium    High
+26: engine T4 max BA vs observed p99.9              Pine Medium     Low
+27: engine T4 max BA vs observed p99.9              Pine Medium  Medium
+28: engine T4 max BA vs observed p99.9        Spruce-Fir   High    High
+29: engine T4 max BA vs observed p99.9        Spruce-Fir   High     Low
+30: engine T4 max BA vs observed p99.9        Spruce-Fir   High  Medium
+31: engine T4 max BA vs observed p99.9        Spruce-Fir    Low    High
+32: engine T4 max BA vs observed p99.9        Spruce-Fir    Low     Low
+33: engine T4 max BA vs observed p99.9        Spruce-Fir    Low  Medium
+34: engine T4 max BA vs observed p99.9        Spruce-Fir Medium    High
+35: engine T4 max BA vs observed p99.9        Spruce-Fir Medium     Low
+36: engine T4 max BA vs observed p99.9        Spruce-Fir Medium  Medium
+       arm                    relation             group   site density
+    <char>                      <char>            <char> <char>  <char>
+                                                               detail
+                                                               <char>
+ 1:  max BA 73.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 2:  max BA 39.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 3:  max BA 61.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 4:  max BA 73.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 5:  max BA 37.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 6:  max BA 64.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 7:  max BA 73.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 8:  max BA 38.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 9:  max BA 63.8 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+10: max BA 132.9 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+11:  max BA 51.9 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+12:  max BA 83.6 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+13: max BA 136.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+14:  max BA 50.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+15:  max BA 89.1 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+16: max BA 149.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+17:  max BA 59.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+18:  max BA 89.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+19:  max BA 51.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+20:  max BA 28.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+21:  max BA 37.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+22:  max BA 45.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+23:  max BA 28.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+24:  max BA 40.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+25:  max BA 50.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+26:  max BA 28.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+27:  max BA 36.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+28:  max BA 52.8 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+29:  max BA 17.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+30:  max BA 37.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+31:  max BA 41.8 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+32:  max BA 15.8 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+33:  max BA 33.1 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+34:  max BA 52.1 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+35:  max BA 18.8 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+36:  max BA 37.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+                                                               detail
+                                                               <char>
+
+Reineke axis: 14 trajectories evaluated, 0 not evaluated, 11 flagged. A zero flag count rests only on the evaluated count.
+This test falsifies; a pass is not a confirmation of accuracy.
+Wrote outputs to out_engine

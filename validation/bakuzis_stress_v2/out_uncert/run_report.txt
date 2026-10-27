@@ -1,0 +1,556 @@
+Warning message:
+NAs introduced by coercion 
+Warning message:
+NAs introduced by coercion 
+========================================================================
+BAKUZIS STRESS TEST v2  fvsmodern_fiaensemble_20261019
+  input: repos/fvs-modern/calibration/output/bakuzis/bakuzis_uncertainty_summary_long.csv
+  source: uncert   qmd_rate: 0.1 cm yr-1   form factor: 0.4
+========================================================================
+Warning messages:
+1: In min(diff(ba)/head(ba, -1)) :
+  no non-missing arguments to min; returning Inf
+2: In min(diff(ba)/head(ba, -1)) :
+  no non-missing arguments to min; returning Inf
+
+SUMMARY (evaluated / not evaluated / flagged), median age step 5 yr
+                   arm                                      relation evaluated
+                <char>                                        <char>     <int>
+ 1: ACD_calibrated_map                         T0 initial-step shock        30
+ 2: ACD_calibrated_map                            T1 monotone HT_dom        30
+ 3: ACD_calibrated_map                               T1 monotone QMD        30
+ 4: ACD_calibrated_map                           T2 site ordering HT         4
+ 5: ACD_calibrated_map                          T2 site ordering VOL         4
+ 6: ACD_calibrated_map             T3 Reineke slope (trajectory OLS)         0
+ 7: ACD_calibrated_map T3b frontier slope (rq tau 0.95, pooled limb)         0
+ 8: ACD_calibrated_map                   T4 max BA vs observed p99.9         0
+ 9: ACD_calibrated_map                          T4 peak SDI / SDImax        30
+10: ACD_calibrated_map          T5 Eichhorn VOL~HT site independence         4
+11: ACD_calibrated_map   T6 Sukachev per-tree VOL falls with density         4
+12: ACD_calibrated_map  T7 yield-density final BA vs initial density         4
+13: ACD_calibrated_map                          T8 pinned BA plateau         4
+14: ACD_calibrated_map             T9 BA inversions (>10% step drop)        30
+15: ACD_calibrated_map            T9 VOL inversions (>10% step drop)        30
+16:        ACD_default                         T0 initial-step shock        30
+17:        ACD_default                            T1 monotone HT_dom        30
+18:        ACD_default                               T1 monotone QMD        30
+19:        ACD_default                           T2 site ordering HT         4
+20:        ACD_default                          T2 site ordering VOL         4
+21:        ACD_default             T3 Reineke slope (trajectory OLS)         0
+22:        ACD_default T3b frontier slope (rq tau 0.95, pooled limb)         0
+23:        ACD_default                   T4 max BA vs observed p99.9         0
+24:        ACD_default                          T4 peak SDI / SDImax        30
+25:        ACD_default          T5 Eichhorn VOL~HT site independence         4
+26:        ACD_default   T6 Sukachev per-tree VOL falls with density         4
+27:        ACD_default  T7 yield-density final BA vs initial density         4
+28:        ACD_default                          T8 pinned BA plateau         4
+29:        ACD_default             T9 BA inversions (>10% step drop)        30
+30:        ACD_default            T9 VOL inversions (>10% step drop)        30
+31:  NE_calibrated_map                         T0 initial-step shock        27
+32:  NE_calibrated_map                            T1 monotone HT_dom        27
+33:  NE_calibrated_map                               T1 monotone QMD        27
+34:  NE_calibrated_map                           T2 site ordering HT         4
+35:  NE_calibrated_map                          T2 site ordering VOL         4
+36:  NE_calibrated_map             T3 Reineke slope (trajectory OLS)         0
+37:  NE_calibrated_map T3b frontier slope (rq tau 0.95, pooled limb)         0
+38:  NE_calibrated_map                   T4 max BA vs observed p99.9         0
+39:  NE_calibrated_map                          T4 peak SDI / SDImax        27
+40:  NE_calibrated_map          T5 Eichhorn VOL~HT site independence         4
+41:  NE_calibrated_map   T6 Sukachev per-tree VOL falls with density         4
+42:  NE_calibrated_map  T7 yield-density final BA vs initial density         4
+43:  NE_calibrated_map                          T8 pinned BA plateau         4
+44:  NE_calibrated_map             T9 BA inversions (>10% step drop)        27
+45:  NE_calibrated_map            T9 VOL inversions (>10% step drop)        27
+46:         NE_default                         T0 initial-step shock        27
+47:         NE_default                            T1 monotone HT_dom        27
+48:         NE_default                               T1 monotone QMD        27
+49:         NE_default                           T2 site ordering HT         4
+50:         NE_default                          T2 site ordering VOL         4
+51:         NE_default             T3 Reineke slope (trajectory OLS)         0
+52:         NE_default T3b frontier slope (rq tau 0.95, pooled limb)         0
+53:         NE_default                   T4 max BA vs observed p99.9         0
+54:         NE_default                          T4 peak SDI / SDImax        27
+55:         NE_default          T5 Eichhorn VOL~HT site independence         4
+56:         NE_default   T6 Sukachev per-tree VOL falls with density         4
+57:         NE_default  T7 yield-density final BA vs initial density         4
+58:         NE_default                          T8 pinned BA plateau         4
+59:         NE_default             T9 BA inversions (>10% step drop)        27
+60:         NE_default            T9 VOL inversions (>10% step drop)        27
+                   arm                                      relation evaluated
+                <char>                                        <char>     <int>
+    not_evaluated not_applicable flagged       verdict
+            <int>          <int>   <int>        <char>
+ 1:             0              0       0          PASS
+ 2:             0              0       0          PASS
+ 3:             0              0       0          PASS
+ 4:             0              0       0          PASS
+ 5:             0              0       4    FLAG (all)
+ 6:             0             30       0 NOT EVALUATED
+ 7:             0              4       0 NOT EVALUATED
+ 8:            30              0       0 NOT EVALUATED
+ 9:             0              0       0          PASS
+10:             0              0       3          FLAG
+11:             0              0       1          FLAG
+12:             0              0       4    FLAG (all)
+13:             0              0       0          PASS
+14:             0              0       0          PASS
+15:             0              0       0          PASS
+16:             0              0       0          PASS
+17:             0              0       0          PASS
+18:             0              0       0          PASS
+19:             0              0       0          PASS
+20:             0              0       4    FLAG (all)
+21:             0             30       0 NOT EVALUATED
+22:             0              4       0 NOT EVALUATED
+23:            30              0       0 NOT EVALUATED
+24:             0              0       0          PASS
+25:             0              0       3          FLAG
+26:             0              0       1          FLAG
+27:             0              0       4    FLAG (all)
+28:             0              0       0          PASS
+29:             0              0       0          PASS
+30:             0              0       0          PASS
+31:             0              0       0          PASS
+32:             0              0       0          PASS
+33:             0              0       0          PASS
+34:             0              0       0          PASS
+35:             0              0       4    FLAG (all)
+36:             0             27       0 NOT EVALUATED
+37:             0              4       0 NOT EVALUATED
+38:            27              0       0 NOT EVALUATED
+39:             0              0       0          PASS
+40:             0              0       4    FLAG (all)
+41:             0              0       3          FLAG
+42:             0              0       3          FLAG
+43:             0              0       0          PASS
+44:             0              0       0          PASS
+45:             0              0       0          PASS
+46:             0              0       0          PASS
+47:             0              0       0          PASS
+48:             0              0       0          PASS
+49:             0              0       0          PASS
+50:             0              0       4    FLAG (all)
+51:             0             27       0 NOT EVALUATED
+52:             0              4       0 NOT EVALUATED
+53:            27              0       0 NOT EVALUATED
+54:             0              0       0          PASS
+55:             0              0       4    FLAG (all)
+56:             0              0       3          FLAG
+57:             0              0       3          FLAG
+58:             0              0       0          PASS
+59:             0              0       0          PASS
+60:             0              0       0          PASS
+    not_evaluated not_applicable flagged       verdict
+            <int>          <int>   <int>        <char>
+
+FLAGGED DETAIL
+                   arm                                     relation
+                <char>                                       <char>
+ 1: ACD_calibrated_map                         T2 site ordering VOL
+ 2: ACD_calibrated_map                         T2 site ordering VOL
+ 3: ACD_calibrated_map                         T2 site ordering VOL
+ 4: ACD_calibrated_map                         T2 site ordering VOL
+ 5: ACD_calibrated_map         T5 Eichhorn VOL~HT site independence
+ 6: ACD_calibrated_map         T5 Eichhorn VOL~HT site independence
+ 7: ACD_calibrated_map         T5 Eichhorn VOL~HT site independence
+ 8: ACD_calibrated_map  T6 Sukachev per-tree VOL falls with density
+ 9: ACD_calibrated_map T7 yield-density final BA vs initial density
+10: ACD_calibrated_map T7 yield-density final BA vs initial density
+11: ACD_calibrated_map T7 yield-density final BA vs initial density
+12: ACD_calibrated_map T7 yield-density final BA vs initial density
+13:        ACD_default                         T2 site ordering VOL
+14:        ACD_default                         T2 site ordering VOL
+15:        ACD_default                         T2 site ordering VOL
+16:        ACD_default                         T2 site ordering VOL
+17:        ACD_default         T5 Eichhorn VOL~HT site independence
+18:        ACD_default         T5 Eichhorn VOL~HT site independence
+19:        ACD_default         T5 Eichhorn VOL~HT site independence
+20:        ACD_default  T6 Sukachev per-tree VOL falls with density
+21:        ACD_default T7 yield-density final BA vs initial density
+22:        ACD_default T7 yield-density final BA vs initial density
+23:        ACD_default T7 yield-density final BA vs initial density
+24:        ACD_default T7 yield-density final BA vs initial density
+25:  NE_calibrated_map                         T2 site ordering VOL
+26:  NE_calibrated_map                         T2 site ordering VOL
+27:  NE_calibrated_map                         T2 site ordering VOL
+28:  NE_calibrated_map                         T2 site ordering VOL
+29:  NE_calibrated_map         T5 Eichhorn VOL~HT site independence
+30:  NE_calibrated_map         T5 Eichhorn VOL~HT site independence
+31:  NE_calibrated_map         T5 Eichhorn VOL~HT site independence
+32:  NE_calibrated_map         T5 Eichhorn VOL~HT site independence
+33:  NE_calibrated_map  T6 Sukachev per-tree VOL falls with density
+34:  NE_calibrated_map  T6 Sukachev per-tree VOL falls with density
+35:  NE_calibrated_map  T6 Sukachev per-tree VOL falls with density
+36:  NE_calibrated_map T7 yield-density final BA vs initial density
+37:  NE_calibrated_map T7 yield-density final BA vs initial density
+38:  NE_calibrated_map T7 yield-density final BA vs initial density
+39:         NE_default                         T2 site ordering VOL
+40:         NE_default                         T2 site ordering VOL
+41:         NE_default                         T2 site ordering VOL
+42:         NE_default                         T2 site ordering VOL
+43:         NE_default         T5 Eichhorn VOL~HT site independence
+44:         NE_default         T5 Eichhorn VOL~HT site independence
+45:         NE_default         T5 Eichhorn VOL~HT site independence
+46:         NE_default         T5 Eichhorn VOL~HT site independence
+47:         NE_default  T6 Sukachev per-tree VOL falls with density
+48:         NE_default  T6 Sukachev per-tree VOL falls with density
+49:         NE_default  T6 Sukachev per-tree VOL falls with density
+50:         NE_default T7 yield-density final BA vs initial density
+51:         NE_default T7 yield-density final BA vs initial density
+52:         NE_default T7 yield-density final BA vs initial density
+                   arm                                     relation
+                <char>                                       <char>
+                group   site density
+               <char> <char>  <char>
+ 1: Northern-Hardwood    all     all
+ 2:          Oak-Pine    all     all
+ 3:              Pine    all     all
+ 4:        Spruce-Fir    all     all
+ 5: Northern-Hardwood    all     all
+ 6:          Oak-Pine    all     all
+ 7:              Pine    all     all
+ 8:          Oak-Pine    all     all
+ 9: Northern-Hardwood    all     all
+10:          Oak-Pine    all     all
+11:              Pine    all     all
+12:        Spruce-Fir    all     all
+13: Northern-Hardwood    all     all
+14:          Oak-Pine    all     all
+15:              Pine    all     all
+16:        Spruce-Fir    all     all
+17: Northern-Hardwood    all     all
+18:          Oak-Pine    all     all
+19:              Pine    all     all
+20:          Oak-Pine    all     all
+21: Northern-Hardwood    all     all
+22:          Oak-Pine    all     all
+23:              Pine    all     all
+24:        Spruce-Fir    all     all
+25: Northern-Hardwood    all     all
+26:          Oak-Pine    all     all
+27:              Pine    all     all
+28:        Spruce-Fir    all     all
+29: Northern-Hardwood    all     all
+30:          Oak-Pine    all     all
+31:              Pine    all     all
+32:        Spruce-Fir    all     all
+33: Northern-Hardwood    all     all
+34:          Oak-Pine    all     all
+35:        Spruce-Fir    all     all
+36: Northern-Hardwood    all     all
+37:              Pine    all     all
+38:        Spruce-Fir    all     all
+39: Northern-Hardwood    all     all
+40:          Oak-Pine    all     all
+41:              Pine    all     all
+42:        Spruce-Fir    all     all
+43: Northern-Hardwood    all     all
+44:          Oak-Pine    all     all
+45:              Pine    all     all
+46:        Spruce-Fir    all     all
+47: Northern-Hardwood    all     all
+48:          Oak-Pine    all     all
+49:        Spruce-Fir    all     all
+50: Northern-Hardwood    all     all
+51:              Pine    all     all
+52:        Spruce-Fir    all     all
+                group   site density
+               <char> <char>  <char>
+                                                              detail
+                                                              <char>
+ 1:                            22 of 42 density x age cells inverted
+ 2:                             1 of 42 density x age cells inverted
+ 3:                            21 of 63 density x age cells inverted
+ 4:                            21 of 63 density x age cells inverted
+ 5:                  mean CV of VOL across sites at matched HT 25.1%
+ 6:                  mean CV of VOL across sites at matched HT 21.8%
+ 7:                  mean CV of VOL across sites at matched HT 17.9%
+ 8:                                       2 of 3 site levels ordered
+ 9: worst relative BA drop from lower to higher initial density -36%
+10: worst relative BA drop from lower to higher initial density -49%
+11: worst relative BA drop from lower to higher initial density -44%
+12: worst relative BA drop from lower to higher initial density -34%
+13:                            22 of 42 density x age cells inverted
+14:                             1 of 42 density x age cells inverted
+15:                            21 of 63 density x age cells inverted
+16:                            21 of 63 density x age cells inverted
+17:                  mean CV of VOL across sites at matched HT 25.1%
+18:                  mean CV of VOL across sites at matched HT 21.8%
+19:                  mean CV of VOL across sites at matched HT 17.9%
+20:                                       2 of 3 site levels ordered
+21: worst relative BA drop from lower to higher initial density -36%
+22: worst relative BA drop from lower to higher initial density -49%
+23: worst relative BA drop from lower to higher initial density -44%
+24: worst relative BA drop from lower to higher initial density -34%
+25:                            43 of 63 density x age cells inverted
+26:                             2 of 42 density x age cells inverted
+27:                             6 of 63 density x age cells inverted
+28:                            37 of 42 density x age cells inverted
+29:                  mean CV of VOL across sites at matched HT 31.1%
+30:                  mean CV of VOL across sites at matched HT 16.2%
+31:                  mean CV of VOL across sites at matched HT 16.2%
+32:                  mean CV of VOL across sites at matched HT 49.1%
+33:                                       1 of 3 site levels ordered
+34:                                       1 of 3 site levels ordered
+35:                                       2 of 3 site levels ordered
+36: worst relative BA drop from lower to higher initial density -37%
+37: worst relative BA drop from lower to higher initial density -42%
+38: worst relative BA drop from lower to higher initial density -33%
+39:                            43 of 63 density x age cells inverted
+40:                             2 of 42 density x age cells inverted
+41:                             6 of 63 density x age cells inverted
+42:                            37 of 42 density x age cells inverted
+43:                  mean CV of VOL across sites at matched HT 31.1%
+44:                  mean CV of VOL across sites at matched HT 16.2%
+45:                  mean CV of VOL across sites at matched HT 16.2%
+46:                  mean CV of VOL across sites at matched HT 49.1%
+47:                                       1 of 3 site levels ordered
+48:                                       1 of 3 site levels ordered
+49:                                       2 of 3 site levels ordered
+50: worst relative BA drop from lower to higher initial density -37%
+51: worst relative BA drop from lower to higher initial density -42%
+52: worst relative BA drop from lower to higher initial density -33%
+                                                              detail
+                                                              <char>
+
+NOT EVALUATED DETAIL
+                    arm                    relation             group   site
+                 <char>                      <char>            <char> <char>
+  1: ACD_calibrated_map T4 max BA vs observed p99.9 Northern-Hardwood   High
+  2:        ACD_default T4 max BA vs observed p99.9 Northern-Hardwood   High
+  3:  NE_calibrated_map T4 max BA vs observed p99.9 Northern-Hardwood   High
+  4:         NE_default T4 max BA vs observed p99.9 Northern-Hardwood   High
+  5: ACD_calibrated_map T4 max BA vs observed p99.9 Northern-Hardwood   High
+  6:        ACD_default T4 max BA vs observed p99.9 Northern-Hardwood   High
+  7:  NE_calibrated_map T4 max BA vs observed p99.9 Northern-Hardwood   High
+  8:         NE_default T4 max BA vs observed p99.9 Northern-Hardwood   High
+  9: ACD_calibrated_map T4 max BA vs observed p99.9 Northern-Hardwood    Low
+ 10:        ACD_default T4 max BA vs observed p99.9 Northern-Hardwood    Low
+ 11:  NE_calibrated_map T4 max BA vs observed p99.9 Northern-Hardwood    Low
+ 12:         NE_default T4 max BA vs observed p99.9 Northern-Hardwood    Low
+ 13: ACD_calibrated_map T4 max BA vs observed p99.9 Northern-Hardwood    Low
+ 14:        ACD_default T4 max BA vs observed p99.9 Northern-Hardwood    Low
+ 15: ACD_calibrated_map T4 max BA vs observed p99.9 Northern-Hardwood Medium
+ 16:        ACD_default T4 max BA vs observed p99.9 Northern-Hardwood Medium
+ 17:  NE_calibrated_map T4 max BA vs observed p99.9 Northern-Hardwood Medium
+ 18:         NE_default T4 max BA vs observed p99.9 Northern-Hardwood Medium
+ 19: ACD_calibrated_map T4 max BA vs observed p99.9 Northern-Hardwood Medium
+ 20:        ACD_default T4 max BA vs observed p99.9 Northern-Hardwood Medium
+ 21:  NE_calibrated_map T4 max BA vs observed p99.9 Northern-Hardwood Medium
+ 22:         NE_default T4 max BA vs observed p99.9 Northern-Hardwood Medium
+ 23: ACD_calibrated_map T4 max BA vs observed p99.9 Northern-Hardwood Medium
+ 24:        ACD_default T4 max BA vs observed p99.9 Northern-Hardwood Medium
+ 25:  NE_calibrated_map T4 max BA vs observed p99.9 Northern-Hardwood Medium
+ 26:         NE_default T4 max BA vs observed p99.9 Northern-Hardwood Medium
+ 27: ACD_calibrated_map T4 max BA vs observed p99.9          Oak-Pine   High
+ 28:        ACD_default T4 max BA vs observed p99.9          Oak-Pine   High
+ 29:  NE_calibrated_map T4 max BA vs observed p99.9          Oak-Pine   High
+ 30:         NE_default T4 max BA vs observed p99.9          Oak-Pine   High
+ 31: ACD_calibrated_map T4 max BA vs observed p99.9          Oak-Pine   High
+ 32:        ACD_default T4 max BA vs observed p99.9          Oak-Pine   High
+ 33: ACD_calibrated_map T4 max BA vs observed p99.9          Oak-Pine    Low
+ 34:        ACD_default T4 max BA vs observed p99.9          Oak-Pine    Low
+ 35:  NE_calibrated_map T4 max BA vs observed p99.9          Oak-Pine    Low
+ 36:         NE_default T4 max BA vs observed p99.9          Oak-Pine    Low
+ 37: ACD_calibrated_map T4 max BA vs observed p99.9          Oak-Pine    Low
+ 38:        ACD_default T4 max BA vs observed p99.9          Oak-Pine    Low
+ 39: ACD_calibrated_map T4 max BA vs observed p99.9          Oak-Pine Medium
+ 40:        ACD_default T4 max BA vs observed p99.9          Oak-Pine Medium
+ 41:  NE_calibrated_map T4 max BA vs observed p99.9          Oak-Pine Medium
+ 42:         NE_default T4 max BA vs observed p99.9          Oak-Pine Medium
+ 43: ACD_calibrated_map T4 max BA vs observed p99.9          Oak-Pine Medium
+ 44:        ACD_default T4 max BA vs observed p99.9          Oak-Pine Medium
+ 45:  NE_calibrated_map T4 max BA vs observed p99.9          Oak-Pine Medium
+ 46:         NE_default T4 max BA vs observed p99.9          Oak-Pine Medium
+ 47: ACD_calibrated_map T4 max BA vs observed p99.9          Oak-Pine Medium
+ 48:        ACD_default T4 max BA vs observed p99.9          Oak-Pine Medium
+ 49: ACD_calibrated_map T4 max BA vs observed p99.9              Pine   High
+ 50:        ACD_default T4 max BA vs observed p99.9              Pine   High
+ 51:  NE_calibrated_map T4 max BA vs observed p99.9              Pine   High
+ 52:         NE_default T4 max BA vs observed p99.9              Pine   High
+ 53: ACD_calibrated_map T4 max BA vs observed p99.9              Pine   High
+ 54:        ACD_default T4 max BA vs observed p99.9              Pine   High
+ 55: ACD_calibrated_map T4 max BA vs observed p99.9              Pine   High
+ 56:        ACD_default T4 max BA vs observed p99.9              Pine   High
+ 57:  NE_calibrated_map T4 max BA vs observed p99.9              Pine   High
+ 58:         NE_default T4 max BA vs observed p99.9              Pine   High
+ 59: ACD_calibrated_map T4 max BA vs observed p99.9              Pine    Low
+ 60:        ACD_default T4 max BA vs observed p99.9              Pine    Low
+ 61: ACD_calibrated_map T4 max BA vs observed p99.9              Pine    Low
+ 62:        ACD_default T4 max BA vs observed p99.9              Pine    Low
+ 63:  NE_calibrated_map T4 max BA vs observed p99.9              Pine    Low
+ 64:         NE_default T4 max BA vs observed p99.9              Pine    Low
+ 65: ACD_calibrated_map T4 max BA vs observed p99.9              Pine    Low
+ 66:        ACD_default T4 max BA vs observed p99.9              Pine    Low
+ 67: ACD_calibrated_map T4 max BA vs observed p99.9              Pine Medium
+ 68:        ACD_default T4 max BA vs observed p99.9              Pine Medium
+ 69:  NE_calibrated_map T4 max BA vs observed p99.9              Pine Medium
+ 70:         NE_default T4 max BA vs observed p99.9              Pine Medium
+ 71: ACD_calibrated_map T4 max BA vs observed p99.9              Pine Medium
+ 72:        ACD_default T4 max BA vs observed p99.9              Pine Medium
+ 73:  NE_calibrated_map T4 max BA vs observed p99.9              Pine Medium
+ 74:         NE_default T4 max BA vs observed p99.9              Pine Medium
+ 75: ACD_calibrated_map T4 max BA vs observed p99.9        Spruce-Fir   High
+ 76:        ACD_default T4 max BA vs observed p99.9        Spruce-Fir   High
+ 77:  NE_calibrated_map T4 max BA vs observed p99.9        Spruce-Fir   High
+ 78:         NE_default T4 max BA vs observed p99.9        Spruce-Fir   High
+ 79: ACD_calibrated_map T4 max BA vs observed p99.9        Spruce-Fir   High
+ 80:        ACD_default T4 max BA vs observed p99.9        Spruce-Fir   High
+ 81:  NE_calibrated_map T4 max BA vs observed p99.9        Spruce-Fir   High
+ 82:         NE_default T4 max BA vs observed p99.9        Spruce-Fir   High
+ 83: ACD_calibrated_map T4 max BA vs observed p99.9        Spruce-Fir   High
+ 84:        ACD_default T4 max BA vs observed p99.9        Spruce-Fir   High
+ 85: ACD_calibrated_map T4 max BA vs observed p99.9        Spruce-Fir    Low
+ 86:        ACD_default T4 max BA vs observed p99.9        Spruce-Fir    Low
+ 87:  NE_calibrated_map T4 max BA vs observed p99.9        Spruce-Fir    Low
+ 88:         NE_default T4 max BA vs observed p99.9        Spruce-Fir    Low
+ 89: ACD_calibrated_map T4 max BA vs observed p99.9        Spruce-Fir    Low
+ 90:        ACD_default T4 max BA vs observed p99.9        Spruce-Fir    Low
+ 91:  NE_calibrated_map T4 max BA vs observed p99.9        Spruce-Fir    Low
+ 92:         NE_default T4 max BA vs observed p99.9        Spruce-Fir    Low
+ 93: ACD_calibrated_map T4 max BA vs observed p99.9        Spruce-Fir    Low
+ 94:        ACD_default T4 max BA vs observed p99.9        Spruce-Fir    Low
+ 95:  NE_calibrated_map T4 max BA vs observed p99.9        Spruce-Fir    Low
+ 96:         NE_default T4 max BA vs observed p99.9        Spruce-Fir    Low
+ 97: ACD_calibrated_map T4 max BA vs observed p99.9        Spruce-Fir Medium
+ 98:        ACD_default T4 max BA vs observed p99.9        Spruce-Fir Medium
+ 99:  NE_calibrated_map T4 max BA vs observed p99.9        Spruce-Fir Medium
+100:         NE_default T4 max BA vs observed p99.9        Spruce-Fir Medium
+101: ACD_calibrated_map T4 max BA vs observed p99.9        Spruce-Fir Medium
+102:        ACD_default T4 max BA vs observed p99.9        Spruce-Fir Medium
+103:  NE_calibrated_map T4 max BA vs observed p99.9        Spruce-Fir Medium
+104:         NE_default T4 max BA vs observed p99.9        Spruce-Fir Medium
+105:  NE_calibrated_map T4 max BA vs observed p99.9 Northern-Hardwood   High
+106:         NE_default T4 max BA vs observed p99.9 Northern-Hardwood   High
+107:  NE_calibrated_map T4 max BA vs observed p99.9 Northern-Hardwood    Low
+108:         NE_default T4 max BA vs observed p99.9 Northern-Hardwood    Low
+109:  NE_calibrated_map T4 max BA vs observed p99.9          Oak-Pine   High
+110:         NE_default T4 max BA vs observed p99.9          Oak-Pine   High
+111:  NE_calibrated_map T4 max BA vs observed p99.9          Oak-Pine    Low
+112:         NE_default T4 max BA vs observed p99.9          Oak-Pine    Low
+113:  NE_calibrated_map T4 max BA vs observed p99.9              Pine Medium
+114:         NE_default T4 max BA vs observed p99.9              Pine Medium
+                    arm                    relation             group   site
+                 <char>                      <char>            <char> <char>
+     density                                                           detail
+      <char>                                                           <char>
+  1:    High max BA 15.8 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+  2:    High max BA 15.8 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+  3:    High  max BA 9.6 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+  4:    High  max BA 9.6 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+  5:     Low  max BA 9.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+  6:     Low  max BA 9.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+  7:     Low max BA 16.1 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+  8:     Low max BA 16.1 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+  9:    High max BA 12.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 10:    High max BA 12.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 11:    High  max BA 9.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 12:    High  max BA 9.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 13:     Low  max BA 6.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 14:     Low  max BA 6.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 15:    High max BA 17.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 16:    High max BA 17.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 17:    High max BA 12.9 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 18:    High max BA 12.9 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 19:     Low max BA 12.9 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 20:     Low max BA 12.9 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 21:     Low max BA 13.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 22:     Low max BA 13.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 23:  Medium  max BA 8.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 24:  Medium  max BA 8.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 25:  Medium max BA 18.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 26:  Medium max BA 18.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 27:    High max BA 26.9 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 28:    High max BA 26.9 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 29:    High max BA 39.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 30:    High max BA 43.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 31:     Low max BA 18.8 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 32:     Low max BA 18.8 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 33:    High max BA 23.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 34:    High max BA 23.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 35:    High max BA 20.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 36:    High max BA 20.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 37:     Low  max BA 9.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 38:     Low  max BA 9.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 39:    High max BA 22.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 40:    High max BA 22.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 41:    High max BA 25.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 42:    High max BA 25.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 43:     Low max BA 21.6 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 44:     Low max BA 21.6 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 45:     Low max BA 19.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 46:     Low max BA 19.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 47:  Medium max BA 11.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 48:  Medium max BA 11.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 49:    High max BA 42.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 50:    High max BA 42.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 51:    High max BA 31.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 52:    High max BA 31.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 53:     Low max BA 29.6 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 54:     Low max BA 29.6 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 55:  Medium max BA 16.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 56:  Medium max BA 16.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 57:  Medium max BA 32.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 58:  Medium max BA 32.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 59:    High max BA 24.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 60:    High max BA 24.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 61:     Low max BA 17.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 62:     Low max BA 17.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 63:     Low max BA 11.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 64:     Low max BA 11.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 65:  Medium max BA 10.6 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 66:  Medium max BA 10.6 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 67:    High max BA 29.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 68:    High max BA 29.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 69:    High max BA 17.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 70:    High max BA 17.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 71:     Low max BA 13.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 72:     Low max BA 13.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 73:     Low max BA 14.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 74:     Low max BA 14.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 75:    High max BA 23.9 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 76:    High max BA 23.9 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 77:    High  max BA 9.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 78:    High  max BA 9.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 79:     Low max BA 16.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 80:     Low max BA 16.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 81:     Low  max BA 9.9 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 82:     Low  max BA 9.9 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 83:  Medium max BA 11.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 84:  Medium max BA 11.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 85:    High max BA 14.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 86:    High max BA 14.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 87:    High max BA 14.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 88:    High max BA 14.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 89:     Low max BA 10.8 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 90:     Low max BA 10.8 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 91:     Low max BA 10.6 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 92:     Low max BA 10.6 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 93:  Medium  max BA 7.1 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 94:  Medium  max BA 7.1 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 95:  Medium  max BA 7.1 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 96:  Medium  max BA 7.1 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 97:    High max BA 19.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 98:    High max BA 19.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+ 99:    High max BA 19.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+100:    High max BA 19.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+101:     Low  max BA 9.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+102:     Low  max BA 9.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+103:     Low  max BA 9.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+104:     Low  max BA 9.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+105:  Medium max BA 10.1 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+106:  Medium max BA 10.1 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+107:  Medium max BA 10.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+108:  Medium max BA 10.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+109:  Medium  max BA 9.6 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+110:  Medium  max BA 9.6 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+111:  Medium  max BA 6.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+112:  Medium  max BA 6.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+113:  Medium max BA 30.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+114:  Medium max BA 30.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+     density                                                           detail
+      <char>                                                           <char>
+
+Reineke axis: 0 trajectories evaluated, 0 not evaluated, 0 flagged. A zero flag count rests only on the evaluated count.
+This test falsifies; a pass is not a confirmation of accuracy.
+Wrote outputs to out_uncert

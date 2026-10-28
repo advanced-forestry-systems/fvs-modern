@@ -1,0 +1,17 @@
+arm,relation,evaluated,not_evaluated,not_applicable,flagged,verdict
+conus_b1_gompit,T0 initial-step shock,24097,0,0,480,FLAG
+conus_b1_gompit,T1 monotone HT_dom,0,24097,0,0,NOT EVALUATED
+conus_b1_gompit,T1 monotone QMD,13338,10759,0,8359,FLAG
+conus_b1_gompit,T2 site ordering HT,0,17,0,0,NOT EVALUATED
+conus_b1_gompit,T2 site ordering VOL,0,17,0,0,NOT EVALUATED
+conus_b1_gompit,T3 Reineke slope (trajectory OLS),9297,332,14468,2968,FLAG
+conus_b1_gompit,"T3b frontier slope (rq tau 0.95, pooled limb)",17,0,0,2,FLAG
+conus_b1_gompit,T4 max BA vs observed p99,22500,1597,0,4719,FLAG
+conus_b1_gompit,T4 max BA vs observed p99.9,22500,1597,0,2680,FLAG
+conus_b1_gompit,T4 peak SDI / SDImax,22500,1597,0,1045,FLAG
+conus_b1_gompit,T5 Eichhorn VOL~HT site independence,0,17,0,0,NOT EVALUATED
+conus_b1_gompit,T6 Sukachev per-tree VOL falls with density,0,17,0,0,NOT EVALUATED
+conus_b1_gompit,T7 yield-density final BA vs initial density,0,17,0,0,NOT EVALUATED
+conus_b1_gompit,T8 pinned BA plateau,17,0,0,0,PASS
+conus_b1_gompit,T9 BA inversions (>10% step drop),24097,0,0,12055,FLAG
+conus_b1_gompit,T9 VOL inversions (>10% step drop),0,24097,0,0,NOT EVALUATED

@@ -1,0 +1,123 @@
+Warning message:
+NAs introduced by coercion 
+Warning message:
+NAs introduced by coercion 
+subsampled to at most 1500 trajectories per arm x group: 27097 trajectories kept
+========================================================================
+BAKUZIS STRESS TEST v2  proj_b1_native
+  input: /fs/scratch/PUOM0008/crsfaaron/fvs_stress/conus_eq_proj/out_conus_eq/conus_eq_ak_conus_b1_metrics.csv,/fs/scratch/PUOM0008/crsfaaron/fvs_stress/conus_eq_proj/out_conus_eq/conus_eq_bm_conus_b1_metrics.csv,/fs/scratch/PUOM0008/crsfaaron/fvs_stress/conus_eq_proj/out_conus_eq/conus_eq_ca_conus_b1_metrics.csv,/fs/scratch/PUOM0008/crsfaaron/fvs_stress/conus_eq_proj/out_conus_eq/conus_eq_ci_conus_b1_metrics.csv,/fs/scratch/PUOM0008/crsfaaron/fvs_stress/conus_eq_proj/out_conus_eq/conus_eq_cr_conus_b1_metrics.csv,/fs/scratch/PUOM0008/crsfaaron/fvs_stress/conus_eq_proj/out_conus_eq/conus_eq_cs_conus_b1_metrics.csv,/fs/scratch/PUOM0008/crsfaaron/fvs_stress/conus_eq_proj/out_conus_eq/conus_eq_ec_conus_b1_metrics.csv,/fs/scratch/PUOM0008/crsfaaron/fvs_stress/conus_eq_proj/out_conus_eq/conus_eq_em_conus_b1_metrics.csv,/fs/scratch/PUOM0008/crsfaaron/fvs_stress/conus_eq_proj/out_conus_eq/conus_eq_ie_conus_b1_metrics.csv,/fs/scratch/PUOM0008/crsfaaron/fvs_stress/conus_eq_proj/out_conus_eq/conus_eq_ls_conus_b1_metrics.csv,/fs/scratch/PUOM0008/crsfaaron/fvs_stress/conus_eq_proj/out_conus_eq/conus_eq_nc_conus_b1_metrics.csv,/fs/scratch/PUOM0008/crsfaaron/fvs_stress/conus_eq_proj/out_conus_eq/conus_eq_ne_conus_b1_metrics.csv,/fs/scratch/PUOM0008/crsfaaron/fvs_stress/conus_eq_proj/out_conus_eq/conus_eq_pn_conus_b1_metrics.csv,/fs/scratch/PUOM0008/crsfaaron/fvs_stress/conus_eq_proj/out_conus_eq/conus_eq_sn_conus_b1_metrics.csv,/fs/scratch/PUOM0008/crsfaaron/fvs_stress/conus_eq_proj/out_conus_eq/conus_eq_so_conus_b1_metrics.csv,/fs/scratch/PUOM0008/crsfaaron/fvs_stress/conus_eq_proj/out_conus_eq/conus_eq_tt_conus_b1_metrics.csv,/fs/scratch/PUOM0008/crsfaaron/fvs_stress/conus_eq_proj/out_conus_eq/conus_eq_ut_conus_b1_metrics.csv,/fs/scratch/PUOM0008/crsfaaron/fvs_stress/conus_eq_proj/out_conus_eq/conus_eq_wc_conus_b1_metrics.csv,/fs/scratch/PUOM0008/crsfaaron/fvs_stress/conus_eq_proj/out_conus_eq/conus_eq_ws_conus_b1_metrics.csv
+  source: projector   qmd_rate: 0.1 cm yr-1   form factor: 0.4
+========================================================================
+There were 50 or more warnings (use warnings() to see the first 50)
+
+SUMMARY (evaluated / not evaluated / flagged), median age step 5 yr
+         arm                                      relation evaluated
+      <char>                                        <char>     <int>
+ 1: conus_b1                         T0 initial-step shock     27097
+ 2: conus_b1                            T1 monotone HT_dom         0
+ 3: conus_b1                               T1 monotone QMD     16676
+ 4: conus_b1                           T2 site ordering HT         0
+ 5: conus_b1                          T2 site ordering VOL         0
+ 6: conus_b1             T3 Reineke slope (trajectory OLS)     14424
+ 7: conus_b1 T3b frontier slope (rq tau 0.95, pooled limb)        19
+ 8: conus_b1                     T4 max BA vs observed p99     25500
+ 9: conus_b1                   T4 max BA vs observed p99.9     25500
+10: conus_b1                          T4 peak SDI / SDImax     25500
+11: conus_b1          T5 Eichhorn VOL~HT site independence         0
+12: conus_b1   T6 Sukachev per-tree VOL falls with density         0
+13: conus_b1  T7 yield-density final BA vs initial density         0
+14: conus_b1                          T8 pinned BA plateau        19
+15: conus_b1             T9 BA inversions (>10% step drop)     27097
+16: conus_b1            T9 VOL inversions (>10% step drop)         0
+    not_evaluated not_applicable flagged       verdict
+            <int>          <int>   <int>        <char>
+ 1:             0              0     755          FLAG
+ 2:         27097              0       0 NOT EVALUATED
+ 3:         10421              0    4921          FLAG
+ 4:            19              0       0 NOT EVALUATED
+ 5:            19              0       0 NOT EVALUATED
+ 6:           786          11887    8948          FLAG
+ 7:             0              0       0          PASS
+ 8:          1597              0   10924          FLAG
+ 9:          1597              0    8914          FLAG
+10:          1597              0    5601          FLAG
+11:            19              0       0 NOT EVALUATED
+12:            19              0       0 NOT EVALUATED
+13:            19              0       0 NOT EVALUATED
+14:             0              0       0          PASS
+15:             0              0    7285          FLAG
+16:         27097              0       0 NOT EVALUATED
+
+FLAGGED DETAIL
+            arm                          relation  group        site density
+         <char>                            <char> <char>      <char>  <char>
+    1: conus_b1             T0 initial-step shock     BM unspecified     obs
+    2: conus_b1             T0 initial-step shock     BM unspecified     obs
+    3: conus_b1             T0 initial-step shock     BM unspecified     obs
+    4: conus_b1             T0 initial-step shock     BM unspecified     obs
+    5: conus_b1             T0 initial-step shock     BM unspecified     obs
+   ---                                                                      
+47344: conus_b1 T9 BA inversions (>10% step drop)     WS unspecified     obs
+47345: conus_b1 T9 BA inversions (>10% step drop)     WS unspecified     obs
+47346: conus_b1 T9 BA inversions (>10% step drop)     WS unspecified     obs
+47347: conus_b1 T9 BA inversions (>10% step drop)     WS unspecified     obs
+47348: conus_b1 T9 BA inversions (>10% step drop)     WS unspecified     obs
+                                detail
+                                <char>
+    1:  first 5 yr: stems -26%, BA +8%
+    2:  first 5 yr: stems -28%, BA -6%
+    3: first 5 yr: stems -44%, BA -14%
+    4:  first 5 yr: stems -25%, BA +7%
+    5: first 5 yr: stems -27%, BA +40%
+   ---                                
+47344:                   7 of 20 steps
+47345:                   9 of 20 steps
+47346:                   6 of 20 steps
+47347:                   7 of 20 steps
+47348:                   8 of 20 steps
+
+NOT EVALUATED DETAIL
+            arm                                     relation  group        site
+         <char>                                       <char> <char>      <char>
+    1: conus_b1                           T1 monotone HT_dom     AK unspecified
+    2: conus_b1                              T1 monotone QMD     AK unspecified
+    3: conus_b1           T9 VOL inversions (>10% step drop)     AK unspecified
+    4: conus_b1                         T4 peak SDI / SDImax     AK unspecified
+    5: conus_b1                    T4 max BA vs observed p99     AK unspecified
+   ---                                                                         
+70283: conus_b1                          T2 site ordering HT     WS         all
+70284: conus_b1                         T2 site ordering VOL     WS         all
+70285: conus_b1         T5 Eichhorn VOL~HT site independence     WS         all
+70286: conus_b1  T6 Sukachev per-tree VOL falls with density     WS         all
+70287: conus_b1 T7 yield-density final BA vs initial density     WS         all
+       density
+        <char>
+    1:     obs
+    2:     obs
+    3:     obs
+    4:     obs
+    5:     obs
+   ---        
+70283:     all
+70284:     all
+70285:     all
+70286:     all
+70287:     all
+                                                                                    detail
+                                                                                    <char>
+    1:                                                   no dominant height in this source
+    2: QMD dips with 8 stem-gain steps (ingrowth present); QMD monotonicity not diagnostic
+    3:                                                            no volume in this source
+    4:                                       no SDImax supplied for this group (--sdimax=)
+    5:                       max BA 43.0 m2 ha-1; no observed p99 supplied (--obs_ba_p99=)
+   ---                                                                                    
+70283:                                                                   single site level
+70284:                                                                   single site level
+70285:                                                     site axis inert or single level
+70286:                                                                single density level
+70287:                                                                single density level
+
+Reineke axis: 14424 trajectories evaluated, 786 not evaluated, 8948 flagged. A zero flag count rests only on the evaluated count.
+This test falsifies; a pass is not a confirmation of accuracy.
+There were 19 warnings (use warnings() to see them)
+Wrote outputs to proj_rescore2/b1_native

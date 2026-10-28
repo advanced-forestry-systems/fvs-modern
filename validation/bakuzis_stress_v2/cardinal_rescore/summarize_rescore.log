@@ -1,0 +1,384 @@
+===== b1_native 
+                             relation evaluated not_eval    na flagged
+                               <char>     <int>    <int> <int>   <int>
+1:              T0 initial-step shock     27097        0     0     755
+2:                 T1 monotone HT_dom         0    27097     0       0
+3:                    T1 monotone QMD     16676    10421     0    4921
+4:  T9 BA inversions (>10% step drop)     27097        0     0    7285
+5: T9 VOL inversions (>10% step drop)         0    27097     0       0
+6:  T3 Reineke slope (trajectory OLS)     14424      786 11887    8948
+7:               T4 peak SDI / SDImax     25500     1597     0    5601
+8:          T4 max BA vs observed p99     25500     1597     0   10924
+9:        T4 max BA vs observed p99.9     25500     1597     0    8914
+Reineke slope by variant (evaluated only):
+     group     n  flag   med
+    <char> <int> <int> <num>
+ 1:     AK    95    77 -0.73
+ 2:     BM   714   337 -1.29
+ 3:     CA   730   206 -1.62
+ 4:     CI   488   225 -1.41
+ 5:     CR   277    49 -1.74
+ 6:     CS  1435  1238 -0.37
+ 7:     EC   718   234 -1.59
+ 8:     EM   356   109 -1.59
+ 9:     IE   837   445 -1.18
+10:     LS  1157  1018 -0.14
+11:     NC  1464   952 -1.59
+12:     NE  1423  1286 -0.14
+13:     PN   987   628 -0.86
+14:     SN  1446  1366  0.12
+15:     SO   537   158 -1.63
+16:     TT   296   101 -1.62
+17:     UT   147    47 -1.59
+18:     WC   935   342 -1.61
+19:     WS   382   130 -1.69
+SDI ratio and BA p999 by variant:
+     group     n  over   med   p90
+    <char> <int> <int> <num> <num>
+ 1:     AK    97     0    NA    NA
+ 2:     BM  1500   101  0.58  0.99
+ 3:     CA  1500    73  0.57  0.93
+ 4:     CI  1500    71  0.45  0.88
+ 5:     CR  1500    13  0.35  0.68
+ 6:     CS  1500  1202  1.33  1.83
+ 7:     EC  1500    80  0.57  0.95
+ 8:     EM  1500    17  0.41  0.77
+ 9:     IE  1500   204  0.65  1.12
+10:     LS  1500   934  1.18  1.72
+11:     NC  1500     0    NA    NA
+12:     NE  1500  1106  1.23  1.72
+13:     PN  1500   209  0.76  1.10
+14:     SN  1500  1363  1.50  2.13
+15:     SO  1500    42  0.45  0.85
+16:     TT  1500    15  0.38  0.71
+17:     UT  1500     4  0.31  0.58
+18:     WC  1500   145  0.68  1.04
+19:     WS  1500    22  0.40  0.76
+     group     n  over
+    <char> <int> <int>
+ 1:     AK    97     0
+ 2:     BM  1500   415
+ 3:     CA  1500   301
+ 4:     CI  1500   228
+ 5:     CR  1500    84
+ 6:     CS  1500  1340
+ 7:     EC  1500   176
+ 8:     EM  1500   170
+ 9:     IE  1500   591
+10:     LS  1500  1183
+11:     NC  1500     0
+12:     NE  1500  1444
+13:     PN  1500   873
+14:     SN  1500  1472
+15:     SO  1500   143
+16:     TT  1500    69
+17:     UT  1500    23
+18:     WC  1500   352
+19:     WS  1500    50
+     group status                                                  detail
+    <char> <char>                                                  <char>
+ 1:     AK   PASS    slope -2.18 on 1402 limb points from 94 trajectories
+ 2:     BM   PASS   slope -2.00 on 7690 limb points from 658 trajectories
+ 3:     CA   PASS   slope -1.96 on 8548 limb points from 730 trajectories
+ 4:     CI   PASS   slope -1.84 on 4735 limb points from 469 trajectories
+ 5:     CR   PASS   slope -1.62 on 2934 limb points from 289 trajectories
+ 6:     CS   PASS slope -1.51 on 13619 limb points from 1076 trajectories
+ 7:     EC   PASS   slope -2.01 on 8848 limb points from 719 trajectories
+ 8:     EM   PASS   slope -1.70 on 3635 limb points from 354 trajectories
+ 9:     IE   PASS   slope -1.91 on 9536 limb points from 778 trajectories
+10:     LS   PASS   slope -1.68 on 9428 limb points from 814 trajectories
+11:     NC   PASS slope -1.96 on 20906 limb points from 1368 trajectories
+12:     NE   PASS slope -1.91 on 12163 limb points from 1073 trajectories
+13:     PN   PASS   slope -1.88 on 8845 limb points from 797 trajectories
+14:     SN   PASS   slope -1.67 on 5574 limb points from 705 trajectories
+15:     SO   PASS   slope -1.97 on 5688 limb points from 518 trajectories
+16:     TT   PASS   slope -1.64 on 2622 limb points from 298 trajectories
+17:     UT   PASS   slope -1.62 on 1297 limb points from 157 trajectories
+18:     WC   PASS  slope -2.12 on 10959 limb points from 938 trajectories
+19:     WS   PASS   slope -2.00 on 3837 limb points from 396 trajectories
+===== b2_native 
+                             relation evaluated not_eval    na flagged
+                               <char>     <int>    <int> <int>   <int>
+1:              T0 initial-step shock     27097        0     0     636
+2:                 T1 monotone HT_dom         0    27097     0       0
+3:                    T1 monotone QMD     16682    10415     0    5309
+4:  T9 BA inversions (>10% step drop)     27097        0     0    8289
+5: T9 VOL inversions (>10% step drop)         0    27097     0       0
+6:  T3 Reineke slope (trajectory OLS)     12955     1324 12818    7916
+7:               T4 peak SDI / SDImax     25500     1597     0    4257
+8:          T4 max BA vs observed p99     25500     1597     0    9171
+9:        T4 max BA vs observed p99.9     25500     1597     0    7195
+Reineke slope by variant (evaluated only):
+     group     n  flag   med
+    <char> <int> <int> <num>
+ 1:     AK    95    67 -1.03
+ 2:     BM   561   228 -1.52
+ 3:     CA   552   192 -1.67
+ 4:     CI   418   149 -1.61
+ 5:     CR   199    42 -1.75
+ 6:     CS  1380  1137 -0.39
+ 7:     EC   577   174 -1.68
+ 8:     EM   303    93 -1.69
+ 9:     IE   743   346 -1.44
+10:     LS  1120   932 -0.14
+11:     NC  1430  1025 -1.89
+12:     NE  1368  1167 -0.17
+13:     PN   928   509 -1.26
+14:     SN  1334  1194  0.11
+15:     SO   421   125 -1.71
+16:     TT   294    59 -1.68
+17:     UT   127    35 -1.62
+18:     WC   802   332 -1.72
+19:     WS   303   110 -1.81
+SDI ratio and BA p999 by variant:
+     group     n  over   med   p90
+    <char> <int> <int> <num> <num>
+ 1:     AK    97     0    NA    NA
+ 2:     BM  1500    75  0.51  0.92
+ 3:     CA  1500    21  0.50  0.82
+ 4:     CI  1500    34  0.42  0.80
+ 5:     CR  1500     4  0.34  0.62
+ 6:     CS  1500  1049  1.18  1.57
+ 7:     EC  1500    26  0.51  0.85
+ 8:     EM  1500     4  0.40  0.71
+ 9:     IE  1500   118  0.60  1.01
+10:     LS  1500   746  1.05  1.45
+11:     NC  1500     0    NA    NA
+12:     NE  1500   838  1.09  1.44
+13:     PN  1500    69  0.69  0.95
+14:     SN  1500  1185  1.26  1.69
+15:     SO  1500    13  0.42  0.79
+16:     TT  1500     3  0.41  0.70
+17:     UT  1500     0  0.32  0.57
+18:     WC  1500    63  0.62  0.92
+19:     WS  1500     9  0.37  0.71
+     group     n  over
+    <char> <int> <int>
+ 1:     AK    97     0
+ 2:     BM  1500   258
+ 3:     CA  1500    72
+ 4:     CI  1500   102
+ 5:     CR  1500    32
+ 6:     CS  1500  1196
+ 7:     EC  1500    42
+ 8:     EM  1500    78
+ 9:     IE  1500   407
+10:     LS  1500  1177
+11:     NC  1500     0
+12:     NE  1500  1424
+13:     PN  1500   706
+14:     SN  1500  1446
+15:     SO  1500    60
+16:     TT  1500    21
+17:     UT  1500    12
+18:     WC  1500   142
+19:     WS  1500    20
+     group status                                                  detail
+    <char> <char>                                                  <char>
+ 1:     AK   FLAG    slope -2.30 on 1465 limb points from 93 trajectories
+ 2:     BM   PASS   slope -1.73 on 5826 limb points from 531 trajectories
+ 3:     CA   PASS   slope -1.84 on 5249 limb points from 560 trajectories
+ 4:     CI   PASS   slope -1.65 on 3700 limb points from 417 trajectories
+ 5:     CR   PASS   slope -1.82 on 1896 limb points from 219 trajectories
+ 6:     CS   PASS slope -1.73 on 12858 limb points from 1063 trajectories
+ 7:     EC   PASS   slope -1.88 on 6362 limb points from 597 trajectories
+ 8:     EM   PASS   slope -1.79 on 2664 limb points from 313 trajectories
+ 9:     IE   PASS   slope -1.89 on 7843 limb points from 696 trajectories
+10:     LS   PASS   slope -1.83 on 7984 limb points from 798 trajectories
+11:     NC   PASS slope -1.98 on 19308 limb points from 1335 trajectories
+12:     NE   PASS slope -1.86 on 10758 limb points from 1049 trajectories
+13:     PN   PASS   slope -1.59 on 7367 limb points from 760 trajectories
+14:     SN   PASS   slope -1.79 on 5256 limb points from 688 trajectories
+15:     SO   PASS   slope -1.90 on 3985 limb points from 418 trajectories
+16:     TT   PASS   slope -1.58 on 2433 limb points from 309 trajectories
+17:     UT   PASS   slope -1.95 on 1008 limb points from 136 trajectories
+18:     WC   PASS   slope -1.91 on 7692 limb points from 813 trajectories
+19:     WS   PASS   slope -1.79 on 2429 limb points from 327 trajectories
+===== b1_gompit 
+                             relation evaluated not_eval    na flagged
+                               <char>     <int>    <int> <int>   <int>
+1:              T0 initial-step shock     24097        0     0     480
+2:                 T1 monotone HT_dom         0    24097     0       0
+3:                    T1 monotone QMD     13338    10759     0    8359
+4:  T9 BA inversions (>10% step drop)     24097        0     0   12055
+5: T9 VOL inversions (>10% step drop)         0    24097     0       0
+6:  T3 Reineke slope (trajectory OLS)      9297      332 14468    2968
+7:               T4 peak SDI / SDImax     22500     1597     0    1045
+8:          T4 max BA vs observed p99     22500     1597     0    4719
+9:        T4 max BA vs observed p99.9     22500     1597     0    2680
+Reineke slope by variant (evaluated only):
+     group     n  flag   med
+    <char> <int> <int> <num>
+ 1:     AK    97    50 -1.49
+ 2:     BM   385    41 -1.71
+ 3:     CA   523    84 -1.78
+ 4:     CI   336    55 -1.69
+ 5:     CR   165    25 -1.70
+ 6:     CS  1348   620 -1.26
+ 7:     EC   498    85 -1.77
+ 8:     EM   239    63 -1.73
+ 9:     IE   629    75 -1.72
+10:     LS   971   210 -1.56
+11:     NC  1491  1080 -2.25
+12:     PN   824   110 -1.78
+13:     SO   301    44 -1.72
+14:     TT   175    50 -1.68
+15:     UT   119    62 -1.54
+16:     WC   892   234 -1.82
+17:     WS   304    80 -1.82
+SDI ratio and BA p999 by variant:
+     group     n  over   med   p90
+    <char> <int> <int> <num> <num>
+ 1:     AK    97     0    NA    NA
+ 2:     BM  1500    12  0.43  0.74
+ 3:     CA  1500    20  0.49  0.80
+ 4:     CI  1500    10  0.38  0.72
+ 5:     CR  1500     1  0.34  0.59
+ 6:     CS  1500   552  0.96  1.30
+ 7:     EC  1500    27  0.46  0.82
+ 8:     EM  1500     0  0.36  0.65
+ 9:     IE  1500    57  0.51  0.88
+10:     LS  1500   235  0.74  1.14
+11:     NC  1500     0    NA    NA
+12:     PN  1500    46  0.59  0.90
+13:     SO  1500     5  0.37  0.70
+14:     TT  1500     2  0.33  0.63
+15:     UT  1500     0  0.34  0.56
+16:     WC  1500    67  0.64  0.94
+17:     WS  1500    11  0.35  0.71
+     group     n  over
+    <char> <int> <int>
+ 1:     AK    97     0
+ 2:     BM  1500    57
+ 3:     CA  1500    64
+ 4:     CI  1500    45
+ 5:     CR  1500    16
+ 6:     CS  1500   750
+ 7:     EC  1500    35
+ 8:     EM  1500    34
+ 9:     IE  1500   217
+10:     LS  1500   817
+11:     NC  1500     0
+12:     PN  1500   412
+13:     SO  1500    25
+14:     TT  1500    26
+15:     UT  1500    23
+16:     WC  1500   146
+17:     WS  1500    13
+     group status                                                  detail
+    <char> <char>                                                  <char>
+ 1:     AK   FLAG    slope -2.37 on 1374 limb points from 96 trajectories
+ 2:     BM   PASS   slope -1.91 on 3028 limb points from 410 trajectories
+ 3:     CA   PASS   slope -1.97 on 4504 limb points from 556 trajectories
+ 4:     CI   PASS   slope -1.85 on 2477 limb points from 352 trajectories
+ 5:     CR   PASS   slope -1.80 on 1178 limb points from 200 trajectories
+ 6:     CS   PASS slope -1.67 on 13409 limb points from 1252 trajectories
+ 7:     EC   PASS   slope -2.00 on 4555 limb points from 527 trajectories
+ 8:     EM   PASS   slope -1.75 on 1732 limb points from 274 trajectories
+ 9:     IE   PASS   slope -2.00 on 6427 limb points from 653 trajectories
+10:     LS   PASS  slope -1.85 on 10583 limb points from 977 trajectories
+11:     NC   FLAG slope -2.22 on 21887 limb points from 1444 trajectories
+12:     PN   PASS   slope -2.01 on 7746 limb points from 859 trajectories
+13:     SO   PASS   slope -1.70 on 2401 limb points from 332 trajectories
+14:     TT   PASS   slope -1.60 on 1048 limb points from 181 trajectories
+15:     UT   PASS    slope -1.60 on 789 limb points from 125 trajectories
+16:     WC   PASS   slope -2.14 on 9065 limb points from 925 trajectories
+17:     WS   PASS   slope -2.01 on 2445 limb points from 335 trajectories
+===== b2_gompit 
+                             relation evaluated not_eval    na flagged
+                               <char>     <int>    <int> <int>   <int>
+1:              T0 initial-step shock     27097        0     0     538
+2:                 T1 monotone HT_dom         0    27097     0       0
+3:                    T1 monotone QMD     14109    12988     0    8638
+4:  T9 BA inversions (>10% step drop)     27097        0     0   13836
+5: T9 VOL inversions (>10% step drop)         0    27097     0       0
+6:  T3 Reineke slope (trajectory OLS)     10842      774 15481    3828
+7:               T4 peak SDI / SDImax     25500     1597     0    1141
+8:          T4 max BA vs observed p99     25500     1597     0    6292
+9:        T4 max BA vs observed p99.9     25500     1597     0    3367
+Reineke slope by variant (evaluated only):
+     group     n  flag   med
+    <char> <int> <int> <num>
+ 1:     AK    97    61 -1.56
+ 2:     BM   328    46 -1.77
+ 3:     CA   422    98 -1.83
+ 4:     CI   319    57 -1.70
+ 5:     CR   137    34 -1.72
+ 6:     CS  1285   531 -1.31
+ 7:     EC   411   103 -1.80
+ 8:     EM   235    70 -1.74
+ 9:     IE   555    80 -1.76
+10:     LS   889   150 -1.63
+11:     NC  1488  1174 -2.26
+12:     NE  1245   271 -1.57
+13:     PN   738   143 -1.80
+14:     SN  1168   517 -1.41
+15:     SO   263    53 -1.78
+16:     TT   161    36 -1.75
+17:     UT   111    46 -1.63
+18:     WC   732   264 -1.92
+19:     WS   258    94 -1.85
+SDI ratio and BA p999 by variant:
+     group     n  over   med   p90
+    <char> <int> <int> <num> <num>
+ 1:     AK    97     0    NA    NA
+ 2:     BM  1500    11  0.40  0.74
+ 3:     CA  1500     8  0.45  0.75
+ 4:     CI  1500    10  0.37  0.71
+ 5:     CR  1500     1  0.34  0.57
+ 6:     CS  1500   355  0.87  1.17
+ 7:     EC  1500    18  0.44  0.77
+ 8:     EM  1500     1  0.37  0.67
+ 9:     IE  1500    34  0.50  0.82
+10:     LS  1500   149  0.72  1.05
+11:     NC  1500     0    NA    NA
+12:     NE  1500   188  0.78  1.08
+13:     PN  1500    74  0.57  0.89
+14:     SN  1500   239  0.81  1.12
+15:     SO  1500     7  0.37  0.68
+16:     TT  1500     2  0.36  0.61
+17:     UT  1500     0  0.35  0.56
+18:     WC  1500    38  0.58  0.88
+19:     WS  1500     6  0.34  0.67
+     group     n  over
+    <char> <int> <int>
+ 1:     AK    97     0
+ 2:     BM  1500    48
+ 3:     CA  1500    24
+ 4:     CI  1500    35
+ 5:     CR  1500     7
+ 6:     CS  1500   434
+ 7:     EC  1500    13
+ 8:     EM  1500    24
+ 9:     IE  1500   132
+10:     LS  1500   652
+11:     NC  1500     0
+12:     NE  1500   835
+13:     PN  1500   273
+14:     SN  1500   757
+15:     SO  1500    25
+16:     TT  1500     7
+17:     UT  1500    10
+18:     WC  1500    73
+19:     WS  1500    18
+     group status                                                  detail
+    <char> <char>                                                  <char>
+ 1:     AK   FLAG    slope -2.38 on 1306 limb points from 96 trajectories
+ 2:     BM   PASS   slope -1.82 on 2377 limb points from 353 trajectories
+ 3:     CA   PASS   slope -1.77 on 3141 limb points from 455 trajectories
+ 4:     CI   PASS   slope -1.70 on 2244 limb points from 347 trajectories
+ 5:     CR   PASS   slope -1.85 on 1008 limb points from 165 trajectories
+ 6:     CS   PASS slope -1.61 on 13152 limb points from 1236 trajectories
+ 7:     EC   PASS   slope -1.86 on 3229 limb points from 448 trajectories
+ 8:     EM   PASS   slope -1.66 on 1584 limb points from 260 trajectories
+ 9:     IE   PASS   slope -1.88 on 5084 limb points from 596 trajectories
+10:     LS   PASS   slope -1.96 on 9464 limb points from 909 trajectories
+11:     NC   PASS slope -2.13 on 20385 limb points from 1436 trajectories
+12:     NE   PASS slope -1.97 on 14147 limb points from 1245 trajectories
+13:     PN   PASS   slope -1.60 on 6520 limb points from 788 trajectories
+14:     SN   PASS  slope -1.79 on 9027 limb points from 1142 trajectories
+15:     SO   PASS   slope -1.83 on 1860 limb points from 295 trajectories
+16:     TT   PASS    slope -1.80 on 844 limb points from 193 trajectories
+17:     UT   PASS    slope -1.76 on 732 limb points from 124 trajectories
+18:     WC   PASS   slope -1.97 on 6033 limb points from 775 trajectories
+19:     WS   PASS   slope -1.65 on 1731 limb points from 284 trajectories

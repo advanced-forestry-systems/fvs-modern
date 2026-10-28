@@ -1,0 +1,5 @@
+arm,n_stand_year,n_dropped_nonphysical,R2_AGB_HTDOM,rmse_base_tons_ac,rmse_full_tons_ac,site_class_rmse_reduction_pct,site_class_band_frac_of_sd,eichhorn_flag
+b1_native,4078927,1444,0.2962,58.133,57.954,0.31,0.055,PASS
+b2_native,4079677,763,0.4158,48.126,48.051,0.15,0.05,PASS
+b2_gompit,4078536,925,0.4989,31.863,31.757,0.33,0.148,PASS
+b1_gompit,1605234,775,0.5707,34.238,33.842,1.16,0.1,PASS

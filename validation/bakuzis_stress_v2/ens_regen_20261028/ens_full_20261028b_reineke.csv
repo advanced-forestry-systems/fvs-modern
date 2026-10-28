@@ -1,0 +1,161 @@
+arm,group,site,density,traj,step_yr,relation,status,value,detail
+ACD_calibrated_map,Northern-Hardwood,High,High,Northern-Hardwood|High|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.67579766505681,"slope -1.68 on 4 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.61)"
+ACD_default,Northern-Hardwood,High,High,Northern-Hardwood|High|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.67579766505681,"slope -1.68 on 4 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.61)"
+NE_calibrated_map,Northern-Hardwood,High,High,Northern-Hardwood|High|High,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.60 < gate 0.55 (stems -93% over the run)
+NE_default,Northern-Hardwood,High,High,Northern-Hardwood|High|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.68140701080472,"slope -1.68 on 11 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.63)"
+ACD_calibrated_map,Northern-Hardwood,High,Low,Northern-Hardwood|High|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.51 < gate 0.55 (stems -81% over the run)
+ACD_default,Northern-Hardwood,High,Low,Northern-Hardwood|High|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.51 < gate 0.55 (stems -81% over the run)
+NE_calibrated_map,Northern-Hardwood,High,Low,Northern-Hardwood|High|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.50 < gate 0.55 (stems -90% over the run)
+NE_default,Northern-Hardwood,High,Low,Northern-Hardwood|High|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.41461549050179,"slope -1.41 on 4 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.57)"
+ACD_calibrated_map,Northern-Hardwood,High,Medium,Northern-Hardwood|High|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.62473132418607,"slope -1.62 on 4 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.57)"
+ACD_default,Northern-Hardwood,High,Medium,Northern-Hardwood|High|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.62473132418607,"slope -1.62 on 4 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.57)"
+NE_calibrated_map,Northern-Hardwood,High,Medium,Northern-Hardwood|High|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.52 < gate 0.55 (stems -91% over the run)
+NE_default,Northern-Hardwood,High,Medium,Northern-Hardwood|High|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.61266135343205,"slope -1.61 on 4 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.58)"
+ACD_calibrated_map,Northern-Hardwood,Low,High,Northern-Hardwood|Low|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.66146307256083,"slope -1.66 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.71)"
+ACD_default,Northern-Hardwood,Low,High,Northern-Hardwood|Low|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.66146307256083,"slope -1.66 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.71)"
+NE_calibrated_map,Northern-Hardwood,Low,High,Northern-Hardwood|Low|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.61144932879837,"slope -1.61 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.82)"
+NE_default,Northern-Hardwood,Low,High,Northern-Hardwood|Low|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.60007716668882,"slope -1.60 on 17 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.88)"
+ACD_calibrated_map,Northern-Hardwood,Low,Low,Northern-Hardwood|Low|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.49080730312803,"slope -1.49 on 10 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.61)"
+ACD_default,Northern-Hardwood,Low,Low,Northern-Hardwood|Low|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.49080730312803,"slope -1.49 on 10 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.61)"
+NE_calibrated_map,Northern-Hardwood,Low,Low,Northern-Hardwood|Low|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.73178676831113,"slope -1.73 on 14 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.65)"
+NE_default,Northern-Hardwood,Low,Low,Northern-Hardwood|Low|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.52469446786021,"slope -1.52 on 15 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.75)"
+ACD_calibrated_map,Northern-Hardwood,Low,Medium,Northern-Hardwood|Low|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.58324822735455,"slope -1.58 on 20 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.65)"
+ACD_default,Northern-Hardwood,Low,Medium,Northern-Hardwood|Low|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.58324822735455,"slope -1.58 on 20 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.65)"
+NE_calibrated_map,Northern-Hardwood,Low,Medium,Northern-Hardwood|Low|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.53765395037513,"slope -1.54 on 19 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.78)"
+NE_default,Northern-Hardwood,Low,Medium,Northern-Hardwood|Low|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.34337397909428,"slope -1.34 on 20 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.87)"
+ACD_calibrated_map,Northern-Hardwood,Medium,High,Northern-Hardwood|Medium|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.71355587970586,"slope -1.71 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.69)"
+ACD_default,Northern-Hardwood,Medium,High,Northern-Hardwood|Medium|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.71355587970586,"slope -1.71 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.69)"
+NE_calibrated_map,Northern-Hardwood,Medium,High,Northern-Hardwood|Medium|High,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.52 < gate 0.55 (stems -86% over the run)
+NE_default,Northern-Hardwood,Medium,High,Northern-Hardwood|Medium|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.66502191383214,"slope -1.67 on 9 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.60)"
+ACD_calibrated_map,Northern-Hardwood,Medium,Low,Northern-Hardwood|Medium|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.54 < gate 0.55 (stems -70% over the run)
+ACD_default,Northern-Hardwood,Medium,Low,Northern-Hardwood|Medium|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.54 < gate 0.55 (stems -70% over the run)
+NE_calibrated_map,Northern-Hardwood,Medium,Low,Northern-Hardwood|Medium|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.52 < gate 0.55 (stems -77% over the run)
+NE_default,Northern-Hardwood,Medium,Low,Northern-Hardwood|Medium|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.54 < gate 0.55 (stems -76% over the run)
+ACD_calibrated_map,Northern-Hardwood,Medium,Medium,Northern-Hardwood|Medium|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.75087863119842,"slope -1.75 on 17 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.67)"
+ACD_default,Northern-Hardwood,Medium,Medium,Northern-Hardwood|Medium|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.75087863119842,"slope -1.75 on 17 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.67)"
+NE_calibrated_map,Northern-Hardwood,Medium,Medium,Northern-Hardwood|Medium|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.52 < gate 0.55 (stems -84% over the run)
+NE_default,Northern-Hardwood,Medium,Medium,Northern-Hardwood|Medium|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.71955736974641,"slope -1.72 on 4 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.59)"
+ACD_calibrated_map,Oak-Pine,High,High,Oak-Pine|High|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.82547529248892,"slope -1.83 on 10 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.68)"
+ACD_default,Oak-Pine,High,High,Oak-Pine|High|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.82547529248892,"slope -1.83 on 10 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.68)"
+NE_calibrated_map,Oak-Pine,High,High,Oak-Pine|High|High,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.50 < gate 0.55 (stems -87% over the run)
+NE_default,Oak-Pine,High,High,Oak-Pine|High|High,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.57 < gate 0.55 (stems -82% over the run)
+ACD_calibrated_map,Oak-Pine,High,Low,Oak-Pine|High|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.54 < gate 0.55 (stems -73% over the run)
+ACD_default,Oak-Pine,High,Low,Oak-Pine|High|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.54 < gate 0.55 (stems -73% over the run)
+NE_calibrated_map,Oak-Pine,High,Low,Oak-Pine|High|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.46 < gate 0.55 (stems -81% over the run)
+NE_default,Oak-Pine,High,Low,Oak-Pine|High|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.76948506739389,"slope -1.77 on 3 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.57)"
+ACD_calibrated_map,Oak-Pine,High,Medium,Oak-Pine|High|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.55 < gate 0.55 (stems -91% over the run)
+ACD_default,Oak-Pine,High,Medium,Oak-Pine|High|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.55 < gate 0.55 (stems -91% over the run)
+NE_calibrated_map,Oak-Pine,High,Medium,Oak-Pine|High|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.54 < gate 0.55 (stems -86% over the run)
+NE_default,Oak-Pine,High,Medium,Oak-Pine|High|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.58 < gate 0.55 (stems -84% over the run)
+ACD_calibrated_map,Oak-Pine,Low,High,Oak-Pine|Low|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.74560188032977,"slope -1.75 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.70)"
+ACD_default,Oak-Pine,Low,High,Oak-Pine|Low|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.74560188032977,"slope -1.75 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.70)"
+NE_calibrated_map,Oak-Pine,Low,High,Oak-Pine|Low|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.4273283709562,"slope -1.43 on 20 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.69)"
+NE_default,Oak-Pine,Low,High,Oak-Pine|Low|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.41523882755278,"slope -1.42 on 19 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.83)"
+ACD_calibrated_map,Oak-Pine,Low,Low,Oak-Pine|Low|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.5505981438392,"slope -1.55 on 18 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.68)"
+ACD_default,Oak-Pine,Low,Low,Oak-Pine|Low|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.5505981438392,"slope -1.55 on 18 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.68)"
+NE_calibrated_map,Oak-Pine,Low,Low,Oak-Pine|Low|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.33429457225237,"slope -1.33 on 13 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.72)"
+NE_default,Oak-Pine,Low,Low,Oak-Pine|Low|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.21901561120732,"slope -1.22 on 15 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.81)"
+ACD_calibrated_map,Oak-Pine,Low,Medium,Oak-Pine|Low|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.53487309726013,"slope -1.53 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.68)"
+ACD_default,Oak-Pine,Low,Medium,Oak-Pine|Low|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.53487309726013,"slope -1.53 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.68)"
+NE_calibrated_map,Oak-Pine,Low,Medium,Oak-Pine|Low|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.57626043889018,"slope -1.58 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.78)"
+NE_default,Oak-Pine,Low,Medium,Oak-Pine|Low|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.40236999780688,"slope -1.40 on 20 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.90)"
+ACD_calibrated_map,Oak-Pine,Medium,High,Oak-Pine|Medium|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.84973088487115,"slope -1.85 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.74)"
+ACD_default,Oak-Pine,Medium,High,Oak-Pine|Medium|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.84973088487115,"slope -1.85 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.74)"
+NE_calibrated_map,Oak-Pine,Medium,High,Oak-Pine|Medium|High,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.52 < gate 0.55 (stems -82% over the run)
+NE_default,Oak-Pine,Medium,High,Oak-Pine|Medium|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.61036048352729,"slope -1.61 on 5 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.58)"
+ACD_calibrated_map,Oak-Pine,Medium,Low,Oak-Pine|Medium|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.65324703622247,"slope -1.65 on 5 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.56)"
+ACD_default,Oak-Pine,Medium,Low,Oak-Pine|Medium|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.65324703622247,"slope -1.65 on 5 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.56)"
+NE_calibrated_map,Oak-Pine,Medium,Low,Oak-Pine|Medium|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.55 < gate 0.55 (stems -84% over the run)
+NE_default,Oak-Pine,Medium,Low,Oak-Pine|Medium|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.71581553575588,"slope -1.72 on 10 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.63)"
+ACD_calibrated_map,Oak-Pine,Medium,Medium,Oak-Pine|Medium|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.55507926373137,"slope -1.56 on 6 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.59)"
+ACD_default,Oak-Pine,Medium,Medium,Oak-Pine|Medium|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.55507926373137,"slope -1.56 on 6 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.59)"
+NE_calibrated_map,Oak-Pine,Medium,Medium,Oak-Pine|Medium|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.62676451962001,"slope -1.63 on 9 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.64)"
+NE_default,Oak-Pine,Medium,Medium,Oak-Pine|Medium|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.67932707456551,"slope -1.68 on 18 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.72)"
+ACD_calibrated_map,Pine,High,High,Pine|High|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.67860445632739,"slope -1.68 on 9 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.66)"
+ACD_default,Pine,High,High,Pine|High|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.67860445632739,"slope -1.68 on 9 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.66)"
+NE_calibrated_map,Pine,High,High,Pine|High|High,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.50 < gate 0.55 (stems -76% over the run)
+NE_default,Pine,High,High,Pine|High|High,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.56 < gate 0.55 (stems -72% over the run)
+ACD_calibrated_map,Pine,High,Low,Pine|High|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.52 < gate 0.55 (stems -84% over the run)
+ACD_default,Pine,High,Low,Pine|High|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.52 < gate 0.55 (stems -84% over the run)
+NE_calibrated_map,Pine,High,Low,Pine|High|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.44 < gate 0.55 (stems -74% over the run)
+NE_default,Pine,High,Low,Pine|High|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.47 < gate 0.55 (stems -68% over the run)
+ACD_calibrated_map,Pine,High,Medium,Pine|High|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.70199334463936,"slope -1.70 on 5 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.59)"
+ACD_default,Pine,High,Medium,Pine|High|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.70199334463936,"slope -1.70 on 5 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.59)"
+NE_calibrated_map,Pine,High,Medium,Pine|High|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.51 < gate 0.55 (stems -86% over the run)
+NE_default,Pine,High,Medium,Pine|High|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.56 < gate 0.55 (stems -83% over the run)
+ACD_calibrated_map,Pine,Low,High,Pine|Low|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.70846039934925,"slope -1.71 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.72)"
+ACD_default,Pine,Low,High,Pine|Low|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.70846039934925,"slope -1.71 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.72)"
+NE_calibrated_map,Pine,Low,High,Pine|Low|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.83591634762971,"slope -1.84 on 5 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.64)"
+NE_default,Pine,Low,High,Pine|Low|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.82315348417512,"slope -1.82 on 18 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.74)"
+ACD_calibrated_map,Pine,Low,Low,Pine|Low|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.54 < gate 0.55 (stems -37% over the run)
+ACD_default,Pine,Low,Low,Pine|Low|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.54 < gate 0.55 (stems -37% over the run)
+NE_calibrated_map,Pine,Low,Low,Pine|Low|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.63654875409846,"slope -1.64 on 17 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.70)"
+NE_default,Pine,Low,Low,Pine|Low|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.51168410065511,"slope -1.51 on 17 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.72)"
+ACD_calibrated_map,Pine,Low,Medium,Pine|Low|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.60851783385223,"slope -1.61 on 19 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.67)"
+ACD_default,Pine,Low,Medium,Pine|Low|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.60851783385223,"slope -1.61 on 19 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.67)"
+NE_calibrated_map,Pine,Low,Medium,Pine|Low|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.34358040759431,"slope -1.34 on 18 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.77)"
+NE_default,Pine,Low,Medium,Pine|Low|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.29008314748806,"slope -1.29 on 18 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.83)"
+ACD_calibrated_map,Pine,Medium,High,Pine|Medium|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.74268918857881,"slope -1.74 on 11 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.65)"
+ACD_default,Pine,Medium,High,Pine|Medium|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.74268918857881,"slope -1.74 on 11 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.65)"
+NE_calibrated_map,Pine,Medium,High,Pine|Medium|High,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.59 < gate 0.55 (stems -87% over the run)
+NE_default,Pine,Medium,High,Pine|Medium|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.69546115687612,"slope -1.70 on 4 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.59)"
+ACD_calibrated_map,Pine,Medium,Low,Pine|Medium|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.79966262449994,"slope -1.80 on 6 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.58)"
+ACD_default,Pine,Medium,Low,Pine|Medium|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.79966262449994,"slope -1.80 on 6 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.58)"
+NE_calibrated_map,Pine,Medium,Low,Pine|Medium|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.48 < gate 0.55 (stems -71% over the run)
+NE_default,Pine,Medium,Low,Pine|Medium|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.53 < gate 0.55 (stems -66% over the run)
+ACD_calibrated_map,Pine,Medium,Medium,Pine|Medium|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.51 < gate 0.55 (stems -63% over the run)
+ACD_default,Pine,Medium,Medium,Pine|Medium|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.51 < gate 0.55 (stems -63% over the run)
+NE_calibrated_map,Pine,Medium,Medium,Pine|Medium|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.49 < gate 0.55 (stems -85% over the run)
+NE_default,Pine,Medium,Medium,Pine|Medium|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.64579778077968,"slope -1.65 on 3 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.58)"
+ACD_calibrated_map,Spruce-Fir,High,High,Spruce-Fir|High|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.8107421422284,"slope -1.81 on 4 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.61)"
+ACD_default,Spruce-Fir,High,High,Spruce-Fir|High|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.8107421422284,"slope -1.81 on 4 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.61)"
+NE_calibrated_map,Spruce-Fir,High,High,Spruce-Fir|High|High,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.58 < gate 0.55 (stems -88% over the run)
+NE_default,Spruce-Fir,High,High,Spruce-Fir|High|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.69507784587229,"slope -1.70 on 7 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.65)"
+ACD_calibrated_map,Spruce-Fir,High,Low,Spruce-Fir|High|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.55 < gate 0.55 (stems -84% over the run)
+ACD_default,Spruce-Fir,High,Low,Spruce-Fir|High|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.55 < gate 0.55 (stems -84% over the run)
+NE_calibrated_map,Spruce-Fir,High,Low,Spruce-Fir|High|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.40 < gate 0.55 (stems -46% over the run)
+NE_default,Spruce-Fir,High,Low,Spruce-Fir|High|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.43 < gate 0.55 (stems -37% over the run)
+ACD_calibrated_map,Spruce-Fir,High,Medium,Spruce-Fir|High|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.66158449045199,"slope -1.66 on 4 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.57)"
+ACD_default,Spruce-Fir,High,Medium,Spruce-Fir|High|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.66158449045199,"slope -1.66 on 4 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.57)"
+NE_calibrated_map,Spruce-Fir,High,Medium,Spruce-Fir|High|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.42 < gate 0.55 (stems -85% over the run)
+NE_default,Spruce-Fir,High,Medium,Spruce-Fir|High|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.47 < gate 0.55 (stems -83% over the run)
+ACD_calibrated_map,Spruce-Fir,Low,High,Spruce-Fir|Low|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.70815377153052,"slope -1.71 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.76)"
+ACD_default,Spruce-Fir,Low,High,Spruce-Fir|Low|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.70815377153052,"slope -1.71 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.76)"
+NE_calibrated_map,Spruce-Fir,Low,High,Spruce-Fir|Low|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.81177366099045,"slope -1.81 on 20 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.73)"
+NE_default,Spruce-Fir,Low,High,Spruce-Fir|Low|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.75961447534378,"slope -1.76 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.85)"
+ACD_calibrated_map,Spruce-Fir,Low,Low,Spruce-Fir|Low|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.38673999264782,"slope -1.39 on 15 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.63)"
+ACD_default,Spruce-Fir,Low,Low,Spruce-Fir|Low|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.38673999264782,"slope -1.39 on 15 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.63)"
+NE_calibrated_map,Spruce-Fir,Low,Low,Spruce-Fir|Low|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.47842809971669,"slope -1.48 on 13 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.69)"
+NE_default,Spruce-Fir,Low,Low,Spruce-Fir|Low|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.33693524560025,"slope -1.34 on 15 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.80)"
+ACD_calibrated_map,Spruce-Fir,Low,Medium,Spruce-Fir|Low|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.53089449073771,"slope -1.53 on 20 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.69)"
+ACD_default,Spruce-Fir,Low,Medium,Spruce-Fir|Low|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.53089449073771,"slope -1.53 on 20 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.69)"
+NE_calibrated_map,Spruce-Fir,Low,Medium,Spruce-Fir|Low|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.59462198582662,"slope -1.59 on 20 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.70)"
+NE_default,Spruce-Fir,Low,Medium,Spruce-Fir|Low|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.54561301522202,"slope -1.55 on 20 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.74)"
+ACD_calibrated_map,Spruce-Fir,Medium,High,Spruce-Fir|Medium|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.43986213138176,"slope -1.44 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.75)"
+ACD_default,Spruce-Fir,Medium,High,Spruce-Fir|Medium|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.43986213138176,"slope -1.44 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.75)"
+NE_calibrated_map,Spruce-Fir,Medium,High,Spruce-Fir|Medium|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.75334031072452,"slope -1.75 on 10 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.64)"
+NE_default,Spruce-Fir,Medium,High,Spruce-Fir|Medium|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.71213539476378,"slope -1.71 on 19 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.70)"
+ACD_calibrated_map,Spruce-Fir,Medium,Low,Spruce-Fir|Medium|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.69901699822042,"slope -1.70 on 14 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.62)"
+ACD_default,Spruce-Fir,Medium,Low,Spruce-Fir|Medium|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.69901699822042,"slope -1.70 on 14 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.62)"
+NE_calibrated_map,Spruce-Fir,Medium,Low,Spruce-Fir|Medium|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.60900149963643,"slope -1.61 on 4 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.57)"
+NE_default,Spruce-Fir,Medium,Low,Spruce-Fir|Medium|Low,5,T3 Reineke slope (trajectory OLS),PASS,-1.54331880326645,"slope -1.54 on 13 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.66)"
+ACD_calibrated_map,Spruce-Fir,Medium,Medium,Spruce-Fir|Medium|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.65245412279465,"slope -1.65 on 17 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.63)"
+ACD_default,Spruce-Fir,Medium,Medium,Spruce-Fir|Medium|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.65245412279465,"slope -1.65 on 17 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.63)"
+NE_calibrated_map,Spruce-Fir,Medium,Medium,Spruce-Fir|Medium|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.52 < gate 0.55 (stems -87% over the run)
+NE_default,Spruce-Fir,Medium,Medium,Spruce-Fir|Medium|Medium,5,T3 Reineke slope (trajectory OLS),PASS,-1.53625972115872,"slope -1.54 on 4 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.57)"
+ACD_calibrated_map,Northern-Hardwood,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",PASS,-1.83753927514058,slope -1.84 on 95 limb points from 7 trajectories
+ACD_calibrated_map,Oak-Pine,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",PASS,-1.77482014376119,slope -1.77 on 98 limb points from 7 trajectories
+ACD_calibrated_map,Pine,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",PASS,-1.6890492524345,slope -1.69 on 68 limb points from 6 trajectories
+ACD_calibrated_map,Spruce-Fir,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",PASS,-1.67965700577899,slope -1.68 on 114 limb points from 9 trajectories
+ACD_default,Northern-Hardwood,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",PASS,-1.83753927514058,slope -1.84 on 95 limb points from 7 trajectories
+ACD_default,Oak-Pine,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",PASS,-1.77482014376119,slope -1.77 on 98 limb points from 7 trajectories
+ACD_default,Pine,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",PASS,-1.6890492524345,slope -1.69 on 68 limb points from 6 trajectories
+ACD_default,Spruce-Fir,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",PASS,-1.67965700577899,slope -1.68 on 114 limb points from 9 trajectories
+NE_calibrated_map,Northern-Hardwood,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",PASS,-1.61335257060472,slope -1.61 on 54 limb points from 4 trajectories
+NE_calibrated_map,Oak-Pine,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",PASS,-1.73656347650777,slope -1.74 on 62 limb points from 5 trajectories
+NE_calibrated_map,Pine,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",PASS,-1.40972919703896,slope -1.41 on 39 limb points from 3 trajectories
+NE_calibrated_map,Spruce-Fir,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",PASS,-1.72226849252784,slope -1.72 on 66 limb points from 6 trajectories
+NE_default,Northern-Hardwood,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",PASS,-1.7840022491901,slope -1.78 on 82 limb points from 8 trajectories
+NE_default,Oak-Pine,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",PASS,-1.82471248031377,slope -1.82 on 92 limb points from 9 trajectories
+NE_default,Pine,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",PASS,-1.96982286068695,slope -1.97 on 60 limb points from 7 trajectories
+NE_default,Spruce-Fir,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",PASS,-1.75177003989956,slope -1.75 on 96 limb points from 7 trajectories

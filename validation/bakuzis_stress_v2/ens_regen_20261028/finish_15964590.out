@@ -1,0 +1,64 @@
+
+Lmod is automatically replacing "intel/2021.10.0" with "gcc/12.3.0".
+
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) mvapich/4.1
+
+== seed gate Wed Oct 28 07:07:41 PM EDT 2026
+raw rows 771120 variants ACD,NE configs default,calibrated_map,posterior draws 101 
+
+YEAR-0 SEED GATE (default config, each replicate vs its BALIVE selection bin)
+   variant density_class replicates in_bin zero_stems ba_min ba_med ba_max
+    <char>        <char>      <int>  <int>      <int>  <int>  <num>  <int>
+1:     ACD          High         60     47          0     40  161.0    275
+2:     ACD           Low         60     48          0      9   77.5    153
+3:     ACD        Medium         60     57          0     31  122.5    164
+4:      NE          High         60     43          0      9  165.0    240
+5:      NE           Low         60     48          0     10   73.5    221
+6:      NE        Medium         60     53          0     28  117.5    157
+   variant cells cells_populated
+    <char> <int>           <int>
+1:     ACD    36              36
+2:      NE    36              36
+
+F5 bound: cell-median year-100 BA (ft2/ac) by variant and config:
+   variant         config max_cell_median_ft2ac  m2ha
+    <char>         <char>                 <num> <num>
+1:     ACD calibrated_map                   260  59.7
+2:     ACD        default                   260  59.7
+3:     ACD      posterior                   238  54.6
+4:      NE calibrated_map                   277  63.6
+5:      NE        default                   280  64.3
+6:      NE      posterior                   278  63.8
+== aggregate Wed Oct 28 07:07:46 PM EDT 2026
+    ACD        default                   0.00                   0.00                            1.00                          NaN           36
+    ACD posterior_band                   0.17                   0.00                            1.00                          NaN           36
+     NE calibrated_map                   0.00                   0.00                            1.00                          NaN           36
+     NE        default                   0.00                   0.00                            1.00                          NaN           36
+     NE posterior_band                   0.00                   0.00                            1.00                          NaN           36
+total 17
+drwxr-xr-x  2 crsfaaron PUOM0008    4096 Oct 28 19:08 .
+drwxr-xr-x 10 crsfaaron PUOM0008   16384 Oct 28 19:07 ..
+-rw-r--r--  1 crsfaaron PUOM0008  111610 Oct 28 19:08 bakuzis_benchmark_wide.csv
+-rw-r--r--  1 crsfaaron PUOM0008     339 Oct 28 19:08 bakuzis_laws_compliance.csv
+-rw-r--r--  1 crsfaaron PUOM0008 3899367 Oct 28 19:08 bakuzis_uncertainty_summary_long.csv
+== score Wed Oct 28 07:08:05 PM EDT 2026
+    group   ba_p99  ba_p999
+   <char>    <num>    <num>
+1:     NE 51.26469 62.69456
+2:    ACD 51.26469 62.69456
+    group sdimax
+   <char>  <num>
+1:     NE   1498
+2:    ACD   1498
+Reineke axis: 144 trajectories evaluated, 0 not evaluated, 19 flagged. A zero flag count rests only on the evaluated count.
+Wrote outputs to score_ens_full
+variant,config,law_sukachev_fraction,law_eichhorn_fraction,law_density_mortality_fraction,law_mortality_size_fraction,n_scenarios
+ACD,calibrated_map,0.0,0.0,1.0,,36
+ACD,default,0.0,0.0,1.0,,36
+ACD,posterior_band,0.16666666666666666,0.0,1.0,,36
+NE,calibrated_map,0.0,0.0,1.0,,36
+NE,default,0.0,0.0,1.0,,36
+NE,posterior_band,0.0,0.0,1.0,,36
+FINISH_DONE

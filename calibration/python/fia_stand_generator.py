@@ -205,9 +205,9 @@ def build_stand_init(
         "region": _variant_region(variant),
         "forest": 0,
         "district": 0,
-        "basal_area_factor": 0.0,
-        "inv_plot_size": 6.0,
-        "brk_dbh": 5.0,
+        "basal_area_factor": -1.0,  # fixed 1 acre large-tree plot; BAF 0 gave every tree >= brk_dbh zero expansion (found 2026-10-28)
+        "inv_plot_size": 1.0,       # tree_count is TPA_UNADJ (already per acre); 6.0 double-expanded every record x6 (found 2026-10-27)
+        "brk_dbh": 999.0,           # all trees on the fixed plot so tree_count passes through as TPA
         "num_plots": 1,
         "age": int(cond_row.get("STDAGE", 40) or 40),
         "aspect": float(cond_row.get("ASPECT", 0) or 0),

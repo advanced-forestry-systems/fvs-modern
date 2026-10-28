@@ -1,0 +1,41 @@
+arm,group,site,density,traj,step_yr,relation,status,value,detail
+engine,Northern-Hardwood,High,High,Northern-Hardwood|High|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.51329659346112,"slope -1.51 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.90)"
+engine,Northern-Hardwood,High,Low,Northern-Hardwood|High|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.46 < gate 0.55 (stems -24% over the run)
+engine,Northern-Hardwood,High,Medium,Northern-Hardwood|High|Medium,5,T3 Reineke slope (trajectory OLS),FLAG,-0.517854991374755,"slope -0.52 on 12 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.73)"
+engine,Northern-Hardwood,Low,High,Northern-Hardwood|Low|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.56287843927184,"slope -1.56 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.90)"
+engine,Northern-Hardwood,Low,Low,Northern-Hardwood|Low|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.44 < gate 0.55 (stems -23% over the run)
+engine,Northern-Hardwood,Low,Medium,Northern-Hardwood|Low|Medium,5,T3 Reineke slope (trajectory OLS),FLAG,-0.671097787234474,"slope -0.67 on 16 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.75)"
+engine,Northern-Hardwood,Medium,High,Northern-Hardwood|Medium|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.34272311636286,"slope -1.34 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.88)"
+engine,Northern-Hardwood,Medium,Low,Northern-Hardwood|Medium|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.45 < gate 0.55 (stems -24% over the run)
+engine,Northern-Hardwood,Medium,Medium,Northern-Hardwood|Medium|Medium,5,T3 Reineke slope (trajectory OLS),FLAG,-0.6094597767639,"slope -0.61 on 14 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.74)"
+engine,Oak-Pine,High,High,Oak-Pine|High|High,5,T3 Reineke slope (trajectory OLS),FLAG,-0.336286279201401,"slope -0.34 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 1.49)"
+engine,Oak-Pine,High,Low,Oak-Pine|High|Low,5,T3 Reineke slope (trajectory OLS),FLAG,-0.557732812099362,"slope -0.56 on 3 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.58)"
+engine,Oak-Pine,High,Medium,Oak-Pine|High|Medium,5,T3 Reineke slope (trajectory OLS),FLAG,-0.401746416075128,"slope -0.40 on 15 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.93)"
+engine,Oak-Pine,Low,High,Oak-Pine|Low|High,5,T3 Reineke slope (trajectory OLS),FLAG,-0.353799764811743,"slope -0.35 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 1.52)"
+engine,Oak-Pine,Low,Low,Oak-Pine|Low|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.57 < gate 0.55 (stems -20% over the run)
+engine,Oak-Pine,Low,Medium,Oak-Pine|Low|Medium,5,T3 Reineke slope (trajectory OLS),FLAG,-0.410161713350289,"slope -0.41 on 18 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.98)"
+engine,Oak-Pine,Medium,High,Oak-Pine|Medium|High,5,T3 Reineke slope (trajectory OLS),FLAG,-0.406068367030195,"slope -0.41 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 1.63)"
+engine,Oak-Pine,Medium,Low,Oak-Pine|Medium|Low,5,T3 Reineke slope (trajectory OLS),FLAG,-0.588950327293271,"slope -0.59 on 8 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.65)"
+engine,Oak-Pine,Medium,Medium,Oak-Pine|Medium|Medium,5,T3 Reineke slope (trajectory OLS),FLAG,-0.407542933707331,"slope -0.41 on 18 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.98)"
+engine,Pine,High,High,Pine|High|High,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.78 < gate 0.55 (stems -89% over the run)
+engine,Pine,High,Low,Pine|High|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.35 < gate 0.55 (stems -66% over the run)
+engine,Pine,High,Medium,Pine|High|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.54 < gate 0.55 (stems -83% over the run)
+engine,Pine,Low,High,Pine|Low|High,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.70 < gate 0.55 (stems -88% over the run)
+engine,Pine,Low,Low,Pine|Low|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.34 < gate 0.55 (stems -64% over the run)
+engine,Pine,Low,Medium,Pine|Low|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.58 < gate 0.55 (stems -85% over the run)
+engine,Pine,Medium,High,Pine|Medium|High,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.76 < gate 0.55 (stems -88% over the run)
+engine,Pine,Medium,Low,Pine|Medium|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.34 < gate 0.55 (stems -67% over the run)
+engine,Pine,Medium,Medium,Pine|Medium|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.53 < gate 0.55 (stems -81% over the run)
+engine,Spruce-Fir,High,High,Spruce-Fir|High|High,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.82 < gate 0.55 (stems -99% over the run)
+engine,Spruce-Fir,High,Low,Spruce-Fir|High|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.28 < gate 0.55 (stems -97% over the run)
+engine,Spruce-Fir,High,Medium,Spruce-Fir|High|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.56 < gate 0.55 (stems -98% over the run)
+engine,Spruce-Fir,Low,High,Spruce-Fir|Low|High,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.68 < gate 0.55 (stems -99% over the run)
+engine,Spruce-Fir,Low,Low,Spruce-Fir|Low|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.26 < gate 0.55 (stems -97% over the run)
+engine,Spruce-Fir,Low,Medium,Spruce-Fir|Low|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.51 < gate 0.55 (stems -98% over the run)
+engine,Spruce-Fir,Medium,High,Spruce-Fir|Medium|High,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.81 < gate 0.55 (stems -99% over the run)
+engine,Spruce-Fir,Medium,Low,Spruce-Fir|Medium|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.30 < gate 0.55 (stems -98% over the run)
+engine,Spruce-Fir,Medium,Medium,Spruce-Fir|Medium|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.56 < gate 0.55 (stems -99% over the run)
+engine,Northern-Hardwood,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",PASS,-1.60261786404872,slope -1.60 on 99 limb points from 6 trajectories
+engine,Oak-Pine,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",FLAG,-0.407881439431889,slope -0.41 on 124 limb points from 9 trajectories
+engine,Pine,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",NOT APPLICABLE,,0 limb points at SDI/SDImax >= 0.55 (peak RD 0.78); need >= 10 and quantreg
+engine,Spruce-Fir,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",NOT APPLICABLE,,0 limb points at SDI/SDImax >= 0.55 (peak RD 0.82); need >= 10 and quantreg

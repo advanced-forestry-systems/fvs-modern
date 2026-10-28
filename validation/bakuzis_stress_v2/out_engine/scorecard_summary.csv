@@ -1,0 +1,16 @@
+arm,relation,evaluated,not_evaluated,not_applicable,flagged,verdict
+engine,T0 initial-step shock,36,0,0,15,FLAG
+engine,T1 monotone HT_dom,36,0,0,0,PASS
+engine,T1 monotone QMD,36,0,0,8,FLAG
+engine,T2 site ordering HT,4,0,0,4,FLAG (all)
+engine,T2 site ordering VOL,4,0,0,4,FLAG (all)
+engine,T3 Reineke slope (trajectory OLS),14,0,22,11,FLAG
+engine,"T3b frontier slope (rq tau 0.95, pooled limb)",2,0,2,1,FLAG
+engine,T4 max BA vs observed p99.9,0,36,0,0,NOT EVALUATED
+engine,T4 peak SDI / SDImax,36,0,0,3,FLAG
+engine,T5 Eichhorn VOL~HT site independence,4,0,0,1,FLAG
+engine,T6 Sukachev per-tree VOL falls with density,4,0,0,4,FLAG (all)
+engine,T7 yield-density final BA vs initial density,4,0,0,0,PASS
+engine,T8 pinned BA plateau,4,0,0,1,FLAG
+engine,T9 BA inversions (>10% step drop),36,0,0,15,FLAG
+engine,T9 VOL inversions (>10% step drop),36,0,0,12,FLAG

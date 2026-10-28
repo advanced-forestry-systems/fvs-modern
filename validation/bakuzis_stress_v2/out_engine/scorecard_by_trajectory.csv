@@ -1,0 +1,317 @@
+arm,group,site,density,traj,step_yr,relation,status,value,detail
+engine,Northern-Hardwood,High,High,Northern-Hardwood|High|High,5,T0 initial-step shock,PASS,0.0358974358974358,"first 5 yr: stems -4%, BA +4%"
+engine,Northern-Hardwood,High,High,Northern-Hardwood|High|High,5,T1 monotone HT_dom,PASS,0.304799999999997,min step dHT 0.30 m
+engine,Northern-Hardwood,High,High,Northern-Hardwood|High|High,5,T1 monotone QMD,PASS,0.677931297675521,monotone
+engine,Northern-Hardwood,High,High,Northern-Hardwood|High|High,5,T9 BA inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Northern-Hardwood,High,High,Northern-Hardwood|High|High,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Northern-Hardwood,High,High,Northern-Hardwood|High|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.51329659346112,"slope -1.51 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.90)"
+engine,Northern-Hardwood,High,High,Northern-Hardwood|High|High,5,T4 peak SDI / SDImax,PASS,0.895139312405796,peak SDI 1239 vs SDImax 1384 (ratio 0.90)
+engine,Northern-Hardwood,High,High,Northern-Hardwood|High|High,5,T4 max BA vs observed p99.9,NOT EVALUATED,73.2323196,max BA 73.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Northern-Hardwood,High,Low,Northern-Hardwood|High|Low,5,T0 initial-step shock,PASS,0.013157894736842,"first 5 yr: stems -1%, BA +8%"
+engine,Northern-Hardwood,High,Low,Northern-Hardwood|High|Low,5,T1 monotone HT_dom,PASS,0.3048,min step dHT 0.30 m
+engine,Northern-Hardwood,High,Low,Northern-Hardwood|High|Low,5,T1 monotone QMD,PASS,0.65227200760846,monotone
+engine,Northern-Hardwood,High,Low,Northern-Hardwood|High|Low,5,T9 BA inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Northern-Hardwood,High,Low,Northern-Hardwood|High|Low,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Northern-Hardwood,High,Low,Northern-Hardwood|High|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.46 < gate 0.55 (stems -24% over the run)
+engine,Northern-Hardwood,High,Low,Northern-Hardwood|High|Low,5,T4 peak SDI / SDImax,PASS,0.462130249901449,peak SDI 640 vs SDImax 1384 (ratio 0.46)
+engine,Northern-Hardwood,High,Low,Northern-Hardwood|High|Low,5,T4 max BA vs observed p99.9,NOT EVALUATED,39.4857648,max BA 39.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Northern-Hardwood,High,Medium,Northern-Hardwood|High|Medium,5,T0 initial-step shock,PASS,0.0125000000000001,"first 5 yr: stems -1%, BA +7%"
+engine,Northern-Hardwood,High,Medium,Northern-Hardwood|High|Medium,5,T1 monotone HT_dom,PASS,0.304799999999997,min step dHT 0.30 m
+engine,Northern-Hardwood,High,Medium,Northern-Hardwood|High|Medium,5,T1 monotone QMD,PASS,0.673089943564726,monotone
+engine,Northern-Hardwood,High,Medium,Northern-Hardwood|High|Medium,5,T9 BA inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Northern-Hardwood,High,Medium,Northern-Hardwood|High|Medium,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Northern-Hardwood,High,Medium,Northern-Hardwood|High|Medium,5,T3 Reineke slope (trajectory OLS),FLAG,-0.517854991374755,"slope -0.52 on 12 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.73)"
+engine,Northern-Hardwood,High,Medium,Northern-Hardwood|High|Medium,5,T4 peak SDI / SDImax,PASS,0.726443336284533,peak SDI 1005 vs SDImax 1384 (ratio 0.73)
+engine,Northern-Hardwood,High,Medium,Northern-Hardwood|High|Medium,5,T4 max BA vs observed p99.9,NOT EVALUATED,61.5243312,max BA 61.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Northern-Hardwood,Low,High,Northern-Hardwood|Low|High,5,T0 initial-step shock,PASS,0.0358974358974358,"first 5 yr: stems -4%, BA +4%"
+engine,Northern-Hardwood,Low,High,Northern-Hardwood|Low|High,5,T1 monotone HT_dom,PASS,0.3048,min step dHT 0.30 m
+engine,Northern-Hardwood,Low,High,Northern-Hardwood|Low|High,5,T1 monotone QMD,PASS,0.656044755880181,monotone
+engine,Northern-Hardwood,Low,High,Northern-Hardwood|Low|High,5,T9 BA inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Northern-Hardwood,Low,High,Northern-Hardwood|Low|High,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Northern-Hardwood,Low,High,Northern-Hardwood|Low|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.56287843927184,"slope -1.56 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.90)"
+engine,Northern-Hardwood,Low,High,Northern-Hardwood|Low|High,5,T4 peak SDI / SDImax,PASS,0.903130484308655,peak SDI 1250 vs SDImax 1384 (ratio 0.90)
+engine,Northern-Hardwood,Low,High,Northern-Hardwood|Low|High,5,T4 max BA vs observed p99.9,NOT EVALUATED,73.2323196,max BA 73.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Northern-Hardwood,Low,Low,Northern-Hardwood|Low|Low,5,T0 initial-step shock,PASS,0.013157894736842,"first 5 yr: stems -1%, BA +8%"
+engine,Northern-Hardwood,Low,Low,Northern-Hardwood|Low|Low,5,T1 monotone HT_dom,PASS,0.3048,min step dHT 0.30 m
+engine,Northern-Hardwood,Low,Low,Northern-Hardwood|Low|Low,5,T1 monotone QMD,PASS,0.671439971204997,monotone
+engine,Northern-Hardwood,Low,Low,Northern-Hardwood|Low|Low,5,T9 BA inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Northern-Hardwood,Low,Low,Northern-Hardwood|Low|Low,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Northern-Hardwood,Low,Low,Northern-Hardwood|Low|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.44 < gate 0.55 (stems -23% over the run)
+engine,Northern-Hardwood,Low,Low,Northern-Hardwood|Low|Low,5,T4 peak SDI / SDImax,PASS,0.443373391585407,peak SDI 614 vs SDImax 1384 (ratio 0.44)
+engine,Northern-Hardwood,Low,Low,Northern-Hardwood|Low|Low,5,T4 max BA vs observed p99.9,NOT EVALUATED,37.4196492,max BA 37.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Northern-Hardwood,Low,Medium,Northern-Hardwood|Low|Medium,5,T0 initial-step shock,PASS,0.0125000000000001,"first 5 yr: stems -1%, BA +6%"
+engine,Northern-Hardwood,Low,Medium,Northern-Hardwood|Low|Medium,5,T1 monotone HT_dom,PASS,0.3048,min step dHT 0.30 m
+engine,Northern-Hardwood,Low,Medium,Northern-Hardwood|Low|Medium,5,T1 monotone QMD,PASS,0.685146464645221,monotone
+engine,Northern-Hardwood,Low,Medium,Northern-Hardwood|Low|Medium,5,T9 BA inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Northern-Hardwood,Low,Medium,Northern-Hardwood|Low|Medium,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Northern-Hardwood,Low,Medium,Northern-Hardwood|Low|Medium,5,T3 Reineke slope (trajectory OLS),FLAG,-0.671097787234474,"slope -0.67 on 16 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.75)"
+engine,Northern-Hardwood,Low,Medium,Northern-Hardwood|Low|Medium,5,T4 peak SDI / SDImax,PASS,0.746291624289698,peak SDI 1033 vs SDImax 1384 (ratio 0.75)
+engine,Northern-Hardwood,Low,Medium,Northern-Hardwood|Low|Medium,5,T4 max BA vs observed p99.9,NOT EVALUATED,64.279152,max BA 64.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Northern-Hardwood,Medium,High,Northern-Hardwood|Medium|High,5,T0 initial-step shock,PASS,0.0153846153846153,"first 5 yr: stems -2%, BA +6%"
+engine,Northern-Hardwood,Medium,High,Northern-Hardwood|Medium|High,5,T1 monotone HT_dom,PASS,0.304799999999997,min step dHT 0.30 m
+engine,Northern-Hardwood,Medium,High,Northern-Hardwood|Medium|High,5,T1 monotone QMD,PASS,0.555422853130985,monotone
+engine,Northern-Hardwood,Medium,High,Northern-Hardwood|Medium|High,5,T9 BA inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Northern-Hardwood,Medium,High,Northern-Hardwood|Medium|High,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Northern-Hardwood,Medium,High,Northern-Hardwood|Medium|High,5,T3 Reineke slope (trajectory OLS),PASS,-1.34272311636286,"slope -1.34 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.88)"
+engine,Northern-Hardwood,Medium,High,Northern-Hardwood|Medium|High,5,T4 peak SDI / SDImax,PASS,0.881889373139482,peak SDI 1221 vs SDImax 1384 (ratio 0.88)
+engine,Northern-Hardwood,Medium,High,Northern-Hardwood|Medium|High,5,T4 max BA vs observed p99.9,NOT EVALUATED,73.0027512,max BA 73.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Northern-Hardwood,Medium,Low,Northern-Hardwood|Medium|Low,5,T0 initial-step shock,PASS,0.013157894736842,"first 5 yr: stems -1%, BA +9%"
+engine,Northern-Hardwood,Medium,Low,Northern-Hardwood|Medium|Low,5,T1 monotone HT_dom,PASS,0.3048,min step dHT 0.30 m
+engine,Northern-Hardwood,Medium,Low,Northern-Hardwood|Medium|Low,5,T1 monotone QMD,PASS,0.66300716643034,monotone
+engine,Northern-Hardwood,Medium,Low,Northern-Hardwood|Medium|Low,5,T9 BA inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Northern-Hardwood,Medium,Low,Northern-Hardwood|Medium|Low,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Northern-Hardwood,Medium,Low,Northern-Hardwood|Medium|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.45 < gate 0.55 (stems -24% over the run)
+engine,Northern-Hardwood,Medium,Low,Northern-Hardwood|Medium|Low,5,T4 peak SDI / SDImax,PASS,0.451318136996873,peak SDI 625 vs SDImax 1384 (ratio 0.45)
+engine,Northern-Hardwood,Medium,Low,Northern-Hardwood|Medium|Low,5,T4 max BA vs observed p99.9,NOT EVALUATED,38.3379228,max BA 38.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Northern-Hardwood,Medium,Medium,Northern-Hardwood|Medium|Medium,5,T0 initial-step shock,PASS,0.0125000000000001,"first 5 yr: stems -1%, BA +6%"
+engine,Northern-Hardwood,Medium,Medium,Northern-Hardwood|Medium|Medium,5,T1 monotone HT_dom,PASS,0.304799999999997,min step dHT 0.30 m
+engine,Northern-Hardwood,Medium,Medium,Northern-Hardwood|Medium|Medium,5,T1 monotone QMD,PASS,0.715394476435037,monotone
+engine,Northern-Hardwood,Medium,Medium,Northern-Hardwood|Medium|Medium,5,T9 BA inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Northern-Hardwood,Medium,Medium,Northern-Hardwood|Medium|Medium,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Northern-Hardwood,Medium,Medium,Northern-Hardwood|Medium|Medium,5,T3 Reineke slope (trajectory OLS),FLAG,-0.6094597767639,"slope -0.61 on 14 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.74)"
+engine,Northern-Hardwood,Medium,Medium,Northern-Hardwood|Medium|Medium,5,T4 peak SDI / SDImax,PASS,0.742561474797552,peak SDI 1028 vs SDImax 1384 (ratio 0.74)
+engine,Northern-Hardwood,Medium,Medium,Northern-Hardwood|Medium|Medium,5,T4 max BA vs observed p99.9,NOT EVALUATED,63.8200152,max BA 63.8 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Oak-Pine,High,High,Oak-Pine|High|High,5,T0 initial-step shock,PASS,0.0102564102564102,"first 5 yr: stems -1%, BA +10%"
+engine,Oak-Pine,High,High,Oak-Pine|High|High,5,T1 monotone HT_dom,PASS,0.3048,min step dHT 0.30 m
+engine,Oak-Pine,High,High,Oak-Pine|High|High,5,T1 monotone QMD,PASS,0.915444887295493,monotone
+engine,Oak-Pine,High,High,Oak-Pine|High|High,5,T9 BA inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Oak-Pine,High,High,Oak-Pine|High|High,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Oak-Pine,High,High,Oak-Pine|High|High,5,T3 Reineke slope (trajectory OLS),FLAG,-0.336286279201401,"slope -0.34 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 1.49)"
+engine,Oak-Pine,High,High,Oak-Pine|High|High,5,T4 peak SDI / SDImax,FLAG,1.48727778133847,peak SDI 2058 vs SDImax 1384 (ratio 1.49)
+engine,Oak-Pine,High,High,Oak-Pine|High|High,5,T4 max BA vs observed p99.9,NOT EVALUATED,132.9201036,max BA 132.9 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Oak-Pine,High,Low,Oak-Pine|High|Low,5,T0 initial-step shock,PASS,0.013157894736842,"first 5 yr: stems -1%, BA +11%"
+engine,Oak-Pine,High,Low,Oak-Pine|High|Low,5,T1 monotone HT_dom,PASS,0.3048,min step dHT 0.30 m
+engine,Oak-Pine,High,Low,Oak-Pine|High|Low,5,T1 monotone QMD,PASS,0.921831043641518,monotone
+engine,Oak-Pine,High,Low,Oak-Pine|High|Low,5,T9 BA inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Oak-Pine,High,Low,Oak-Pine|High|Low,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Oak-Pine,High,Low,Oak-Pine|High|Low,5,T3 Reineke slope (trajectory OLS),FLAG,-0.557732812099362,"slope -0.56 on 3 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.58)"
+engine,Oak-Pine,High,Low,Oak-Pine|High|Low,5,T4 peak SDI / SDImax,PASS,0.580155613577784,peak SDI 803 vs SDImax 1384 (ratio 0.58)
+engine,Oak-Pine,High,Low,Oak-Pine|High|Low,5,T4 max BA vs observed p99.9,NOT EVALUATED,51.8824584,max BA 51.9 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Oak-Pine,High,Medium,Oak-Pine|High|Medium,5,T0 initial-step shock,PASS,0.0083333333333333,"first 5 yr: stems -1%, BA +10%"
+engine,Oak-Pine,High,Medium,Oak-Pine|High|Medium,5,T1 monotone HT_dom,PASS,0.304799999999997,min step dHT 0.30 m
+engine,Oak-Pine,High,Medium,Oak-Pine|High|Medium,5,T1 monotone QMD,PASS,0.96203140129105,monotone
+engine,Oak-Pine,High,Medium,Oak-Pine|High|Medium,5,T9 BA inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Oak-Pine,High,Medium,Oak-Pine|High|Medium,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Oak-Pine,High,Medium,Oak-Pine|High|Medium,5,T3 Reineke slope (trajectory OLS),FLAG,-0.401746416075128,"slope -0.40 on 15 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.93)"
+engine,Oak-Pine,High,Medium,Oak-Pine|High|Medium,5,T4 peak SDI / SDImax,PASS,0.931661649644189,peak SDI 1289 vs SDImax 1384 (ratio 0.93)
+engine,Oak-Pine,High,Medium,Oak-Pine|High|Medium,5,T4 max BA vs observed p99.9,NOT EVALUATED,83.5628976,max BA 83.6 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Oak-Pine,Low,High,Oak-Pine|Low|High,5,T0 initial-step shock,PASS,0.0102564102564102,"first 5 yr: stems -1%, BA +9%"
+engine,Oak-Pine,Low,High,Oak-Pine|Low|High,5,T1 monotone HT_dom,PASS,0.3048,min step dHT 0.30 m
+engine,Oak-Pine,Low,High,Oak-Pine|Low|High,5,T1 monotone QMD,PASS,0.981728021529186,monotone
+engine,Oak-Pine,Low,High,Oak-Pine|Low|High,5,T9 BA inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Oak-Pine,Low,High,Oak-Pine|Low|High,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Oak-Pine,Low,High,Oak-Pine|Low|High,5,T3 Reineke slope (trajectory OLS),FLAG,-0.353799764811743,"slope -0.35 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 1.52)"
+engine,Oak-Pine,Low,High,Oak-Pine|Low|High,5,T4 peak SDI / SDImax,FLAG,1.51715489413433,peak SDI 2100 vs SDImax 1384 (ratio 1.52)
+engine,Oak-Pine,Low,High,Oak-Pine|Low|High,5,T4 max BA vs observed p99.9,NOT EVALUATED,136.3636296,max BA 136.4 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Oak-Pine,Low,Low,Oak-Pine|Low|Low,5,T0 initial-step shock,PASS,0.013157894736842,"first 5 yr: stems -1%, BA +10%"
+engine,Oak-Pine,Low,Low,Oak-Pine|Low|Low,5,T1 monotone HT_dom,PASS,0.3048,min step dHT 0.30 m
+engine,Oak-Pine,Low,Low,Oak-Pine|Low|Low,5,T1 monotone QMD,PASS,0.928397888770249,monotone
+engine,Oak-Pine,Low,Low,Oak-Pine|Low|Low,5,T9 BA inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Oak-Pine,Low,Low,Oak-Pine|Low|Low,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Oak-Pine,Low,Low,Oak-Pine|Low|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.57 < gate 0.55 (stems -20% over the run)
+engine,Oak-Pine,Low,Low,Oak-Pine|Low|Low,5,T4 peak SDI / SDImax,PASS,0.569832579710691,peak SDI 789 vs SDImax 1384 (ratio 0.57)
+engine,Oak-Pine,Low,Low,Oak-Pine|Low|Low,5,T4 max BA vs observed p99.9,NOT EVALUATED,50.7346164,max BA 50.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Oak-Pine,Low,Medium,Oak-Pine|Low|Medium,5,T0 initial-step shock,PASS,0.0125000000000001,"first 5 yr: stems -1%, BA +8%"
+engine,Oak-Pine,Low,Medium,Oak-Pine|Low|Medium,5,T1 monotone HT_dom,PASS,0.3048,min step dHT 0.30 m
+engine,Oak-Pine,Low,Medium,Oak-Pine|Low|Medium,5,T1 monotone QMD,PASS,0.949967397282698,monotone
+engine,Oak-Pine,Low,Medium,Oak-Pine|Low|Medium,5,T9 BA inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Oak-Pine,Low,Medium,Oak-Pine|Low|Medium,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Oak-Pine,Low,Medium,Oak-Pine|Low|Medium,5,T3 Reineke slope (trajectory OLS),FLAG,-0.410161713350289,"slope -0.41 on 18 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.98)"
+engine,Oak-Pine,Low,Medium,Oak-Pine|Low|Medium,5,T4 peak SDI / SDImax,PASS,0.979634148632444,peak SDI 1356 vs SDImax 1384 (ratio 0.98)
+engine,Oak-Pine,Low,Medium,Oak-Pine|Low|Medium,5,T4 max BA vs observed p99.9,NOT EVALUATED,89.0725392,max BA 89.1 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Oak-Pine,Medium,High,Oak-Pine|Medium|High,5,T0 initial-step shock,PASS,0.0102564102564102,"first 5 yr: stems -1%, BA +8%"
+engine,Oak-Pine,Medium,High,Oak-Pine|Medium|High,5,T1 monotone HT_dom,PASS,0.3048,min step dHT 0.30 m
+engine,Oak-Pine,Medium,High,Oak-Pine|Medium|High,5,T1 monotone QMD,PASS,0.933797553844379,monotone
+engine,Oak-Pine,Medium,High,Oak-Pine|Medium|High,5,T9 BA inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Oak-Pine,Medium,High,Oak-Pine|Medium|High,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Oak-Pine,Medium,High,Oak-Pine|Medium|High,5,T3 Reineke slope (trajectory OLS),FLAG,-0.406068367030195,"slope -0.41 on 21 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 1.63)"
+engine,Oak-Pine,Medium,High,Oak-Pine|Medium|High,5,T4 peak SDI / SDImax,FLAG,1.62785431343746,peak SDI 2253 vs SDImax 1384 (ratio 1.63)
+engine,Oak-Pine,Medium,High,Oak-Pine|Medium|High,5,T4 max BA vs observed p99.9,NOT EVALUATED,148.9898916,max BA 149.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Oak-Pine,Medium,Low,Oak-Pine|Medium|Low,5,T0 initial-step shock,PASS,0.013157894736842,"first 5 yr: stems -1%, BA +7%"
+engine,Oak-Pine,Medium,Low,Oak-Pine|Medium|Low,5,T1 monotone HT_dom,PASS,0.3048,min step dHT 0.30 m
+engine,Oak-Pine,Medium,Low,Oak-Pine|Medium|Low,5,T1 monotone QMD,PASS,0.886836419933999,monotone
+engine,Oak-Pine,Medium,Low,Oak-Pine|Medium|Low,5,T9 BA inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Oak-Pine,Medium,Low,Oak-Pine|Medium|Low,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Oak-Pine,Medium,Low,Oak-Pine|Medium|Low,5,T3 Reineke slope (trajectory OLS),FLAG,-0.588950327293271,"slope -0.59 on 8 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.65)"
+engine,Oak-Pine,Medium,Low,Oak-Pine|Medium|Low,5,T4 peak SDI / SDImax,PASS,0.646150556269133,peak SDI 894 vs SDImax 1384 (ratio 0.65)
+engine,Oak-Pine,Medium,Low,Oak-Pine|Medium|Low,5,T4 max BA vs observed p99.9,NOT EVALUATED,59.4582156,max BA 59.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Oak-Pine,Medium,Medium,Oak-Pine|Medium|Medium,5,T0 initial-step shock,PASS,0.0125000000000001,"first 5 yr: stems -1%, BA +8%"
+engine,Oak-Pine,Medium,Medium,Oak-Pine|Medium|Medium,5,T1 monotone HT_dom,PASS,0.3048,min step dHT 0.30 m
+engine,Oak-Pine,Medium,Medium,Oak-Pine|Medium|Medium,5,T1 monotone QMD,PASS,0.886667990357331,monotone
+engine,Oak-Pine,Medium,Medium,Oak-Pine|Medium|Medium,5,T9 BA inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Oak-Pine,Medium,Medium,Oak-Pine|Medium|Medium,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Oak-Pine,Medium,Medium,Oak-Pine|Medium|Medium,5,T3 Reineke slope (trajectory OLS),FLAG,-0.407542933707331,"slope -0.41 on 18 of 21 points (window -2.2 to -1.2; RD gate 0.55, peak RD 0.98)"
+engine,Oak-Pine,Medium,Medium,Oak-Pine|Medium|Medium,5,T4 peak SDI / SDImax,PASS,0.981659809779145,peak SDI 1359 vs SDImax 1384 (ratio 0.98)
+engine,Oak-Pine,Medium,Medium,Oak-Pine|Medium|Medium,5,T4 max BA vs observed p99.9,NOT EVALUATED,89.3021076,max BA 89.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Pine,High,High,Pine|High|High,5,T0 initial-step shock,FLAG,0.686567164179104,"first 5 yr: stems -69%, BA -42%"
+engine,Pine,High,High,Pine|High|High,5,T1 monotone HT_dom,PASS,0,min step dHT 0.00 m
+engine,Pine,High,High,Pine|High|High,5,T1 monotone QMD,PASS,0.513966336843907,monotone
+engine,Pine,High,High,Pine|High|High,5,T9 BA inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Pine,High,High,Pine|High|High,5,T9 VOL inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Pine,High,High,Pine|High|High,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.78 < gate 0.55 (stems -89% over the run)
+engine,Pine,High,High,Pine|High|High,5,T4 peak SDI / SDImax,PASS,0.775968308649466,peak SDI 1014 vs SDImax 1307 (ratio 0.78)
+engine,Pine,High,High,Pine|High|High,5,T4 max BA vs observed p99.9,NOT EVALUATED,51.65289,max BA 51.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Pine,High,Low,Pine|High|Low,5,T0 initial-step shock,PASS,0.0137931034482758,"first 5 yr: stems -1%, BA +12%"
+engine,Pine,High,Low,Pine|High|Low,5,T1 monotone HT_dom,PASS,0,min step dHT 0.00 m
+engine,Pine,High,Low,Pine|High|Low,5,T1 monotone QMD,PASS,0.838397349954079,monotone
+engine,Pine,High,Low,Pine|High|Low,5,T9 BA inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Pine,High,Low,Pine|High|Low,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Pine,High,Low,Pine|High|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.35 < gate 0.55 (stems -66% over the run)
+engine,Pine,High,Low,Pine|High|Low,5,T4 peak SDI / SDImax,PASS,0.34857870841555,peak SDI 456 vs SDImax 1307 (ratio 0.35)
+engine,Pine,High,Low,Pine|High|Low,5,T4 max BA vs observed p99.9,NOT EVALUATED,28.4664816,max BA 28.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Pine,High,Medium,Pine|High|Medium,5,T0 initial-step shock,FLAG,0.392712550607287,"first 5 yr: stems -39%, BA -20%"
+engine,Pine,High,Medium,Pine|High|Medium,5,T1 monotone HT_dom,PASS,0,min step dHT 0.00 m
+engine,Pine,High,Medium,Pine|High|Medium,5,T1 monotone QMD,PASS,0.564688332432034,monotone
+engine,Pine,High,Medium,Pine|High|Medium,5,T9 BA inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Pine,High,Medium,Pine|High|Medium,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Pine,High,Medium,Pine|High|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.54 < gate 0.55 (stems -83% over the run)
+engine,Pine,High,Medium,Pine|High|Medium,5,T4 peak SDI / SDImax,PASS,0.538788456094746,peak SDI 704 vs SDImax 1307 (ratio 0.54)
+engine,Pine,High,Medium,Pine|High|Medium,5,T4 max BA vs observed p99.9,NOT EVALUATED,36.9605124,max BA 37.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Pine,Low,High,Pine|Low|High,5,T0 initial-step shock,FLAG,0.579601990049751,"first 5 yr: stems -58%, BA -35%"
+engine,Pine,Low,High,Pine|Low|High,5,T1 monotone HT_dom,PASS,0.3048,min step dHT 0.30 m
+engine,Pine,Low,High,Pine|Low|High,5,T1 monotone QMD,PASS,0.468229458187508,monotone
+engine,Pine,Low,High,Pine|Low|High,5,T9 BA inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Pine,Low,High,Pine|Low|High,5,T9 VOL inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Pine,Low,High,Pine|Low|High,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.70 < gate 0.55 (stems -88% over the run)
+engine,Pine,Low,High,Pine|Low|High,5,T4 peak SDI / SDImax,PASS,0.703148585781228,peak SDI 919 vs SDImax 1307 (ratio 0.70)
+engine,Pine,Low,High,Pine|Low|High,5,T4 max BA vs observed p99.9,NOT EVALUATED,45.6841116,max BA 45.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Pine,Low,Low,Pine|Low|Low,5,T0 initial-step shock,PASS,0.0137931034482758,"first 5 yr: stems -1%, BA +14%"
+engine,Pine,Low,Low,Pine|Low|Low,5,T1 monotone HT_dom,PASS,0,min step dHT 0.00 m
+engine,Pine,Low,Low,Pine|Low|Low,5,T1 monotone QMD,PASS,0.853098826327575,monotone
+engine,Pine,Low,Low,Pine|Low|Low,5,T9 BA inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Pine,Low,Low,Pine|Low|Low,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Pine,Low,Low,Pine|Low|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.34 < gate 0.55 (stems -64% over the run)
+engine,Pine,Low,Low,Pine|Low|Low,5,T4 peak SDI / SDImax,PASS,0.342190338630933,peak SDI 447 vs SDImax 1307 (ratio 0.34)
+engine,Pine,Low,Low,Pine|Low|Low,5,T4 max BA vs observed p99.9,NOT EVALUATED,28.0073448,max BA 28.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Pine,Low,Medium,Pine|Low|Medium,5,T0 initial-step shock,FLAG,0.554655870445344,"first 5 yr: stems -55%, BA -26%"
+engine,Pine,Low,Medium,Pine|Low|Medium,5,T1 monotone HT_dom,PASS,0.3048,min step dHT 0.30 m
+engine,Pine,Low,Medium,Pine|Low|Medium,5,T1 monotone QMD,PASS,0.575714899131405,monotone
+engine,Pine,Low,Medium,Pine|Low|Medium,5,T9 BA inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Pine,Low,Medium,Pine|Low|Medium,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Pine,Low,Medium,Pine|Low|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.58 < gate 0.55 (stems -85% over the run)
+engine,Pine,Low,Medium,Pine|Low|Medium,5,T4 peak SDI / SDImax,PASS,0.576074366152809,peak SDI 753 vs SDImax 1307 (ratio 0.58)
+engine,Pine,Low,Medium,Pine|Low|Medium,5,T4 max BA vs observed p99.9,NOT EVALUATED,40.17447,max BA 40.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Pine,Medium,High,Pine|Medium|High,5,T0 initial-step shock,FLAG,0.604477611940299,"first 5 yr: stems -60%, BA -41%"
+engine,Pine,Medium,High,Pine|Medium|High,5,T1 monotone HT_dom,PASS,0.304799999999997,min step dHT 0.30 m
+engine,Pine,Medium,High,Pine|Medium|High,5,T1 monotone QMD,PASS,0.767391076615311,monotone
+engine,Pine,Medium,High,Pine|Medium|High,5,T9 BA inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Pine,Medium,High,Pine|Medium|High,5,T9 VOL inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Pine,Medium,High,Pine|Medium|High,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.76 < gate 0.55 (stems -88% over the run)
+engine,Pine,Medium,High,Pine|Medium|High,5,T4 peak SDI / SDImax,PASS,0.762099567498218,peak SDI 996 vs SDImax 1307 (ratio 0.76)
+engine,Pine,Medium,High,Pine|Medium|High,5,T4 max BA vs observed p99.9,NOT EVALUATED,50.505048,max BA 50.5 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Pine,Medium,Low,Pine|Medium|Low,5,T0 initial-step shock,PASS,0.0137931034482758,"first 5 yr: stems -1%, BA +12%"
+engine,Pine,Medium,Low,Pine|Medium|Low,5,T1 monotone HT_dom,PASS,0,min step dHT 0.00 m
+engine,Pine,Medium,Low,Pine|Medium|Low,5,T1 monotone QMD,PASS,1.06059495590185,monotone
+engine,Pine,Medium,Low,Pine|Medium|Low,5,T9 BA inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Pine,Medium,Low,Pine|Medium|Low,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Pine,Medium,Low,Pine|Medium|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.34 < gate 0.55 (stems -67% over the run)
+engine,Pine,Medium,Low,Pine|Medium|Low,5,T4 peak SDI / SDImax,PASS,0.342426373044412,peak SDI 448 vs SDImax 1307 (ratio 0.34)
+engine,Pine,Medium,Low,Pine|Medium|Low,5,T4 max BA vs observed p99.9,NOT EVALUATED,28.2369132,max BA 28.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Pine,Medium,Medium,Pine|Medium|Medium,5,T0 initial-step shock,FLAG,0.384615384615385,"first 5 yr: stems -38%, BA -18%"
+engine,Pine,Medium,Medium,Pine|Medium|Medium,5,T1 monotone HT_dom,PASS,0,min step dHT 0.00 m
+engine,Pine,Medium,Medium,Pine|Medium|Medium,5,T1 monotone QMD,PASS,0.564688332432034,monotone
+engine,Pine,Medium,Medium,Pine|Medium|Medium,5,T9 BA inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Pine,Medium,Medium,Pine|Medium|Medium,5,T9 VOL inversions (>10% step drop),PASS,0,0 of 20 steps
+engine,Pine,Medium,Medium,Pine|Medium|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.53 < gate 0.55 (stems -81% over the run)
+engine,Pine,Medium,Medium,Pine|Medium|Medium,5,T4 peak SDI / SDImax,PASS,0.530716791806312,peak SDI 694 vs SDImax 1307 (ratio 0.53)
+engine,Pine,Medium,Medium,Pine|Medium|Medium,5,T4 max BA vs observed p99.9,NOT EVALUATED,36.2718072,max BA 36.3 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Spruce-Fir,High,High,Spruce-Fir|High|High,5,T0 initial-step shock,FLAG,0.977272727272727,"first 5 yr: stems -98%, BA -94%"
+engine,Spruce-Fir,High,High,Spruce-Fir|High|High,5,T1 monotone HT_dom,PASS,0,min step dHT 0.00 m
+engine,Spruce-Fir,High,High,Spruce-Fir|High|High,5,T1 monotone QMD,FLAG,-1.98607797939416,QMD declines -1.99 cm with no ingrowth
+engine,Spruce-Fir,High,High,Spruce-Fir|High|High,5,T9 BA inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Spruce-Fir,High,High,Spruce-Fir|High|High,5,T9 VOL inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Spruce-Fir,High,High,Spruce-Fir|High|High,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.82 < gate 0.55 (stems -99% over the run)
+engine,Spruce-Fir,High,High,Spruce-Fir|High|High,5,T4 peak SDI / SDImax,PASS,0.823341166742023,peak SDI 1029 vs SDImax 1250 (ratio 0.82)
+engine,Spruce-Fir,High,High,Spruce-Fir|High|High,5,T4 max BA vs observed p99.9,NOT EVALUATED,52.800732,max BA 52.8 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Spruce-Fir,High,Low,Spruce-Fir|High|Low,5,T0 initial-step shock,FLAG,0.933774834437086,"first 5 yr: stems -93%, BA -83%"
+engine,Spruce-Fir,High,Low,Spruce-Fir|High|Low,5,T1 monotone HT_dom,PASS,0,min step dHT 0.00 m
+engine,Spruce-Fir,High,Low,Spruce-Fir|High|Low,5,T1 monotone QMD,FLAG,-2.43243881944677,QMD declines -2.43 cm with no ingrowth
+engine,Spruce-Fir,High,Low,Spruce-Fir|High|Low,5,T9 BA inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Spruce-Fir,High,Low,Spruce-Fir|High|Low,5,T9 VOL inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Spruce-Fir,High,Low,Spruce-Fir|High|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.28 < gate 0.55 (stems -97% over the run)
+engine,Spruce-Fir,High,Low,Spruce-Fir|High|Low,5,T4 peak SDI / SDImax,PASS,0.282816795374977,peak SDI 354 vs SDImax 1250 (ratio 0.28)
+engine,Spruce-Fir,High,Low,Spruce-Fir|High|Low,5,T4 max BA vs observed p99.9,NOT EVALUATED,17.6767668,max BA 17.7 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Spruce-Fir,High,Medium,Spruce-Fir|High|Medium,5,T0 initial-step shock,FLAG,0.966804979253112,"first 5 yr: stems -97%, BA -92%"
+engine,Spruce-Fir,High,Medium,Spruce-Fir|High|Medium,5,T1 monotone HT_dom,PASS,0,min step dHT 0.00 m
+engine,Spruce-Fir,High,Medium,Spruce-Fir|High|Medium,5,T1 monotone QMD,FLAG,-2.43243881944677,QMD declines -2.43 cm with no ingrowth
+engine,Spruce-Fir,High,Medium,Spruce-Fir|High|Medium,5,T9 BA inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Spruce-Fir,High,Medium,Spruce-Fir|High|Medium,5,T9 VOL inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Spruce-Fir,High,Medium,Spruce-Fir|High|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.56 < gate 0.55 (stems -98% over the run)
+engine,Spruce-Fir,High,Medium,Spruce-Fir|High|Medium,5,T4 peak SDI / SDImax,PASS,0.560627728842085,peak SDI 701 vs SDImax 1250 (ratio 0.56)
+engine,Spruce-Fir,High,Medium,Spruce-Fir|High|Medium,5,T4 max BA vs observed p99.9,NOT EVALUATED,36.9605124,max BA 37.0 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Spruce-Fir,Low,High,Spruce-Fir|Low|High,5,T0 initial-step shock,FLAG,0.96969696969697,"first 5 yr: stems -97%, BA -93%"
+engine,Spruce-Fir,Low,High,Spruce-Fir|Low|High,5,T1 monotone HT_dom,PASS,0.3048,min step dHT 0.30 m
+engine,Spruce-Fir,Low,High,Spruce-Fir|Low|High,5,T1 monotone QMD,FLAG,-2.17563942055693,QMD declines -2.18 cm with no ingrowth
+engine,Spruce-Fir,Low,High,Spruce-Fir|Low|High,5,T9 BA inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Spruce-Fir,Low,High,Spruce-Fir|Low|High,5,T9 VOL inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Spruce-Fir,Low,High,Spruce-Fir|Low|High,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.68 < gate 0.55 (stems -99% over the run)
+engine,Spruce-Fir,Low,High,Spruce-Fir|Low|High,5,T4 peak SDI / SDImax,PASS,0.682339528364935,peak SDI 853 vs SDImax 1250 (ratio 0.68)
+engine,Spruce-Fir,Low,High,Spruce-Fir|Low|High,5,T4 max BA vs observed p99.9,NOT EVALUATED,41.7814488,max BA 41.8 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Spruce-Fir,Low,Low,Spruce-Fir|Low|Low,5,T0 initial-step shock,FLAG,0.894039735099338,"first 5 yr: stems -89%, BA -81%"
+engine,Spruce-Fir,Low,Low,Spruce-Fir|Low|Low,5,T1 monotone HT_dom,PASS,0.3048,min step dHT 0.30 m
+engine,Spruce-Fir,Low,Low,Spruce-Fir|Low|Low,5,T1 monotone QMD,PASS,0,monotone
+engine,Spruce-Fir,Low,Low,Spruce-Fir|Low|Low,5,T9 BA inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Spruce-Fir,Low,Low,Spruce-Fir|Low|Low,5,T9 VOL inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Spruce-Fir,Low,Low,Spruce-Fir|Low|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.26 < gate 0.55 (stems -97% over the run)
+engine,Spruce-Fir,Low,Low,Spruce-Fir|Low|Low,5,T4 peak SDI / SDImax,PASS,0.258983911172984,peak SDI 324 vs SDImax 1250 (ratio 0.26)
+engine,Spruce-Fir,Low,Low,Spruce-Fir|Low|Low,5,T4 max BA vs observed p99.9,NOT EVALUATED,15.8402196,max BA 15.8 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Spruce-Fir,Low,Medium,Spruce-Fir|Low|Medium,5,T0 initial-step shock,FLAG,0.966804979253112,"first 5 yr: stems -97%, BA -91%"
+engine,Spruce-Fir,Low,Medium,Spruce-Fir|Low|Medium,5,T1 monotone HT_dom,PASS,0,min step dHT 0.00 m
+engine,Spruce-Fir,Low,Medium,Spruce-Fir|Low|Medium,5,T1 monotone QMD,FLAG,-2.43243881944677,QMD declines -2.43 cm with no ingrowth
+engine,Spruce-Fir,Low,Medium,Spruce-Fir|Low|Medium,5,T9 BA inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Spruce-Fir,Low,Medium,Spruce-Fir|Low|Medium,5,T9 VOL inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Spruce-Fir,Low,Medium,Spruce-Fir|Low|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.51 < gate 0.55 (stems -98% over the run)
+engine,Spruce-Fir,Low,Medium,Spruce-Fir|Low|Medium,5,T4 peak SDI / SDImax,PASS,0.512604847363701,peak SDI 641 vs SDImax 1250 (ratio 0.51)
+engine,Spruce-Fir,Low,Medium,Spruce-Fir|Low|Medium,5,T4 max BA vs observed p99.9,NOT EVALUATED,33.0578496,max BA 33.1 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Spruce-Fir,Medium,High,Spruce-Fir|Medium|High,5,T0 initial-step shock,FLAG,0.984848484848485,"first 5 yr: stems -98%, BA -94%"
+engine,Spruce-Fir,Medium,High,Spruce-Fir|Medium|High,5,T1 monotone HT_dom,PASS,0,min step dHT 0.00 m
+engine,Spruce-Fir,Medium,High,Spruce-Fir|Medium|High,5,T1 monotone QMD,FLAG,-2.80873841438977,QMD declines -2.81 cm with no ingrowth
+engine,Spruce-Fir,Medium,High,Spruce-Fir|Medium|High,5,T9 BA inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Spruce-Fir,Medium,High,Spruce-Fir|Medium|High,5,T9 VOL inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Spruce-Fir,Medium,High,Spruce-Fir|Medium|High,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.81 < gate 0.55 (stems -99% over the run)
+engine,Spruce-Fir,Medium,High,Spruce-Fir|Medium|High,5,T4 peak SDI / SDImax,PASS,0.814711773698973,peak SDI 1018 vs SDImax 1250 (ratio 0.81)
+engine,Spruce-Fir,Medium,High,Spruce-Fir|Medium|High,5,T4 max BA vs observed p99.9,NOT EVALUATED,52.1120268,max BA 52.1 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Spruce-Fir,Medium,Low,Spruce-Fir|Medium|Low,5,T0 initial-step shock,FLAG,0.966887417218543,"first 5 yr: stems -97%, BA -84%"
+engine,Spruce-Fir,Medium,Low,Spruce-Fir|Medium|Low,5,T1 monotone HT_dom,PASS,0,min step dHT 0.00 m
+engine,Spruce-Fir,Medium,Low,Spruce-Fir|Medium|Low,5,T1 monotone QMD,FLAG,-2.80873841438977,QMD declines -2.81 cm with no ingrowth
+engine,Spruce-Fir,Medium,Low,Spruce-Fir|Medium|Low,5,T9 BA inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Spruce-Fir,Medium,Low,Spruce-Fir|Medium|Low,5,T9 VOL inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Spruce-Fir,Medium,Low,Spruce-Fir|Medium|Low,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.30 < gate 0.55 (stems -98% over the run)
+engine,Spruce-Fir,Medium,Low,Spruce-Fir|Medium|Low,5,T4 peak SDI / SDImax,PASS,0.297462351303475,peak SDI 372 vs SDImax 1250 (ratio 0.30)
+engine,Spruce-Fir,Medium,Low,Spruce-Fir|Medium|Low,5,T4 max BA vs observed p99.9,NOT EVALUATED,18.8246088,max BA 18.8 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Spruce-Fir,Medium,Medium,Spruce-Fir|Medium|Medium,5,T0 initial-step shock,FLAG,0.966804979253112,"first 5 yr: stems -97%, BA -92%"
+engine,Spruce-Fir,Medium,Medium,Spruce-Fir|Medium|Medium,5,T1 monotone HT_dom,PASS,0,min step dHT 0.00 m
+engine,Spruce-Fir,Medium,Medium,Spruce-Fir|Medium|Medium,5,T1 monotone QMD,FLAG,-2.43243881944677,QMD declines -2.43 cm with no ingrowth
+engine,Spruce-Fir,Medium,Medium,Spruce-Fir|Medium|Medium,5,T9 BA inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Spruce-Fir,Medium,Medium,Spruce-Fir|Medium|Medium,5,T9 VOL inversions (>10% step drop),FLAG,1,1 of 20 steps
+engine,Spruce-Fir,Medium,Medium,Spruce-Fir|Medium|Medium,5,T3 Reineke slope (trajectory OLS),NOT APPLICABLE,,never in the self-thinning zone: peak SDI/SDImax 0.56 < gate 0.55 (stems -99% over the run)
+engine,Spruce-Fir,Medium,Medium,Spruce-Fir|Medium|Medium,5,T4 peak SDI / SDImax,PASS,0.56342045234488,peak SDI 704 vs SDImax 1250 (ratio 0.56)
+engine,Spruce-Fir,Medium,Medium,Spruce-Fir|Medium|Medium,5,T4 max BA vs observed p99.9,NOT EVALUATED,37.1900808,max BA 37.2 m2 ha-1; no observed p99.9 supplied (--obs_ba_p999=)
+engine,Northern-Hardwood,all,all,cross,5,T2 site ordering HT,FLAG,16,16 of 63 density x age cells inverted
+engine,Northern-Hardwood,all,all,cross,5,T2 site ordering VOL,FLAG,28,28 of 63 density x age cells inverted
+engine,Northern-Hardwood,all,all,cross,5,T5 Eichhorn VOL~HT site independence,PASS,0.0708975680153503,mean CV of VOL across sites at matched HT 7.1%
+engine,Northern-Hardwood,all,all,cross,5,T6 Sukachev per-tree VOL falls with density,FLAG,0,0 of 3 site levels ordered
+engine,Northern-Hardwood,all,all,cross,5,T7 yield-density final BA vs initial density,PASS,0.107142857142857,worst relative BA drop from lower to higher initial density 11%
+engine,Northern-Hardwood,all,all,cross,5,T8 pinned BA plateau,PASS,0.259415444835867,final BA CV 25.9% across 9 trajectories that started with CV 52%
+engine,Northern-Hardwood,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",PASS,-1.60261786404872,slope -1.60 on 99 limb points from 6 trajectories
+engine,Oak-Pine,all,all,cross,5,T2 site ordering HT,FLAG,6,6 of 63 density x age cells inverted
+engine,Oak-Pine,all,all,cross,5,T2 site ordering VOL,FLAG,63,63 of 63 density x age cells inverted
+engine,Oak-Pine,all,all,cross,5,T5 Eichhorn VOL~HT site independence,PASS,0.142675875388505,mean CV of VOL across sites at matched HT 14.3%
+engine,Oak-Pine,all,all,cross,5,T6 Sukachev per-tree VOL falls with density,FLAG,0.666666666666667,2 of 3 site levels ordered
+engine,Oak-Pine,all,all,cross,5,T7 yield-density final BA vs initial density,PASS,0.501930501930502,worst relative BA drop from lower to higher initial density 50%
+engine,Oak-Pine,all,all,cross,5,T8 pinned BA plateau,PASS,0.402046323834987,final BA CV 40.2% across 9 trajectories that started with CV 44%
+engine,Oak-Pine,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",FLAG,-0.407881439431889,slope -0.41 on 124 limb points from 9 trajectories
+engine,Pine,all,all,cross,5,T2 site ordering HT,FLAG,18,18 of 63 density x age cells inverted
+engine,Pine,all,all,cross,5,T2 site ordering VOL,FLAG,12,12 of 63 density x age cells inverted
+engine,Pine,all,all,cross,5,T5 Eichhorn VOL~HT site independence,PASS,0.02977829477938,mean CV of VOL across sites at matched HT 3.0%
+engine,Pine,all,all,cross,5,T6 Sukachev per-tree VOL falls with density,FLAG,0.333333333333333,1 of 3 site levels ordered
+engine,Pine,all,all,cross,5,T7 yield-density final BA vs initial density,PASS,-0.0542635658914729,worst relative BA drop from lower to higher initial density -5%
+engine,Pine,all,all,cross,5,T8 pinned BA plateau,FLAG,0.017107422125481,final BA CV 1.7% across 9 trajectories that started with CV 42%
+engine,Pine,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",NOT APPLICABLE,,0 limb points at SDI/SDImax >= 0.55 (peak RD 0.78); need >= 10 and quantreg
+engine,Spruce-Fir,all,all,cross,5,T2 site ordering HT,FLAG,1,1 of 63 density x age cells inverted
+engine,Spruce-Fir,all,all,cross,5,T2 site ordering VOL,FLAG,24,24 of 63 density x age cells inverted
+engine,Spruce-Fir,all,all,cross,5,T5 Eichhorn VOL~HT site independence,FLAG,0.152983792452841,mean CV of VOL across sites at matched HT 15.3%
+engine,Spruce-Fir,all,all,cross,5,T6 Sukachev per-tree VOL falls with density,FLAG,0,0 of 3 site levels ordered
+engine,Spruce-Fir,all,all,cross,5,T7 yield-density final BA vs initial density,PASS,-0.0769230769230769,worst relative BA drop from lower to higher initial density -8%
+engine,Spruce-Fir,all,all,cross,5,T8 pinned BA plateau,PASS,0.0423519329486836,final BA CV 4.2% across 9 trajectories that started with CV 41%
+engine,Spruce-Fir,all,all,cross,5,"T3b frontier slope (rq tau 0.95, pooled limb)",NOT APPLICABLE,,0 limb points at SDI/SDImax >= 0.55 (peak RD 0.82); need >= 10 and quantreg

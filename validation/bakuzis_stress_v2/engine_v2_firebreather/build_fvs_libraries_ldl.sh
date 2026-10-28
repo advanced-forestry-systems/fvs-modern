@@ -1,0 +1,461 @@
+#!/bin/bash
+# =============================================================================
+# build_fvs_libraries.sh
+#
+# Build FVS Fortran shared libraries (.so) for use with rFVS/fvsOL on Linux.
+# Targets the ORIGINAL fixed-form source (ForestVegetationSimulator-main).
+#
+# Compiler support
+# ----------------
+# gfortran is the supported and tested Fortran compiler. Intel ifort produces
+# uppercase symbol exports for routines decorated with !DEC$ ATTRIBUTES ALIAS
+# (e.g., src-converted/base/fvs.f90 line 50: ALIAS : "FVS" :: FVS), which do
+# not match the lowercase + underscore name mangling expected by downstream
+# Fortran callers and ctypes consumers. Until those directives are audited
+# and made portable, only gfortran is documented as working.
+#
+# A typical Cardinal session loads gcc/12.3.0 before this script (R/4.4.0
+# inherits the same toolchain). On Fedora/RHEL workstations install via
+# `dnf install gcc-gfortran`; on macOS `brew install gcc`; on Ubuntu/Debian
+# `apt install gfortran`.
+#
+# Usage:
+#   ./build_fvs_libraries.sh [--verbose] SOURCE_DIR OUTPUT_DIR [VARIANTS...]
+#
+# Examples:
+#   ./build_fvs_libraries.sh . ./lib                    # all variants
+#   ./build_fvs_libraries.sh . ./lib ne ak ie           # subset
+#   ./build_fvs_libraries.sh --verbose . ./lib ne       # show compile errors
+#
+# If no variants specified, builds all US + Canadian variants.
+# =============================================================================
+
+set -euo pipefail
+
+# Parse flags
+VERBOSE=0
+ARGS=()
+for arg in "$@"; do
+    case "$arg" in
+        --verbose|-v) VERBOSE=1 ;;
+        *) ARGS+=("$arg") ;;
+    esac
+done
+set -- "${ARGS[@]+"${ARGS[@]}"}"
+
+SOURCE_DIR="${1:?Usage: $0 [--verbose] SOURCE_DIR OUTPUT_DIR [VARIANTS...]}"
+OUTPUT_DIR="${2:?Usage: $0 [--verbose] SOURCE_DIR OUTPUT_DIR [VARIANTS...]}"
+shift 2
+VARIANTS=("$@")
+
+# Default: all US variants
+if [ ${#VARIANTS[@]} -eq 0 ]; then
+    VARIANTS=(ak acd bm ca ci cr cs ec em ie kt ls nc ne oc op pn sn so tt ut wc ws bc on)
+fi
+
+# Compiler settings. gfortran is the supported compiler; ifort emits
+# uppercase symbols for !DEC$ ATTRIBUTES ALIAS decorations that downstream
+# ctypes and Fortran callers cannot resolve. The check below warns when an
+# environment forces ifort and reverts to gfortran so the build still works.
+if [ "${FC:-gfortran}" != "gfortran" ]; then
+    echo "WARNING: FC=$FC is not supported. Reverting to gfortran." >&2
+    echo "         Reason: ifort and other compilers do not honor the" >&2
+    echo "         lowercase ALIAS names that downstream callers expect." >&2
+fi
+FC="gfortran"
+CC="${CC:-gcc}"
+CXX="${CXX:-g++}"
+FFLAGS="-fPIC -g -cpp -DCMPgcc -std=legacy -w -fallow-argument-mismatch"
+CFLAGS="-fPIC -DANSI -DCMPgcc -DSQLITE_THREADSAFE=0 -DSQLITE_OMIT_LOAD_EXTENSION -w"
+CXXFLAGS="-fPIC -DANSI -DCMPgcc -w"
+
+BUILD_DIR=$(mktemp -d /tmp/fvs-build-XXXXXX)
+_cleanup_all() { rm -rf "$BUILD_DIR"; }
+trap "_cleanup_all" EXIT
+
+mkdir -p "$OUTPUT_DIR"
+
+echo "================================================================"
+echo "FVS Shared Library Builder"
+echo "================================================================"
+echo "Source:   $SOURCE_DIR"
+echo "Output:   $OUTPUT_DIR"
+echo "Variants: ${VARIANTS[*]}"
+echo "Compiler: $($FC --version | head -1)"
+echo "Build:    $BUILD_DIR"
+echo "================================================================"
+echo ""
+
+# Resolve source directory: accept project root (with src-converted/) or
+# direct path to the source tree (with bin/ and base/).
+if [ -d "$SOURCE_DIR/src-converted/bin" ] && [ -d "$SOURCE_DIR/src-converted/base" ]; then
+    SOURCE_DIR="$SOURCE_DIR/src-converted"
+elif [ ! -d "$SOURCE_DIR/bin" ] || [ ! -d "$SOURCE_DIR/base" ]; then
+    echo "ERROR: $SOURCE_DIR does not look like a FVS source tree."
+    echo "Expected bin/ and base/ subdirectories (or src-converted/ parent)."
+    exit 1
+fi
+
+# Function to compile a single source file
+compile_file() {
+    local src="$1"
+    local obj="$2"
+    local incdirs="$3"
+    local ext="${src##*.}"
+
+    case "$ext" in
+        f|F|f90|F90)
+            $FC $FFLAGS $incdirs -c "$src" -o "$obj"
+            ;;
+        for)
+            $FC $FFLAGS $incdirs -c "$src" -o "$obj"
+            ;;
+        c)
+            $CC $CFLAGS $incdirs -c "$src" -o "$obj"
+            ;;
+        cpp|cxx|C)
+            $CXX $CXXFLAGS $incdirs -c "$src" -o "$obj"
+            ;;
+    esac
+}
+
+# Build each variant
+
+build_stubs() {
+    local stub_dir="${SOURCE_DIR}/stubs"
+    if [ ! -d "$stub_dir" ]; then
+        echo "[stubs] no stub dir at $stub_dir, skipping"
+        return 0
+    fi
+    local FC_LOCAL="${FC:-gfortran}"
+    if ! command -v "$FC_LOCAL" >/dev/null 2>&1; then
+        FC_LOCAL=$(command -v ifort 2>/dev/null || command -v ifx 2>/dev/null || command -v gfortran 2>/dev/null)
+    fi
+    for stub_src in "$stub_dir"/*.f; do
+        [ -f "$stub_src" ] || continue
+        local base=$(basename "$stub_src" .f)
+        local lib_out="${OUTPUT_DIR}/lib${base}.so"
+        echo -n "[stubs] Building $(basename "$lib_out") ... "
+        local obj="${BUILD_DIR}/${base}.o"
+        if "$FC_LOCAL" -fPIC -c "$stub_src" -o "$obj" 2>/tmp/stub_${base}.err && "$FC_LOCAL" -shared "$obj" -o "$lib_out" 2>>/tmp/stub_${base}.err; then
+            echo "OK"
+        else
+            echo "FAIL (see /tmp/stub_${base}.err)"
+        fi
+    done
+}
+
+BUILT=0
+FAILED=0
+
+build_stubs
+
+for var in "${VARIANTS[@]}"; do
+    SRCLIST="$SOURCE_DIR/bin/FVS${var}_sourceList.txt"
+    if [ ! -f "$SRCLIST" ]; then
+        echo "[$var] SKIP: No source list found at $SRCLIST"
+        continue
+    fi
+
+    echo -n "[$var] Building FVS${var}.so ... "
+    VARDIR="$BUILD_DIR/$var"
+    mkdir -p "$VARDIR"
+
+    # -------------------------------------------------------------------------
+    # PRGPRM variant-header shadow (fixes zero-trees / corrupt COMMON /CONCHR/).
+    #
+    # Root cause: base/*.f90 sources (e.g. base/intree.f90) carry a bare
+    #   INCLUDE 'PRGPRM.f90'
+    # which gfortran resolves relative to the SOURCE FILE's own directory FIRST,
+    # i.e. base/PRGPRM.f90 (MAXSP=23), REGARDLESS of the -I include order below.
+    # The variant-dir sources instead see <var>/common/PRGPRM.f90 (e.g. ne=108).
+    # The two MAXSP values size COMMON /CONCHR/ (defined via base/CONTRL.f90)
+    # differently, so intree.o and blkdat.o disagree on the CONCHR layout, the
+    # character COMMON is corrupted, and zero trees load at runtime.
+    #
+    # Fix: for the duration of this variant's build, back up base/PRGPRM.f90 and
+    # shadow it with the VARIANT's PRGPRM.f90 so base-dir INCLUDE 'PRGPRM.f90'
+    # resolves to the variant MAXSP. Restored at the end of the iteration (and by
+    # the EXIT trap on any error) so the source tree is never left modified.
+    BASE_PRGPRM="$SOURCE_DIR/base/PRGPRM.f90"
+    VAR_PRGPRM=""
+    for cand in "$SOURCE_DIR/$var/common/PRGPRM.f90" "$SOURCE_DIR/$var/PRGPRM.f90" "$SOURCE_DIR/canada/$var/common/PRGPRM.f90" "$SOURCE_DIR/canada/$var/PRGPRM.f90"; do
+        [ -f "$cand" ] && { VAR_PRGPRM="$cand"; break; }
+    done
+    PRGPRM_SHADOWED=0
+    if [ -n "$VAR_PRGPRM" ] && [ -f "$BASE_PRGPRM" ] && ! cmp -s "$VAR_PRGPRM" "$BASE_PRGPRM"; then
+        cp -f "$BASE_PRGPRM" "$BASE_PRGPRM.prgprm_bak"
+        cp -f "$VAR_PRGPRM" "$BASE_PRGPRM"
+        PRGPRM_SHADOWED=1
+        _bmx=$(grep -m1 -oE 'MAXSP *= *[0-9]+' "$BASE_PRGPRM" | grep -oE '[0-9]+')
+        echo "" ; echo "  [prgprm] shadowed base/PRGPRM.f90 with $var (MAXSP=${_bmx:-?}) for this build"
+    fi
+    # Restore the original base/PRGPRM.f90 no matter how this iteration ends.
+    restore_prgprm() {
+        if [ "${PRGPRM_SHADOWED:-0}" = "1" ] && [ -f "$BASE_PRGPRM.prgprm_bak" ]; then
+            cp -f "$BASE_PRGPRM.prgprm_bak" "$BASE_PRGPRM"
+            rm -f "$BASE_PRGPRM.prgprm_bak"
+            PRGPRM_SHADOWED=0
+        fi
+    }
+    trap 'restore_prgprm; _cleanup_all' EXIT
+
+    # Parse source list and collect include directories
+    OBJECTS=()
+    COMPILE_ERRORS=0
+
+    while IFS= read -r line || [ -n "$line" ]; do
+        # Skip blank lines and comments
+        line=$(echo "$line" | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+        [ -z "$line" ] && continue
+        [[ "$line" == "#"* ]] && continue
+
+        # Skip rd/ INCLUDE-only files (referenced via INCLUDE 'RD*.f90'
+        # in rd/rd*.f90 sources). Compiling them as standalone units
+        # pollutes the link namespace with COMMON-block declarations,
+        # breaking keyrdr.f90 at runtime on PN/IE.
+        case "$line" in
+            */rd/RDADD.f90|*/rd/RDARRY.f90|*/rd/RDCOM.f90|*/rd/RDCRY.f90|*/rd/RDPARM.f90)
+                continue
+                ;;
+        esac
+
+
+        # Resolve path relative to bin/
+        srcfile="$SOURCE_DIR/bin/$line"
+        if [ ! -f "$srcfile" ]; then
+            # Source lists often reference .f90 for files that haven't been
+            # converted from fixed-form yet. Fall back to .f or .for.
+            stem="${srcfile%.*}"
+            if [ -f "${stem}.f" ]; then
+                srcfile="${stem}.f"
+            elif [ -f "${stem}.for" ]; then
+                srcfile="${stem}.for"
+            else
+                continue
+            fi
+        fi
+
+        # Build include path from source directory
+        srcdir=$(dirname "$srcfile")
+        fname=$(basename "$srcfile")
+        objname="${fname%.*}.o"
+        objpath="$VARDIR/$objname"
+
+        # Handle duplicate basenames by adding directory prefix
+        if [ -f "$objpath" ]; then
+            dirprefix=$(basename "$srcdir")
+            objpath="$VARDIR/${dirprefix}_${objname}"
+        fi
+
+        # Collect include directories. Variant-specific paths come BEFORE
+        # base/ so that PRGPRM.f90 and other shared header names resolve
+        # to the variant's own copy (with the variant-specific MAXSP and
+        # other parameters). Without this, files like vwc/morts.f90 that
+        # are shared between PN and WC and depend on MAXSP=39 would
+        # silently pick up base/PRGPRM.f90's MAXSP=23 and fail to
+        # compile their 39-element DATA arrays.
+        INCDIRS="-I$SOURCE_DIR/$var"
+        [ -d "$SOURCE_DIR/$var/common" ] && INCDIRS="$INCDIRS -I$SOURCE_DIR/$var/common"
+        INCDIRS="$INCDIRS -I$SOURCE_DIR/base"
+        [ -d "$SOURCE_DIR/base/common" ] && INCDIRS="$INCDIRS -I$SOURCE_DIR/base/common"
+        [ -d "$SOURCE_DIR/vbase" ] && INCDIRS="$INCDIRS -I$SOURCE_DIR/vbase"
+        [ -d "$SOURCE_DIR/common" ] && INCDIRS="$INCDIRS -I$SOURCE_DIR/common"
+        [ -d "$SOURCE_DIR/fire/base/common" ] && INCDIRS="$INCDIRS -I$SOURCE_DIR/fire/base/common"
+        [ -d "$SOURCE_DIR/fire/$var/common" ] && INCDIRS="$INCDIRS -I$SOURCE_DIR/fire/$var/common"
+        # Canadian variants live under canada/ subdirectory
+        [ -d "$SOURCE_DIR/canada/$var" ] && INCDIRS="$INCDIRS -I$SOURCE_DIR/canada/$var"
+        [ -d "$SOURCE_DIR/canada/fire" ] && INCDIRS="$INCDIRS -I$SOURCE_DIR/canada/fire"
+        [ -d "$SOURCE_DIR/canada/newmist" ] && INCDIRS="$INCDIRS -I$SOURCE_DIR/canada/newmist"
+        [ -d "$srcdir" ] && INCDIRS="$INCDIRS -I$srcdir"
+        INCDIRS="$INCDIRS -I$SOURCE_DIR/dbs -I$SOURCE_DIR/dbsqlite"
+        # NVEL volume library includes (.inc files like wdbkwtdata.inc)
+        [ -d "$SOURCE_DIR/volume/NVEL" ] && INCDIRS="$INCDIRS -I$SOURCE_DIR/volume/NVEL"
+        [ -d "$SOURCE_DIR/volume" ] && INCDIRS="$INCDIRS -I$SOURCE_DIR/volume"
+        # Cross-variant source files (e.g., ie/vols.f90 used by acd) need
+        # the originating variant's common dir for ESPARM.f90 etc.
+        [ -d "$SOURCE_DIR/ie/common" ] && INCDIRS="$INCDIRS -I$SOURCE_DIR/ie/common"
+        [ -d "$SOURCE_DIR/ls/common" ] && INCDIRS="$INCDIRS -I$SOURCE_DIR/ls/common"
+
+        if compile_file "$srcfile" "$objpath" "$INCDIRS" 2>"$VARDIR/err_$(basename "$objpath" .o).log" && [ -f "$objpath" ]; then
+            OBJECTS+=("$objpath")
+        else
+            # If .f90 failed, try .f fixed-form fallback (common when .f90
+            # has unconverted INCLUDE references but .f compiles cleanly)
+            stem="${srcfile%.*}"
+            fallback=""
+            if [[ "$srcfile" == *.f90 ]] && [ -f "${stem}.f" ]; then
+                fallback="${stem}.f"
+            elif [[ "$srcfile" == *.f90 ]] && [ -f "${stem}.for" ]; then
+                fallback="${stem}.for"
+            fi
+            if [ -n "$fallback" ]; then
+                fb_objname="${fallback##*/}"
+                fb_objpath="$VARDIR/fb_${fb_objname%.*}.o"
+                if compile_file "$fallback" "$fb_objpath" "$INCDIRS" 2>/dev/null && [ -f "$fb_objpath" ]; then
+                    OBJECTS+=("$fb_objpath")
+                else
+                    COMPILE_ERRORS=$((COMPILE_ERRORS + 1))
+                    if [ "$VERBOSE" -eq 1 ]; then
+                        echo ""
+                        echo "  COMPILE FAIL: $srcfile (and fallback $fallback)"
+                        tail -3 "$VARDIR/err_$(basename "$objpath" .o).log" 2>/dev/null | sed 's/^/    /'
+                    fi
+                fi
+            else
+                COMPILE_ERRORS=$((COMPILE_ERRORS + 1))
+                if [ "$VERBOSE" -eq 1 ]; then
+                    echo ""
+                    echo "  COMPILE FAIL: $srcfile"
+                    tail -3 "$VARDIR/err_$(basename "$objpath" .o).log" 2>/dev/null | sed 's/^/    /'
+                fi
+            fi
+        fi
+
+    done < "$SRCLIST"
+
+    # Windows pre-link self-containment (#72): PE DLLs cannot contain unresolved symbols and the
+    # post-link auto-stub cannot help (the link must succeed first). Derive symbols referenced (U)
+    # but defined by no object, stub them, and add to the link so it has zero unresolved symbols.
+    case "$(uname -s)" in
+        MINGW*|MSYS*|CYGWIN*)
+            if [ ${#OBJECTS[@]} -gt 0 ]; then
+                DEFD=$(nm "${OBJECTS[@]}" 2>/dev/null | awk 'NF>=3 && $2 ~ /^[TtDdBbRr]$/ {print $3}' | sort -u)
+                REFD=$(nm "${OBJECTS[@]}" 2>/dev/null | awk '$1=="U"{print $2} NF==2 && $1 ~ /^[Uu]$/{print $2}' | sort -u)
+                TOSTUB=$(comm -23 <(printf '%s\n' "$REFD") <(printf '%s\n' "$DEFD") 2>/dev/null \
+                        | grep -E '^[a-z][a-z0-9_]+_$' | grep -vE '^(gfortran|_gfortran|__|gomp|omp_|gcov|main)' || true)
+                if [ -n "$TOSTUB" ]; then
+                    PSF="$VARDIR/prelinkstub_${var}.f90"; : > "$PSF"
+                    for sym in $TOSTUB; do nm0="${sym%_}"; printf 'subroutine %s\nend subroutine %s\n' "$nm0" "$nm0" >> "$PSF"; done
+                    PSO="$VARDIR/prelinkstub_${var}.o"
+                    if compile_file "$PSF" "$PSO" "$INCDIRS" 2>/dev/null && [ -f "$PSO" ]; then
+                        OBJECTS+=("$PSO")
+                        echo "  [win pre-link] stubbed $(printf '%s\n' $TOSTUB | wc -l | tr -d ' ') undefined symbol(s) for PE link"
+                    fi
+                fi
+            fi ;;
+    esac
+
+    # Filter out main.o (the executable entry point; not needed for shared library)
+    SHLIB_OBJECTS=()
+    for obj in "${OBJECTS[@]}"; do
+        bname=$(basename "$obj")
+        if [[ "$bname" != "main.o" ]]; then
+            SHLIB_OBJECTS+=("$obj")
+        fi
+    done
+
+    # Link shared library
+    if [ ${#SHLIB_OBJECTS[@]} -gt 0 ]; then
+        # Link against the project stub libraries (libfvs_stubs*.so in OUTPUT_DIR) as a
+        # fallback so symbols a variant references but does not itself define (e.g. volinitnvb_,
+        # varver_) resolve from the stubs. Using -l (not direct object add) pulls a stub ONLY for
+        # an otherwise-undefined symbol, so it never duplicates a real definition. $ORIGIN rpath
+        # lets the loaded .so find the stub libs sitting beside it.
+        # OS-aware shared-library link. Linux -shared tolerates undefined symbols by default
+        # and uses the stub-library fallback + rpath; macOS ld64 and Windows/MinGW PE linking
+        # reject undefined symbols at link time, so they need an explicit allow flag (the FVS .so
+        # carry harmless unresolved internal NVEL symbols resolved lazily at load).
+        STUBLINK=(); RPATHFLAG=(); EXTRALINK=()
+        case "$(uname -s)" in
+            Linux)
+                RPATHFLAG=(-Wl,-rpath,\$ORIGIN)
+                for sl in "$OUTPUT_DIR"/libfvs_stubs*.so; do [ -f "$sl" ] && STUBLINK+=("-l:$(basename "$sl")"); done ;;
+            Darwin)
+                EXTRALINK=(-Wl,-undefined,dynamic_lookup) ;;
+            MINGW*|MSYS*|CYGWIN*)
+                for sl in "$OUTPUT_DIR"/libfvs_stubs*.so; do [ -f "$sl" ] && STUBLINK+=("-l:$(basename "$sl")"); done
+                # Statically bundle the gfortran/gcc runtime so the PE DLL is self-contained
+                # (no libgfortran-5.dll/libgcc/libquadmath dependency at load time).
+                EXTRALINK=(-static-libgfortran -static-libgcc -static-libquadmath -Wl,--enable-auto-import -Wl,--unresolved-symbols=ignore-all) ;;
+            *)
+                EXTRALINK=(-Wl,--unresolved-symbols=ignore-all -Wl,--no-as-needed -ldl) ;;
+        esac
+        if $FC -shared -o "$OUTPUT_DIR/FVS${var}.so" "${SHLIB_OBJECTS[@]}" -L"$OUTPUT_DIR" ${RPATHFLAG[@]+"${RPATHFLAG[@]}"} ${STUBLINK[@]+"${STUBLINK[@]}"} ${EXTRALINK[@]+"${EXTRALINK[@]}"} 2>"$VARDIR/link.err"; then
+            NOBJ=${#SHLIB_OBJECTS[@]}
+            SIZE=$(ls -lh "$OUTPUT_DIR/FVS${var}.so" | awk '{print $5}')
+            echo "DONE ($NOBJ objects, $COMPILE_ERRORS skipped, $SIZE)"
+            BUILT=$((BUILT + 1))
+
+            # --- post-build CONCHR layout assertion (zero-trees guard) ---------
+            # Confirm the character COMMON /CONCHR/ has the SAME size in the base
+            # intree object and the variant blkdat object. A mismatch means a
+            # base-dir source compiled against the wrong MAXSP (the bug the PRGPRM
+            # shadow above prevents); the library would load zero trees. Compare
+            # the emitted size of the `conchr_` symbol (2nd nm --print-size col).
+            INTREE_O=""; BLKDAT_O=""
+            for _o in "${OBJECTS[@]}"; do
+                case "$(basename "$_o")" in
+                    intree.o|*_intree.o) [ -z "$INTREE_O" ] && INTREE_O="$_o" ;;
+                    blkdat.o|*_blkdat.o) [ -z "$BLKDAT_O" ] && BLKDAT_O="$_o" ;;
+                esac
+            done
+            if [ -n "$INTREE_O" ] && [ -n "$BLKDAT_O" ]; then
+                _sz() { nm --defined-only --print-size "$1" 2>/dev/null                         | awk 'tolower($NF) ~ /^conchr_$/ {print $2; exit}'; }
+                CONCHR_INTREE=$(_sz "$INTREE_O")
+                CONCHR_BLKDAT=$(_sz "$BLKDAT_O")
+                if [ -n "$CONCHR_INTREE" ] && [ -n "$CONCHR_BLKDAT" ]; then
+                    if [ "$CONCHR_INTREE" != "$CONCHR_BLKDAT" ]; then
+                        echo "  [CONCHR] ASSERTION FAILED for $var:"
+                        echo "          sizeof(COMMON /CONCHR/) differs between objects"
+                        echo "          intree.o = 0x$CONCHR_INTREE   blkdat.o = 0x$CONCHR_BLKDAT"
+                        echo "          -> base-dir sources built against wrong MAXSP; the .so"
+                        echo "             would load ZERO trees. Failing the build."
+                        rm -f "$OUTPUT_DIR/FVS${var}.so"
+                        restore_prgprm
+                        FAILED=$((FAILED + 1)); BUILT=$((BUILT - 1))
+                        continue
+                    else
+                        echo "  [CONCHR] OK: sizeof(COMMON /CONCHR/) matches (0x$CONCHR_INTREE) in intree.o and blkdat.o"
+                    fi
+                fi
+            fi
+
+            # --- self-contained pass (#72): stub any remaining UNDEFINED FVS-internal Fortran
+            # symbols and re-link them in, so the library also loads on macOS/Windows (whose
+            # dlopen cannot defer unresolved symbols like Linux lazy binding does). Only undefined
+            # symbols are stubbed, so this never duplicates a real definition. Stubbed routines are
+            # ones this variant does not link or call; behavior matches the prior lazy-load.
+            SOF="$OUTPUT_DIR/FVS${var}.so"
+            UND=$( { nm -u "$SOF" 2>/dev/null || nm -D -u "$SOF" 2>/dev/null; } \
+                   | awk "{print \$NF}" | sed "s/^_//" \
+                   | grep -E "^[a-z][a-z0-9_]+_$" \
+                   | grep -vE "^(gfortran|_gfortran|gomp|omp_|gcov)" | sort -u )
+            if [ -n "$UND" ]; then
+                ASF="$VARDIR/autostub_${var}.f90"; : > "$ASF"
+                for sym in $UND; do nm0="${sym%_}"; printf "subroutine %s\nend subroutine %s\n" "$nm0" "$nm0" >> "$ASF"; done
+                ASO="$VARDIR/autostub_${var}.o"
+                if compile_file "$ASF" "$ASO" "$INCDIRS" 2>/dev/null && [ -f "$ASO" ]; then
+                    if $FC -shared -o "$SOF" "${SHLIB_OBJECTS[@]}" "$ASO" -L"$OUTPUT_DIR" ${RPATHFLAG[@]+"${RPATHFLAG[@]}"} ${STUBLINK[@]+"${STUBLINK[@]}"} ${EXTRALINK[@]+"${EXTRALINK[@]}"} 2>"$VARDIR/relink.err"; then
+                        echo "  [self-contained] stubbed $(printf "%s\n" $UND | wc -l | tr -d " ") undefined symbol(s) for portable load"
+                    fi
+                fi
+            fi
+        else
+            echo "LINK FAILED"
+            echo "  --- link.err (tail) ---"
+            tail -40 "$VARDIR/link.err" 2>/dev/null | sed 's/^/    /'
+            FAILED=$((FAILED + 1))
+        fi
+    else
+        echo "NO OBJECTS"
+        FAILED=$((FAILED + 1))
+    fi
+
+    # Restore base/PRGPRM.f90 for the next variant (shadow was per-variant).
+    restore_prgprm
+done
+
+echo ""
+echo "================================================================"
+echo "Build Summary"
+echo "================================================================"
+echo "  Built successfully: $BUILT"
+echo "  Failed:             $FAILED"
+echo "  Output directory:   $OUTPUT_DIR"
+echo ""
+if [ $BUILT -gt 0 ]; then
+    echo "Libraries:"
+    ls -lh "$OUTPUT_DIR"/FVS*.so 2>/dev/null
+fi
+echo "================================================================"

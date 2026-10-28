@@ -1,0 +1,72 @@
+==========================================================================
+ADDENDUM: Eichhorn (raw), SDI gate, BAMAX ceiling
+==========================================================================
+
+
+[8 EICHHORN, raw plot-level, 2 m height bins, min 20 plot-cycles per site class per bin]
+
+  fvs_base      bins with all 4 site classes: 7 (HT 19-31 m)
+                per-bin CV: 19m=22.5% 21m=19.1% 23m=21.0% 25m=20.1% 27m=15.7% 29m=12.1% 31m=11.1%
+                MEAN Eichhorn CV = 17.4%  -> FLAG (site-dependent V-H)
+
+  fvs_regional  bins with all 4 site classes: 7 (HT 19-31 m)
+                per-bin CV: 19m=20.2% 21m=16.4% 23m=18.4% 25m=16.1% 27m=13.4% 29m=9.5% 31m=8.0%
+                MEAN Eichhorn CV = 14.6%  -> PASS (site-independent)
+
+  organon       bins with all 4 site classes: 16 (HT 19-49 m)
+                per-bin CV: 19m=19.2% 21m=8.2% 23m=5.4% 25m=13.8% 27m=13.1% 29m=9.3% 31m=13.3% 33m=14.8% 35m=20.7% 37m=20.5% 39m=20.3% 41m=16.0% 43m=15.7% 45m=16.6% 47m=14.8% 49m=19.1%
+                MEAN Eichhorn CV = 15.1%  -> FLAG (site-dependent V-H)
+
+
+[SDI GATE] vls/morts.f90: density mortality engages only above PMSDIL = 55% of SDImax
+           (line ~530: IF(T .LE. TEM .OR. RN .LE. 0.0) RIP=RI)
+           Below the gate ONLY the halved background rate applies (line 512: RI = 0.5 * RI)
+
+  fvs_base      % of plot-cycles BELOW the 55% gate: all=42.9%  low-density=63.6%  high-density=22.1%
+                by site class: S1=70%  S2=44%  S3=30%  S4=28%
+  fvs_regional  % of plot-cycles BELOW the 55% gate: all=35.8%  low-density=55.5%  high-density=16.1%
+                by site class: S1=66%  S2=34%  S3=21%  S4=22%
+  organon       % of plot-cycles BELOW the 55% gate: all=77.7%  low-density=91.0%  high-density=64.5%
+                by site class: S1=93%  S2=72%  S3=72%  S4=74%
+
+
+[BAMAX CEILING] vls/morts.f90 lines 750-786 inflate mortality until
+                residual BA <= BAMAX + 1 ft2/ac, where BAMAX =
+                SDImax * 0.5454154 * 0.85 (vbase/sdical.f90 line 202)
+
+  fvs_base      max BA/BAMAX = 1.127 ; % of plot-cycles pinned within 1 ft2/ac of BAMAX = 29.6% ; % above 0.99*BAMAX = 37.5%
+  fvs_regional  max BA/BAMAX = 1.127 ; % of plot-cycles pinned within 1 ft2/ac of BAMAX = 39.5% ; % above 0.99*BAMAX = 44.6%
+  organon       max BA/BAMAX = 1.127 ; % of plot-cycles pinned within 1 ft2/ac of BAMAX = 15.7% ; % above 0.99*BAMAX = 18.3%
+
+
+==========================================================================
+  arm          relation                   
+1 fvs_base     8 Eichhorn (volume-height) 
+2 fvs_regional 8 Eichhorn (volume-height) 
+3 organon      8 Eichhorn (volume-height) 
+4 fvs_base     DIAG: SDI gate (55% SDImax)
+5 fvs_regional DIAG: SDI gate (55% SDImax)
+6 organon      DIAG: SDI gate (55% SDImax)
+7 fvs_base     DIAG: BAMAX ceiling        
+8 fvs_regional DIAG: BAMAX ceiling        
+9 organon      DIAG: BAMAX ceiling        
+  statistic                                                                                              
+1 mean CV of VOL at matched HT = 17.4% over 7 common 2 m bins (threshold 15%)                            
+2 mean CV of VOL at matched HT = 14.6% over 7 common 2 m bins (threshold 15%)                            
+3 mean CV of VOL at matched HT = 15.1% over 16 common 2 m bins (threshold 15%)                           
+4 42.9% of plot-cycles below the gate (low-density 63.6%, high-density 22.1%): density mortality inactive
+5 35.8% of plot-cycles below the gate (low-density 55.5%, high-density 16.1%): density mortality inactive
+6 77.7% of plot-cycles below the gate (low-density 91.0%, high-density 64.5%): density mortality inactive
+7 29.6% of plot-cycles pinned within 1 ft2 ac-1 of BAMAX (max BA/BAMAX 1.127)                            
+8 39.5% of plot-cycles pinned within 1 ft2 ac-1 of BAMAX (max BA/BAMAX 1.127)                            
+9 15.7% of plot-cycles pinned within 1 ft2 ac-1 of BAMAX (max BA/BAMAX 1.127)                            
+  decision  
+1 FLAG      
+2 PASS      
+3 FLAG      
+4 DIAGNOSTIC
+5 DIAGNOSTIC
+6 DIAGNOSTIC
+7 DIAGNOSTIC
+8 DIAGNOSTIC
+9 DIAGNOSTIC

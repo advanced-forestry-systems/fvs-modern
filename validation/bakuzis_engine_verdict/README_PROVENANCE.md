@@ -1,0 +1,5 @@
+# Provenance note for engine_bakuzis_out/engine_bakuzis_100yr.csv (added October 27, 2026)
+
+This table was produced in the Cardinal worktree `wt-engine` (branch `reconcile/three-arm-onto-main`) with its `lib_gompit` library, not from the main-branch source in this repository. Its keyfile wrote `SETSITE`, which is not an FVS keyword, so every site class ran on the variant default. Scored with `validation/bakuzis_stress_v2/bakuzis_stress_v2.R`, it shows every Spruce-Fir scenario losing 89 to 98 percent of stems in the first five-year cycle, Pine basal area pinned at 129 to 130 ft² ac⁻¹, and Oak-Pine at 1.6 times the engine SDImax.
+
+The same 36 scenarios run through FVSne built from main at 895f5aa (`validation/bakuzis_stress_v2/engine_v2_firebreather/`, October 27, 2026, with `SITECODE` and a seeding gate) show none of that under either GOMPIT or native mortality. The table is kept for the record and should not be used as evidence about the main-branch engine. `bakuzis_final_verdict.R` and `bakuzis_verdict.R` in this folder hardcode the yield-density verdict as PASS and the site-ordering verdict as inconclusive; use the v2 scorer instead.

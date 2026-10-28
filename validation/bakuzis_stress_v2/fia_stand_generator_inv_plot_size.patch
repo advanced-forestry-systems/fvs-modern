@@ -1,0 +1,13 @@
+diff --git a/calibration/python/fia_stand_generator.py b/calibration/python/fia_stand_generator.py
+index 24e7ac0..02915a8 100644
+--- a/calibration/python/fia_stand_generator.py
++++ b/calibration/python/fia_stand_generator.py
+@@ -206,7 +206,7 @@ def build_stand_init(
+         "forest": 0,
+         "district": 0,
+         "basal_area_factor": 0.0,
+-        "inv_plot_size": 6.0,
++        "inv_plot_size": 1.0,   # tree_count is TPA_UNADJ (already per acre); 6.0 double-expanded every record x6 (found 2026-10-27)
+         "brk_dbh": 5.0,
+         "num_plots": 1,
+         "age": int(cond_row.get("STDAGE", 40) or 40),

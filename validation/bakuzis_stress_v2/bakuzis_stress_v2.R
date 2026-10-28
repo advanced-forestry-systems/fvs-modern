@@ -40,7 +40,9 @@ FF     <- as.numeric(ga("ff", "0.40"))           # form factor when VOL is absen
 LABEL  <- ga("label", paste0(SRC, "_", format(Sys.Date(), "%Y%m%d")))
 SDIMAX <- ga("sdimax"); OBS99 <- as.numeric(ga("obs_ba_p99", "NA")); OBS999 <- as.numeric(ga("obs_ba_p999", "NA"))
 SITECOL <- ga("site_col")
+OBSFILE <- ga("obs_ba_file")   # optional csv: group, ba_p99, ba_p999 (m2 ha-1) overriding the scalar thresholds per group
 SHOCK  <- as.numeric(ga("shock", "0.25"))        # first-step stem or BA loss fraction that flags
+MAXTRAJ <- as.integer(ga("max_traj_per_group", "0"))   # >0: random sample of trajectories per arm x group (seed 20261027)
 WINDOW <- c(-2.2, -1.2)                          # Reineke acceptance window (skill default)
 RD_GATE <- as.numeric(ga("rd_gate", "0.55"))     # SDI/SDImax above which the self-thinning limb is fitted (when SDImax is supplied)
 dir.create(OUT, recursive = TRUE, showWarnings = FALSE)
@@ -56,12 +58,17 @@ read_engine <- function(f) {
         HT = attopht * FT_M, VOL = tcuft * CUFTAC_M3HA)][, QMD := qmd_cm(BAPH, TPH)][]
 }
 read_projector <- function(f) {
-  d <- fread(f)
+  ## f may be one file or a comma-separated list (one per variant); STAND_CN is read as character so a
+  ## 64-bit CN written as a double is never coerced. HT_DOM_M is optional (older metrics files lack it);
+  ## without it HT and VOL are NA and every height or volume relation reports NOT EVALUATED.
+  files <- strsplit(f, ",")[[1]]
+  d <- rbindlist(lapply(files, function(x) fread(x, colClasses = list(character = "STAND_CN"))), fill = TRUE)
   site <- if (!is.null(SITECOL) && SITECOL %in% names(d)) d[[SITECOL]] else "unspecified"
+  if (!"HT_DOM_M" %in% names(d)) d[, HT_DOM_M := NA_real_]
   d[, .(arm = CONFIG, group = VARIANT, site = site, density = "obs",
-        traj = as.character(STAND_CN), age = as.numeric(PROJ_YEAR),
+        traj = paste(VARIANT, STAND_CN, sep = ":"), age = as.numeric(PROJ_YEAR),
         TPH = TPH, BAPH = BA_FT2AC * FT2AC_M2HA, HT = HT_DOM_M,
-        VOL = BA_FT2AC * FT2AC_M2HA * HT_DOM_M * FF)][, QMD := qmd_cm(BAPH, TPH)][]
+        VOL = ifelse(is.finite(HT_DOM_M), BA_FT2AC * FT2AC_M2HA * HT_DOM_M * FF, NA_real_))][, QMD := qmd_cm(BAPH, TPH)][]
 }
 read_gate <- function(f) {
   d <- fread(f); nm <- names(d)
@@ -91,8 +98,11 @@ read_long <- function(f) { d <- fread(f)
   if (!"VOL" %in% names(d)) d[, VOL := NA_real_]; d[, age := as.numeric(age)]; d }
 d <- switch(SRC, engine = read_engine(IN), projector = read_projector(IN), gate = read_gate(IN), long = read_long(IN), uncert = read_uncert(IN),
             stop("unknown --source"))
-d[!is.finite(VOL) | VOL <= 0, VOL := BAPH * HT * FF]
+d[(!is.finite(VOL) | VOL <= 0) & is.finite(HT), VOL := BAPH * HT * FF]
 d[, site := as.character(site)][, density := as.character(density)]
+if (MAXTRAJ > 0) { set.seed(20261027)
+  keep_tr <- d[, .(traj = unique(traj)), by = .(arm, group)][, .(traj = if (.N > MAXTRAJ) sample(traj, MAXTRAJ) else traj), by = .(arm, group)]
+  d <- d[traj %in% keep_tr$traj]; cat(sprintf("subsampled to at most %d trajectories per arm x group: %d trajectories kept\n", MAXTRAJ, uniqueN(d$traj))) }
 setorder(d, arm, group, site, density, traj, age)
 d[, SDI := ifelse(TPH > 0 & QMD > 0, TPH * (QMD / 25.4)^1.605, NA_real_)]   # Reineke SDI, metric form
 fwrite(d, file.path(OUT, paste0(LABEL, "_long_metric.csv")))
@@ -108,6 +118,8 @@ dens_rank <- function(s) { u <- unique(s); n <- suppressWarnings(as.numeric(u))
 d[, dens_r := dens_rank(density)]
 
 sdimax_map <- NULL
+obs_map <- NULL
+if (!is.null(OBSFILE) && file.exists(OBSFILE)) { ob <- fread(OBSFILE); obs_map <- ob[, .(group = as.character(group), ba_p99, ba_p999)] }
 if (!is.null(SDIMAX) && file.exists(SDIMAX)) { sm <- fread(SDIMAX); sdimax_map <- setNames(sm$sdimax, sm$group) }
 
 rows <- list(); add <- function(key, ...) rows[[length(rows) + 1]] <<- as.data.table(c(key, list(...)))
@@ -125,16 +137,16 @@ for (tr in unique(d$traj)) for (am in unique(d[traj == tr, arm])) {
       value = max(st_loss, ba_loss), detail = sprintf("first %g yr: stems %+.0f%%, BA %+.0f%%", stp, -100 * st_loss, -100 * ba_loss))
   ## T1 monotone development (HT up; QMD up; TPH down unless ingrowth present)
   tol <- 1e-6
-  ht_ok <- all(diff(g$HT) >= -0.05)          # 5 cm tolerance for top-height rounding
+  ht_na <- !all(is.finite(g$HT)); ht_ok <- if (ht_na) NA else all(diff(g$HT) >= -0.05)   # 5 cm tolerance for top-height rounding
   qmd_ok <- all(diff(g$QMD) >= -0.05)
   tph_up <- sum(diff(g$TPH) > 0.5)           # steps with stem gain = ingrowth or a defect; reported, not flagged alone
-  add(key, relation = "T1 monotone HT_dom", status = ifelse(ht_ok, "PASS", "FLAG"), value = min(diff(g$HT)), detail = sprintf("min step dHT %.2f m", min(diff(g$HT))))
+  add(key, relation = "T1 monotone HT_dom", status = ifelse(ht_na, "NOT EVALUATED", ifelse(ht_ok, "PASS", "FLAG")), value = if (ht_na) NA_real_ else min(diff(g$HT)), detail = if (ht_na) "no dominant height in this source" else sprintf("min step dHT %.2f m", min(diff(g$HT))))
   add(key, relation = "T1 monotone QMD", status = ifelse(qmd_ok, "PASS", ifelse(tph_up > 0, "NOT EVALUATED", "FLAG")), value = min(diff(g$QMD)),
       detail = ifelse(qmd_ok, "monotone", ifelse(tph_up > 0, sprintf("QMD dips with %d stem-gain steps (ingrowth present); QMD monotonicity not diagnostic", tph_up), sprintf("QMD declines %.2f cm with no ingrowth", min(diff(g$QMD))))))
   ## T9 stand-level inversions: BA or VOL falls > 10% in one step (Paper 2 counted these as inversions)
   ba_inv <- sum(diff(g$BAPH) / head(g$BAPH, -1) < -0.10, na.rm = TRUE); v_inv <- sum(diff(g$VOL) / head(g$VOL, -1) < -0.10, na.rm = TRUE)
   add(key, relation = "T9 BA inversions (>10% step drop)", status = ifelse(ba_inv == 0, "PASS", "FLAG"), value = ba_inv, detail = sprintf("%d of %d steps", ba_inv, nrow(g) - 1))
-  add(key, relation = "T9 VOL inversions (>10% step drop)", status = ifelse(v_inv == 0, "PASS", "FLAG"), value = v_inv, detail = sprintf("%d of %d steps", v_inv, nrow(g) - 1))
+  add(key, relation = "T9 VOL inversions (>10% step drop)", status = ifelse(!all(is.finite(g$VOL)), "NOT EVALUATED", ifelse(v_inv == 0, "PASS", "FLAG")), value = v_inv, detail = ifelse(!all(is.finite(g$VOL)), "no volume in this source", sprintf("%d of %d steps", v_inv, nrow(g) - 1)))
   ## T3 Reineke, step aware (defect record 2026-09-07): screen is a RATE times this trajectory's own step.
   ## Added 2026-10-27: a relative-density gate. Reineke describes the self-thinning limb, so when SDImax is
   ## known only points at SDI/SDImax >= RD_GATE are fitted; a trajectory that never reaches the zone is
@@ -164,6 +176,8 @@ for (tr in unique(d$traj)) for (am in unique(d[traj == tr, arm])) {
   add(key, relation = "T4 peak SDI / SDImax", status = ifelse(is.na(smx), "NOT EVALUATED", ifelse(pk / smx > 1.05, "FLAG", "PASS")), value = ifelse(is.na(smx), NA_real_, pk / smx),
       detail = ifelse(is.na(smx), "no SDImax supplied for this group (--sdimax=)", sprintf("peak SDI %.0f vs SDImax %.0f (ratio %.2f)", pk, smx, pk / smx)))
   bmx <- max(g$BAPH, na.rm = TRUE)
+  OBS99 <- if (!is.null(obs_map) && g$group[1] %in% obs_map$group) obs_map[group == g$group[1], ba_p99][1] else as.numeric(ga("obs_ba_p99", "NA"))
+  OBS999 <- if (!is.null(obs_map) && g$group[1] %in% obs_map$group) obs_map[group == g$group[1], ba_p999][1] else as.numeric(ga("obs_ba_p999", "NA"))
   add(key, relation = "T4 max BA vs observed p99", status = ifelse(is.na(OBS99), "NOT EVALUATED", ifelse(bmx > OBS99, "FLAG", "PASS")), value = bmx,
       detail = ifelse(is.na(OBS99), sprintf("max BA %.1f m2 ha-1; no observed p99 supplied (--obs_ba_p99=)", bmx), sprintf("max BA %.1f vs observed p99 %.1f m2 ha-1", bmx, OBS99)))
   add(key, relation = "T4 max BA vs observed p99.9", status = ifelse(is.na(OBS999), "NOT EVALUATED", ifelse(bmx > OBS999, "FLAG", "PASS")), value = bmx,
@@ -176,8 +190,8 @@ for (am in unique(d$arm)) for (gr in unique(d[arm == am, group])) {
   ages <- sort(unique(h$age)); fin <- max(ages); inert <- FALSE
   ## site axis inert? identical trajectories across site levels mean the lever did nothing
   if (uniqueN(h$site) >= 2) {
-    sp <- h[age == fin, .(ht = mean(HT), v = mean(VOL)), by = .(site, site_r)]
-    inert <- (max(sp$ht) - min(sp$ht)) / mean(sp$ht) < 0.01 & (max(sp$v) - min(sp$v)) / mean(sp$v) < 0.01
+    sp <- h[age == fin, .(ht = mean(HT, na.rm = TRUE), v = mean(VOL, na.rm = TRUE)), by = .(site, site_r)]
+    inert <- isTRUE((max(sp$ht) - min(sp$ht)) / mean(sp$ht) < 0.01 & (max(sp$v) - min(sp$v)) / mean(sp$v) < 0.01)
     if (inert) {
       add(key, relation = "T2 site ordering HT", status = "NOT EVALUATED", value = NA_real_, detail = "site axis inert: final HT and VOL identical (<1%) across site levels; the site lever did not reach the engine")
       add(key, relation = "T2 site ordering VOL", status = "NOT EVALUATED", value = NA_real_, detail = "site axis inert")

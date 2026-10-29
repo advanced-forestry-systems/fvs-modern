@@ -1,0 +1,423 @@
+seed gate filter: trajectories 124380 -> 123328 
+calibrated arms not distinct from default:  
+arms x variants: 146  variants: 20 
+     group       recommended
+    <char>            <char>
+ 1:    ACD    default_native
+ 2:     BM    default_native
+ 3:     CA calibrated_gompit
+ 4:     CI calibrated_native
+ 5:     CR calibrated_gompit
+ 6:     CS    default_native
+ 7:     EC calibrated_gompit
+ 8:     EM calibrated_gompit
+ 9:     IE calibrated_gompit
+10:     LS calibrated_native
+11:     NE    default_gompit
+12:     PN calibrated_gompit
+13:     SN    default_native
+14:     SO calibrated_gompit
+15:     TT   conus_b2_gompit
+16:     UT calibrated_gompit
+17:     WC calibrated_gompit
+18:     WS calibrated_native
+19:     AK                  
+20:     NC                  
+     group       recommended
+    <char>            <char>
+                                                     status
+                                                     <char>
+ 1:                                             RECOMMENDED
+ 2:                                             RECOMMENDED
+ 3: NOT RECOMMENDED for long horizons (least-bad arm named)
+ 4: NOT RECOMMENDED for long horizons (least-bad arm named)
+ 5: NOT RECOMMENDED for long horizons (least-bad arm named)
+ 6:                                             RECOMMENDED
+ 7: NOT RECOMMENDED for long horizons (least-bad arm named)
+ 8: NOT RECOMMENDED for long horizons (least-bad arm named)
+ 9: NOT RECOMMENDED for long horizons (least-bad arm named)
+10:                                             RECOMMENDED
+11:                                             RECOMMENDED
+12: NOT RECOMMENDED for long horizons (least-bad arm named)
+13:                                             RECOMMENDED
+14: NOT RECOMMENDED for long horizons (least-bad arm named)
+15: NOT RECOMMENDED for long horizons (least-bad arm named)
+16: NOT RECOMMENDED for long horizons (least-bad arm named)
+17: NOT RECOMMENDED for long horizons (least-bad arm named)
+18:                                             RECOMMENDED
+19:      NOT EVALUATED (no FIA thresholds for this variant)
+20:      NOT EVALUATED (no FIA thresholds for this variant)
+                                                     status
+                                                     <char>
+                                                         admissible_arms
+                                                                  <char>
+ 1: default_native; default_gompit; calibrated_native; calibrated_gompit
+ 2: default_native; default_gompit; calibrated_native; calibrated_gompit
+ 3:                                                                     
+ 4:                                                                     
+ 5:                                                                     
+ 6: default_native; default_gompit; calibrated_native; calibrated_gompit
+ 7:                                                                     
+ 8:                                                                     
+ 9:                                                                     
+10:                                 calibrated_native; calibrated_gompit
+11: default_native; default_gompit; calibrated_native; calibrated_gompit
+12:                                                                     
+13: default_native; default_gompit; calibrated_native; calibrated_gompit
+14:                                                                     
+15:                                                                     
+16:                                                                     
+17:                                                                     
+18:                                                    calibrated_native
+19:                                                                     
+20:                                                                     
+                                                         admissible_arms
+                                                                  <char>
+               nearterm_evidence rule_sensitive
+                          <char>         <lgcl>
+ 1:             none per variant          FALSE
+ 2:             none per variant           TRUE
+ 3:             none per variant           TRUE
+ 4:             none per variant           TRUE
+ 5:             none per variant           TRUE
+ 6:             none per variant          FALSE
+ 7:             none per variant           TRUE
+ 8:             none per variant          FALSE
+ 9:             none per variant          FALSE
+10:             none per variant          FALSE
+11: Paper 2 NE cohort (stocking)          FALSE
+12:             none per variant          FALSE
+13:             none per variant          FALSE
+14:             none per variant           TRUE
+15:             none per variant          FALSE
+16:             none per variant          FALSE
+17:             none per variant           TRUE
+18:             none per variant           TRUE
+19:             none per variant          FALSE
+20:             none per variant          FALSE
+               nearterm_evidence rule_sensitive
+                          <char>         <lgcl>
+                                                                                       admissible_arms_alt
+                                                                                                    <char>
+ 1:                                   default_native; default_gompit; calibrated_native; calibrated_gompit
+ 2: default_native; default_gompit; calibrated_native; calibrated_gompit; conus_b1_gompit; conus_b2_gompit
+ 3:                                                                                        conus_b1_gompit
+ 4:                                                                                         default_native
+ 5:                                                                     calibrated_native; conus_b1_gompit
+ 6:                                   default_native; default_gompit; calibrated_native; calibrated_gompit
+ 7:                                                                                        conus_b1_gompit
+ 8:                                                                                                       
+ 9:                                                                                                       
+10:                                                                   calibrated_native; calibrated_gompit
+11:                                   default_native; default_gompit; calibrated_native; calibrated_gompit
+12:                                                                                                       
+13:                                   default_native; default_gompit; calibrated_native; calibrated_gompit
+14:                                                                                        conus_b1_gompit
+15:                                                                                                       
+16:                                                                                                       
+17:                                                                                         default_gompit
+18:                                                                      default_native; calibrated_native
+19:                                                                                                       
+20:                                                                                                       
+                                                                                       admissible_arms_alt
+                                                                                                    <char>
+      group               arm n_traj share_ba999_50 share_sdi_50
+     <char>            <char>  <int>          <num>        <num>
+  1:    ACD    default_native    299          0.010        0.003
+  2:    ACD    default_gompit    299          0.013        0.047
+  3:    ACD calibrated_native    299          0.010        0.003
+  4:    ACD calibrated_gompit    299          0.013        0.047
+  5:     AK          conus_b1     97             NA           NA
+  6:     AK   conus_b1_gompit     97             NA           NA
+  7:     AK          conus_b2     97             NA           NA
+  8:     AK   conus_b2_gompit     97             NA           NA
+  9:     BM    default_native    298          0.007        0.003
+ 10:     BM    default_gompit    298          0.007        0.003
+ 11:     BM calibrated_native    298          0.007        0.003
+ 12:     BM calibrated_gompit    298          0.007        0.003
+ 13:     BM          conus_b1   1500          0.255        0.089
+ 14:     BM   conus_b1_gompit   1500          0.038        0.015
+ 15:     BM          conus_b2   1500          0.162        0.062
+ 16:     BM   conus_b2_gompit   1500          0.032        0.014
+ 17:     CA    default_native    142          0.007        0.007
+ 18:     CA    default_gompit    142          0.007        0.007
+ 19:     CA calibrated_native    142          0.007        0.014
+ 20:     CA calibrated_gompit    142          0.007        0.007
+ 21:     CA          conus_b1   1500          0.191        0.067
+ 22:     CA   conus_b1_gompit   1500          0.043        0.021
+ 23:     CA          conus_b2   1500          0.047        0.024
+ 24:     CA   conus_b2_gompit   1500          0.016        0.009
+ 25:     CI    default_native    297          0.003        0.003
+ 26:     CI    default_gompit    297          0.017        0.010
+ 27:     CI calibrated_native    297          0.003        0.003
+ 28:     CI calibrated_gompit    297          0.017        0.010
+ 29:     CI          conus_b1   1500          0.128        0.055
+ 30:     CI   conus_b1_gompit   1500          0.030        0.011
+ 31:     CI          conus_b2   1500          0.059        0.027
+ 32:     CI   conus_b2_gompit   1500          0.023        0.011
+ 33:     CR    default_native    300          0.000        0.000
+ 34:     CR    default_gompit    300          0.000        0.003
+ 35:     CR calibrated_native    300          0.000        0.000
+ 36:     CR calibrated_gompit    300          0.000        0.000
+ 37:     CR          conus_b1   1500          0.053        0.009
+ 38:     CR   conus_b1_gompit   1500          0.011        0.002
+ 39:     CR          conus_b2   1500          0.019        0.003
+ 40:     CR   conus_b2_gompit   1500          0.004        0.001
+ 41:     CS    default_native    233          0.004        0.004
+ 42:     CS    default_gompit    233          0.004        0.021
+ 43:     CS calibrated_native    233          0.004        0.004
+ 44:     CS calibrated_gompit    233          0.004        0.009
+ 45:     CS          conus_b1   1500          0.861        0.795
+ 46:     CS   conus_b1_gompit   1500          0.488        0.434
+ 47:     CS          conus_b2   1500          0.759        0.717
+ 48:     CS   conus_b2_gompit   1500          0.287        0.299
+ 49:     EC    default_native    300          0.003        0.003
+ 50:     EC    default_gompit    300          0.003        0.003
+ 51:     EC calibrated_native    300          0.003        0.003
+ 52:     EC calibrated_gompit    300          0.003        0.003
+ 53:     EC          conus_b1   1500          0.101        0.068
+ 54:     EC   conus_b1_gompit   1500          0.023        0.023
+ 55:     EC          conus_b2   1500          0.027        0.028
+ 56:     EC   conus_b2_gompit   1500          0.009        0.017
+ 57:     EM    default_native    300          0.223        0.000
+ 58:     EM    default_gompit    300          0.077        0.000
+ 59:     EM calibrated_native    300          0.100        0.000
+ 60:     EM calibrated_gompit    300          0.000        0.000
+ 61:     EM          conus_b1   1500          0.098        0.019
+ 62:     EM   conus_b1_gompit   1500          0.021        0.003
+ 63:     EM          conus_b2   1500          0.043        0.003
+ 64:     EM   conus_b2_gompit   1500          0.013        0.001
+ 65:     IE    default_native    298          0.003        0.000
+ 66:     IE    default_gompit    298          0.003        0.000
+ 67:     IE calibrated_native    298          0.003        0.000
+ 68:     IE calibrated_gompit    298          0.003        0.000
+ 69:     IE          conus_b1   1500          0.369        0.159
+ 70:     IE   conus_b1_gompit   1500          0.145        0.049
+ 71:     IE          conus_b2   1500          0.263        0.101
+ 72:     IE   conus_b2_gompit   1500          0.087        0.033
+ 73:     LS    default_native    266          0.143        0.034
+ 74:     LS    default_gompit    266          0.102        0.038
+ 75:     LS calibrated_native    266          0.034        0.004
+ 76:     LS calibrated_gompit    266          0.015        0.011
+ 77:     LS          conus_b1   1500          0.771        0.619
+ 78:     LS   conus_b1_gompit   1500          0.533        0.195
+ 79:     LS          conus_b2   1500          0.757        0.527
+ 80:     LS   conus_b2_gompit   1500          0.422        0.125
+ 81:     NC          conus_b1   1500             NA           NA
+ 82:     NC   conus_b1_gompit   1500             NA           NA
+ 83:     NC          conus_b2   1500             NA           NA
+ 84:     NC   conus_b2_gompit   1500             NA           NA
+ 85:     NE    default_native    285          0.007        0.004
+ 86:     NE    default_gompit    285          0.014        0.035
+ 87:     NE calibrated_native    285          0.004        0.004
+ 88:     NE calibrated_gompit    285          0.007        0.021
+ 89:     NE          conus_b1   1500          0.941        0.757
+ 90:     NE          conus_b2   1500          0.914        0.616
+ 91:     NE   conus_b2_gompit   1500          0.553        0.162
+ 92:     PN    default_native     38          0.342        0.000
+ 93:     PN    default_gompit     38          0.026        0.000
+ 94:     PN calibrated_native     38          0.316        0.000
+ 95:     PN calibrated_gompit     38          0.026        0.000
+ 96:     PN          conus_b1   1500          0.561        0.181
+ 97:     PN   conus_b1_gompit   1500          0.275        0.049
+ 98:     PN          conus_b2   1500          0.469        0.066
+ 99:     PN   conus_b2_gompit   1500          0.181        0.061
+100:     SN    default_native    161          0.012        0.000
+101:     SN    default_gompit    161          0.006        0.012
+102:     SN calibrated_native    161          0.006        0.000
+103:     SN calibrated_gompit    161          0.012        0.012
+104:     SN          conus_b1   1500          0.979        0.912
+105:     SN          conus_b2   1500          0.955        0.812
+106:     SN   conus_b2_gompit   1500          0.491        0.202
+107:     SO    default_native    300          0.000        0.000
+108:     SO    default_gompit    300          0.000        0.000
+109:     SO calibrated_native    300          0.000        0.000
+110:     SO calibrated_gompit    300          0.000        0.000
+111:     SO          conus_b1   1500          0.089        0.033
+112:     SO   conus_b1_gompit   1500          0.017        0.008
+113:     SO          conus_b2   1500          0.035        0.017
+114:     SO   conus_b2_gompit   1500          0.017        0.008
+115:     TT    default_native    142          0.007        0.007
+116:     TT    default_gompit    142          0.007        0.007
+117:     TT calibrated_native    142          0.007        0.007
+118:     TT calibrated_gompit    142          0.007        0.007
+119:     TT          conus_b1   1500          0.037        0.014
+120:     TT   conus_b1_gompit   1500          0.011        0.003
+121:     TT          conus_b2   1500          0.013        0.007
+122:     TT   conus_b2_gompit   1500          0.003        0.003
+123:     UT    default_native    300          0.003        0.003
+124:     UT    default_gompit    300          0.003        0.003
+125:     UT calibrated_native    300          0.003        0.003
+126:     UT calibrated_gompit    300          0.003        0.003
+127:     UT          conus_b1   1500          0.011        0.003
+128:     UT   conus_b1_gompit   1500          0.007        0.001
+129:     UT          conus_b2   1500          0.006        0.001
+130:     UT   conus_b2_gompit   1500          0.004        0.001
+131:     WC    default_native    226          0.106        0.004
+132:     WC    default_gompit    226          0.031        0.004
+133:     WC calibrated_native    226          0.093        0.018
+134:     WC calibrated_gompit    226          0.022        0.018
+135:     WC          conus_b1   1500          0.230        0.123
+136:     WC   conus_b1_gompit   1500          0.097        0.063
+137:     WC          conus_b2   1500          0.095        0.059
+138:     WC   conus_b2_gompit   1500          0.049        0.038
+139:     WS    default_native    300          0.003        0.010
+140:     WS    default_gompit    300          0.003        0.003
+141:     WS calibrated_native    300          0.003        0.007
+142:     WS calibrated_gompit    300          0.003        0.003
+143:     WS          conus_b1   1500          0.033        0.019
+144:     WS   conus_b1_gompit   1500          0.009        0.009
+145:     WS          conus_b2   1500          0.013        0.009
+146:     WS   conus_b2_gompit   1500          0.012        0.007
+      group               arm n_traj share_ba999_50 share_sdi_50
+     <char>            <char>  <int>          <num>        <num>
+     reineke_flag_rate med_peak_ba100 ba_p50 admissible
+                 <num>          <num>  <num>     <lgcl>
+  1:              0.02           48.2   24.9       TRUE
+  2:              0.01           47.3   24.9       TRUE
+  3:              0.02           48.2   24.9       TRUE
+  4:              0.01           47.3   24.9       TRUE
+  5:              0.81          145.4     NA      FALSE
+  6:              0.52          111.4     NA      FALSE
+  7:              0.71          105.6     NA      FALSE
+  8:              0.63           84.1     NA      FALSE
+  9:              0.00           42.9   17.9       TRUE
+ 10:              0.00           42.5   17.9       TRUE
+ 11:              0.00           42.9   17.9       TRUE
+ 12:              0.00           42.5   17.9       TRUE
+ 13:              0.47           52.8   17.9      FALSE
+ 14:              0.11           38.7   17.9      FALSE
+ 15:              0.41           45.3   17.9      FALSE
+ 16:              0.14           34.9   17.9      FALSE
+ 17:              0.78           74.4   27.4      FALSE
+ 18:              0.56           46.5   27.4      FALSE
+ 19:              0.43           52.3   27.4      FALSE
+ 20:              0.41           41.7   27.4      FALSE
+ 21:              0.28           64.4   27.4      FALSE
+ 22:              0.16           52.1   27.4      FALSE
+ 23:              0.35           52.1   27.4      FALSE
+ 24:              0.23           47.7   27.4      FALSE
+ 25:              0.10           36.7   20.9      FALSE
+ 26:              0.32           29.6   20.9      FALSE
+ 27:              0.17           34.2   20.9      FALSE
+ 28:              0.31           29.4   20.9      FALSE
+ 29:              0.46           34.0   20.9      FALSE
+ 30:              0.16           28.2   20.9      FALSE
+ 31:              0.36           31.7   20.9      FALSE
+ 32:              0.18           28.1   20.9      FALSE
+ 33:              0.27           52.8   24.0      FALSE
+ 34:              0.30           33.3   24.0      FALSE
+ 35:              0.12           43.6   24.0      FALSE
+ 36:              0.22           33.3   24.0      FALSE
+ 37:              0.18           33.8   24.0      FALSE
+ 38:              0.15           33.0   24.0      FALSE
+ 39:              0.21           32.3   24.0      FALSE
+ 40:              0.25           32.9   24.0      FALSE
+ 41:              0.02           39.5   18.5       TRUE
+ 42:              0.08           39.3   18.5       TRUE
+ 43:              0.01           30.5   18.5       TRUE
+ 44:              0.05           29.8   18.5       TRUE
+ 45:              0.86           88.6   18.5      FALSE
+ 46:              0.46           63.9   18.5      FALSE
+ 47:              0.82           77.2   18.5      FALSE
+ 48:              0.41           57.0   18.5      FALSE
+ 49:              0.17           25.5   21.2      FALSE
+ 50:              0.32           24.8   21.2      FALSE
+ 51:              0.58           68.9   21.2      FALSE
+ 52:              0.25           39.3   21.2      FALSE
+ 53:              0.33           60.7   21.2      FALSE
+ 54:              0.17           47.7   21.2      FALSE
+ 55:              0.30           52.5   21.2      FALSE
+ 56:              0.25           43.8   21.2      FALSE
+ 57:              0.64           70.6   23.7      FALSE
+ 58:              0.13           37.8   23.7      FALSE
+ 59:              0.77           52.9   23.7      FALSE
+ 60:              0.26           31.7   23.7      FALSE
+ 61:              0.31           35.7   23.7      FALSE
+ 62:              0.26           31.5   23.7      FALSE
+ 63:              0.31           35.2   23.7      FALSE
+ 64:              0.30           32.6   23.7      FALSE
+ 65:              0.32           34.1   21.7      FALSE
+ 66:              0.56           29.7   21.7      FALSE
+ 67:              0.47           33.6   21.7      FALSE
+ 68:              0.55           29.8   21.7      FALSE
+ 69:              0.53           62.4   21.7      FALSE
+ 70:              0.12           46.8   21.7      FALSE
+ 71:              0.47           53.8   21.7      FALSE
+ 72:              0.14           44.2   21.7      FALSE
+ 73:              0.22           48.8   16.8      FALSE
+ 74:              0.14           42.6   16.8      FALSE
+ 75:              0.05           34.4   16.8       TRUE
+ 76:              0.05           34.2   16.8       TRUE
+ 77:              0.88           96.7   16.8      FALSE
+ 78:              0.22           58.2   16.8      FALSE
+ 79:              0.83           81.5   16.8      FALSE
+ 80:              0.17           53.3   16.8      FALSE
+ 81:              0.65           72.2     NA      FALSE
+ 82:              0.72           60.7     NA      FALSE
+ 83:              0.72           62.7     NA      FALSE
+ 84:              0.79           57.0     NA      FALSE
+ 85:              0.06           44.3   24.9       TRUE
+ 86:              0.07           43.4   24.9       TRUE
+ 87:              0.08           37.0   24.9       TRUE
+ 88:              0.09           36.7   24.9       TRUE
+ 89:              0.90          107.4   24.9      FALSE
+ 90:              0.85           91.2   24.9      FALSE
+ 91:              0.22           64.8   24.9      FALSE
+ 92:              0.29          120.4   65.3      FALSE
+ 93:              0.61           83.4   65.3      FALSE
+ 94:              0.26          117.4   65.3      FALSE
+ 95:              0.61           83.9   65.3      FALSE
+ 96:              0.64          116.4   65.3      FALSE
+ 97:              0.13           88.3   65.3      FALSE
+ 98:              0.55          103.2   65.3      FALSE
+ 99:              0.19           82.8   65.3      FALSE
+100:              0.00           45.9   21.6       TRUE
+101:              0.03           45.7   21.6       TRUE
+102:              0.03           37.6   21.6       TRUE
+103:              0.02           38.3   21.6       TRUE
+104:              0.94          119.9   21.6      FALSE
+105:              0.90           97.0   21.6      FALSE
+106:              0.44           61.9   21.6      FALSE
+107:              0.17           30.4   16.4      FALSE
+108:              0.12           30.3   16.4      FALSE
+109:              0.17           30.3   16.4      FALSE
+110:              0.12           30.3   16.4      FALSE
+111:              0.29           46.2   16.4      FALSE
+112:              0.15           38.0   16.4      FALSE
+113:              0.30           42.2   16.4      FALSE
+114:              0.20           36.3   16.4      FALSE
+115:              0.84           45.8   16.8      FALSE
+116:                NA           24.1   16.8      FALSE
+117:              0.26           38.1   16.8      FALSE
+118:              0.17           24.9   16.8      FALSE
+119:              0.34           31.0   16.8      FALSE
+120:              0.29           26.8   16.8      FALSE
+121:              0.20           33.8   16.8      FALSE
+122:              0.22           29.1   16.8      FALSE
+123:              0.57           49.1   22.9      FALSE
+124:              0.30           29.0   22.9      FALSE
+125:              0.29           43.2   22.9      FALSE
+126:              0.26           31.1   22.9      FALSE
+127:              0.32           30.6   22.9      FALSE
+128:              0.52           33.2   22.9      FALSE
+129:              0.28           32.1   22.9      FALSE
+130:              0.41           34.0   22.9      FALSE
+131:              0.61          100.0   50.4      FALSE
+132:              0.17           69.0   50.4      FALSE
+133:              0.26           83.3   50.4      FALSE
+134:              0.17           66.1   50.4      FALSE
+135:              0.37           88.4   50.4      FALSE
+136:              0.26           80.1   50.4      FALSE
+137:              0.41           76.9   50.4      FALSE
+138:              0.36           71.8   50.4      FALSE
+139:              0.16           56.6   30.0      FALSE
+140:              0.50           40.5   30.0      FALSE
+141:              0.06           49.1   30.0       TRUE
+142:              0.30           41.6   30.0      FALSE
+143:              0.34           48.1   30.0      FALSE
+144:              0.26           43.0   30.0      FALSE
+145:              0.36           43.3   30.0      FALSE
+146:              0.36           40.8   30.0      FALSE
+     reineke_flag_rate med_peak_ba100 ba_p50 admissible
+                 <num>          <num>  <num>     <lgcl>

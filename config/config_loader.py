@@ -46,6 +46,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 import numpy as np
+import warnings
 
 logger = logging.getLogger(__name__)
 
@@ -1066,7 +1067,13 @@ class FvsConfigLoader:
         # BAMAX keyword (for variants that use it)
         bamax_values = self._find_bamax_param(cats)
         if bamax_values is not None:
-            lines.append(self._format_bamax_keywords(bamax_values, include_comments))
+            try:
+                lines.append(self._format_bamax_keywords(bamax_values, include_comments))
+            except ValueError as exc:
+                # A per-species BAMAX vector (the variant's own blkdat array, e.g. ACD and IE) is not a
+                # stand-level cap and is not a calibrated quantity. Skip it and keep the rest of the
+                # block; before 2026-10-29 this raise aborted every calibrated keyword for the variant.
+                warnings.warn(f"BAMAX skipped for variant {self.variant}: {exc}")
 
         # Per-species multipliers. Prefer the precomputed calibration_multipliers
         # block written by the R serializer (calibration/R/06_posterior_to_json.R

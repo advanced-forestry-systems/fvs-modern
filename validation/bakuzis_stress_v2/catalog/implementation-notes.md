@@ -14,10 +14,13 @@
 9. The exact 0.75 x BALIVE under-seeding on failing stands in 15 variants was the condition proportion: tree expansion is per plot acre and BALIVE per condition acre. Trees are now expanded by CONDPROP_UNADJ. The 1.25 to 1.64 x over-seeding in SN and CS was the runner's all-plot fallback when the condition's trees were not found; removed.
 10. Species crosswalk: unmapped species are relabelled to the variant's other-softwood or other-hardwood code (FIA 299 or 998, or 999 where that is the only catch-all) instead of aborting the stand; counts and the basal-area share relabelled are in the seed gate file.
 
+11. ACD and IE calibrated arms: `config_loader.generate_keywords` raised on the variants' own per-species BAMAX array (blkdat, not a calibrated quantity) and aborted the whole block, so the calibrated arms ran as default. The loader now skips BAMAX with a warning (`patch_config_loader.py`, applied to `config/config_loader.py`); ACD now emits 68 calibrated keyword lines and IE 49, and both variants were rerun (array 15984133).
+12. EM and IE rerun with NOAUTOES (the runner appends it to the keyword block when `FVS_NOAUTOES=1`). Stems now decline over 50 years; the Reineke failures remain.
+13. Over-seeding diagnostic (`diag_overseed.py`, `diag_overseed.csv`): for the failing SN, CS and NE stands the condition's tree sum per condition acre reproduces BALIVE (first case 90.4 against 90.3 ft2 ac-1), so the 1.3 to 1.8 x year-0 excess is inside the engine's year-0 accounting for those stands and is unrelated to relabelled species, sapling share or condition proportion. Next test: run one failing stand with a single cycle and compare the engine tree list at year 0 against the input records.
+
 ## Discovered unknowns
 
 - Species crosswalk gaps (SN 165 of 300 stands, BM 76, CS 73 in the first run) are handled by relabelling; which species carry the relabelled basal area is reported, not audited.
-- Automatic establishment in EM and IE makes the within-stand Reineke slope uninformative there; NOAUTOES or an ingrowth-aware slope is needed before those rows mean anything.
 - Dominant height is non-monotone in most trajectories (T1 HT_dom flags 4,071 of 4,399 in the engine arms), which is expected when tall trees die and is not gated.
 - Per-variant near-term accuracy exists only for the Northeast cohort.
 

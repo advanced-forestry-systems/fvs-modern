@@ -89,6 +89,18 @@ def main():
     import bakuzis_uncertainty_comparison as buc        # run_scenario, paths, fvs2py setup
     from fia_stand_generator import build_stand_init, build_tree_init
     from inventory_keyfile import _variant_crosswalk
+    import inventory_keyfile as _ik
+    noautoes = os.environ.get("FVS_NOAUTOES", "") == "1"
+    if noautoes:
+        # Suppress the automatic establishment model (EM and IE add regeneration in every projection, which makes
+        # the within-stand Reineke test meaningless and is unlike every other variant in the catalog). NOAUTOES is a
+        # base keyword with no fields; it is appended to the calibration block so it is parsed in the keyword phase.
+        _orig_mk = _ik.make_inventory_keyfile
+        def _mk(*args, **kw):
+            kw["calibration_keywords"] = (kw.get("calibration_keywords") or "") + "\nNOAUTOES"
+            return _orig_mk(*args, **kw)
+        _ik.make_inventory_keyfile = _mk
+        log.info("NOAUTOES appended to every keyfile for %s", a.variant)
 
     v = a.variant.lower()
     # Species the compiled variant does not recognise are relabelled the way FVS itself does on input: softwoods
@@ -174,7 +186,7 @@ def main():
             s = s.copy().sort_values("year")
             ba0 = float(s["atba"].iloc[0]); tpa0 = float(s["tpa"].iloc[0])
             seed_ok = (np.isfinite(balive) and balive > 0 and abs(ba0 - balive) / balive <= a.seed_tol)
-            gate.append(dict(variant=v.upper(), arm=a.arm, plt_cn=cn, config=cfg, status="OK" if seed_ok else "SEED_FAIL", ba0_ft2ac=ba0, balive=balive, tpa0=tpa0, stdage=c.get("STDAGE", np.nan), fortypcd=c.get("FORTYPCD", np.nan), sicond=c.get("SICOND", np.nan), blank_fields=";".join(blanks), n_relabel=n_relabel, n_drop=n_drop, ba_relabel_share=round(ba_rel_share, 4), condprop=condprop))
+            gate.append(dict(variant=v.upper(), arm=a.arm, plt_cn=cn, config=cfg, status="OK" if seed_ok else "SEED_FAIL", ba0_ft2ac=ba0, balive=balive, tpa0=tpa0, stdage=c.get("STDAGE", np.nan), fortypcd=c.get("FORTYPCD", np.nan), sicond=c.get("SICOND", np.nan), blank_fields=";".join(blanks), n_relabel=n_relabel, n_drop=n_drop, ba_relabel_share=round(ba_rel_share, 4), condprop=condprop, noautoes=noautoes))
             y0 = int(s["year"].iloc[0])
             rows.append(pd.DataFrame({
                 "arm": f"{cfg}_{a.arm}", "group": v.upper(), "site": "all", "density": "all", "traj": sid,

@@ -1,0 +1,65 @@
+arm,relation,evaluated,not_evaluated,not_applicable,flagged,verdict
+calibrated_gompit,T0 initial-step shock,4748,0,0,113,FLAG
+calibrated_gompit,T1 monotone HT_dom,4748,0,0,1549,FLAG
+calibrated_gompit,T1 monotone QMD,4748,0,0,167,FLAG
+calibrated_gompit,T2 site ordering HT,0,18,0,0,NOT EVALUATED
+calibrated_gompit,T2 site ordering VOL,0,18,0,0,NOT EVALUATED
+calibrated_gompit,T3 Reineke slope (trajectory OLS),1241,65,3442,178,FLAG
+calibrated_gompit,"T3b frontier slope (rq tau 0.95, pooled limb)",18,0,0,0,PASS
+calibrated_gompit,T4 max BA vs observed p99,4748,0,0,338,FLAG
+calibrated_gompit,T4 max BA vs observed p99.9,4748,0,0,82,FLAG
+calibrated_gompit,T4 peak SDI / SDImax,4748,0,0,30,FLAG
+calibrated_gompit,T5 Eichhorn VOL~HT site independence,0,18,0,0,NOT EVALUATED
+calibrated_gompit,T6 Sukachev per-tree VOL falls with density,0,18,0,0,NOT EVALUATED
+calibrated_gompit,T7 yield-density final BA vs initial density,0,18,0,0,NOT EVALUATED
+calibrated_gompit,T8 pinned BA plateau,18,0,0,0,PASS
+calibrated_gompit,T9 BA inversions (>10% step drop),4748,0,0,228,FLAG
+calibrated_gompit,T9 VOL inversions (>10% step drop),4748,0,0,142,FLAG
+calibrated_native,T0 initial-step shock,4748,0,0,267,FLAG
+calibrated_native,T1 monotone HT_dom,4748,0,0,878,FLAG
+calibrated_native,T1 monotone QMD,4748,0,0,66,FLAG
+calibrated_native,T2 site ordering HT,0,18,0,0,NOT EVALUATED
+calibrated_native,T2 site ordering VOL,0,18,0,0,NOT EVALUATED
+calibrated_native,T3 Reineke slope (trajectory OLS),1572,68,3108,366,FLAG
+calibrated_native,"T3b frontier slope (rq tau 0.95, pooled limb)",18,0,0,0,PASS
+calibrated_native,T4 max BA vs observed p99,4748,0,0,631,FLAG
+calibrated_native,T4 max BA vs observed p99.9,4748,0,0,244,FLAG
+calibrated_native,T4 peak SDI / SDImax,4748,0,0,16,FLAG
+calibrated_native,T5 Eichhorn VOL~HT site independence,0,18,0,0,NOT EVALUATED
+calibrated_native,T6 Sukachev per-tree VOL falls with density,0,18,0,0,NOT EVALUATED
+calibrated_native,T7 yield-density final BA vs initial density,0,18,0,0,NOT EVALUATED
+calibrated_native,T8 pinned BA plateau,18,0,0,0,PASS
+calibrated_native,T9 BA inversions (>10% step drop),4748,0,0,156,FLAG
+calibrated_native,T9 VOL inversions (>10% step drop),4748,0,0,94,FLAG
+default_gompit,T0 initial-step shock,4748,0,0,51,FLAG
+default_gompit,T1 monotone HT_dom,4748,0,0,1412,FLAG
+default_gompit,T1 monotone QMD,4748,0,0,120,FLAG
+default_gompit,T2 site ordering HT,0,18,0,0,NOT EVALUATED
+default_gompit,T2 site ordering VOL,0,18,0,0,NOT EVALUATED
+default_gompit,T3 Reineke slope (trajectory OLS),1579,63,3106,235,FLAG
+default_gompit,"T3b frontier slope (rq tau 0.95, pooled limb)",18,0,0,0,PASS
+default_gompit,T4 max BA vs observed p99,4748,0,0,644,FLAG
+default_gompit,T4 max BA vs observed p99.9,4748,0,0,152,FLAG
+default_gompit,T4 peak SDI / SDImax,4748,0,0,42,FLAG
+default_gompit,T5 Eichhorn VOL~HT site independence,0,18,0,0,NOT EVALUATED
+default_gompit,T6 Sukachev per-tree VOL falls with density,0,18,0,0,NOT EVALUATED
+default_gompit,T7 yield-density final BA vs initial density,0,18,0,0,NOT EVALUATED
+default_gompit,T8 pinned BA plateau,18,0,0,0,PASS
+default_gompit,T9 BA inversions (>10% step drop),4748,0,0,155,FLAG
+default_gompit,T9 VOL inversions (>10% step drop),4748,0,0,98,FLAG
+default_native,T0 initial-step shock,4748,0,0,120,FLAG
+default_native,T1 monotone HT_dom,4748,0,0,785,FLAG
+default_native,T1 monotone QMD,4748,0,0,27,FLAG
+default_native,T2 site ordering HT,0,18,0,0,NOT EVALUATED
+default_native,T2 site ordering VOL,0,18,0,0,NOT EVALUATED
+default_native,T3 Reineke slope (trajectory OLS),2163,111,2474,528,FLAG
+default_native,"T3b frontier slope (rq tau 0.95, pooled limb)",18,0,0,0,PASS
+default_native,T4 max BA vs observed p99,4748,0,0,1126,FLAG
+default_native,T4 max BA vs observed p99.9,4748,0,0,402,FLAG
+default_native,T4 peak SDI / SDImax,4748,0,0,27,FLAG
+default_native,T5 Eichhorn VOL~HT site independence,0,18,0,0,NOT EVALUATED
+default_native,T6 Sukachev per-tree VOL falls with density,0,18,0,0,NOT EVALUATED
+default_native,T7 yield-density final BA vs initial density,0,18,0,0,NOT EVALUATED
+default_native,T8 pinned BA plateau,18,0,0,0,PASS
+default_native,T9 BA inversions (>10% step drop),4748,0,0,77,FLAG
+default_native,T9 VOL inversions (>10% step drop),4748,0,0,52,FLAG

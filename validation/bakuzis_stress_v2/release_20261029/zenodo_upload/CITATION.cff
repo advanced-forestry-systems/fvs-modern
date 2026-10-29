@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "Cite the concept DOI 10.5281/zenodo.23777723 (version 1.0.0 is 10.5281/zenodo.23777724)."
+title: "A configuration catalog for fvs-modern across the FVS variants of the conterminous United States: Bakuzis admissibility gates, stress test, and selector"
+authors:
+  - family-names: Weiskittel
+    given-names: Aaron R.
+    orcid: "https://orcid.org/0000-0003-2534-4478"
+    affiliation: "Center for Research on Sustainable Forests, University of Maine"
+date-released: 2026-10-29
+version: 1.0.0
+license: CC-BY-4.0
+repository-code: "https://github.com/advanced-forestry-systems/fvs-modern"
+doi: 10.5281/zenodo.23777723

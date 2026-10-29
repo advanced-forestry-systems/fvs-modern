@@ -148,6 +148,11 @@ def main():
         # BALIVE on October 29), expanded to the condition acre by CONDPROP_UNADJ, which is how BALIVE is defined
         # (sum of BA x TPA_UNADJ / CONDPROP_UNADJ) and why partial conditions seeded at exactly 0.75 x before.
         t = tree[(tree["PLT_CN"] == cn) & (tree["CONDID"] == condid)]
+        # Live records with a null TPA_UNADJ (P2A_GRM_FLG = Y: trees carried from the prior periodic
+        # inventory for growth, removal and mortality only, on legacy subplot numbers) contribute nothing
+        # to BALIVE, but build_tree_init fills a null tree_count with 6.0 TPA. Drop them (2026-10-29:
+        # 250 of 256 eastern seed-gate failures were this).
+        n_null_tpa = int(t["TPA_UNADJ"].isna().sum()); t = t[t["TPA_UNADJ"].notna()]
         if t.empty:
             gate.append(dict(variant=v.upper(), arm=a.arm, plt_cn=cn, status="NO_TREES")); continue
         condprop = c.get("CONDPROP_UNADJ")
@@ -185,8 +190,8 @@ def main():
                 gate.append(dict(variant=v.upper(), arm=a.arm, plt_cn=cn, config=cfg, status="EMPTY")); continue
             s = s.copy().sort_values("year")
             ba0 = float(s["atba"].iloc[0]); tpa0 = float(s["tpa"].iloc[0])
-            seed_ok = (np.isfinite(balive) and balive > 0 and abs(ba0 - balive) / balive <= a.seed_tol)
-            gate.append(dict(variant=v.upper(), arm=a.arm, plt_cn=cn, config=cfg, status="OK" if seed_ok else "SEED_FAIL", ba0_ft2ac=ba0, balive=balive, tpa0=tpa0, stdage=c.get("STDAGE", np.nan), fortypcd=c.get("FORTYPCD", np.nan), sicond=c.get("SICOND", np.nan), blank_fields=";".join(blanks), n_relabel=n_relabel, n_drop=n_drop, ba_relabel_share=round(ba_rel_share, 4), condprop=condprop, noautoes=noautoes))
+            seed_ok = (np.isfinite(balive) and balive > 0 and (abs(ba0 - balive) / balive <= a.seed_tol or abs(ba0 - balive) <= 1.0))  # 1 ft2/ac absolute floor: the engine summary is integer BA
+            gate.append(dict(variant=v.upper(), arm=a.arm, plt_cn=cn, config=cfg, status="OK" if seed_ok else "SEED_FAIL", ba0_ft2ac=ba0, balive=balive, tpa0=tpa0, stdage=c.get("STDAGE", np.nan), fortypcd=c.get("FORTYPCD", np.nan), sicond=c.get("SICOND", np.nan), blank_fields=";".join(blanks), n_relabel=n_relabel, n_drop=n_drop, n_null_tpa=n_null_tpa, ba_relabel_share=round(ba_rel_share, 4), condprop=condprop, noautoes=noautoes))
             y0 = int(s["year"].iloc[0])
             rows.append(pd.DataFrame({
                 "arm": f"{cfg}_{a.arm}", "group": v.upper(), "site": "all", "density": "all", "traj": sid,

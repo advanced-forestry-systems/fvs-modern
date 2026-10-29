@@ -34,6 +34,7 @@ from pathlib import Path
 from typing import Optional
 
 import numpy as np
+import logging
 import pandas as pd
 
 # Variant -> tuple of FIPS state codes covered. Conservative;
@@ -206,8 +207,8 @@ def build_stand_init(
         "forest": 0,
         "district": 0,
         "basal_area_factor": -1.0,  # fixed 1 acre large-tree plot; BAF 0 gave every tree >= brk_dbh zero expansion (found 2026-10-28)
-        "inv_plot_size": 1.0,       # tree_count is TPA_UNADJ (already per acre); 6.0 double-expanded every record x6 (found 2026-10-27)
-        "brk_dbh": 999.0,           # all trees on the fixed plot so tree_count passes through as TPA
+        "inv_plot_size": 1.0,   # tree_count is TPA_UNADJ (already per acre); 6.0 double-expanded every record x6 (found 2026-10-27)
+        "brk_dbh": 999.0,           # all trees on the fixed plot so tree_count (TPA_UNADJ) passes through as TPA
         "num_plots": 1,
         "age": int(cond_row.get("STDAGE", 40) or 40),
         "aspect": float(cond_row.get("ASPECT", 0) or 0),
@@ -227,6 +228,14 @@ def build_tree_init(
     stand_id: str,
 ) -> pd.DataFrame:
     """Convert TREE records to fvs_treeinit format."""
+    # Live records with a null TPA_UNADJ (P2A_GRM_FLG = Y: trees carried from a prior periodic inventory for
+    # growth, removal and mortality accounting only, on legacy subplot numbers) carry no area expansion and
+    # contribute nothing to BALIVE. They used to be filled with 6.0 TPA, which over-seeded 250 of 256 eastern
+    # seed-gate failures in the October 2026 CONUS catalog (fvs-modern validation/bakuzis_stress_v2). Drop them.
+    n_null = int(tree_df["TPA_UNADJ"].isna().sum()) if "TPA_UNADJ" in tree_df else 0
+    if n_null:
+        logging.getLogger(__name__).warning("%s: dropping %d live tree records with null TPA_UNADJ", stand_id, n_null)
+        tree_df = tree_df[tree_df["TPA_UNADJ"].notna()]
     if tree_df.empty:
         return pd.DataFrame(columns=[
             "stand_id", "plot_id", "tree_id", "tree_count",
@@ -236,7 +245,7 @@ def build_tree_init(
         "stand_id":   stand_id,
         "plot_id":    1,
         "tree_id":    range(1, len(tree_df) + 1),
-        "tree_count": tree_df["TPA_UNADJ"].fillna(6.0).round(2),
+        "tree_count": tree_df["TPA_UNADJ"].round(2),
         "species":    tree_df["SPCD"].astype(int),
         "diameter":   tree_df["DIA"].fillna(5.0).round(1),
         "ht":         tree_df["HT"].fillna(40).round(0),

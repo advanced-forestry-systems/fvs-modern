@@ -93,6 +93,15 @@ def select_config(variant: str, survival: str | None = None, parameter_set: str 
         else:
             arm = f"{parameter_set or _split(rec['recommended'])[0]}_{survival or _split(rec['recommended'])[1]}"
     pset, surv = _split(arm)
+    projector_named = None
+    if pset.startswith("conus") and survival is None and parameter_set is None:
+        # The catalog names a projector arm as least-bad; that arm is not runnable here, so hand the caller the
+        # least-bad engine arm instead and say what the catalog named.
+        eng = [g for g in gates if not g["arm"].startswith("conus")]
+        if eng:
+            projector_named = arm
+            arm = min(eng, key=lambda g: (float(g.get("share_ba999_50") or 1), float(g.get("share_sdi_50") or 1)))["arm"]
+            pset, surv = _split(arm)
     if pset.startswith("conus"):
         raise ValueError(f"{arm} is a CONUS projector arm; it is not runnable through fvs2py. Use fvs-conus-pipeline.")
     env = {}
@@ -106,6 +115,8 @@ def select_config(variant: str, survival: str | None = None, parameter_set: str 
         note = (note + " " if note else "") + f"Reineke self-thinning not testable ({ev.get('reineke_eval', '0')} trajectories reached the relative-density gate)."
     if ev.get("calibrated_distinct", "") in ("FALSE", "False"):
         note = (note + " " if note else "") + "The calibrated config did not load for this variant; this arm is identical to the default."
+    if projector_named:
+        note = (note + " " if note else "") + f"The catalog's least-bad arm for {v} is the projector arm {projector_named}, not runnable here; {arm} is the least-bad engine arm."
     if rec.get("rule_sensitive", "") in ("TRUE", "True"):
         note = (note + " " if note else "") + "Verdict is rule-sensitive (admissible set differs under the alternative Reineke gate)."
     if not rec["status"].startswith("RECOMMENDED"):

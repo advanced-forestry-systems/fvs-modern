@@ -17,6 +17,7 @@
 11. ACD and IE calibrated arms: `config_loader.generate_keywords` raised on the variants' own per-species BAMAX array (blkdat, not a calibrated quantity) and aborted the whole block, so the calibrated arms ran as default. The loader now skips BAMAX with a warning (`patch_config_loader.py`, applied to `config/config_loader.py`); ACD now emits 68 calibrated keyword lines and IE 49, and both variants were rerun (array 15984133).
 12. EM and IE rerun with NOAUTOES (the runner appends it to the keyword block when `FVS_NOAUTOES=1`). Stems now decline over 50 years; the Reineke failures remain.
 13. Over-seeding diagnostic (`diag_overseed.py`, `diag_overseed.csv`): for the failing SN, CS and NE stands the condition's tree sum per condition acre reproduces BALIVE (first case 90.4 against 90.3 ft2 ac-1), so the 1.3 to 1.8 x year-0 excess is inside the engine's year-0 accounting for those stands and is unrelated to relabelled species, sapling share or condition proportion. Next test: run one failing stand with a single cycle and compare the engine tree list at year 0 against the input records.
+14. Shipped under the primary rule (Aaron, October 29, 14:36 EDT). Stress test after shipping (`stress_catalog.R`, job 15990793): 144-cell rule grid and 500-draw stand bootstrap, zero disagreements with the shipped verdicts, 8 of 23 admissible arms and 8 of 49 not-admissible arms labelled FRAGILE; the Reineke tolerance is the only axis that changes recommended variants. No verdict changed.
 
 ## Discovered unknowns
 

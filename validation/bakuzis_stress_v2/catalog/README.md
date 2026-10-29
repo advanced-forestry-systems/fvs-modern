@@ -1,5 +1,7 @@
 # CONUS configuration catalog for fvs-modern (October 28, 2026)
 
+**Status: shipped under the primary rule on October 29, 2026 (Aaron's decision, 14:36 EDT).** `recommended` and `status` in `config/catalog/` follow the primary rule; the alternative rule stays visible in `admissible_alt` and `rule_sensitive`. The stress test of the shipped verdicts is in `stress/` (see the section below).
+
 This folder holds the evidence and the rule behind `config/catalog/`, which `fvs2py.catalog.select_config(variant)` reads. The catalog answers one question per FVS variant: which survival model (the variant's native mortality or GOMPIT crown-closure survival) and which parameter set (fvs-modern default, fvs-modern Bayesian calibrated MAP, or for comparison the CONUS trait-mediated projector arms b1 and b2) stays inside the observed envelope of the FIA fitting data over a 50 and a 100 year projection, and which of the admissible arms is the simplest.
 
 ## Common stand sample
@@ -28,6 +30,12 @@ The protocol's alternative Reineke gate, added after the interim scoring showed 
 
 Eighteen variants ran; 4,485 stands passed the year-0 seed gate and carry the gates (95 to 100 percent of sampled stands in 15 variants, 89 percent in LS, 78 in CS, 54 in SN, where the failing eastern stands enter above BALIVE at a median 1.46 times and are excluded, unexplained). Under the primary rule seven variants have admissible fvs-modern arms (ACD, BM, CS, NE, SN on all four; LS on the two calibrated arms; WS calibrated native) and eleven do not (CA, CI, CR, EC, EM, IE, PN, SO, TT, UT, WC), nearly all on the Reineke axis alone; the magnitude gates pass in 14 of 18 variants at or below 1.7 percent of stands above the BA p99.9 by year 50, the SDI ceiling is never exceeded by more than 4.7 percent of stands, and the year-50 lower bound passes in every arm. Under the alternative, CI, CR, WC and WS gain an engine arm and six projector GOMPIT rows become admissible; no projector arm is admissible under the primary rule. Section 15 of the memo has the numbers.
 
+## Stress test of the shipped catalog (October 29, job 15990793)
+
+`stress_catalog.R` recomputes the primary rule from the trajectory-level data and then varies the analyst choices in it, with no new engine runs. Part A is a rule grid of 144 cells: horizon 50 or 100 years, exceedance tolerance 3, 5 or 10 percent, Wilson upper bound 10 or 15 percent, basal area ceiling p99.9 or p99, Reineke flag tolerance 10, 15 or 25 percent, minimum evaluated trajectories 10 or 30. Part B is a stand bootstrap, 500 resamples with replacement per variant under the shipped rule. The recomputed rule reproduces all 72 shipped engine verdicts (zero disagreements), which is an independent check of `catalog_gates.R`. `stress/stress_by_arm.csv` adds `boot_admissible_prob`, `grid_admissible_share`, the verdict under each single-axis change, and `verdict_stability` (STABLE or FRAGILE, admissible or not); `stress/stress_by_variant.csv` gives the probability that a variant keeps at least one admissible engine arm and the share of grid cells in which it does.
+
+Of the 23 admissible arms, 15 are stable and 8 fragile (the ACD GOMPIT arms, CS default GOMPIT, LS calibrated native, the NE calibrated arms, NE default GOMPIT, WS calibrated native); of the 49 not-admissible arms, 41 are stable and 8 fragile (CI default native, CR calibrated native, EC default native, the four SO arms, TT calibrated GOMPIT), which are the arms the alternative Reineke rule admits and the bootstrap keeps below even odds. The seven recommended variants keep an admissible engine arm in 100 percent of resamples (ACD, BM, CS, LS, SN), 99 percent (NE) and 90 percent (WS). The Reineke tolerance is the only axis that changes recommended variants (25 percent admits 13 more arms); the p99 ceiling admits only five arms anywhere; the 100 year horizon removes LS calibrated native; the 3 percent tolerance removes the ACD GOMPIT arms, LS calibrated native and NE default GOMPIT; the minimum of 30 evaluated trajectories changes nothing. No shipped verdict is overturned. Memo Section 16 has the discussion.
+
 ## Files
 
 - `conus_catalog_runs.py`, `catalog_runs.slurm`: the engine runs (Cardinal arrays 15976824 and 15984133 (ACD, EM, IE reruns) after library build 15967530 with the GOMPSURV fix; earlier arrays fed the superseded first catalog).
@@ -35,6 +43,7 @@ Eighteen variants ran; 4,485 stands passed the year-0 seed gate and carry the ga
 - `fia_variant_assignment.csv`, `fia_variant_thresholds_plot.csv`: the stand sample frame and the thresholds.
 - `gates/catalog_gates_by_arm.csv`, `gates/catalog_recommendation_by_variant.csv`: the catalog itself (copied to `config/catalog/`).
 - `catalog_seedgate_all.csv`, `score_catalog/`: the year-0 gate and the full v2 scorecards.
+- `stress_catalog.R`, `stress.slurm`, `stress/`: the stress test of the shipped catalog (job 15990793; `stress_by_arm.csv`, `stress_by_variant.csv`, log and md5 list).
 
 ## What the catalog does not cover
 

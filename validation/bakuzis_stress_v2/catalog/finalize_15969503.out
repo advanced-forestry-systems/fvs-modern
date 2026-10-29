@@ -1,0 +1,214 @@
+
+Lmod is automatically replacing "intel/2021.10.0" with "gcc/12.3.0".
+
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) mvapich/4.1
+
+== concatenate Thu Oct 29 02:26:37 AM EDT 2026
+files 36 rows 360985 arms default_gompit,calibrated_gompit,default_native,calibrated_native groups 18 
+      status     N
+      <char> <int>
+1:        OK 14824
+2: SEED_FAIL  2372
+3:  RUN_FAIL  1796
+    variant    arm     config        ok     n
+     <char> <char>     <char>     <num> <int>
+ 1:     ACD gompit calibrated 0.9266667   300
+ 2:     ACD gompit    default 0.9266667   300
+ 3:     ACD native calibrated 0.9266667   300
+ 4:     ACD native    default 0.9266667   300
+ 5:      BM gompit calibrated 0.9107143   224
+ 6:      BM gompit    default 0.9107143   224
+ 7:      BM native calibrated 0.9107143   224
+ 8:      BM native    default 0.9107143   224
+ 9:      CA gompit calibrated 0.9029851   134
+10:      CA gompit    default 0.9029851   134
+11:      CA native calibrated 0.9029851   134
+12:      CA native    default 0.9029851   134
+13:      CI gompit calibrated 0.8986486   296
+14:      CI gompit    default 0.8986486   296
+15:      CI native calibrated 0.8986486   296
+16:      CI native    default 0.8986486   296
+17:      CR gompit calibrated 0.8976109   293
+18:      CR gompit    default 0.8976109   293
+19:      CR native calibrated 0.8976109   293
+20:      CR native    default 0.8976109   293
+21:      CS gompit calibrated 0.6387665   227
+22:      CS gompit    default 0.6387665   227
+23:      CS native calibrated 0.6387665   227
+24:      CS native    default 0.6387665   227
+25:      EC gompit calibrated 0.9492754   276
+26:      EC gompit    default 0.9492754   276
+27:      EC native calibrated 0.9492754   276
+28:      EC native    default 0.9492754   276
+29:      EM gompit calibrated 0.8361204   299
+30:      EM gompit    default 0.8361204   299
+31:      EM native calibrated 0.8361204   299
+32:      EM native    default 0.8361204   299
+33:      IE gompit calibrated 0.8639456   294
+34:      IE gompit    default 0.8639456   294
+35:      IE native calibrated 0.8639456   294
+36:      IE native    default 0.8639456   294
+37:      LS gompit calibrated 0.7872340   282
+38:      LS gompit    default 0.7872340   282
+39:      LS native calibrated 0.7872340   282
+40:      LS native    default 0.7872340   282
+41:      NE gompit calibrated 0.8600000   300
+42:      NE gompit    default 0.8600000   300
+43:      NE native calibrated 0.8600000   300
+44:      NE native    default 0.8600000   300
+45:      PN gompit calibrated 0.8055556    36
+46:      PN gompit    default 0.8055556    36
+47:      PN native calibrated 0.8055556    36
+48:      PN native    default 0.8055556    36
+49:      SN gompit calibrated 0.5629630   135
+50:      SN gompit    default 0.5629630   135
+51:      SN native calibrated 0.5629630   135
+52:      SN native    default 0.5629630   135
+53:      SO gompit calibrated 0.9557196   271
+54:      SO gompit    default 0.9557196   271
+55:      SO native calibrated 0.9557196   271
+56:      SO native    default 0.9557196   271
+57:      TT gompit calibrated 0.8732394   142
+58:      TT gompit    default 0.8732394   142
+59:      TT native calibrated 0.8732394   142
+60:      TT native    default 0.8732394   142
+61:      UT gompit calibrated 0.8433333   300
+62:      UT gompit    default 0.8433333   300
+63:      UT native calibrated 0.8433333   300
+64:      UT native    default 0.8433333   300
+65:      WC gompit calibrated 0.8939394   198
+66:      WC gompit    default 0.8939394   198
+67:      WC native calibrated 0.8939394   198
+68:      WC native    default 0.8939394   198
+69:      WS gompit calibrated 0.9075342   292
+70:      WS gompit    default 0.9075342   292
+71:      WS native calibrated 0.9075342   292
+72:      WS native    default 0.9075342   292
+    variant    arm     config        ok     n
+     <char> <char>     <char>     <num> <int>
+== score Thu Oct 29 02:26:39 AM EDT 2026
+Reineke axis: 5592 trajectories evaluated, 319 not evaluated, 1305 flagged. A zero flag count rests only on the evaluated count.
+== gates Thu Oct 29 02:30:38 AM EDT 2026
+ 29:              0.46           34.0   20.9      FALSE
+ 30:              0.16           28.2   20.9      FALSE
+ 31:              0.36           31.7   20.9      FALSE
+ 32:              0.18           28.1   20.9      FALSE
+ 33:              0.29           52.8   24.0      FALSE
+ 34:              0.33           32.6   24.0      FALSE
+ 35:              0.14           43.6   24.0      FALSE
+ 36:              0.22           33.1   24.0      FALSE
+ 37:              0.18           33.8   24.0      FALSE
+ 38:              0.15           33.0   24.0      FALSE
+ 39:              0.21           32.3   24.0      FALSE
+ 40:              0.25           32.9   24.0      FALSE
+ 41:              0.03           39.0   18.5       TRUE
+ 42:              0.07           38.6   18.5       TRUE
+ 43:              0.06           31.0   18.5       TRUE
+ 44:              0.08           30.5   18.5       TRUE
+ 45:              0.86           88.6   18.5      FALSE
+ 46:              0.46           63.9   18.5      FALSE
+ 47:              0.82           77.2   18.5      FALSE
+ 48:              0.41           57.0   18.5      FALSE
+ 49:              0.19           24.8   21.2      FALSE
+ 50:              0.35           24.4   21.2      FALSE
+ 51:              0.57           68.5   21.2      FALSE
+ 52:              0.20           38.1   21.2      FALSE
+ 53:              0.33           60.7   21.2      FALSE
+ 54:              0.17           47.7   21.2      FALSE
+ 55:              0.30           52.5   21.2      FALSE
+ 56:              0.25           43.8   21.2      FALSE
+ 57:              0.82           69.3   23.7      FALSE
+ 58:              0.39           38.6   23.7      FALSE
+ 59:              0.86           56.2   23.7      FALSE
+ 60:              0.32           32.1   23.7      FALSE
+ 61:              0.31           35.7   23.7      FALSE
+ 62:              0.26           31.5   23.7      FALSE
+ 63:              0.31           35.2   23.7      FALSE
+ 64:              0.30           32.6   23.7      FALSE
+ 65:              0.29           35.4   21.7      FALSE
+ 66:              0.65           29.5   21.7      FALSE
+ 67:              0.29           35.4   21.7      FALSE
+ 68:              0.65           29.5   21.7      FALSE
+ 69:              0.53           62.4   21.7      FALSE
+ 70:              0.12           46.8   21.7      FALSE
+ 71:              0.47           53.8   21.7      FALSE
+ 72:              0.14           44.2   21.7      FALSE
+ 73:              0.23           49.1   16.8      FALSE
+ 74:              0.15           42.6   16.8      FALSE
+ 75:              0.05           34.4   16.8       TRUE
+ 76:              0.05           34.4   16.8       TRUE
+ 77:              0.88           96.7   16.8      FALSE
+ 78:              0.22           58.2   16.8      FALSE
+ 79:              0.83           81.5   16.8      FALSE
+ 80:              0.17           53.3   16.8      FALSE
+ 81:              0.65           72.2     NA      FALSE
+ 82:              0.72           60.7     NA      FALSE
+ 83:              0.72           62.7     NA      FALSE
+ 84:              0.79           57.0     NA      FALSE
+ 85:              0.05           44.1   24.9       TRUE
+ 86:              0.06           43.6   24.9       TRUE
+ 87:              0.06           37.0   24.9       TRUE
+ 88:              0.06           36.7   24.9       TRUE
+ 89:              0.90          107.4   24.9      FALSE
+ 90:              0.85           91.2   24.9      FALSE
+ 91:              0.22           64.8   24.9      FALSE
+ 92:              0.31          116.6   65.3      FALSE
+ 93:              0.65           81.0   65.3      FALSE
+ 94:              0.31          115.5   65.3      FALSE
+ 95:              0.60           81.4   65.3      FALSE
+ 96:              0.64          116.4   65.3      FALSE
+ 97:              0.13           88.3   65.3      FALSE
+ 98:              0.55          103.2   65.3      FALSE
+ 99:              0.19           82.8   65.3      FALSE
+100:              0.03           46.8   21.6       TRUE
+101:              0.05           44.5   21.6       TRUE
+102:              0.06           37.4   21.6       TRUE
+103:              0.08           37.4   21.6       TRUE
+104:              0.94          119.9   21.6      FALSE
+105:              0.90           97.0   21.6      FALSE
+106:              0.44           61.9   21.6      FALSE
+107:              0.18           30.3   16.4      FALSE
+108:              0.12           30.3   16.4      FALSE
+109:              0.18           30.3   16.4      FALSE
+110:              0.12           30.3   16.4      FALSE
+111:              0.29           46.2   16.4      FALSE
+112:              0.15           38.0   16.4      FALSE
+113:              0.30           42.2   16.4      FALSE
+114:              0.20           36.3   16.4      FALSE
+115:              0.87           45.3   16.8      FALSE
+116:                NA           23.5   16.8       TRUE
+117:              0.25           37.9   16.8      FALSE
+118:              0.15           24.4   16.8      FALSE
+119:              0.34           31.0   16.8      FALSE
+120:              0.29           26.8   16.8      FALSE
+121:              0.20           33.8   16.8      FALSE
+122:              0.22           29.1   16.8      FALSE
+123:              0.53           48.0   22.9      FALSE
+124:              0.28           28.2   22.9      FALSE
+125:              0.30           42.6   22.9      FALSE
+126:              0.28           29.7   22.9      FALSE
+127:              0.32           30.6   22.9      FALSE
+128:              0.52           33.2   22.9      FALSE
+129:              0.28           32.1   22.9      FALSE
+130:              0.41           34.0   22.9      FALSE
+131:              0.61          101.6   50.4      FALSE
+132:              0.15           69.2   50.4      FALSE
+133:              0.27           84.7   50.4      FALSE
+134:              0.14           66.5   50.4      FALSE
+135:              0.37           88.4   50.4      FALSE
+136:              0.26           80.1   50.4      FALSE
+137:              0.41           76.9   50.4      FALSE
+138:              0.36           71.8   50.4      FALSE
+139:              0.17           56.4   30.0      FALSE
+140:              0.52           39.4   30.0      FALSE
+141:              0.09           47.8   30.0       TRUE
+142:              0.28           41.0   30.0      FALSE
+143:              0.34           48.1   30.0      FALSE
+144:              0.26           43.0   30.0      FALSE
+145:              0.36           43.3   30.0      FALSE
+146:              0.36           40.8   30.0      FALSE
+     reineke_flag_rate med_peak_ba100 ba_p50 admissible
+                 <num>          <num>  <num>     <lgcl>
+CATALOG_FINAL_DONE

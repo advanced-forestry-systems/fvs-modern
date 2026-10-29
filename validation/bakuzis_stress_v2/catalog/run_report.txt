@@ -1,0 +1,225 @@
+Warning message:
+NAs introduced by coercion 
+Warning message:
+NAs introduced by coercion 
+========================================================================
+BAKUZIS STRESS TEST v2  catalog_20261028
+  input: catalog_long_all.csv
+  source: long   qmd_rate: 0.1 cm yr-1   form factor: 0.4
+========================================================================
+
+SUMMARY (evaluated / not evaluated / flagged), median age step 5 yr
+                  arm                                      relation evaluated
+               <char>                                        <char>     <int>
+ 1: calibrated_gompit                         T0 initial-step shock      4299
+ 2: calibrated_gompit                            T1 monotone HT_dom      4299
+ 3: calibrated_gompit                               T1 monotone QMD      3707
+ 4: calibrated_gompit                           T2 site ordering HT         0
+ 5: calibrated_gompit                          T2 site ordering VOL         0
+ 6: calibrated_gompit             T3 Reineke slope (trajectory OLS)      1030
+ 7: calibrated_gompit T3b frontier slope (rq tau 0.95, pooled limb)        18
+ 8: calibrated_gompit                     T4 max BA vs observed p99      4299
+ 9: calibrated_gompit                   T4 max BA vs observed p99.9      4299
+10: calibrated_gompit                          T4 peak SDI / SDImax      4299
+11: calibrated_gompit          T5 Eichhorn VOL~HT site independence         0
+12: calibrated_gompit   T6 Sukachev per-tree VOL falls with density         0
+13: calibrated_gompit  T7 yield-density final BA vs initial density         0
+14: calibrated_gompit                          T8 pinned BA plateau        18
+15: calibrated_gompit             T9 BA inversions (>10% step drop)      4299
+16: calibrated_gompit            T9 VOL inversions (>10% step drop)      4299
+17: calibrated_native                         T0 initial-step shock      4299
+18: calibrated_native                            T1 monotone HT_dom      4299
+19: calibrated_native                               T1 monotone QMD      3712
+20: calibrated_native                           T2 site ordering HT         0
+21: calibrated_native                          T2 site ordering VOL         0
+22: calibrated_native             T3 Reineke slope (trajectory OLS)      1371
+23: calibrated_native T3b frontier slope (rq tau 0.95, pooled limb)        18
+24: calibrated_native                     T4 max BA vs observed p99      4299
+25: calibrated_native                   T4 max BA vs observed p99.9      4299
+26: calibrated_native                          T4 peak SDI / SDImax      4299
+27: calibrated_native          T5 Eichhorn VOL~HT site independence         0
+28: calibrated_native   T6 Sukachev per-tree VOL falls with density         0
+29: calibrated_native  T7 yield-density final BA vs initial density         0
+30: calibrated_native                          T8 pinned BA plateau        18
+31: calibrated_native             T9 BA inversions (>10% step drop)      4299
+32: calibrated_native            T9 VOL inversions (>10% step drop)      4299
+33:    default_gompit                         T0 initial-step shock      4299
+34:    default_gompit                            T1 monotone HT_dom      4299
+35:    default_gompit                               T1 monotone QMD      3707
+36:    default_gompit                           T2 site ordering HT         0
+37:    default_gompit                          T2 site ordering VOL         0
+38:    default_gompit             T3 Reineke slope (trajectory OLS)      1311
+39:    default_gompit T3b frontier slope (rq tau 0.95, pooled limb)        18
+40:    default_gompit                     T4 max BA vs observed p99      4299
+41:    default_gompit                   T4 max BA vs observed p99.9      4299
+42:    default_gompit                          T4 peak SDI / SDImax      4299
+43:    default_gompit          T5 Eichhorn VOL~HT site independence         0
+44:    default_gompit   T6 Sukachev per-tree VOL falls with density         0
+45:    default_gompit  T7 yield-density final BA vs initial density         0
+46:    default_gompit                          T8 pinned BA plateau        18
+47:    default_gompit             T9 BA inversions (>10% step drop)      4299
+48:    default_gompit            T9 VOL inversions (>10% step drop)      4299
+49:    default_native                         T0 initial-step shock      4299
+50:    default_native                            T1 monotone HT_dom      4299
+51:    default_native                               T1 monotone QMD      3714
+52:    default_native                           T2 site ordering HT         0
+53:    default_native                          T2 site ordering VOL         0
+54:    default_native             T3 Reineke slope (trajectory OLS)      1880
+55:    default_native T3b frontier slope (rq tau 0.95, pooled limb)        18
+56:    default_native                     T4 max BA vs observed p99      4299
+57:    default_native                   T4 max BA vs observed p99.9      4299
+58:    default_native                          T4 peak SDI / SDImax      4299
+59:    default_native          T5 Eichhorn VOL~HT site independence         0
+60:    default_native   T6 Sukachev per-tree VOL falls with density         0
+61:    default_native  T7 yield-density final BA vs initial density         0
+62:    default_native                          T8 pinned BA plateau        18
+63:    default_native             T9 BA inversions (>10% step drop)      4299
+64:    default_native            T9 VOL inversions (>10% step drop)      4299
+                  arm                                      relation evaluated
+               <char>                                        <char>     <int>
+    not_evaluated not_applicable flagged       verdict
+            <int>          <int>   <int>        <char>
+ 1:             0              0      77          FLAG
+ 2:             0              0    1390          FLAG
+ 3:           592              0     103          FLAG
+ 4:            18              0       0 NOT EVALUATED
+ 5:            18              0       0 NOT EVALUATED
+ 6:            61           3208     160          FLAG
+ 7:             0              0       0          PASS
+ 8:             0              0     277          FLAG
+ 9:             0              0      61          FLAG
+10:             0              0      24          FLAG
+11:            18              0       0 NOT EVALUATED
+12:            18              0       0 NOT EVALUATED
+13:            18              0       0 NOT EVALUATED
+14:             0              0       0          PASS
+15:             0              0     175          FLAG
+16:             0              0     116          FLAG
+17:             0              0     181          FLAG
+18:             0              0     710          FLAG
+19:           587              0      23          FLAG
+20:            18              0       0 NOT EVALUATED
+21:            18              0       0 NOT EVALUATED
+22:            75           2853     367          FLAG
+23:             0              0       0          PASS
+24:             0              0     570          FLAG
+25:             0              0     217          FLAG
+26:             0              0       8          FLAG
+27:            18              0       0 NOT EVALUATED
+28:            18              0       0 NOT EVALUATED
+29:            18              0       0 NOT EVALUATED
+30:             0              0       0          PASS
+31:             0              0     132          FLAG
+32:             0              0     101          FLAG
+33:             0              0      31          FLAG
+34:             0              0    1297          FLAG
+35:           592              0      83          FLAG
+36:            18              0       0 NOT EVALUATED
+37:            18              0       0 NOT EVALUATED
+38:            58           2930     231          FLAG
+39:             0              0       0          PASS
+40:             0              0     519          FLAG
+41:             0              0     131          FLAG
+42:             0              0      36          FLAG
+43:            18              0       0 NOT EVALUATED
+44:            18              0       0 NOT EVALUATED
+45:            18              0       0 NOT EVALUATED
+46:             0              0       0          PASS
+47:             0              0     120          FLAG
+48:             0              0      78          FLAG
+49:             0              0      85          FLAG
+50:             0              0     674          FLAG
+51:           585              0      10          FLAG
+52:            18              0       0 NOT EVALUATED
+53:            18              0       0 NOT EVALUATED
+54:           125           2294     547          FLAG
+55:             0              0       0          PASS
+56:             0              0     987          FLAG
+57:             0              0     360          FLAG
+58:             0              0      18          FLAG
+59:            18              0       0 NOT EVALUATED
+60:            18              0       0 NOT EVALUATED
+61:            18              0       0 NOT EVALUATED
+62:             0              0       0          PASS
+63:             0              0      50          FLAG
+64:             0              0      36          FLAG
+    not_evaluated not_applicable flagged       verdict
+            <int>          <int>   <int>        <char>
+
+FLAGGED DETAIL
+                    arm                           relation  group   site
+                 <char>                             <char> <char> <char>
+   1: calibrated_gompit              T0 initial-step shock     CR    all
+   2: calibrated_gompit              T0 initial-step shock     CS    all
+   3: calibrated_gompit              T0 initial-step shock     CS    all
+   4: calibrated_gompit              T0 initial-step shock     CS    all
+   5: calibrated_gompit              T0 initial-step shock     CS    all
+  ---                                                                   
+9981:    default_native T9 VOL inversions (>10% step drop)     WC    all
+9982:    default_native T9 VOL inversions (>10% step drop)     WS    all
+9983:    default_native T9 VOL inversions (>10% step drop)     WS    all
+9984:    default_native T9 VOL inversions (>10% step drop)     WS    all
+9985:    default_native T9 VOL inversions (>10% step drop)     WS    all
+      density                          detail
+       <char>                          <char>
+   1:     all first 5 yr: stems -28%, BA -15%
+   2:     all  first 5 yr: stems -51%, BA -8%
+   3:     all first 5 yr: stems -35%, BA -11%
+   4:     all first 5 yr: stems -44%, BA -12%
+   5:     all first 5 yr: stems -29%, BA -12%
+  ---                                        
+9981:     all                   1 of 20 steps
+9982:     all                   1 of 20 steps
+9983:     all                   1 of 20 steps
+9984:     all                   1 of 20 steps
+9985:     all                   1 of 20 steps
+
+NOT EVALUATED DETAIL
+                    arm                                     relation  group
+                 <char>                                       <char> <char>
+   1: calibrated_gompit            T3 Reineke slope (trajectory OLS)    ACD
+   2:    default_gompit            T3 Reineke slope (trajectory OLS)    ACD
+   3:    default_gompit            T3 Reineke slope (trajectory OLS)     CA
+   4:    default_native            T3 Reineke slope (trajectory OLS)     CA
+   5: calibrated_gompit            T3 Reineke slope (trajectory OLS)     CA
+  ---                                                                      
+3031:    default_native                          T2 site ordering HT     WS
+3032:    default_native                         T2 site ordering VOL     WS
+3033:    default_native         T5 Eichhorn VOL~HT site independence     WS
+3034:    default_native  T6 Sukachev per-tree VOL falls with density     WS
+3035:    default_native T7 yield-density final BA vs initial density     WS
+        site density
+      <char>  <char>
+   1:    all     all
+   2:    all     all
+   3:    all     all
+   4:    all     all
+   5:    all     all
+  ---               
+3031:    all     all
+3032:    all     all
+3033:    all     all
+3034:    all     all
+3035:    all     all
+                                                                                             detail
+                                                                                             <char>
+   1: stand loses 43% of stems but screen left 1 of 21 points; check qmd_rate against the 5 yr step
+   2: stand loses 43% of stems but screen left 1 of 21 points; check qmd_rate against the 5 yr step
+   3: stand loses 36% of stems but screen left 0 of 21 points; check qmd_rate against the 5 yr step
+   4: stand loses 25% of stems but screen left 0 of 21 points; check qmd_rate against the 5 yr step
+   5: stand loses 47% of stems but screen left 0 of 21 points; check qmd_rate against the 5 yr step
+  ---                                                                                              
+3031:                                                                             single site level
+3032:                                                                             single site level
+3033:                                                               site axis inert or single level
+3034:                                                                          single density level
+3035:                                                                          single density level
+
+Reineke axis: 5592 trajectories evaluated, 319 not evaluated, 1305 flagged. A zero flag count rests only on the evaluated count.
+This test falsifies; a pass is not a confirmation of accuracy.
+Warning messages:
+1: In scale_x_log10() : log-10 transformation introduced infinite values.
+2: In scale_x_log10() : log-10 transformation introduced infinite values.
+3: In scale_x_log10() : log-10 transformation introduced infinite values.
+4: In scale_x_log10() : log-10 transformation introduced infinite values.
+Wrote outputs to score_catalog

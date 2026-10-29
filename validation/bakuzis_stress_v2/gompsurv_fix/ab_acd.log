@@ -1,0 +1,6 @@
+prefix tree GOMPSURV calls with D: 1
+acd prefix build DONE (552 objects, 108 skipped, 11M)
+build_conus/ab_acd.sh: line 9: 585745 Segmentation fault      FVS_GOMPIT=1 FVS_GOMPIT_COEF=$W/config/greg_mortality_coefficients.csv python3 engine_bakuzis_v2.py --wt $W --lib $LIB --tag gompit_$tag --out $B/ab_acd > $B/ab_acd_$tag.log 2>&1
+prefix rc=139 
+postfix rc=0 GATE SUMMARY gompit_postfix: 36 of 36 scenarios pass seeding and site gates; 0 SEED_FAIL, 0 SITE_FAIL
+AB_ACD_DONE

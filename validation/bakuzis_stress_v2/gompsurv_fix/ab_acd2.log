@@ -1,0 +1,5 @@
+native prefix rc=0 GATE SUMMARY native_prefix: 36 of 36 scenarios pass seeding and site gates; 0 SEED_FAIL, 0 SITE_FAIL
+build_conus/ab_acd2.sh: line 5: 586101 Segmentation fault      FVS_GOMPIT=1 FVS_GOMPIT_COEF=$W/config/greg_mortality_coefficients.csv python3 engine_bakuzis_v2.py --wt $W --lib $B/lib_acd_prefix/FVSacd.so --tag gompit_prefix2 --out $B/ab_acd > $B/ab_acd_prefix2.log 2>&1
+gompit prefix repeat rc=139 
+native postfix rc=0 GATE SUMMARY native_postfix: 36 of 36 scenarios pass seeding and site gates; 0 SEED_FAIL, 0 SITE_FAIL
+AB_ACD2_DONE

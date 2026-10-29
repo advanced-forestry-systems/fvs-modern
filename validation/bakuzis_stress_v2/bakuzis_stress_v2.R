@@ -121,6 +121,15 @@ sdimax_map <- NULL
 obs_map <- NULL
 if (!is.null(OBSFILE) && file.exists(OBSFILE)) { ob <- fread(OBSFILE); obs_map <- ob[, .(group = as.character(group), ba_p99, ba_p999)] }
 if (!is.null(SDIMAX) && file.exists(SDIMAX)) { sm <- fread(SDIMAX); sdimax_map <- setNames(sm$sdimax, sm$group) }
+## Threshold key check (added 2026-10-28 after a silent miss: thresholds keyed by variant against data grouped by
+## species group left T4 NOT EVALUATED without a word). A threshold file whose groups match none of the data groups
+## is almost certainly keyed wrong, so say so loudly; a partial match is reported group by group.
+if (!is.null(obs_map) || !is.null(sdimax_map)) {
+  dg <- unique(as.character(d$group)); tg <- unique(c(if (!is.null(obs_map)) obs_map$group, names(sdimax_map)))
+  if (!any(dg %in% tg)) cat("WARNING: no threshold group matches any data group. data groups:", paste(dg, collapse = ","),
+                            " threshold groups:", paste(tg, collapse = ","), ". T4 will report NOT EVALUATED everywhere.\n")
+  else if (!all(dg %in% tg)) cat("NOTE: data groups without thresholds (T4 not evaluated there):", paste(setdiff(dg, tg), collapse = ","), "\n")
+}
 
 rows <- list(); add <- function(key, ...) rows[[length(rows) + 1]] <<- as.data.table(c(key, list(...)))
 step_of <- function(a) { s <- stats::median(diff(sort(unique(a)))); if (!is.finite(s) || s <= 0) NA_real_ else s }

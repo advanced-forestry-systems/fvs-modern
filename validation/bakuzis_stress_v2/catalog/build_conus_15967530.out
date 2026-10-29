@@ -1,0 +1,56 @@
+
+Lmod is automatically replacing "intel/2021.10.0" with "gcc/12.3.0".
+
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) mvapich/4.1
+
+start Wed Oct 28 09:28:24 PM EDT 2026
+calls without D: 0
+acd rc=0 Wed Oct 28 09:29:14 PM EDT 2026 8672600
+bm rc=1 Wed Oct 28 09:30:19 PM EDT 2026 9877416
+ca rc=0 Wed Oct 28 09:31:13 PM EDT 2026 9204200
+ci rc=1 Wed Oct 28 09:32:13 PM EDT 2026 9828624
+cr rc=1 Wed Oct 28 09:33:15 PM EDT 2026 9912128
+cs rc=1 Wed Oct 28 09:34:02 PM EDT 2026 8650048
+ec rc=1 Wed Oct 28 09:34:57 PM EDT 2026 9954512
+em rc=1 Wed Oct 28 09:35:57 PM EDT 2026 9905704
+ie rc=1 Wed Oct 28 09:36:52 PM EDT 2026 9837496
+kt rc=1 Wed Oct 28 09:37:48 PM EDT 2026 9744624
+ls rc=1 Wed Oct 28 09:38:35 PM EDT 2026 8639944
+nc rc=0 Wed Oct 28 09:39:30 PM EDT 2026 9815720
+ne rc=1 Wed Oct 28 09:40:23 PM EDT 2026 8746768
+oc rc=0 Wed Oct 28 09:41:16 PM EDT 2026 9581632
+op rc=1 Wed Oct 28 09:42:08 PM EDT 2026 9537632
+pn rc=1 Wed Oct 28 09:43:04 PM EDT 2026 9959144
+so rc=1 Wed Oct 28 09:44:00 PM EDT 2026 10003408
+sn rc=1 Wed Oct 28 09:44:46 PM EDT 2026 8717336
+tt rc=1 Wed Oct 28 09:45:46 PM EDT 2026 9796280
+ut rc=1 Wed Oct 28 09:46:40 PM EDT 2026 9804784
+wc rc=1 Wed Oct 28 09:47:35 PM EDT 2026 9961032
+ws rc=0 Wed Oct 28 09:48:30 PM EDT 2026 9880056
+-rwxr-xr-x 1 crsfaaron PUOM0008  8672600 Oct 28 21:29 lib/FVSacd.so
+-rwxr-xr-x 1 crsfaaron PUOM0008  9877416 Oct 28 21:30 lib/FVSbm.so
+-rwxr-xr-x 1 crsfaaron PUOM0008  9204200 Oct 28 21:31 lib/FVSca.so
+-rwxr-xr-x 1 crsfaaron PUOM0008  9828624 Oct 28 21:32 lib/FVSci.so
+-rwxr-xr-x 1 crsfaaron PUOM0008  9912128 Oct 28 21:33 lib/FVScr.so
+-rwxr-xr-x 1 crsfaaron PUOM0008  8650048 Oct 28 21:34 lib/FVScs.so
+-rwxr-xr-x 1 crsfaaron PUOM0008  9954512 Oct 28 21:34 lib/FVSec.so
+-rwxr-xr-x 1 crsfaaron PUOM0008  9905704 Oct 28 21:35 lib/FVSem.so
+-rwxr-xr-x 1 crsfaaron PUOM0008  9837496 Oct 28 21:36 lib/FVSie.so
+-rwxr-xr-x 1 crsfaaron PUOM0008  9744624 Oct 28 21:37 lib/FVSkt.so
+-rwxr-xr-x 1 crsfaaron PUOM0008  8639944 Oct 28 21:38 lib/FVSls.so
+-rwxr-xr-x 1 crsfaaron PUOM0008  9815720 Oct 28 21:39 lib/FVSnc.so
+-rwxr-xr-x 1 crsfaaron PUOM0008  8746768 Oct 28 21:40 lib/FVSne.so
+-rwxr-xr-x 1 crsfaaron PUOM0008  9581632 Oct 28 21:41 lib/FVSoc.so
+-rwxr-xr-x 1 crsfaaron PUOM0008  9537632 Oct 28 21:42 lib/FVSop.so
+-rwxr-xr-x 1 crsfaaron PUOM0008  9959144 Oct 28 21:43 lib/FVSpn.so
+-rwxr-xr-x 1 crsfaaron PUOM0008  8717336 Oct 28 21:44 lib/FVSsn.so
+-rwxr-xr-x 1 crsfaaron PUOM0008 10003408 Oct 28 21:43 lib/FVSso.so
+-rwxr-xr-x 1 crsfaaron PUOM0008  9796280 Oct 28 21:45 lib/FVStt.so
+-rwxr-xr-x 1 crsfaaron PUOM0008  9804784 Oct 28 21:46 lib/FVSut.so
+-rwxr-xr-x 1 crsfaaron PUOM0008  9961032 Oct 28 21:47 lib/FVSwc.so
+-rwxr-xr-x 1 crsfaaron PUOM0008  9880056 Oct 28 21:48 lib/FVSws.so
+-rwxr-xr-x 1 crsfaaron PUOM0008    15872 Oct 28 21:47 lib/libfvs_stubs_final.so
+-rwxr-xr-x 1 crsfaaron PUOM0008    15944 Oct 28 21:47 lib/libfvs_stubs.so
+BUILD_CONUS_DONE

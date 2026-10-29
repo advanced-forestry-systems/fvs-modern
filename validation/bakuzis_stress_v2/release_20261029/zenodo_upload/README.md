@@ -26,7 +26,7 @@ Lead file: `00_fvs-modern_catalog_graphical_abstract.png` (three panels: variant
 
 ## Repository
 
-The same files are on the fvs-modern main branch of the advanced-forestry-systems organization at commit 1a520f5e (pull requests 118 to 126), under `config/catalog/` and `validation/bakuzis_stress_v2/`; the report, deck and this record's scripts land in `validation/bakuzis_stress_v2/release_20261029/` in the pull request that accompanies this record. Trajectory level engine output (4,485 stands in total, up to 300 per variant, x 4 arms x 21 steps) stays on Cardinal scratch and firebreather and is reproducible from `conus_catalog_runs.py` with the fvs-modern libraries.
+The same files are on the fvs-modern main branch of the advanced-forestry-systems organization at commit 1a520f5e (pull requests 118 to 126), under `config/catalog/` and `validation/bakuzis_stress_v2/`; the report, deck and this record's scripts are in `validation/bakuzis_stress_v2/release_20261029/` at commit 45ed6422 (pull request 127). The record was published on October 29, 2026. Trajectory level engine output (4,485 stands in total, up to 300 per variant, x 4 arms x 21 steps) stays on Cardinal scratch and firebreather and is reproducible from `conus_catalog_runs.py` with the fvs-modern libraries.
 
 ## Not deposited
 

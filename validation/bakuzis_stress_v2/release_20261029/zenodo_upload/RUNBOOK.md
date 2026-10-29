@@ -7,4 +7,4 @@
 5. Publishing is Aaron's action in the Zenodo web interface after review of the draft.
 6. Backfill the concept DOI: fvs-modern `validation/bakuzis_stress_v2/release_20261029/README.md`, the memo's data availability line, Paper 1 and Paper 2 data availability statements.
 
-Restricted data audit result is printed by `check_deposit.py` at every run and copied here after the final run.
+Restricted data audit, final run (October 29, 2026, 16:36 firebreather clock): 29 text files scanned, 486,765 characters, 10 files not text-scannable (the four PNG figures, the graphical abstract, the two PDFs, the docx and the pptx); no coordinate or plot CN column, no restricted token, no contextual coordinate pair; waived hits are the sweep's own pattern list in check_deposit.py. Published as 10.5281/zenodo.23777724 (concept 10.5281/zenodo.23777723) on October 29, 2026 from firebreather after Aaron's decision at 15:51 EDT.

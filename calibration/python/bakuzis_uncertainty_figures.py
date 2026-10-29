@@ -84,7 +84,7 @@ def plot_trajectory_bands(summary: pd.DataFrame, outpath: str,
                 post = sub.loc[sub["config"] == "posterior_band"]
                 if not post.empty and "q025" in post.columns and "q975" in post.columns:
                     ax.fill_between(
-                        post["horizon_yr"], post["q025"], post["q975"],
+                        post["horizon_yr"].to_numpy(), post["q025"].to_numpy(), post["q975"].to_numpy(),
                         color=CONFIG_COLORS["posterior_band"], alpha=0.22,
                     )
                 # Lines per config
@@ -98,7 +98,7 @@ def plot_trajectory_bands(summary: pd.DataFrame, outpath: str,
                         continue
                     lw = 0.9 if config == "posterior_band" else 1.5
                     ax.plot(
-                        g["horizon_yr"], g["median"],
+                        g["horizon_yr"].to_numpy(), g["median"].to_numpy(),
                         color=CONFIG_COLORS[config], ls=ls, lw=lw,
                         alpha=0.9,
                     )
@@ -160,7 +160,7 @@ def plot_divergence(benchmark: pd.DataFrame, outpath: str,
             sizes = g["band_pct"].fillna(4.0)
             sizes = np.clip(sizes * 2, 20, 220)
             ax.scatter(
-                g["def_median_y100"], g["diff_pct"],
+                g["def_median_y100"].to_numpy(), g["diff_pct"].to_numpy(),
                 marker=markers.get(site, "x"), s=sizes,
                 alpha=0.75, edgecolor="black", linewidth=0.5,
                 color=species_cmap.get(sp, "gray"),
@@ -272,7 +272,7 @@ def plot_band_growth(summary: pd.DataFrame, outpath: str,
             subsub = sub[sub["site_class"] == site]
             for scen, g in subsub.groupby("scenario"):
                 ax.plot(
-                    g["horizon_yr"], g["band_pct"],
+                    g["horizon_yr"].to_numpy(), g["band_pct"].to_numpy(),
                     color=palette[site], alpha=0.55, lw=0.9,
                 )
         ax.set_title(sp, fontsize=11)

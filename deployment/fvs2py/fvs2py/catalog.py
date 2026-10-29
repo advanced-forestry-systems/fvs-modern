@@ -78,14 +78,18 @@ def select_config(variant: str, survival: str | None = None, parameter_set: str 
     if v not in recs:
         raise KeyError(f"variant {v} is not in the catalog (no fitting plots assigned or not run)")
     rec = recs[v]
+    if not rec["recommended"]:
+        raise KeyError(f"variant {v}: {rec['status']}")
     adm = [a for a in rec["admissible_arms"].split("; ") if a]
     arm = rec["recommended"]
+    prefer = "gompit" if "NE cohort" in rec.get("nearterm_evidence", "") else None   # the only per-variant near-term evidence
     # caller constraints: pick the simplest admissible arm that satisfies them, else the matching
     # non-admissible arm with admissible=False
     cands = [a for a in adm if (survival is None or a.endswith(survival)) and (parameter_set is None or a.startswith(parameter_set))]
     if survival is not None or parameter_set is not None:
         if cands:
-            arm = cands[0]
+            pref = [a for a in cands if prefer and a.endswith(prefer)]
+            arm = (pref or cands)[0]
         else:
             arm = f"{parameter_set or _split(rec['recommended'])[0]}_{survival or _split(rec['recommended'])[1]}"
     pset, surv = _split(arm)
@@ -98,6 +102,12 @@ def select_config(variant: str, survival: str | None = None, parameter_set: str 
     ev = next((g for g in gates if g["arm"] == arm), {})
     admissible = arm in adm
     note = "" if admissible else (f"{arm} is not an admissible arm for {v}: {ev.get('why_not', '')}".strip() if ev else f"{arm} has no gate row for {v}")
+    if ev.get("reineke_unknown", "") in ("TRUE", "True"):
+        note = (note + " " if note else "") + f"Reineke self-thinning not testable ({ev.get('reineke_eval', '0')} trajectories reached the relative-density gate)."
+    if ev.get("calibrated_distinct", "") in ("FALSE", "False"):
+        note = (note + " " if note else "") + "The calibrated config did not load for this variant; this arm is identical to the default."
+    if rec.get("rule_sensitive", "") in ("TRUE", "True"):
+        note = (note + " " if note else "") + "Verdict is rule-sensitive (admissible set differs under the alternative Reineke gate)."
     if not rec["status"].startswith("RECOMMENDED"):
         note = (note + " " if note else "") + rec["status"]
     return CatalogChoice(variant=v, arm=arm, parameter_set=pset, survival=surv,

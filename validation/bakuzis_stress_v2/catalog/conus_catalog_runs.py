@@ -63,7 +63,7 @@ def read_state_tables(fia_dir, states):
         pc = os.path.join(fia_dir, f"{ab}_COND.csv"); pp = os.path.join(fia_dir, f"{ab}_PLOT.csv"); pt = os.path.join(fia_dir, f"{ab}_TREE.csv")
         if not (os.path.exists(pc) and os.path.exists(pt)):
             log.warning("missing FIA tables for %s", ab); continue
-        cond.append(pd.read_csv(pc, usecols=lambda c: c in ("PLT_CN", "CONDID", "COND_STATUS_CD", "SICOND", "SIBASE", "SISP", "BALIVE", "FORTYPCD", "STDAGE", "ASPECT", "SLOPE", "ELEV", "STATECD", "COUNTYCD"), low_memory=False))
+        cond.append(pd.read_csv(pc, usecols=lambda c: c in ("PLT_CN", "CONDID", "COND_STATUS_CD", "SICOND", "SIBASE", "SISP", "BALIVE", "FORTYPCD", "STDAGE", "ASPECT", "SLOPE", "ELEV", "STATECD", "COUNTYCD", "CONDPROP_UNADJ"), low_memory=False))
         if os.path.exists(pp):
             plot.append(pd.read_csv(pp, usecols=lambda c: c in ("CN", "LAT", "LON", "STATECD", "COUNTYCD", "PLOT", "INVYR"), low_memory=False))
         tree.append(pd.read_csv(pt, usecols=lambda c: c in ("PLT_CN", "CONDID", "STATUSCD", "SPCD", "DIA", "HT", "CR", "TPA_UNADJ"), low_memory=False))
@@ -88,8 +88,20 @@ def main():
 
     import bakuzis_uncertainty_comparison as buc        # run_scenario, paths, fvs2py setup
     from fia_stand_generator import build_stand_init, build_tree_init
+    from inventory_keyfile import _variant_crosswalk
 
     v = a.variant.lower()
+    # Species the compiled variant does not recognise are relabelled the way FVS itself does on input: softwoods
+    # (SPCD < 300) to the variant's other-softwood code (FIA 299), hardwoods to other-hardwood (998), or to the
+    # all-species code (999) where that is the only catch-all. Added October 29 after 165 of 300 SN stands, 76 BM
+    # and 73 CS were lost to the strict crosswalk. Counts go into the seed gate file.
+    xw = _variant_crosswalk(v)
+    def relabel(spcd):
+        if spcd in xw: return spcd, False
+        if spcd < 300 and 299 in xw: return 299, True
+        if 998 in xw: return 998, True
+        if 999 in xw: return 999, True
+        return None, True
     assign = pd.read_csv(a.assign, dtype={"PLT_CN": str})
     smp = sample_plots(assign, v, a.n_stands, a.seed)
     if smp.empty:
@@ -120,10 +132,15 @@ def main():
         # defaults (40 yr, 0, 15 percent, 1000 ft, 60) apply, and the blank is recorded in the seed gate file.
         blanks = [k for k in ("STDAGE", "ASPECT", "SLOPE", "ELEV", "SICOND") if pd.isna(c.get(k, np.nan))]
         c = {k: (None if (isinstance(val, float) and np.isnan(val)) else val) for k, val in c.to_dict().items()}
+        # Trees of this condition only (no all-plot fallback: that is what put SN and CS stands at 1.25 to 1.64 x
+        # BALIVE on October 29), expanded to the condition acre by CONDPROP_UNADJ, which is how BALIVE is defined
+        # (sum of BA x TPA_UNADJ / CONDPROP_UNADJ) and why partial conditions seeded at exactly 0.75 x before.
         t = tree[(tree["PLT_CN"] == cn) & (tree["CONDID"] == condid)]
-        if t.empty: t = tree[tree["PLT_CN"] == cn]
         if t.empty:
             gate.append(dict(variant=v.upper(), arm=a.arm, plt_cn=cn, status="NO_TREES")); continue
+        condprop = c.get("CONDPROP_UNADJ")
+        condprop = float(condprop) if condprop is not None and float(condprop) > 0 else 1.0
+        t = t.copy(); t["TPA_UNADJ"] = t["TPA_UNADJ"] / condprop
         sid = f"C{i + 1:04d}"
         try:
             sdf = build_stand_init(c, sid, v)
@@ -137,6 +154,14 @@ def main():
                 sdf["latitude"] = float(p["LAT"].iloc[0]); sdf["longitude"] = float(p["LON"].iloc[0])
         sisp = c.get("SISP", np.nan)
         if pd.notna(sisp) and int(sisp) > 0: sdf["site_species"] = int(sisp)
+        t = t.copy()
+        rl = [relabel(int(s)) for s in t["SPCD"]]
+        t["SPCD"] = [r[0] if r[0] is not None else -1 for r in rl]
+        n_relabel = int(sum(r[1] for r in rl)); n_drop = int((t["SPCD"] < 0).sum())
+        ba_rel_share = float((t.loc[[r[1] for r in rl], "DIA"].pow(2) * t.loc[[r[1] for r in rl], "TPA_UNADJ"]).sum() / max((t["DIA"].pow(2) * t["TPA_UNADJ"]).sum(), 1e-9))
+        t = t[t["SPCD"] > 0]
+        if t.empty:
+            gate.append(dict(variant=v.upper(), arm=a.arm, plt_cn=cn, status="NO_MAPPED_TREES")); continue
         tdf = build_tree_init(t, sid)
         balive = float(c.get("BALIVE") if c.get("BALIVE") is not None else np.nan)
         for cfg in a.configs.split(","):
@@ -149,7 +174,7 @@ def main():
             s = s.copy().sort_values("year")
             ba0 = float(s["atba"].iloc[0]); tpa0 = float(s["tpa"].iloc[0])
             seed_ok = (np.isfinite(balive) and balive > 0 and abs(ba0 - balive) / balive <= a.seed_tol)
-            gate.append(dict(variant=v.upper(), arm=a.arm, plt_cn=cn, config=cfg, status="OK" if seed_ok else "SEED_FAIL", ba0_ft2ac=ba0, balive=balive, tpa0=tpa0, stdage=c.get("STDAGE", np.nan), fortypcd=c.get("FORTYPCD", np.nan), sicond=c.get("SICOND", np.nan), blank_fields=";".join(blanks)))
+            gate.append(dict(variant=v.upper(), arm=a.arm, plt_cn=cn, config=cfg, status="OK" if seed_ok else "SEED_FAIL", ba0_ft2ac=ba0, balive=balive, tpa0=tpa0, stdage=c.get("STDAGE", np.nan), fortypcd=c.get("FORTYPCD", np.nan), sicond=c.get("SICOND", np.nan), blank_fields=";".join(blanks), n_relabel=n_relabel, n_drop=n_drop, ba_relabel_share=round(ba_rel_share, 4), condprop=condprop))
             y0 = int(s["year"].iloc[0])
             rows.append(pd.DataFrame({
                 "arm": f"{cfg}_{a.arm}", "group": v.upper(), "site": "all", "density": "all", "traj": sid,

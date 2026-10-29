@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=cat_runs --account=PUOM0008 --time=10:00:00 --nodes=1 --ntasks=1 --cpus-per-task=2 --mem=24G
-#SBATCH --array=2-17,20,21,32-43
+#SBATCH --array=0-43
 #SBATCH --output=/fs/scratch/PUOM0008/crsfaaron/bakuzis_v2_20261027/catalog/logs/cat_%A_%a.out
 # 22 variants x 2 survival arms; task = variant index * 2 + arm index
 source /etc/profile.d/lmod.sh; module load gcc/12.3.0
@@ -16,5 +16,5 @@ else
   unset FVS_GOMPIT; ARM=native
 fi
 echo ">>> $V $ARM $(date)"
-python3 $J/conus_catalog_runs.py --variant $V --arm $ARM --assign $J/fia_variant_assignment.csv --n-stands 300 --seed 20261028 --out $J/runs
+python3 $J/conus_catalog_runs.py --variant $V --arm $ARM --assign $J/fia_variant_assignment.csv --n-stands 300 --seed 20261028 --out $J/runs_v3
 echo "rc=$? $(date)"

@@ -35,6 +35,20 @@ if (length(miss)) stop("long input missing: ", paste(miss, collapse = ","))
 L[, `:=`(age = as.numeric(age), TPH = as.numeric(TPH), BAPH = as.numeric(BAPH), QMD = as.numeric(QMD), group = toupper(group))]
 L <- L[is.finite(BAPH) & is.finite(TPH) & TPH > 0]
 L[, SDI := TPH * (QMD / 25.4)^1.605]     # Reineke SDI, metric (trees ha-1 at QMD 25.4 cm)
+## Output red team, October 29 (defect 4): stands that failed the year-0 seed gate are excluded from the gates.
+## Engine rows carry seed_ok; projector rows do not and are kept.
+if ("seed_ok" %in% names(L)) {
+  n_before <- uniqueN(L[, .(arm, group, traj)]); L <- L[is.na(seed_ok) | seed_ok %in% c(TRUE, "TRUE", "True")]
+  cat("seed gate filter: trajectories", n_before, "->", uniqueN(L[, .(arm, group, traj)]), "\n")
+}
+## Output red team (defect 2): a calibrated arm whose trajectories equal the default arm's to the last digit was never
+## distinct (the calibrated config did not load or carried nothing for the variant) and must not be counted as evidence.
+dist <- L[grepl("^(default|calibrated)_", arm), .(arm, group, traj, age, BAPH, TPH)]
+dist[, `:=`(pset = sub("_.*", "", arm), surv = sub(".*_", "", arm))]
+dw <- dcast(dist, group + surv + traj + age ~ pset, value.var = c("BAPH", "TPH"))
+nd <- dw[, .(max_abs_diff = max(abs(BAPH_calibrated - BAPH_default), abs(TPH_calibrated - TPH_default), na.rm = TRUE)), by = .(group, surv)]
+nd[, `:=`(arm = paste0("calibrated_", surv), calibrated_distinct = max_abs_diff > 1e-9)]
+cat("calibrated arms not distinct from default:", paste(nd[calibrated_distinct == FALSE, paste(group, surv)], collapse = ", "), "\n")
 th <- fread(TH); setnames(th, "variant", "group"); th[, group := toupper(group)]
 
 wilson_hi <- function(x, n, z = 1.96) { p <- x / n; (p + z^2 / (2 * n) + z * sqrt(p * (1 - p) / n + z^2 / (4 * n^2))) / (1 + z^2 / n) }
@@ -42,7 +56,8 @@ wilson_hi <- function(x, n, z = 1.96) { p <- x / n; (p + z^2 / (2 * n) + z * sqr
 ## per trajectory peaks over the two horizons
 pk <- L[, .(ba_max50 = max(BAPH[age <= 50]), ba_max100 = max(BAPH), sdi_max50 = max(SDI[age <= 50]), sdi_max100 = max(SDI),
             tph0 = TPH[which.min(age)], tph50 = if (any(age >= 50)) TPH[which.min(abs(age - 50))] else NA_real_,
-            ba0 = BAPH[which.min(age)], n_age = .N, age_max = max(age)), by = .(arm, group, traj)]
+            ba0 = BAPH[which.min(age)], ba50 = if (any(age >= 50)) BAPH[which.min(abs(age - 50))] else NA_real_,
+            n_age = .N, age_max = max(age)), by = .(arm, group, traj)]
 pk <- merge(pk, th, by = "group", all.x = TRUE)
 g <- pk[, .(n_traj = .N, fia_n_plots = N[1],
             ba_p999 = ba_p999[1], ba_p99 = ba_p99[1], ba_p50 = ba_p50[1], sdi_p999 = sdi_p999_ha[1],
@@ -50,7 +65,7 @@ g <- pk[, .(n_traj = .N, fia_n_plots = N[1],
             x_ba99_50 = sum(ba_max50 > ba_p99), x_ba99_100 = sum(ba_max100 > ba_p99),
             x_sdi_50 = sum(sdi_max50 > sdi_p999_ha), x_sdi_100 = sum(sdi_max100 > sdi_p999_ha),
             med_peak_ba100 = median(ba_max100), med_peak_sdi100 = median(sdi_max100),
-            med_ba0 = median(ba0), med_stem_ret50 = median(tph50 / tph0, na.rm = TRUE),
+            med_ba0 = median(ba0), med_ba50 = median(ba50, na.rm = TRUE), med_stem_ret50 = median(tph50 / tph0, na.rm = TRUE),
             share_peak_below_p50 = mean(ba_max100 < ba_p50)), by = .(arm, group)]
 g[, `:=`(share_ba999_50 = x_ba999_50 / n_traj, share_ba999_100 = x_ba999_100 / n_traj,
          share_ba99_50 = x_ba99_50 / n_traj, share_ba99_100 = x_ba99_100 / n_traj,
@@ -61,6 +76,7 @@ g[, `:=`(wil_ba999_50 = wilson_hi(x_ba999_50, n_traj), wil_sdi_50 = wilson_hi(x_
 if (length(TRAJ)) {
   T <- rbindlist(lapply(TRAJ, fread), fill = TRUE)
   T <- T[grepl("^T3 Reineke", relation)]; T[, group := toupper(group)]
+  keep <- unique(L[, .(arm, group, traj)]); T <- merge(T, keep, by = c("arm", "group", "traj"))   # same seed-OK trajectory set as the magnitude gates
   r <- T[, .(reineke_eval = sum(status %in% c("PASS", "FLAG")), reineke_flag = sum(status == "FLAG"),
              reineke_na = sum(grepl("NOT APPLICABLE", status)),
              reineke_slope_med = median(as.numeric(value)[status %in% c("PASS", "FLAG")], na.rm = TRUE)), by = .(arm, group)]
@@ -74,25 +90,36 @@ if (length(SG)) {
   S <- rbindlist(lapply(SG, fread), fill = TRUE)
   if (all(c("variant", "arm", "config", "status") %in% names(S))) {
     S[, `:=`(group = toupper(variant), arm2 = paste(config, arm, sep = "_"))]
-    s <- S[!is.na(config), .(seed_n = .N, seed_ok_share = mean(status == "OK")), by = .(arm = arm2, group)]
+    s <- S[!is.na(config) & status %in% c("OK", "SEED_FAIL"), .(seed_n = .N, seed_ok_share = mean(status == "OK")), by = .(arm = arm2, group)]
+    s2 <- S[!is.na(config), .(run_fail_share = mean(status == "RUN_FAIL")), by = .(arm = arm2, group)]
+    s <- merge(s, s2, by = c("arm", "group"), all = TRUE)
     g <- merge(g, s, by = c("arm", "group"), all.x = TRUE)
   }
 }
 
 ## admissibility
-g[, admissible := share_ba999_50 < 0.05 & wil_ba999_50 < 0.10 & share_sdi_50 < 0.05 & wil_sdi_50 < 0.10 &
-                   (is.na(reineke_flag_rate) | reineke_flag_rate < 0.10) & med_peak_ba100 >= ba_p50]
+g <- merge(g, nd[, .(arm, group, calibrated_distinct)], by = c("arm", "group"), all.x = TRUE)
+g[is.na(calibrated_distinct), calibrated_distinct := TRUE]
 g[, reineke_unknown := is.na(reineke_flag_rate)]
+## Repairs after the October 29 output red team (logged in implementation-notes.md): the under-stocking bound is the
+## median basal area at year 50 (the 100 year peak included year 0 and could not fail); a Reineke gate that cannot
+## be tested (fewer than 10 evaluated trajectories) is NOT TESTED and does not admit; a calibrated arm identical to the
+## default is not evidence.
+g[, admissible := share_ba999_50 < 0.05 & wil_ba999_50 < 0.10 & share_sdi_50 < 0.05 & wil_sdi_50 < 0.10 &
+                   !reineke_unknown & reineke_flag_rate < 0.10 & med_ba50 >= ba_p50 & calibrated_distinct]
 ## Stress-test alternative (pre-registered as the protocol's alternative, not the primary rule): the Reineke gate on
 ## its Wilson 95 percent upper bound under 25 percent with at least 30 evaluated trajectories (fewer: not gating),
 ## because 10 to 12 evaluated trajectories make a 10 percent point gate flip on one trajectory.
 g[, reineke_flag_wil := ifelse(!is.na(reineke_eval) & reineke_eval > 0, wilson_hi(reineke_flag, reineke_eval), NA_real_)]
 g[, admissible_alt := share_ba999_50 < 0.05 & wil_ba999_50 < 0.10 & share_sdi_50 < 0.05 & wil_sdi_50 < 0.10 &
-                       (is.na(reineke_eval) | reineke_eval < 30 | reineke_flag_wil < 0.25) & med_peak_ba100 >= ba_p50]
+                       !is.na(reineke_eval) & reineke_eval >= 30 & reineke_flag_wil < 0.25 & med_ba50 >= ba_p50 & calibrated_distinct]
 g[, why_not := paste0(ifelse(share_ba999_50 >= 0.05 | wil_ba999_50 >= 0.10, "BA>p99.9 by 50 yr; ", ""),
                       ifelse(share_sdi_50 >= 0.05 | wil_sdi_50 >= 0.10, "SDI>p99.9 by 50 yr; ", ""),
                       ifelse(!is.na(reineke_flag_rate) & reineke_flag_rate >= 0.10, "Reineke flags; ", ""),
-                      ifelse(med_peak_ba100 < ba_p50, "under-stocks (median peak BA < FIA p50); ", ""))]
+                      ifelse(reineke_unknown, sprintf("Reineke not testable (%s evaluated); ", ifelse(is.na(reineke_eval), "0", reineke_eval)), ""),
+                      ifelse(is.na(med_ba50) | med_ba50 < ba_p50, "under-stocks (median BA at 50 yr < FIA p50); ", ""),
+                      ifelse(!calibrated_distinct, "calibrated config did not load (identical to default); ", ""))]
+g[, threshold_n := fia_n_plots]
 
 ## simplicity order and recommendation
 simp <- function(a) { s <- 0
@@ -100,7 +127,7 @@ simp <- function(a) { s <- 0
   s * 10 + ifelse(grepl("gompit", a), 1, 0) }
 g[, simplicity := simp(arm)]
 nearterm <- c(NE = "gompit")   # Paper 2 Table 1 (Northeast cohort): GOMPIT BA bias +4.62% vs native +10.78%
-rec <- g[, {
+rec <- g[!is.na(ba_p999), {
   ad <- .SD[admissible == TRUE]
   ad_alt <- .SD[admissible_alt == TRUE]
   sens <- !setequal(ad$arm, ad_alt$arm)
@@ -118,6 +145,9 @@ rec <- g[, {
          rule_sensitive = sens, admissible_arms_alt = paste(ad_alt[order(simplicity), arm], collapse = "; "))
   }
 }, by = group]
+noth <- g[is.na(ba_p999), .(recommended = "", status = "NOT EVALUATED (no FIA thresholds for this variant)", admissible_arms = "",
+                            nearterm_evidence = "none per variant", rule_sensitive = FALSE, admissible_arms_alt = ""), by = group]
+rec <- rbind(rec, noth, fill = TRUE)
 setorder(g, group, simplicity)
 fwrite(g, file.path(OUT, "catalog_gates_by_arm.csv"))
 fwrite(rec, file.path(OUT, "catalog_recommendation_by_variant.csv"))

@@ -1,0 +1,46 @@
+
+Lmod is automatically replacing "intel/2021.10.0" with "gcc/12.3.0".
+
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) mvapich/4.1
+
+== prep Thu Oct 29 01:07:28 PM EDT 2026
+stands with classes: 4485  site NA: 326  density NA: 0 
+wrote catalog_long_scorecard.csv 2589621 rows; 20 groups; 8 arms
+Key: <group>
+     group  High   Low Medium unspecified
+    <char> <int> <int>  <int>       <int>
+ 1:    ACD    96    97     98           8
+ 2:     BM    87   100     85          26
+ 3:     CA    36    40     38          28
+ 4:     CI    90    99    106           2
+ 5:     CR    93   103     91          13
+ 6:     CS    78    80     75          NA
+ 7:     EC    87    90     93          30
+ 8:     EM    93   102    101           4
+ 9:     IE    99   100     99          NA
+10:     LS    82    94     90          NA
+11:     NE    81    92     95          17
+12:     PN    12    14     11           1
+13:     SN    39    41     43          38
+14:     SO    72    79     80          69
+15:     TT    42    49     47           4
+16:     UT    90    95     88          27
+17:     WC    69    70     71          16
+18:     WS    83    92     82          43
+== score Thu Oct 29 01:07:32 PM EDT 2026
+Reineke axis: 53384 trajectories evaluated, 3518 not evaluated, 24906 flagged. A zero flag count rests only on the evaluated count.
+== scorecards Thu Oct 29 01:37:22 PM EDT 2026
+wrote 18 scorecards to scorecards 
+ACD_bakuzis_scorecard.md
+BM_bakuzis_scorecard.md
+CA_bakuzis_scorecard.md
+CI_bakuzis_scorecard.md
+CR_bakuzis_scorecard.md
+CS_bakuzis_scorecard.md
+EC_bakuzis_scorecard.md
+EM_bakuzis_scorecard.md
+IE_bakuzis_scorecard.md
+LS_bakuzis_scorecard.md
+SCORECARDS_DONE

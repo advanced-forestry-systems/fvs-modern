@@ -1,0 +1,2337 @@
+group,arm,rel,relation,evaluated,flagged,not_applicable,not_evaluated,verdict
+ACD,calibrated_gompit,T0,T0 initial-step shock,299,0,0,0,PASS
+ACD,calibrated_gompit,T1,T1 monotone HT_dom,299,22,0,0,MINOR
+ACD,calibrated_gompit,T1,T1 monotone QMD,299,0,0,0,PASS
+ACD,calibrated_gompit,T9,T9 BA inversions (>10% step drop),299,0,0,0,PASS
+ACD,calibrated_gompit,T9,T9 VOL inversions (>10% step drop),299,0,0,0,PASS
+ACD,calibrated_gompit,T3,T3 Reineke slope (trajectory OLS),224,3,75,0,MINOR
+ACD,calibrated_gompit,T4,T4 peak SDI / SDImax,299,7,0,0,MINOR
+ACD,calibrated_gompit,T4,T4 max BA vs observed p99,299,80,0,0,FLAG
+ACD,calibrated_gompit,T4,T4 max BA vs observed p99.9,299,4,0,0,MINOR
+ACD,calibrated_native,T0,T0 initial-step shock,299,11,0,0,MINOR
+ACD,calibrated_native,T1,T1 monotone HT_dom,299,8,0,0,MINOR
+ACD,calibrated_native,T1,T1 monotone QMD,299,0,0,0,PASS
+ACD,calibrated_native,T9,T9 BA inversions (>10% step drop),299,0,0,0,PASS
+ACD,calibrated_native,T9,T9 VOL inversions (>10% step drop),299,0,0,0,PASS
+ACD,calibrated_native,T3,T3 Reineke slope (trajectory OLS),235,5,64,0,MINOR
+ACD,calibrated_native,T4,T4 peak SDI / SDImax,299,1,0,0,MINOR
+ACD,calibrated_native,T4,T4 max BA vs observed p99,299,93,0,0,FLAG
+ACD,calibrated_native,T4,T4 max BA vs observed p99.9,299,4,0,0,MINOR
+ACD,default_gompit,T0,T0 initial-step shock,299,0,0,0,PASS
+ACD,default_gompit,T1,T1 monotone HT_dom,299,24,0,0,MINOR
+ACD,default_gompit,T1,T1 monotone QMD,299,0,0,0,PASS
+ACD,default_gompit,T9,T9 BA inversions (>10% step drop),299,0,0,0,PASS
+ACD,default_gompit,T9,T9 VOL inversions (>10% step drop),299,0,0,0,PASS
+ACD,default_gompit,T3,T3 Reineke slope (trajectory OLS),225,3,74,0,MINOR
+ACD,default_gompit,T4,T4 peak SDI / SDImax,299,7,0,0,MINOR
+ACD,default_gompit,T4,T4 max BA vs observed p99,299,79,0,0,FLAG
+ACD,default_gompit,T4,T4 max BA vs observed p99.9,299,4,0,0,MINOR
+ACD,default_native,T0,T0 initial-step shock,299,11,0,0,MINOR
+ACD,default_native,T1,T1 monotone HT_dom,299,11,0,0,MINOR
+ACD,default_native,T1,T1 monotone QMD,299,0,0,0,PASS
+ACD,default_native,T9,T9 BA inversions (>10% step drop),299,0,0,0,PASS
+ACD,default_native,T9,T9 VOL inversions (>10% step drop),299,0,0,0,PASS
+ACD,default_native,T3,T3 Reineke slope (trajectory OLS),236,5,63,0,MINOR
+ACD,default_native,T4,T4 peak SDI / SDImax,299,1,0,0,MINOR
+ACD,default_native,T4,T4 max BA vs observed p99,299,94,0,0,FLAG
+ACD,default_native,T4,T4 max BA vs observed p99.9,299,4,0,0,MINOR
+BM,calibrated_gompit,T0,T0 initial-step shock,298,1,0,0,MINOR
+BM,calibrated_gompit,T1,T1 monotone HT_dom,298,110,0,0,FLAG
+BM,calibrated_gompit,T1,T1 monotone QMD,298,3,0,0,MINOR
+BM,calibrated_gompit,T9,T9 BA inversions (>10% step drop),298,1,0,0,MINOR
+BM,calibrated_gompit,T9,T9 VOL inversions (>10% step drop),298,0,0,0,PASS
+BM,calibrated_gompit,T3,T3 Reineke slope (trajectory OLS),63,0,235,0,PASS
+BM,calibrated_gompit,T4,T4 peak SDI / SDImax,298,0,0,0,PASS
+BM,calibrated_gompit,T4,T4 max BA vs observed p99,298,22,0,0,MINOR
+BM,calibrated_gompit,T4,T4 max BA vs observed p99.9,298,2,0,0,MINOR
+BM,calibrated_native,T0,T0 initial-step shock,298,1,0,0,MINOR
+BM,calibrated_native,T1,T1 monotone HT_dom,298,109,0,0,FLAG
+BM,calibrated_native,T1,T1 monotone QMD,298,0,0,0,PASS
+BM,calibrated_native,T9,T9 BA inversions (>10% step drop),298,1,0,0,MINOR
+BM,calibrated_native,T9,T9 VOL inversions (>10% step drop),298,0,0,0,PASS
+BM,calibrated_native,T3,T3 Reineke slope (trajectory OLS),67,0,231,0,PASS
+BM,calibrated_native,T4,T4 peak SDI / SDImax,298,0,0,0,PASS
+BM,calibrated_native,T4,T4 max BA vs observed p99,298,28,0,0,MINOR
+BM,calibrated_native,T4,T4 max BA vs observed p99.9,298,2,0,0,MINOR
+BM,default_gompit,T0,T0 initial-step shock,298,1,0,0,MINOR
+BM,default_gompit,T1,T1 monotone HT_dom,298,103,0,0,FLAG
+BM,default_gompit,T1,T1 monotone QMD,298,4,0,0,MINOR
+BM,default_gompit,T9,T9 BA inversions (>10% step drop),298,1,0,0,MINOR
+BM,default_gompit,T9,T9 VOL inversions (>10% step drop),298,0,0,0,PASS
+BM,default_gompit,T3,T3 Reineke slope (trajectory OLS),62,0,236,0,PASS
+BM,default_gompit,T4,T4 peak SDI / SDImax,298,0,0,0,PASS
+BM,default_gompit,T4,T4 max BA vs observed p99,298,18,0,0,MINOR
+BM,default_gompit,T4,T4 max BA vs observed p99.9,298,2,0,0,MINOR
+BM,default_native,T0,T0 initial-step shock,298,1,0,0,MINOR
+BM,default_native,T1,T1 monotone HT_dom,298,104,0,0,FLAG
+BM,default_native,T1,T1 monotone QMD,298,0,0,0,PASS
+BM,default_native,T9,T9 BA inversions (>10% step drop),298,1,0,0,MINOR
+BM,default_native,T9,T9 VOL inversions (>10% step drop),298,0,0,0,PASS
+BM,default_native,T3,T3 Reineke slope (trajectory OLS),67,0,231,0,PASS
+BM,default_native,T4,T4 peak SDI / SDImax,298,0,0,0,PASS
+BM,default_native,T4,T4 max BA vs observed p99,298,22,0,0,MINOR
+BM,default_native,T4,T4 max BA vs observed p99.9,298,2,0,0,MINOR
+CA,calibrated_gompit,T0,T0 initial-step shock,142,0,0,0,PASS
+CA,calibrated_gompit,T1,T1 monotone HT_dom,142,25,0,0,FLAG
+CA,calibrated_gompit,T1,T1 monotone QMD,142,4,0,0,MINOR
+CA,calibrated_gompit,T9,T9 BA inversions (>10% step drop),142,3,0,0,MINOR
+CA,calibrated_gompit,T9,T9 VOL inversions (>10% step drop),142,2,0,0,MINOR
+CA,calibrated_gompit,T3,T3 Reineke slope (trajectory OLS),22,9,117,3,FLAG
+CA,calibrated_gompit,T4,T4 peak SDI / SDImax,142,1,0,0,MINOR
+CA,calibrated_gompit,T4,T4 max BA vs observed p99,142,3,0,0,MINOR
+CA,calibrated_gompit,T4,T4 max BA vs observed p99.9,142,2,0,0,MINOR
+CA,calibrated_native,T0,T0 initial-step shock,142,2,0,0,MINOR
+CA,calibrated_native,T1,T1 monotone HT_dom,142,13,0,0,MINOR
+CA,calibrated_native,T1,T1 monotone QMD,142,1,0,0,MINOR
+CA,calibrated_native,T9,T9 BA inversions (>10% step drop),142,2,0,0,MINOR
+CA,calibrated_native,T9,T9 VOL inversions (>10% step drop),142,1,0,0,MINOR
+CA,calibrated_native,T3,T3 Reineke slope (trajectory OLS),46,20,95,1,FLAG
+CA,calibrated_native,T4,T4 peak SDI / SDImax,142,2,0,0,MINOR
+CA,calibrated_native,T4,T4 max BA vs observed p99,142,12,0,0,MINOR
+CA,calibrated_native,T4,T4 max BA vs observed p99.9,142,7,0,0,MINOR
+CA,default_gompit,T0,T0 initial-step shock,142,0,0,0,PASS
+CA,default_gompit,T1,T1 monotone HT_dom,142,17,0,0,FLAG
+CA,default_gompit,T1,T1 monotone QMD,142,3,0,0,MINOR
+CA,default_gompit,T9,T9 BA inversions (>10% step drop),142,0,0,0,PASS
+CA,default_gompit,T9,T9 VOL inversions (>10% step drop),142,0,0,0,PASS
+CA,default_gompit,T3,T3 Reineke slope (trajectory OLS),34,19,104,4,FLAG
+CA,default_gompit,T4,T4 peak SDI / SDImax,142,1,0,0,MINOR
+CA,default_gompit,T4,T4 max BA vs observed p99,142,10,0,0,MINOR
+CA,default_gompit,T4,T4 max BA vs observed p99.9,142,1,0,0,MINOR
+CA,default_native,T0,T0 initial-step shock,142,0,0,0,PASS
+CA,default_native,T1,T1 monotone HT_dom,142,1,0,0,MINOR
+CA,default_native,T1,T1 monotone QMD,142,0,0,0,PASS
+CA,default_native,T9,T9 BA inversions (>10% step drop),142,0,0,0,PASS
+CA,default_native,T9,T9 VOL inversions (>10% step drop),142,0,0,0,PASS
+CA,default_native,T3,T3 Reineke slope (trajectory OLS),89,69,52,1,FLAG
+CA,default_native,T4,T4 peak SDI / SDImax,142,1,0,0,MINOR
+CA,default_native,T4,T4 max BA vs observed p99,142,52,0,0,FLAG
+CA,default_native,T4,T4 max BA vs observed p99.9,142,1,0,0,MINOR
+CI,calibrated_gompit,T0,T0 initial-step shock,297,0,0,0,PASS
+CI,calibrated_gompit,T1,T1 monotone HT_dom,297,74,0,0,FLAG
+CI,calibrated_gompit,T1,T1 monotone QMD,297,12,0,0,MINOR
+CI,calibrated_gompit,T9,T9 BA inversions (>10% step drop),297,12,0,0,MINOR
+CI,calibrated_gompit,T9,T9 VOL inversions (>10% step drop),297,4,0,0,MINOR
+CI,calibrated_gompit,T3,T3 Reineke slope (trajectory OLS),74,23,221,2,FLAG
+CI,calibrated_gompit,T4,T4 peak SDI / SDImax,297,1,0,0,MINOR
+CI,calibrated_gompit,T4,T4 max BA vs observed p99,297,17,0,0,MINOR
+CI,calibrated_gompit,T4,T4 max BA vs observed p99.9,297,11,0,0,MINOR
+CI,calibrated_native,T0,T0 initial-step shock,297,0,0,0,PASS
+CI,calibrated_native,T1,T1 monotone HT_dom,297,22,0,0,MINOR
+CI,calibrated_native,T1,T1 monotone QMD,297,6,0,0,MINOR
+CI,calibrated_native,T9,T9 BA inversions (>10% step drop),297,0,0,0,PASS
+CI,calibrated_native,T9,T9 VOL inversions (>10% step drop),297,0,0,0,PASS
+CI,calibrated_native,T3,T3 Reineke slope (trajectory OLS),58,10,239,0,FLAG
+CI,calibrated_native,T4,T4 peak SDI / SDImax,297,0,0,0,PASS
+CI,calibrated_native,T4,T4 max BA vs observed p99,297,5,0,0,MINOR
+CI,calibrated_native,T4,T4 max BA vs observed p99.9,297,1,0,0,MINOR
+CI,default_gompit,T0,T0 initial-step shock,297,0,0,0,PASS
+CI,default_gompit,T1,T1 monotone HT_dom,297,74,0,0,FLAG
+CI,default_gompit,T1,T1 monotone QMD,297,12,0,0,MINOR
+CI,default_gompit,T9,T9 BA inversions (>10% step drop),297,12,0,0,MINOR
+CI,default_gompit,T9,T9 VOL inversions (>10% step drop),297,4,0,0,MINOR
+CI,default_gompit,T3,T3 Reineke slope (trajectory OLS),74,24,221,2,FLAG
+CI,default_gompit,T4,T4 peak SDI / SDImax,297,1,0,0,MINOR
+CI,default_gompit,T4,T4 max BA vs observed p99,297,17,0,0,MINOR
+CI,default_gompit,T4,T4 max BA vs observed p99.9,297,11,0,0,MINOR
+CI,default_native,T0,T0 initial-step shock,297,0,0,0,PASS
+CI,default_native,T1,T1 monotone HT_dom,297,18,0,0,MINOR
+CI,default_native,T1,T1 monotone QMD,297,6,0,0,MINOR
+CI,default_native,T9,T9 BA inversions (>10% step drop),297,0,0,0,PASS
+CI,default_native,T9,T9 VOL inversions (>10% step drop),297,0,0,0,PASS
+CI,default_native,T3,T3 Reineke slope (trajectory OLS),79,8,218,0,FLAG
+CI,default_native,T4,T4 peak SDI / SDImax,297,0,0,0,PASS
+CI,default_native,T4,T4 max BA vs observed p99,297,6,0,0,MINOR
+CI,default_native,T4,T4 max BA vs observed p99.9,297,1,0,0,MINOR
+CR,calibrated_gompit,T0,T0 initial-step shock,300,1,0,0,MINOR
+CR,calibrated_gompit,T1,T1 monotone HT_dom,300,225,0,0,FLAG
+CR,calibrated_gompit,T1,T1 monotone QMD,300,10,0,0,MINOR
+CR,calibrated_gompit,T9,T9 BA inversions (>10% step drop),300,17,0,0,MINOR
+CR,calibrated_gompit,T9,T9 VOL inversions (>10% step drop),300,20,0,0,MINOR
+CR,calibrated_gompit,T3,T3 Reineke slope (trajectory OLS),23,5,274,3,FLAG
+CR,calibrated_gompit,T4,T4 peak SDI / SDImax,300,0,0,0,PASS
+CR,calibrated_gompit,T4,T4 max BA vs observed p99,300,2,0,0,MINOR
+CR,calibrated_gompit,T4,T4 max BA vs observed p99.9,300,0,0,0,PASS
+CR,calibrated_native,T0,T0 initial-step shock,300,7,0,0,MINOR
+CR,calibrated_native,T1,T1 monotone HT_dom,300,99,0,0,FLAG
+CR,calibrated_native,T1,T1 monotone QMD,300,1,0,0,MINOR
+CR,calibrated_native,T9,T9 BA inversions (>10% step drop),300,8,0,0,MINOR
+CR,calibrated_native,T9,T9 VOL inversions (>10% step drop),300,6,0,0,MINOR
+CR,calibrated_native,T3,T3 Reineke slope (trajectory OLS),72,9,223,5,FLAG
+CR,calibrated_native,T4,T4 peak SDI / SDImax,300,0,0,0,PASS
+CR,calibrated_native,T4,T4 max BA vs observed p99,300,20,0,0,MINOR
+CR,calibrated_native,T4,T4 max BA vs observed p99.9,300,0,0,0,PASS
+CR,default_gompit,T0,T0 initial-step shock,300,0,0,0,PASS
+CR,default_gompit,T1,T1 monotone HT_dom,300,218,0,0,FLAG
+CR,default_gompit,T1,T1 monotone QMD,300,2,0,0,MINOR
+CR,default_gompit,T9,T9 BA inversions (>10% step drop),300,9,0,0,MINOR
+CR,default_gompit,T9,T9 VOL inversions (>10% step drop),300,10,0,0,MINOR
+CR,default_gompit,T3,T3 Reineke slope (trajectory OLS),33,10,260,7,FLAG
+CR,default_gompit,T4,T4 peak SDI / SDImax,300,2,0,0,MINOR
+CR,default_gompit,T4,T4 max BA vs observed p99,300,10,0,0,MINOR
+CR,default_gompit,T4,T4 max BA vs observed p99.9,300,0,0,0,PASS
+CR,default_native,T0,T0 initial-step shock,300,1,0,0,MINOR
+CR,default_native,T1,T1 monotone HT_dom,300,79,0,0,FLAG
+CR,default_native,T1,T1 monotone QMD,300,1,0,0,MINOR
+CR,default_native,T9,T9 BA inversions (>10% step drop),300,2,0,0,MINOR
+CR,default_native,T9,T9 VOL inversions (>10% step drop),300,2,0,0,MINOR
+CR,default_native,T3,T3 Reineke slope (trajectory OLS),129,35,154,17,FLAG
+CR,default_native,T4,T4 peak SDI / SDImax,300,0,0,0,PASS
+CR,default_native,T4,T4 max BA vs observed p99,300,36,0,0,FLAG
+CR,default_native,T4,T4 max BA vs observed p99.9,300,0,0,0,PASS
+CS,calibrated_gompit,T0,T0 initial-step shock,233,19,0,0,MINOR
+CS,calibrated_gompit,T1,T1 monotone HT_dom,233,86,0,0,FLAG
+CS,calibrated_gompit,T1,T1 monotone QMD,233,5,0,0,MINOR
+CS,calibrated_gompit,T9,T9 BA inversions (>10% step drop),233,29,0,0,FLAG
+CS,calibrated_gompit,T9,T9 VOL inversions (>10% step drop),233,19,0,0,MINOR
+CS,calibrated_gompit,T3,T3 Reineke slope (trajectory OLS),73,4,159,1,MINOR
+CS,calibrated_gompit,T4,T4 peak SDI / SDImax,233,1,0,0,MINOR
+CS,calibrated_gompit,T4,T4 max BA vs observed p99,233,5,0,0,MINOR
+CS,calibrated_gompit,T4,T4 max BA vs observed p99.9,233,1,0,0,MINOR
+CS,calibrated_native,T0,T0 initial-step shock,233,46,0,0,FLAG
+CS,calibrated_native,T1,T1 monotone HT_dom,233,28,0,0,FLAG
+CS,calibrated_native,T1,T1 monotone QMD,233,5,0,0,MINOR
+CS,calibrated_native,T9,T9 BA inversions (>10% step drop),233,24,0,0,FLAG
+CS,calibrated_native,T9,T9 VOL inversions (>10% step drop),233,17,0,0,MINOR
+CS,calibrated_native,T3,T3 Reineke slope (trajectory OLS),70,1,163,0,MINOR
+CS,calibrated_native,T4,T4 peak SDI / SDImax,233,0,0,0,PASS
+CS,calibrated_native,T4,T4 max BA vs observed p99,233,5,0,0,MINOR
+CS,calibrated_native,T4,T4 max BA vs observed p99.9,233,1,0,0,MINOR
+CS,default_gompit,T0,T0 initial-step shock,233,1,0,0,MINOR
+CS,default_gompit,T1,T1 monotone HT_dom,233,53,0,0,FLAG
+CS,default_gompit,T1,T1 monotone QMD,233,1,0,0,MINOR
+CS,default_gompit,T9,T9 BA inversions (>10% step drop),233,2,0,0,MINOR
+CS,default_gompit,T9,T9 VOL inversions (>10% step drop),233,2,0,0,MINOR
+CS,default_gompit,T3,T3 Reineke slope (trajectory OLS),177,15,55,1,MINOR
+CS,default_gompit,T4,T4 peak SDI / SDImax,233,1,0,0,MINOR
+CS,default_gompit,T4,T4 max BA vs observed p99,233,70,0,0,FLAG
+CS,default_gompit,T4,T4 max BA vs observed p99.9,233,2,0,0,MINOR
+CS,default_native,T0,T0 initial-step shock,233,4,0,0,MINOR
+CS,default_native,T1,T1 monotone HT_dom,233,29,0,0,FLAG
+CS,default_native,T1,T1 monotone QMD,233,0,0,0,PASS
+CS,default_native,T9,T9 BA inversions (>10% step drop),233,2,0,0,MINOR
+CS,default_native,T9,T9 VOL inversions (>10% step drop),233,2,0,0,MINOR
+CS,default_native,T3,T3 Reineke slope (trajectory OLS),201,5,32,0,MINOR
+CS,default_native,T4,T4 peak SDI / SDImax,233,0,0,0,PASS
+CS,default_native,T4,T4 max BA vs observed p99,233,72,0,0,FLAG
+CS,default_native,T4,T4 max BA vs observed p99.9,233,1,0,0,MINOR
+EC,calibrated_gompit,T0,T0 initial-step shock,300,1,0,0,MINOR
+EC,calibrated_gompit,T1,T1 monotone HT_dom,300,105,0,0,FLAG
+EC,calibrated_gompit,T1,T1 monotone QMD,300,18,0,0,MINOR
+EC,calibrated_gompit,T9,T9 BA inversions (>10% step drop),300,9,0,0,MINOR
+EC,calibrated_gompit,T9,T9 VOL inversions (>10% step drop),300,5,0,0,MINOR
+EC,calibrated_gompit,T3,T3 Reineke slope (trajectory OLS),63,16,229,8,FLAG
+EC,calibrated_gompit,T4,T4 peak SDI / SDImax,300,1,0,0,MINOR
+EC,calibrated_gompit,T4,T4 max BA vs observed p99,300,14,0,0,MINOR
+EC,calibrated_gompit,T4,T4 max BA vs observed p99.9,300,1,0,0,MINOR
+EC,calibrated_native,T0,T0 initial-step shock,300,1,0,0,MINOR
+EC,calibrated_native,T1,T1 monotone HT_dom,300,39,0,0,FLAG
+EC,calibrated_native,T1,T1 monotone QMD,300,1,0,0,MINOR
+EC,calibrated_native,T9,T9 BA inversions (>10% step drop),300,1,0,0,MINOR
+EC,calibrated_native,T9,T9 VOL inversions (>10% step drop),300,1,0,0,MINOR
+EC,calibrated_native,T3,T3 Reineke slope (trajectory OLS),173,100,126,1,FLAG
+EC,calibrated_native,T4,T4 peak SDI / SDImax,300,0,0,0,PASS
+EC,calibrated_native,T4,T4 max BA vs observed p99,300,21,0,0,MINOR
+EC,calibrated_native,T4,T4 max BA vs observed p99.9,300,1,0,0,MINOR
+EC,default_gompit,T0,T0 initial-step shock,300,5,0,0,MINOR
+EC,default_gompit,T1,T1 monotone HT_dom,300,148,0,0,FLAG
+EC,default_gompit,T1,T1 monotone QMD,300,17,0,0,MINOR
+EC,default_gompit,T9,T9 BA inversions (>10% step drop),300,27,0,0,MINOR
+EC,default_gompit,T9,T9 VOL inversions (>10% step drop),300,23,0,0,MINOR
+EC,default_gompit,T3,T3 Reineke slope (trajectory OLS),25,8,272,3,FLAG
+EC,default_gompit,T4,T4 peak SDI / SDImax,300,0,0,0,PASS
+EC,default_gompit,T4,T4 max BA vs observed p99,300,4,0,0,MINOR
+EC,default_gompit,T4,T4 max BA vs observed p99.9,300,1,0,0,MINOR
+EC,default_native,T0,T0 initial-step shock,300,30,0,0,FLAG
+EC,default_native,T1,T1 monotone HT_dom,300,123,0,0,FLAG
+EC,default_native,T1,T1 monotone QMD,300,1,0,0,MINOR
+EC,default_native,T9,T9 BA inversions (>10% step drop),300,20,0,0,MINOR
+EC,default_native,T9,T9 VOL inversions (>10% step drop),300,11,0,0,MINOR
+EC,default_native,T3,T3 Reineke slope (trajectory OLS),30,5,270,0,FLAG
+EC,default_native,T4,T4 peak SDI / SDImax,300,0,0,0,PASS
+EC,default_native,T4,T4 max BA vs observed p99,300,4,0,0,MINOR
+EC,default_native,T4,T4 max BA vs observed p99.9,300,1,0,0,MINOR
+EM,calibrated_gompit,T0,T0 initial-step shock,300,21,0,0,MINOR
+EM,calibrated_gompit,T1,T1 monotone HT_dom,300,136,0,0,FLAG
+EM,calibrated_gompit,T1,T1 monotone QMD,300,31,0,0,FLAG
+EM,calibrated_gompit,T9,T9 BA inversions (>10% step drop),300,33,0,0,FLAG
+EM,calibrated_gompit,T9,T9 VOL inversions (>10% step drop),300,21,0,0,MINOR
+EM,calibrated_gompit,T3,T3 Reineke slope (trajectory OLS),42,11,258,0,FLAG
+EM,calibrated_gompit,T4,T4 peak SDI / SDImax,300,0,0,0,PASS
+EM,calibrated_gompit,T4,T4 max BA vs observed p99,300,3,0,0,MINOR
+EM,calibrated_gompit,T4,T4 max BA vs observed p99.9,300,0,0,0,PASS
+EM,calibrated_native,T0,T0 initial-step shock,300,33,0,0,FLAG
+EM,calibrated_native,T1,T1 monotone HT_dom,300,96,0,0,FLAG
+EM,calibrated_native,T1,T1 monotone QMD,300,30,0,0,FLAG
+EM,calibrated_native,T9,T9 BA inversions (>10% step drop),300,24,0,0,MINOR
+EM,calibrated_native,T9,T9 VOL inversions (>10% step drop),300,21,0,0,MINOR
+EM,calibrated_native,T3,T3 Reineke slope (trajectory OLS),138,106,152,10,FLAG
+EM,calibrated_native,T4,T4 peak SDI / SDImax,300,0,0,0,PASS
+EM,calibrated_native,T4,T4 max BA vs observed p99,300,129,0,0,FLAG
+EM,calibrated_native,T4,T4 max BA vs observed p99.9,300,88,0,0,FLAG
+EM,default_gompit,T0,T0 initial-step shock,300,0,0,0,PASS
+EM,default_gompit,T1,T1 monotone HT_dom,300,110,0,0,FLAG
+EM,default_gompit,T1,T1 monotone QMD,300,9,0,0,MINOR
+EM,default_gompit,T9,T9 BA inversions (>10% step drop),300,16,0,0,MINOR
+EM,default_gompit,T9,T9 VOL inversions (>10% step drop),300,9,0,0,MINOR
+EM,default_gompit,T3,T3 Reineke slope (trajectory OLS),82,11,218,0,FLAG
+EM,default_gompit,T4,T4 peak SDI / SDImax,300,0,0,0,PASS
+EM,default_gompit,T4,T4 max BA vs observed p99,300,47,0,0,FLAG
+EM,default_gompit,T4,T4 max BA vs observed p99.9,300,33,0,0,FLAG
+EM,default_native,T0,T0 initial-step shock,300,0,0,0,PASS
+EM,default_native,T1,T1 monotone HT_dom,300,59,0,0,FLAG
+EM,default_native,T1,T1 monotone QMD,300,9,0,0,MINOR
+EM,default_native,T9,T9 BA inversions (>10% step drop),300,2,0,0,MINOR
+EM,default_native,T9,T9 VOL inversions (>10% step drop),300,5,0,0,MINOR
+EM,default_native,T3,T3 Reineke slope (trajectory OLS),202,130,89,9,FLAG
+EM,default_native,T4,T4 peak SDI / SDImax,300,0,0,0,PASS
+EM,default_native,T4,T4 max BA vs observed p99,300,206,0,0,FLAG
+EM,default_native,T4,T4 max BA vs observed p99.9,300,168,0,0,FLAG
+IE,calibrated_gompit,T0,T0 initial-step shock,298,0,0,0,PASS
+IE,calibrated_gompit,T1,T1 monotone HT_dom,298,117,0,0,FLAG
+IE,calibrated_gompit,T1,T1 monotone QMD,298,26,0,0,MINOR
+IE,calibrated_gompit,T9,T9 BA inversions (>10% step drop),298,24,0,0,MINOR
+IE,calibrated_gompit,T9,T9 VOL inversions (>10% step drop),298,8,0,0,MINOR
+IE,calibrated_gompit,T3,T3 Reineke slope (trajectory OLS),38,21,254,6,FLAG
+IE,calibrated_gompit,T4,T4 peak SDI / SDImax,298,0,0,0,PASS
+IE,calibrated_gompit,T4,T4 max BA vs observed p99,298,17,0,0,MINOR
+IE,calibrated_gompit,T4,T4 max BA vs observed p99.9,298,6,0,0,MINOR
+IE,calibrated_native,T0,T0 initial-step shock,298,19,0,0,MINOR
+IE,calibrated_native,T1,T1 monotone HT_dom,298,77,0,0,FLAG
+IE,calibrated_native,T1,T1 monotone QMD,298,12,0,0,MINOR
+IE,calibrated_native,T9,T9 BA inversions (>10% step drop),298,18,0,0,MINOR
+IE,calibrated_native,T9,T9 VOL inversions (>10% step drop),298,3,0,0,MINOR
+IE,calibrated_native,T3,T3 Reineke slope (trajectory OLS),47,22,250,1,FLAG
+IE,calibrated_native,T4,T4 peak SDI / SDImax,298,0,0,0,PASS
+IE,calibrated_native,T4,T4 max BA vs observed p99,298,17,0,0,MINOR
+IE,calibrated_native,T4,T4 max BA vs observed p99.9,298,4,0,0,MINOR
+IE,default_gompit,T0,T0 initial-step shock,298,0,0,0,PASS
+IE,default_gompit,T1,T1 monotone HT_dom,298,96,0,0,FLAG
+IE,default_gompit,T1,T1 monotone QMD,298,25,0,0,MINOR
+IE,default_gompit,T9,T9 BA inversions (>10% step drop),298,21,0,0,MINOR
+IE,default_gompit,T9,T9 VOL inversions (>10% step drop),298,8,0,0,MINOR
+IE,default_gompit,T3,T3 Reineke slope (trajectory OLS),41,23,251,6,FLAG
+IE,default_gompit,T4,T4 peak SDI / SDImax,298,0,0,0,PASS
+IE,default_gompit,T4,T4 max BA vs observed p99,298,17,0,0,MINOR
+IE,default_gompit,T4,T4 max BA vs observed p99.9,298,4,0,0,MINOR
+IE,default_native,T0,T0 initial-step shock,298,0,0,0,PASS
+IE,default_native,T1,T1 monotone HT_dom,298,50,0,0,FLAG
+IE,default_native,T1,T1 monotone QMD,298,8,0,0,MINOR
+IE,default_native,T9,T9 BA inversions (>10% step drop),298,2,0,0,MINOR
+IE,default_native,T9,T9 VOL inversions (>10% step drop),298,0,0,0,PASS
+IE,default_native,T3,T3 Reineke slope (trajectory OLS),44,14,254,0,FLAG
+IE,default_native,T4,T4 peak SDI / SDImax,298,0,0,0,PASS
+IE,default_native,T4,T4 max BA vs observed p99,298,12,0,0,MINOR
+IE,default_native,T4,T4 max BA vs observed p99.9,298,1,0,0,MINOR
+LS,calibrated_gompit,T0,T0 initial-step shock,266,1,0,0,MINOR
+LS,calibrated_gompit,T1,T1 monotone HT_dom,266,42,0,0,FLAG
+LS,calibrated_gompit,T1,T1 monotone QMD,266,3,0,0,MINOR
+LS,calibrated_gompit,T9,T9 BA inversions (>10% step drop),266,11,0,0,MINOR
+LS,calibrated_gompit,T9,T9 VOL inversions (>10% step drop),266,9,0,0,MINOR
+LS,calibrated_gompit,T3,T3 Reineke slope (trajectory OLS),74,4,189,3,MINOR
+LS,calibrated_gompit,T4,T4 peak SDI / SDImax,266,3,0,0,MINOR
+LS,calibrated_gompit,T4,T4 max BA vs observed p99,266,34,0,0,FLAG
+LS,calibrated_gompit,T4,T4 max BA vs observed p99.9,266,4,0,0,MINOR
+LS,calibrated_native,T0,T0 initial-step shock,266,10,0,0,MINOR
+LS,calibrated_native,T1,T1 monotone HT_dom,266,12,0,0,MINOR
+LS,calibrated_native,T1,T1 monotone QMD,266,2,0,0,MINOR
+LS,calibrated_native,T9,T9 BA inversions (>10% step drop),266,5,0,0,MINOR
+LS,calibrated_native,T9,T9 VOL inversions (>10% step drop),266,4,0,0,MINOR
+LS,calibrated_native,T3,T3 Reineke slope (trajectory OLS),57,3,207,2,MINOR
+LS,calibrated_native,T4,T4 peak SDI / SDImax,266,0,0,0,PASS
+LS,calibrated_native,T4,T4 max BA vs observed p99,266,43,0,0,FLAG
+LS,calibrated_native,T4,T4 max BA vs observed p99.9,266,15,0,0,MINOR
+LS,default_gompit,T0,T0 initial-step shock,266,0,0,0,PASS
+LS,default_gompit,T1,T1 monotone HT_dom,266,35,0,0,FLAG
+LS,default_gompit,T1,T1 monotone QMD,266,1,0,0,MINOR
+LS,default_gompit,T9,T9 BA inversions (>10% step drop),266,5,0,0,MINOR
+LS,default_gompit,T9,T9 VOL inversions (>10% step drop),266,5,0,0,MINOR
+LS,default_gompit,T3,T3 Reineke slope (trajectory OLS),137,19,128,1,FLAG
+LS,default_gompit,T4,T4 peak SDI / SDImax,266,11,0,0,MINOR
+LS,default_gompit,T4,T4 max BA vs observed p99,266,120,0,0,FLAG
+LS,default_gompit,T4,T4 max BA vs observed p99.9,266,39,0,0,FLAG
+LS,default_native,T0,T0 initial-step shock,266,1,0,0,MINOR
+LS,default_native,T1,T1 monotone HT_dom,266,11,0,0,MINOR
+LS,default_native,T1,T1 monotone QMD,266,0,0,0,PASS
+LS,default_native,T9,T9 BA inversions (>10% step drop),266,0,0,0,PASS
+LS,default_native,T9,T9 VOL inversions (>10% step drop),266,2,0,0,MINOR
+LS,default_native,T3,T3 Reineke slope (trajectory OLS),192,43,74,0,FLAG
+LS,default_native,T4,T4 peak SDI / SDImax,266,10,0,0,MINOR
+LS,default_native,T4,T4 max BA vs observed p99,266,175,0,0,FLAG
+LS,default_native,T4,T4 max BA vs observed p99.9,266,65,0,0,FLAG
+NE,calibrated_gompit,T0,T0 initial-step shock,285,3,0,0,MINOR
+NE,calibrated_gompit,T1,T1 monotone HT_dom,285,51,0,0,FLAG
+NE,calibrated_gompit,T1,T1 monotone QMD,285,0,0,0,PASS
+NE,calibrated_gompit,T9,T9 BA inversions (>10% step drop),285,2,0,0,MINOR
+NE,calibrated_gompit,T9,T9 VOL inversions (>10% step drop),285,2,0,0,MINOR
+NE,calibrated_gompit,T3,T3 Reineke slope (trajectory OLS),76,7,209,0,MINOR
+NE,calibrated_gompit,T4,T4 peak SDI / SDImax,285,4,0,0,MINOR
+NE,calibrated_gompit,T4,T4 max BA vs observed p99,285,24,0,0,MINOR
+NE,calibrated_gompit,T4,T4 max BA vs observed p99.9,285,2,0,0,MINOR
+NE,calibrated_native,T0,T0 initial-step shock,285,18,0,0,MINOR
+NE,calibrated_native,T1,T1 monotone HT_dom,285,11,0,0,MINOR
+NE,calibrated_native,T1,T1 monotone QMD,285,0,0,0,PASS
+NE,calibrated_native,T9,T9 BA inversions (>10% step drop),285,1,0,0,MINOR
+NE,calibrated_native,T9,T9 VOL inversions (>10% step drop),285,1,0,0,MINOR
+NE,calibrated_native,T3,T3 Reineke slope (trajectory OLS),65,5,220,0,MINOR
+NE,calibrated_native,T4,T4 peak SDI / SDImax,285,1,0,0,MINOR
+NE,calibrated_native,T4,T4 max BA vs observed p99,285,33,0,0,FLAG
+NE,calibrated_native,T4,T4 max BA vs observed p99.9,285,5,0,0,MINOR
+NE,default_gompit,T0,T0 initial-step shock,285,0,0,0,PASS
+NE,default_gompit,T1,T1 monotone HT_dom,285,51,0,0,FLAG
+NE,default_gompit,T1,T1 monotone QMD,285,0,0,0,PASS
+NE,default_gompit,T9,T9 BA inversions (>10% step drop),285,0,0,0,PASS
+NE,default_gompit,T9,T9 VOL inversions (>10% step drop),285,1,0,0,MINOR
+NE,default_gompit,T3,T3 Reineke slope (trajectory OLS),151,11,134,0,MINOR
+NE,default_gompit,T4,T4 peak SDI / SDImax,285,6,0,0,MINOR
+NE,default_gompit,T4,T4 max BA vs observed p99,285,42,0,0,FLAG
+NE,default_gompit,T4,T4 max BA vs observed p99.9,285,5,0,0,MINOR
+NE,default_native,T0,T0 initial-step shock,285,8,0,0,MINOR
+NE,default_native,T1,T1 monotone HT_dom,285,10,0,0,MINOR
+NE,default_native,T1,T1 monotone QMD,285,0,0,0,PASS
+NE,default_native,T9,T9 BA inversions (>10% step drop),285,0,0,0,PASS
+NE,default_native,T9,T9 VOL inversions (>10% step drop),285,1,0,0,MINOR
+NE,default_native,T3,T3 Reineke slope (trajectory OLS),147,9,138,0,MINOR
+NE,default_native,T4,T4 peak SDI / SDImax,285,1,0,0,MINOR
+NE,default_native,T4,T4 max BA vs observed p99,285,53,0,0,FLAG
+NE,default_native,T4,T4 max BA vs observed p99.9,285,8,0,0,MINOR
+PN,calibrated_gompit,T0,T0 initial-step shock,38,0,0,0,PASS
+PN,calibrated_gompit,T1,T1 monotone HT_dom,38,23,0,0,FLAG
+PN,calibrated_gompit,T1,T1 monotone QMD,38,0,0,0,PASS
+PN,calibrated_gompit,T9,T9 BA inversions (>10% step drop),38,0,0,0,PASS
+PN,calibrated_gompit,T9,T9 VOL inversions (>10% step drop),38,0,0,0,PASS
+PN,calibrated_gompit,T3,T3 Reineke slope (trajectory OLS),23,14,14,1,FLAG
+PN,calibrated_gompit,T4,T4 peak SDI / SDImax,38,0,0,0,PASS
+PN,calibrated_gompit,T4,T4 max BA vs observed p99,38,3,0,0,MINOR
+PN,calibrated_gompit,T4,T4 max BA vs observed p99.9,38,2,0,0,MINOR
+PN,calibrated_native,T0,T0 initial-step shock,38,1,0,0,MINOR
+PN,calibrated_native,T1,T1 monotone HT_dom,38,12,0,0,FLAG
+PN,calibrated_native,T1,T1 monotone QMD,38,0,0,0,PASS
+PN,calibrated_native,T9,T9 BA inversions (>10% step drop),38,0,0,0,PASS
+PN,calibrated_native,T9,T9 VOL inversions (>10% step drop),38,0,0,0,PASS
+PN,calibrated_native,T3,T3 Reineke slope (trajectory OLS),31,8,7,0,FLAG
+PN,calibrated_native,T4,T4 peak SDI / SDImax,38,0,0,0,PASS
+PN,calibrated_native,T4,T4 max BA vs observed p99,38,23,0,0,FLAG
+PN,calibrated_native,T4,T4 max BA vs observed p99.9,38,23,0,0,FLAG
+PN,default_gompit,T0,T0 initial-step shock,38,0,0,0,PASS
+PN,default_gompit,T1,T1 monotone HT_dom,38,22,0,0,FLAG
+PN,default_gompit,T1,T1 monotone QMD,38,0,0,0,PASS
+PN,default_gompit,T9,T9 BA inversions (>10% step drop),38,0,0,0,PASS
+PN,default_gompit,T9,T9 VOL inversions (>10% step drop),38,0,0,0,PASS
+PN,default_gompit,T3,T3 Reineke slope (trajectory OLS),23,14,14,1,FLAG
+PN,default_gompit,T4,T4 peak SDI / SDImax,38,0,0,0,PASS
+PN,default_gompit,T4,T4 max BA vs observed p99,38,3,0,0,MINOR
+PN,default_gompit,T4,T4 max BA vs observed p99.9,38,2,0,0,MINOR
+PN,default_native,T0,T0 initial-step shock,38,2,0,0,MINOR
+PN,default_native,T1,T1 monotone HT_dom,38,9,0,0,FLAG
+PN,default_native,T1,T1 monotone QMD,38,0,0,0,PASS
+PN,default_native,T9,T9 BA inversions (>10% step drop),38,0,0,0,PASS
+PN,default_native,T9,T9 VOL inversions (>10% step drop),38,0,0,0,PASS
+PN,default_native,T3,T3 Reineke slope (trajectory OLS),31,9,7,0,FLAG
+PN,default_native,T4,T4 peak SDI / SDImax,38,0,0,0,PASS
+PN,default_native,T4,T4 max BA vs observed p99,38,26,0,0,FLAG
+PN,default_native,T4,T4 max BA vs observed p99.9,38,26,0,0,FLAG
+SN,calibrated_gompit,T0,T0 initial-step shock,161,4,0,0,MINOR
+SN,calibrated_gompit,T1,T1 monotone HT_dom,161,50,0,0,FLAG
+SN,calibrated_gompit,T1,T1 monotone QMD,161,1,0,0,MINOR
+SN,calibrated_gompit,T9,T9 BA inversions (>10% step drop),161,0,0,0,PASS
+SN,calibrated_gompit,T9,T9 VOL inversions (>10% step drop),161,1,0,0,MINOR
+SN,calibrated_gompit,T3,T3 Reineke slope (trajectory OLS),88,2,73,0,MINOR
+SN,calibrated_gompit,T4,T4 peak SDI / SDImax,161,2,0,0,MINOR
+SN,calibrated_gompit,T4,T4 max BA vs observed p99,161,5,0,0,MINOR
+SN,calibrated_gompit,T4,T4 max BA vs observed p99.9,161,2,0,0,MINOR
+SN,calibrated_native,T0,T0 initial-step shock,161,15,0,0,MINOR
+SN,calibrated_native,T1,T1 monotone HT_dom,161,59,0,0,FLAG
+SN,calibrated_native,T1,T1 monotone QMD,161,1,0,0,MINOR
+SN,calibrated_native,T9,T9 BA inversions (>10% step drop),161,0,0,0,PASS
+SN,calibrated_native,T9,T9 VOL inversions (>10% step drop),161,0,0,0,PASS
+SN,calibrated_native,T3,T3 Reineke slope (trajectory OLS),75,2,86,0,MINOR
+SN,calibrated_native,T4,T4 peak SDI / SDImax,161,0,0,0,PASS
+SN,calibrated_native,T4,T4 max BA vs observed p99,161,4,0,0,MINOR
+SN,calibrated_native,T4,T4 max BA vs observed p99.9,161,1,0,0,MINOR
+SN,default_gompit,T0,T0 initial-step shock,161,1,0,0,MINOR
+SN,default_gompit,T1,T1 monotone HT_dom,161,36,0,0,FLAG
+SN,default_gompit,T1,T1 monotone QMD,161,0,0,0,PASS
+SN,default_gompit,T9,T9 BA inversions (>10% step drop),161,0,0,0,PASS
+SN,default_gompit,T9,T9 VOL inversions (>10% step drop),161,0,0,0,PASS
+SN,default_gompit,T3,T3 Reineke slope (trajectory OLS),106,3,55,0,MINOR
+SN,default_gompit,T4,T4 peak SDI / SDImax,161,1,0,0,MINOR
+SN,default_gompit,T4,T4 max BA vs observed p99,161,54,0,0,FLAG
+SN,default_gompit,T4,T4 max BA vs observed p99.9,161,1,0,0,MINOR
+SN,default_native,T0,T0 initial-step shock,161,5,0,0,MINOR
+SN,default_native,T1,T1 monotone HT_dom,161,35,0,0,FLAG
+SN,default_native,T1,T1 monotone QMD,161,0,0,0,PASS
+SN,default_native,T9,T9 BA inversions (>10% step drop),161,0,0,0,PASS
+SN,default_native,T9,T9 VOL inversions (>10% step drop),161,0,0,0,PASS
+SN,default_native,T3,T3 Reineke slope (trajectory OLS),127,0,34,0,PASS
+SN,default_native,T4,T4 peak SDI / SDImax,161,0,0,0,PASS
+SN,default_native,T4,T4 max BA vs observed p99,161,61,0,0,FLAG
+SN,default_native,T4,T4 max BA vs observed p99.9,161,2,0,0,MINOR
+SO,calibrated_gompit,T0,T0 initial-step shock,300,11,0,0,MINOR
+SO,calibrated_gompit,T1,T1 monotone HT_dom,300,68,0,0,FLAG
+SO,calibrated_gompit,T1,T1 monotone QMD,300,6,0,0,MINOR
+SO,calibrated_gompit,T9,T9 BA inversions (>10% step drop),300,12,0,0,MINOR
+SO,calibrated_gompit,T9,T9 VOL inversions (>10% step drop),300,5,0,0,MINOR
+SO,calibrated_gompit,T3,T3 Reineke slope (trajectory OLS),17,2,283,0,FLAG
+SO,calibrated_gompit,T4,T4 peak SDI / SDImax,300,0,0,0,PASS
+SO,calibrated_gompit,T4,T4 max BA vs observed p99,300,6,0,0,MINOR
+SO,calibrated_gompit,T4,T4 max BA vs observed p99.9,300,1,0,0,MINOR
+SO,calibrated_native,T0,T0 initial-step shock,300,11,0,0,MINOR
+SO,calibrated_native,T1,T1 monotone HT_dom,300,55,0,0,FLAG
+SO,calibrated_native,T1,T1 monotone QMD,300,0,0,0,PASS
+SO,calibrated_native,T9,T9 BA inversions (>10% step drop),300,12,0,0,MINOR
+SO,calibrated_native,T9,T9 VOL inversions (>10% step drop),300,5,0,0,MINOR
+SO,calibrated_native,T3,T3 Reineke slope (trajectory OLS),18,3,282,0,FLAG
+SO,calibrated_native,T4,T4 peak SDI / SDImax,300,0,0,0,PASS
+SO,calibrated_native,T4,T4 max BA vs observed p99,300,7,0,0,MINOR
+SO,calibrated_native,T4,T4 max BA vs observed p99.9,300,1,0,0,MINOR
+SO,default_gompit,T0,T0 initial-step shock,300,11,0,0,MINOR
+SO,default_gompit,T1,T1 monotone HT_dom,300,67,0,0,FLAG
+SO,default_gompit,T1,T1 monotone QMD,300,5,0,0,MINOR
+SO,default_gompit,T9,T9 BA inversions (>10% step drop),300,13,0,0,MINOR
+SO,default_gompit,T9,T9 VOL inversions (>10% step drop),300,5,0,0,MINOR
+SO,default_gompit,T3,T3 Reineke slope (trajectory OLS),17,2,283,0,FLAG
+SO,default_gompit,T4,T4 peak SDI / SDImax,300,0,0,0,PASS
+SO,default_gompit,T4,T4 max BA vs observed p99,300,6,0,0,MINOR
+SO,default_gompit,T4,T4 max BA vs observed p99.9,300,1,0,0,MINOR
+SO,default_native,T0,T0 initial-step shock,300,11,0,0,MINOR
+SO,default_native,T1,T1 monotone HT_dom,300,53,0,0,FLAG
+SO,default_native,T1,T1 monotone QMD,300,0,0,0,PASS
+SO,default_native,T9,T9 BA inversions (>10% step drop),300,12,0,0,MINOR
+SO,default_native,T9,T9 VOL inversions (>10% step drop),300,5,0,0,MINOR
+SO,default_native,T3,T3 Reineke slope (trajectory OLS),18,3,282,0,FLAG
+SO,default_native,T4,T4 peak SDI / SDImax,300,0,0,0,PASS
+SO,default_native,T4,T4 max BA vs observed p99,300,7,0,0,MINOR
+SO,default_native,T4,T4 max BA vs observed p99.9,300,1,0,0,MINOR
+TT,calibrated_gompit,T0,T0 initial-step shock,142,1,0,0,MINOR
+TT,calibrated_gompit,T1,T1 monotone HT_dom,142,37,0,0,FLAG
+TT,calibrated_gompit,T1,T1 monotone QMD,142,2,0,0,MINOR
+TT,calibrated_gompit,T9,T9 BA inversions (>10% step drop),142,3,0,0,MINOR
+TT,calibrated_gompit,T9,T9 VOL inversions (>10% step drop),142,2,0,0,MINOR
+TT,calibrated_gompit,T3,T3 Reineke slope (trajectory OLS),12,2,122,8,FLAG
+TT,calibrated_gompit,T4,T4 peak SDI / SDImax,142,0,0,0,PASS
+TT,calibrated_gompit,T4,T4 max BA vs observed p99,142,3,0,0,MINOR
+TT,calibrated_gompit,T4,T4 max BA vs observed p99.9,142,1,0,0,MINOR
+TT,calibrated_native,T0,T0 initial-step shock,142,1,0,0,MINOR
+TT,calibrated_native,T1,T1 monotone HT_dom,142,16,0,0,FLAG
+TT,calibrated_native,T1,T1 monotone QMD,142,0,0,0,PASS
+TT,calibrated_native,T9,T9 BA inversions (>10% step drop),142,2,0,0,MINOR
+TT,calibrated_native,T9,T9 VOL inversions (>10% step drop),142,2,0,0,MINOR
+TT,calibrated_native,T3,T3 Reineke slope (trajectory OLS),19,5,112,11,FLAG
+TT,calibrated_native,T4,T4 peak SDI / SDImax,142,0,0,0,PASS
+TT,calibrated_native,T4,T4 max BA vs observed p99,142,4,0,0,MINOR
+TT,calibrated_native,T4,T4 max BA vs observed p99.9,142,1,0,0,MINOR
+TT,default_gompit,T0,T0 initial-step shock,142,1,0,0,MINOR
+TT,default_gompit,T1,T1 monotone HT_dom,142,39,0,0,FLAG
+TT,default_gompit,T1,T1 monotone QMD,142,2,0,0,MINOR
+TT,default_gompit,T9,T9 BA inversions (>10% step drop),142,2,0,0,MINOR
+TT,default_gompit,T9,T9 VOL inversions (>10% step drop),142,0,0,0,PASS
+TT,default_gompit,T3,T3 Reineke slope (trajectory OLS),7,3,129,6,FLAG
+TT,default_gompit,T4,T4 peak SDI / SDImax,142,0,0,0,PASS
+TT,default_gompit,T4,T4 max BA vs observed p99,142,11,0,0,MINOR
+TT,default_gompit,T4,T4 max BA vs observed p99.9,142,1,0,0,MINOR
+TT,default_native,T0,T0 initial-step shock,142,1,0,0,MINOR
+TT,default_native,T1,T1 monotone HT_dom,142,9,0,0,MINOR
+TT,default_native,T1,T1 monotone QMD,142,0,0,0,PASS
+TT,default_native,T9,T9 BA inversions (>10% step drop),142,1,0,0,MINOR
+TT,default_native,T9,T9 VOL inversions (>10% step drop),142,0,0,0,PASS
+TT,default_native,T3,T3 Reineke slope (trajectory OLS),31,26,82,29,FLAG
+TT,default_native,T4,T4 peak SDI / SDImax,142,0,0,0,PASS
+TT,default_native,T4,T4 max BA vs observed p99,142,29,0,0,FLAG
+TT,default_native,T4,T4 max BA vs observed p99.9,142,1,0,0,MINOR
+UT,calibrated_gompit,T0,T0 initial-step shock,300,1,0,0,MINOR
+UT,calibrated_gompit,T1,T1 monotone HT_dom,300,89,0,0,FLAG
+UT,calibrated_gompit,T1,T1 monotone QMD,300,5,0,0,MINOR
+UT,calibrated_gompit,T9,T9 BA inversions (>10% step drop),300,2,0,0,MINOR
+UT,calibrated_gompit,T9,T9 VOL inversions (>10% step drop),300,0,0,0,PASS
+UT,calibrated_gompit,T3,T3 Reineke slope (trajectory OLS),38,10,235,27,FLAG
+UT,calibrated_gompit,T4,T4 peak SDI / SDImax,300,0,0,0,PASS
+UT,calibrated_gompit,T4,T4 max BA vs observed p99,300,5,0,0,MINOR
+UT,calibrated_gompit,T4,T4 max BA vs observed p99.9,300,1,0,0,MINOR
+UT,calibrated_native,T0,T0 initial-step shock,300,1,0,0,MINOR
+UT,calibrated_native,T1,T1 monotone HT_dom,300,38,0,0,FLAG
+UT,calibrated_native,T1,T1 monotone QMD,300,0,0,0,PASS
+UT,calibrated_native,T9,T9 BA inversions (>10% step drop),300,0,0,0,PASS
+UT,calibrated_native,T9,T9 VOL inversions (>10% step drop),300,0,0,0,PASS
+UT,calibrated_native,T3,T3 Reineke slope (trajectory OLS),59,17,206,35,FLAG
+UT,calibrated_native,T4,T4 peak SDI / SDImax,300,0,0,0,PASS
+UT,calibrated_native,T4,T4 max BA vs observed p99,300,5,0,0,MINOR
+UT,calibrated_native,T4,T4 max BA vs observed p99.9,300,1,0,0,MINOR
+UT,default_gompit,T0,T0 initial-step shock,300,0,0,0,PASS
+UT,default_gompit,T1,T1 monotone HT_dom,300,92,0,0,FLAG
+UT,default_gompit,T1,T1 monotone QMD,300,5,0,0,MINOR
+UT,default_gompit,T9,T9 BA inversions (>10% step drop),300,1,0,0,MINOR
+UT,default_gompit,T9,T9 VOL inversions (>10% step drop),300,0,0,0,PASS
+UT,default_gompit,T3,T3 Reineke slope (trajectory OLS),37,11,233,30,FLAG
+UT,default_gompit,T4,T4 peak SDI / SDImax,300,0,0,0,PASS
+UT,default_gompit,T4,T4 max BA vs observed p99,300,13,0,0,MINOR
+UT,default_gompit,T4,T4 max BA vs observed p99.9,300,1,0,0,MINOR
+UT,default_native,T0,T0 initial-step shock,300,0,0,0,PASS
+UT,default_native,T1,T1 monotone HT_dom,300,37,0,0,FLAG
+UT,default_native,T1,T1 monotone QMD,300,0,0,0,PASS
+UT,default_native,T9,T9 BA inversions (>10% step drop),300,0,0,0,PASS
+UT,default_native,T9,T9 VOL inversions (>10% step drop),300,0,0,0,PASS
+UT,default_native,T3,T3 Reineke slope (trajectory OLS),67,38,179,54,FLAG
+UT,default_native,T4,T4 peak SDI / SDImax,300,0,0,0,PASS
+UT,default_native,T4,T4 max BA vs observed p99,300,13,0,0,MINOR
+UT,default_native,T4,T4 max BA vs observed p99.9,300,1,0,0,MINOR
+WC,calibrated_gompit,T0,T0 initial-step shock,226,4,0,0,MINOR
+WC,calibrated_gompit,T1,T1 monotone HT_dom,226,113,0,0,FLAG
+WC,calibrated_gompit,T1,T1 monotone QMD,226,7,0,0,MINOR
+WC,calibrated_gompit,T9,T9 BA inversions (>10% step drop),226,7,0,0,MINOR
+WC,calibrated_gompit,T9,T9 VOL inversions (>10% step drop),226,3,0,0,MINOR
+WC,calibrated_gompit,T3,T3 Reineke slope (trajectory OLS),104,18,122,0,FLAG
+WC,calibrated_gompit,T4,T4 peak SDI / SDImax,226,0,0,0,PASS
+WC,calibrated_gompit,T4,T4 max BA vs observed p99,226,33,0,0,FLAG
+WC,calibrated_gompit,T4,T4 max BA vs observed p99.9,226,18,0,0,MINOR
+WC,calibrated_native,T0,T0 initial-step shock,226,10,0,0,MINOR
+WC,calibrated_native,T1,T1 monotone HT_dom,226,72,0,0,FLAG
+WC,calibrated_native,T1,T1 monotone QMD,226,2,0,0,MINOR
+WC,calibrated_native,T9,T9 BA inversions (>10% step drop),226,2,0,0,MINOR
+WC,calibrated_native,T9,T9 VOL inversions (>10% step drop),226,1,0,0,MINOR
+WC,calibrated_native,T3,T3 Reineke slope (trajectory OLS),126,33,99,1,FLAG
+WC,calibrated_native,T4,T4 peak SDI / SDImax,226,2,0,0,MINOR
+WC,calibrated_native,T4,T4 max BA vs observed p99,226,82,0,0,FLAG
+WC,calibrated_native,T4,T4 max BA vs observed p99.9,226,66,0,0,FLAG
+WC,default_gompit,T0,T0 initial-step shock,226,1,0,0,MINOR
+WC,default_gompit,T1,T1 monotone HT_dom,226,99,0,0,FLAG
+WC,default_gompit,T1,T1 monotone QMD,226,6,0,0,MINOR
+WC,default_gompit,T9,T9 BA inversions (>10% step drop),226,2,0,0,MINOR
+WC,default_gompit,T9,T9 VOL inversions (>10% step drop),226,1,0,0,MINOR
+WC,default_gompit,T3,T3 Reineke slope (trajectory OLS),117,20,109,0,FLAG
+WC,default_gompit,T4,T4 peak SDI / SDImax,226,0,0,0,PASS
+WC,default_gompit,T4,T4 max BA vs observed p99,226,35,0,0,FLAG
+WC,default_gompit,T4,T4 max BA vs observed p99.9,226,17,0,0,MINOR
+WC,default_native,T0,T0 initial-step shock,226,4,0,0,MINOR
+WC,default_native,T1,T1 monotone HT_dom,226,62,0,0,FLAG
+WC,default_native,T1,T1 monotone QMD,226,1,0,0,MINOR
+WC,default_native,T9,T9 BA inversions (>10% step drop),226,1,0,0,MINOR
+WC,default_native,T9,T9 VOL inversions (>10% step drop),226,1,0,0,MINOR
+WC,default_native,T3,T3 Reineke slope (trajectory OLS),165,100,61,0,FLAG
+WC,default_native,T4,T4 peak SDI / SDImax,226,1,0,0,MINOR
+WC,default_native,T4,T4 max BA vs observed p99,226,117,0,0,FLAG
+WC,default_native,T4,T4 max BA vs observed p99.9,226,88,0,0,FLAG
+WS,calibrated_gompit,T0,T0 initial-step shock,300,7,0,0,MINOR
+WS,calibrated_gompit,T1,T1 monotone HT_dom,300,92,0,0,FLAG
+WS,calibrated_gompit,T1,T1 monotone QMD,300,30,0,0,FLAG
+WS,calibrated_gompit,T9,T9 BA inversions (>10% step drop),300,29,0,0,MINOR
+WS,calibrated_gompit,T9,T9 VOL inversions (>10% step drop),300,20,0,0,MINOR
+WS,calibrated_gompit,T3,T3 Reineke slope (trajectory OLS),37,11,262,1,FLAG
+WS,calibrated_gompit,T4,T4 peak SDI / SDImax,300,1,0,0,MINOR
+WS,calibrated_gompit,T4,T4 max BA vs observed p99,300,6,0,0,MINOR
+WS,calibrated_gompit,T4,T4 max BA vs observed p99.9,300,1,0,0,MINOR
+WS,calibrated_native,T0,T0 initial-step shock,300,23,0,0,MINOR
+WS,calibrated_native,T1,T1 monotone HT_dom,300,37,0,0,FLAG
+WS,calibrated_native,T1,T1 monotone QMD,300,3,0,0,MINOR
+WS,calibrated_native,T9,T9 BA inversions (>10% step drop),300,21,0,0,MINOR
+WS,calibrated_native,T9,T9 VOL inversions (>10% step drop),300,13,0,0,MINOR
+WS,calibrated_native,T3,T3 Reineke slope (trajectory OLS),77,5,223,0,MINOR
+WS,calibrated_native,T4,T4 peak SDI / SDImax,300,2,0,0,MINOR
+WS,calibrated_native,T4,T4 max BA vs observed p99,300,44,0,0,FLAG
+WS,calibrated_native,T4,T4 max BA vs observed p99.9,300,1,0,0,MINOR
+WS,default_gompit,T0,T0 initial-step shock,300,5,0,0,MINOR
+WS,default_gompit,T1,T1 monotone HT_dom,300,61,0,0,FLAG
+WS,default_gompit,T1,T1 monotone QMD,300,25,0,0,MINOR
+WS,default_gompit,T9,T9 BA inversions (>10% step drop),300,17,0,0,MINOR
+WS,default_gompit,T9,T9 VOL inversions (>10% step drop),300,10,0,0,MINOR
+WS,default_gompit,T3,T3 Reineke slope (trajectory OLS),38,19,261,1,FLAG
+WS,default_gompit,T4,T4 peak SDI / SDImax,300,1,0,0,MINOR
+WS,default_gompit,T4,T4 max BA vs observed p99,300,5,0,0,MINOR
+WS,default_gompit,T4,T4 max BA vs observed p99.9,300,1,0,0,MINOR
+WS,default_native,T0,T0 initial-step shock,300,9,0,0,MINOR
+WS,default_native,T1,T1 monotone HT_dom,300,19,0,0,MINOR
+WS,default_native,T1,T1 monotone QMD,300,1,0,0,MINOR
+WS,default_native,T9,T9 BA inversions (>10% step drop),300,8,0,0,MINOR
+WS,default_native,T9,T9 VOL inversions (>10% step drop),300,5,0,0,MINOR
+WS,default_native,T3,T3 Reineke slope (trajectory OLS),98,16,202,0,FLAG
+WS,default_native,T4,T4 peak SDI / SDImax,300,2,0,0,MINOR
+WS,default_native,T4,T4 max BA vs observed p99,300,43,0,0,FLAG
+WS,default_native,T4,T4 max BA vs observed p99.9,300,1,0,0,MINOR
+AK,conus_b1,T0,T0 initial-step shock,97,0,0,0,PASS
+AK,conus_b1,T1,T1 monotone HT_dom,0,0,0,97,NOT EVALUATED
+AK,conus_b1,T1,T1 monotone QMD,85,21,0,12,FLAG
+AK,conus_b1,T9,T9 BA inversions (>10% step drop),97,7,0,0,MINOR
+AK,conus_b1,T9,T9 VOL inversions (>10% step drop),0,0,0,97,NOT EVALUATED
+AK,conus_b1,T3,T3 Reineke slope (trajectory OLS),95,77,0,2,FLAG
+AK,conus_b1,T4,T4 peak SDI / SDImax,0,0,0,97,NOT EVALUATED
+AK,conus_b1,T4,T4 max BA vs observed p99,0,0,0,97,NOT EVALUATED
+AK,conus_b1,T4,T4 max BA vs observed p99.9,0,0,0,97,NOT EVALUATED
+AK,conus_b1_gompit,T0,T0 initial-step shock,97,0,0,0,PASS
+AK,conus_b1_gompit,T1,T1 monotone HT_dom,0,0,0,97,NOT EVALUATED
+AK,conus_b1_gompit,T1,T1 monotone QMD,82,54,0,15,FLAG
+AK,conus_b1_gompit,T9,T9 BA inversions (>10% step drop),97,44,0,0,FLAG
+AK,conus_b1_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,97,NOT EVALUATED
+AK,conus_b1_gompit,T3,T3 Reineke slope (trajectory OLS),97,50,0,0,FLAG
+AK,conus_b1_gompit,T4,T4 peak SDI / SDImax,0,0,0,97,NOT EVALUATED
+AK,conus_b1_gompit,T4,T4 max BA vs observed p99,0,0,0,97,NOT EVALUATED
+AK,conus_b1_gompit,T4,T4 max BA vs observed p99.9,0,0,0,97,NOT EVALUATED
+AK,conus_b2,T0,T0 initial-step shock,97,1,0,0,MINOR
+AK,conus_b2,T1,T1 monotone HT_dom,0,0,0,97,NOT EVALUATED
+AK,conus_b2,T1,T1 monotone QMD,91,27,0,6,FLAG
+AK,conus_b2,T9,T9 BA inversions (>10% step drop),97,10,0,0,FLAG
+AK,conus_b2,T9,T9 VOL inversions (>10% step drop),0,0,0,97,NOT EVALUATED
+AK,conus_b2,T3,T3 Reineke slope (trajectory OLS),95,67,0,2,FLAG
+AK,conus_b2,T4,T4 peak SDI / SDImax,0,0,0,97,NOT EVALUATED
+AK,conus_b2,T4,T4 max BA vs observed p99,0,0,0,97,NOT EVALUATED
+AK,conus_b2,T4,T4 max BA vs observed p99.9,0,0,0,97,NOT EVALUATED
+AK,conus_b2_gompit,T0,T0 initial-step shock,97,0,0,0,PASS
+AK,conus_b2_gompit,T1,T1 monotone HT_dom,0,0,0,97,NOT EVALUATED
+AK,conus_b2_gompit,T1,T1 monotone QMD,71,47,0,26,FLAG
+AK,conus_b2_gompit,T9,T9 BA inversions (>10% step drop),97,69,0,0,FLAG
+AK,conus_b2_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,97,NOT EVALUATED
+AK,conus_b2_gompit,T3,T3 Reineke slope (trajectory OLS),97,61,0,0,FLAG
+AK,conus_b2_gompit,T4,T4 peak SDI / SDImax,0,0,0,97,NOT EVALUATED
+AK,conus_b2_gompit,T4,T4 max BA vs observed p99,0,0,0,97,NOT EVALUATED
+AK,conus_b2_gompit,T4,T4 max BA vs observed p99.9,0,0,0,97,NOT EVALUATED
+BM,conus_b1,T0,T0 initial-step shock,1500,18,0,0,MINOR
+BM,conus_b1,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+BM,conus_b1,T1,T1 monotone QMD,918,351,0,582,FLAG
+BM,conus_b1,T9,T9 BA inversions (>10% step drop),1500,294,0,0,FLAG
+BM,conus_b1,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+BM,conus_b1,T3,T3 Reineke slope (trajectory OLS),714,337,719,67,FLAG
+BM,conus_b1,T4,T4 peak SDI / SDImax,1500,101,0,0,MINOR
+BM,conus_b1,T4,T4 max BA vs observed p99,1500,699,0,0,FLAG
+BM,conus_b1,T4,T4 max BA vs observed p99.9,1500,415,0,0,FLAG
+BM,conus_b1_gompit,T0,T0 initial-step shock,1500,17,0,0,MINOR
+BM,conus_b1_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+BM,conus_b1_gompit,T1,T1 monotone QMD,704,566,0,796,FLAG
+BM,conus_b1_gompit,T9,T9 BA inversions (>10% step drop),1500,965,0,0,FLAG
+BM,conus_b1_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+BM,conus_b1_gompit,T3,T3 Reineke slope (trajectory OLS),385,41,1106,9,FLAG
+BM,conus_b1_gompit,T4,T4 peak SDI / SDImax,1500,12,0,0,MINOR
+BM,conus_b1_gompit,T4,T4 max BA vs observed p99,1500,220,0,0,FLAG
+BM,conus_b1_gompit,T4,T4 max BA vs observed p99.9,1500,57,0,0,MINOR
+BM,conus_b2,T0,T0 initial-step shock,1500,16,0,0,MINOR
+BM,conus_b2,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+BM,conus_b2,T1,T1 monotone QMD,892,358,0,608,FLAG
+BM,conus_b2,T9,T9 BA inversions (>10% step drop),1500,353,0,0,FLAG
+BM,conus_b2,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+BM,conus_b2,T3,T3 Reineke slope (trajectory OLS),561,228,853,86,FLAG
+BM,conus_b2,T4,T4 peak SDI / SDImax,1500,75,0,0,MINOR
+BM,conus_b2,T4,T4 max BA vs observed p99,1500,505,0,0,FLAG
+BM,conus_b2,T4,T4 max BA vs observed p99.9,1500,258,0,0,FLAG
+BM,conus_b2_gompit,T0,T0 initial-step shock,1500,18,0,0,MINOR
+BM,conus_b2_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+BM,conus_b2_gompit,T1,T1 monotone QMD,605,513,0,895,FLAG
+BM,conus_b2_gompit,T9,T9 BA inversions (>10% step drop),1500,1061,0,0,FLAG
+BM,conus_b2_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+BM,conus_b2_gompit,T3,T3 Reineke slope (trajectory OLS),328,46,1148,24,FLAG
+BM,conus_b2_gompit,T4,T4 peak SDI / SDImax,1500,11,0,0,MINOR
+BM,conus_b2_gompit,T4,T4 max BA vs observed p99,1500,166,0,0,FLAG
+BM,conus_b2_gompit,T4,T4 max BA vs observed p99.9,1500,48,0,0,MINOR
+CA,conus_b1,T0,T0 initial-step shock,1500,42,0,0,MINOR
+CA,conus_b1,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+CA,conus_b1,T1,T1 monotone QMD,1194,257,0,306,FLAG
+CA,conus_b1,T9,T9 BA inversions (>10% step drop),1500,545,0,0,FLAG
+CA,conus_b1,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+CA,conus_b1,T3,T3 Reineke slope (trajectory OLS),730,206,746,24,FLAG
+CA,conus_b1,T4,T4 peak SDI / SDImax,1500,73,0,0,MINOR
+CA,conus_b1,T4,T4 max BA vs observed p99,1500,435,0,0,FLAG
+CA,conus_b1,T4,T4 max BA vs observed p99.9,1500,301,0,0,FLAG
+CA,conus_b1_gompit,T0,T0 initial-step shock,1500,75,0,0,MINOR
+CA,conus_b1_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+CA,conus_b1_gompit,T1,T1 monotone QMD,1071,539,0,429,FLAG
+CA,conus_b1_gompit,T9,T9 BA inversions (>10% step drop),1500,988,0,0,FLAG
+CA,conus_b1_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+CA,conus_b1_gompit,T3,T3 Reineke slope (trajectory OLS),523,84,976,1,FLAG
+CA,conus_b1_gompit,T4,T4 peak SDI / SDImax,1500,20,0,0,MINOR
+CA,conus_b1_gompit,T4,T4 max BA vs observed p99,1500,166,0,0,FLAG
+CA,conus_b1_gompit,T4,T4 max BA vs observed p99.9,1500,64,0,0,MINOR
+CA,conus_b2,T0,T0 initial-step shock,1500,43,0,0,MINOR
+CA,conus_b2,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+CA,conus_b2,T1,T1 monotone QMD,1175,296,0,325,FLAG
+CA,conus_b2,T9,T9 BA inversions (>10% step drop),1500,700,0,0,FLAG
+CA,conus_b2,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+CA,conus_b2,T3,T3 Reineke slope (trajectory OLS),552,192,920,28,FLAG
+CA,conus_b2,T4,T4 peak SDI / SDImax,1500,21,0,0,MINOR
+CA,conus_b2,T4,T4 max BA vs observed p99,1500,218,0,0,FLAG
+CA,conus_b2,T4,T4 max BA vs observed p99.9,1500,72,0,0,MINOR
+CA,conus_b2_gompit,T0,T0 initial-step shock,1500,79,0,0,MINOR
+CA,conus_b2_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+CA,conus_b2_gompit,T1,T1 monotone QMD,1061,595,0,439,FLAG
+CA,conus_b2_gompit,T9,T9 BA inversions (>10% step drop),1500,1125,0,0,FLAG
+CA,conus_b2_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+CA,conus_b2_gompit,T3,T3 Reineke slope (trajectory OLS),422,98,1074,4,FLAG
+CA,conus_b2_gompit,T4,T4 peak SDI / SDImax,1500,8,0,0,MINOR
+CA,conus_b2_gompit,T4,T4 max BA vs observed p99,1500,62,0,0,MINOR
+CA,conus_b2_gompit,T4,T4 max BA vs observed p99.9,1500,24,0,0,MINOR
+CI,conus_b1,T0,T0 initial-step shock,1500,83,0,0,MINOR
+CI,conus_b1,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+CI,conus_b1,T1,T1 monotone QMD,739,347,0,761,FLAG
+CI,conus_b1,T9,T9 BA inversions (>10% step drop),1500,564,0,0,FLAG
+CI,conus_b1,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+CI,conus_b1,T3,T3 Reineke slope (trajectory OLS),488,225,985,27,FLAG
+CI,conus_b1,T4,T4 peak SDI / SDImax,1500,71,0,0,MINOR
+CI,conus_b1,T4,T4 max BA vs observed p99,1500,276,0,0,FLAG
+CI,conus_b1,T4,T4 max BA vs observed p99.9,1500,228,0,0,FLAG
+CI,conus_b1_gompit,T0,T0 initial-step shock,1500,14,0,0,MINOR
+CI,conus_b1_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+CI,conus_b1_gompit,T1,T1 monotone QMD,565,470,0,935,FLAG
+CI,conus_b1_gompit,T9,T9 BA inversions (>10% step drop),1500,977,0,0,FLAG
+CI,conus_b1_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+CI,conus_b1_gompit,T3,T3 Reineke slope (trajectory OLS),336,55,1161,3,FLAG
+CI,conus_b1_gompit,T4,T4 peak SDI / SDImax,1500,10,0,0,MINOR
+CI,conus_b1_gompit,T4,T4 max BA vs observed p99,1500,73,0,0,MINOR
+CI,conus_b1_gompit,T4,T4 max BA vs observed p99.9,1500,45,0,0,MINOR
+CI,conus_b2,T0,T0 initial-step shock,1500,63,0,0,MINOR
+CI,conus_b2,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+CI,conus_b2,T1,T1 monotone QMD,721,401,0,779,FLAG
+CI,conus_b2,T9,T9 BA inversions (>10% step drop),1500,659,0,0,FLAG
+CI,conus_b2,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+CI,conus_b2,T3,T3 Reineke slope (trajectory OLS),418,149,1043,39,FLAG
+CI,conus_b2,T4,T4 peak SDI / SDImax,1500,34,0,0,MINOR
+CI,conus_b2,T4,T4 max BA vs observed p99,1500,162,0,0,FLAG
+CI,conus_b2,T4,T4 max BA vs observed p99.9,1500,102,0,0,MINOR
+CI,conus_b2_gompit,T0,T0 initial-step shock,1500,14,0,0,MINOR
+CI,conus_b2_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+CI,conus_b2_gompit,T1,T1 monotone QMD,475,405,0,1025,FLAG
+CI,conus_b2_gompit,T9,T9 BA inversions (>10% step drop),1500,1032,0,0,FLAG
+CI,conus_b2_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+CI,conus_b2_gompit,T3,T3 Reineke slope (trajectory OLS),319,57,1174,7,FLAG
+CI,conus_b2_gompit,T4,T4 peak SDI / SDImax,1500,10,0,0,MINOR
+CI,conus_b2_gompit,T4,T4 max BA vs observed p99,1500,55,0,0,MINOR
+CI,conus_b2_gompit,T4,T4 max BA vs observed p99.9,1500,35,0,0,MINOR
+CR,conus_b1,T0,T0 initial-step shock,1500,67,0,0,MINOR
+CR,conus_b1,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+CR,conus_b1,T1,T1 monotone QMD,774,277,0,726,FLAG
+CR,conus_b1,T9,T9 BA inversions (>10% step drop),1500,740,0,0,FLAG
+CR,conus_b1,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+CR,conus_b1,T3,T3 Reineke slope (trajectory OLS),277,49,1207,16,FLAG
+CR,conus_b1,T4,T4 peak SDI / SDImax,1500,13,0,0,MINOR
+CR,conus_b1,T4,T4 max BA vs observed p99,1500,185,0,0,FLAG
+CR,conus_b1,T4,T4 max BA vs observed p99.9,1500,84,0,0,MINOR
+CR,conus_b1_gompit,T0,T0 initial-step shock,1500,10,0,0,MINOR
+CR,conus_b1_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+CR,conus_b1_gompit,T1,T1 monotone QMD,875,487,0,625,FLAG
+CR,conus_b1_gompit,T9,T9 BA inversions (>10% step drop),1500,690,0,0,FLAG
+CR,conus_b1_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+CR,conus_b1_gompit,T3,T3 Reineke slope (trajectory OLS),165,25,1322,13,FLAG
+CR,conus_b1_gompit,T4,T4 peak SDI / SDImax,1500,1,0,0,MINOR
+CR,conus_b1_gompit,T4,T4 max BA vs observed p99,1500,59,0,0,MINOR
+CR,conus_b1_gompit,T4,T4 max BA vs observed p99.9,1500,16,0,0,MINOR
+CR,conus_b2,T0,T0 initial-step shock,1500,58,0,0,MINOR
+CR,conus_b2,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+CR,conus_b2,T1,T1 monotone QMD,770,270,0,730,FLAG
+CR,conus_b2,T9,T9 BA inversions (>10% step drop),1500,749,0,0,FLAG
+CR,conus_b2,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+CR,conus_b2,T3,T3 Reineke slope (trajectory OLS),199,42,1285,16,FLAG
+CR,conus_b2,T4,T4 peak SDI / SDImax,1500,4,0,0,MINOR
+CR,conus_b2,T4,T4 max BA vs observed p99,1500,108,0,0,MINOR
+CR,conus_b2,T4,T4 max BA vs observed p99.9,1500,32,0,0,MINOR
+CR,conus_b2_gompit,T0,T0 initial-step shock,1500,10,0,0,MINOR
+CR,conus_b2_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+CR,conus_b2_gompit,T1,T1 monotone QMD,867,430,0,633,FLAG
+CR,conus_b2_gompit,T9,T9 BA inversions (>10% step drop),1500,663,0,0,FLAG
+CR,conus_b2_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+CR,conus_b2_gompit,T3,T3 Reineke slope (trajectory OLS),137,34,1353,10,FLAG
+CR,conus_b2_gompit,T4,T4 peak SDI / SDImax,1500,1,0,0,MINOR
+CR,conus_b2_gompit,T4,T4 max BA vs observed p99,1500,32,0,0,MINOR
+CR,conus_b2_gompit,T4,T4 max BA vs observed p99.9,1500,7,0,0,MINOR
+CS,conus_b1,T0,T0 initial-step shock,1500,9,0,0,MINOR
+CS,conus_b1,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+CS,conus_b1,T1,T1 monotone QMD,964,110,0,536,FLAG
+CS,conus_b1,T9,T9 BA inversions (>10% step drop),1500,39,0,0,MINOR
+CS,conus_b1,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+CS,conus_b1,T3,T3 Reineke slope (trajectory OLS),1435,1238,28,37,FLAG
+CS,conus_b1,T4,T4 peak SDI / SDImax,1500,1202,0,0,FLAG
+CS,conus_b1,T4,T4 max BA vs observed p99,1500,1469,0,0,FLAG
+CS,conus_b1,T4,T4 max BA vs observed p99.9,1500,1340,0,0,FLAG
+CS,conus_b1_gompit,T0,T0 initial-step shock,1500,17,0,0,MINOR
+CS,conus_b1_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+CS,conus_b1_gompit,T1,T1 monotone QMD,829,650,0,671,FLAG
+CS,conus_b1_gompit,T9,T9 BA inversions (>10% step drop),1500,162,0,0,FLAG
+CS,conus_b1_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+CS,conus_b1_gompit,T3,T3 Reineke slope (trajectory OLS),1348,620,72,80,FLAG
+CS,conus_b1_gompit,T4,T4 peak SDI / SDImax,1500,552,0,0,FLAG
+CS,conus_b1_gompit,T4,T4 max BA vs observed p99,1500,1406,0,0,FLAG
+CS,conus_b1_gompit,T4,T4 max BA vs observed p99.9,1500,750,0,0,FLAG
+CS,conus_b2,T0,T0 initial-step shock,1500,10,0,0,MINOR
+CS,conus_b2,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+CS,conus_b2,T1,T1 monotone QMD,1000,89,0,500,MINOR
+CS,conus_b2,T9,T9 BA inversions (>10% step drop),1500,51,0,0,MINOR
+CS,conus_b2,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+CS,conus_b2,T3,T3 Reineke slope (trajectory OLS),1380,1137,36,84,FLAG
+CS,conus_b2,T4,T4 peak SDI / SDImax,1500,1049,0,0,FLAG
+CS,conus_b2,T4,T4 max BA vs observed p99,1500,1462,0,0,FLAG
+CS,conus_b2,T4,T4 max BA vs observed p99.9,1500,1196,0,0,FLAG
+CS,conus_b2_gompit,T0,T0 initial-step shock,1500,17,0,0,MINOR
+CS,conus_b2_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+CS,conus_b2_gompit,T1,T1 monotone QMD,877,563,0,623,FLAG
+CS,conus_b2_gompit,T9,T9 BA inversions (>10% step drop),1500,196,0,0,FLAG
+CS,conus_b2_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+CS,conus_b2_gompit,T3,T3 Reineke slope (trajectory OLS),1285,531,113,102,FLAG
+CS,conus_b2_gompit,T4,T4 peak SDI / SDImax,1500,355,0,0,FLAG
+CS,conus_b2_gompit,T4,T4 max BA vs observed p99,1500,1311,0,0,FLAG
+CS,conus_b2_gompit,T4,T4 max BA vs observed p99.9,1500,434,0,0,FLAG
+EC,conus_b1,T0,T0 initial-step shock,1500,47,0,0,MINOR
+EC,conus_b1,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+EC,conus_b1,T1,T1 monotone QMD,1044,392,0,456,FLAG
+EC,conus_b1,T9,T9 BA inversions (>10% step drop),1500,427,0,0,FLAG
+EC,conus_b1,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+EC,conus_b1,T3,T3 Reineke slope (trajectory OLS),718,234,752,30,FLAG
+EC,conus_b1,T4,T4 peak SDI / SDImax,1500,80,0,0,MINOR
+EC,conus_b1,T4,T4 max BA vs observed p99,1500,371,0,0,FLAG
+EC,conus_b1,T4,T4 max BA vs observed p99.9,1500,176,0,0,FLAG
+EC,conus_b1_gompit,T0,T0 initial-step shock,1500,18,0,0,MINOR
+EC,conus_b1_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+EC,conus_b1_gompit,T1,T1 monotone QMD,905,700,0,595,FLAG
+EC,conus_b1_gompit,T9,T9 BA inversions (>10% step drop),1500,960,0,0,FLAG
+EC,conus_b1_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+EC,conus_b1_gompit,T3,T3 Reineke slope (trajectory OLS),498,85,998,4,FLAG
+EC,conus_b1_gompit,T4,T4 peak SDI / SDImax,1500,27,0,0,MINOR
+EC,conus_b1_gompit,T4,T4 max BA vs observed p99,1500,97,0,0,MINOR
+EC,conus_b1_gompit,T4,T4 max BA vs observed p99.9,1500,35,0,0,MINOR
+EC,conus_b2,T0,T0 initial-step shock,1500,39,0,0,MINOR
+EC,conus_b2,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+EC,conus_b2,T1,T1 monotone QMD,1017,416,0,483,FLAG
+EC,conus_b2,T9,T9 BA inversions (>10% step drop),1500,484,0,0,FLAG
+EC,conus_b2,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+EC,conus_b2,T3,T3 Reineke slope (trajectory OLS),577,174,879,44,FLAG
+EC,conus_b2,T4,T4 peak SDI / SDImax,1500,26,0,0,MINOR
+EC,conus_b2,T4,T4 max BA vs observed p99,1500,152,0,0,FLAG
+EC,conus_b2,T4,T4 max BA vs observed p99.9,1500,42,0,0,MINOR
+EC,conus_b2_gompit,T0,T0 initial-step shock,1500,18,0,0,MINOR
+EC,conus_b2_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+EC,conus_b2_gompit,T1,T1 monotone QMD,813,633,0,687,FLAG
+EC,conus_b2_gompit,T9,T9 BA inversions (>10% step drop),1500,1073,0,0,FLAG
+EC,conus_b2_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+EC,conus_b2_gompit,T3,T3 Reineke slope (trajectory OLS),411,103,1071,18,FLAG
+EC,conus_b2_gompit,T4,T4 peak SDI / SDImax,1500,18,0,0,MINOR
+EC,conus_b2_gompit,T4,T4 max BA vs observed p99,1500,47,0,0,MINOR
+EC,conus_b2_gompit,T4,T4 max BA vs observed p99.9,1500,13,0,0,MINOR
+EM,conus_b1,T0,T0 initial-step shock,1500,96,0,0,MINOR
+EM,conus_b1,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+EM,conus_b1,T1,T1 monotone QMD,800,379,0,700,FLAG
+EM,conus_b1,T9,T9 BA inversions (>10% step drop),1500,543,0,0,FLAG
+EM,conus_b1,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+EM,conus_b1,T3,T3 Reineke slope (trajectory OLS),356,109,1118,26,FLAG
+EM,conus_b1,T4,T4 peak SDI / SDImax,1500,17,0,0,MINOR
+EM,conus_b1,T4,T4 max BA vs observed p99,1500,273,0,0,FLAG
+EM,conus_b1,T4,T4 max BA vs observed p99.9,1500,170,0,0,FLAG
+EM,conus_b1_gompit,T0,T0 initial-step shock,1500,24,0,0,MINOR
+EM,conus_b1_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+EM,conus_b1_gompit,T1,T1 monotone QMD,633,451,0,867,FLAG
+EM,conus_b1_gompit,T9,T9 BA inversions (>10% step drop),1500,837,0,0,FLAG
+EM,conus_b1_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+EM,conus_b1_gompit,T3,T3 Reineke slope (trajectory OLS),239,63,1256,5,FLAG
+EM,conus_b1_gompit,T4,T4 peak SDI / SDImax,1500,0,0,0,PASS
+EM,conus_b1_gompit,T4,T4 max BA vs observed p99,1500,99,0,0,MINOR
+EM,conus_b1_gompit,T4,T4 max BA vs observed p99.9,1500,34,0,0,MINOR
+EM,conus_b2,T0,T0 initial-step shock,1500,84,0,0,MINOR
+EM,conus_b2,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+EM,conus_b2,T1,T1 monotone QMD,798,421,0,702,FLAG
+EM,conus_b2,T9,T9 BA inversions (>10% step drop),1500,587,0,0,FLAG
+EM,conus_b2,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+EM,conus_b2,T3,T3 Reineke slope (trajectory OLS),303,93,1150,47,FLAG
+EM,conus_b2,T4,T4 peak SDI / SDImax,1500,4,0,0,MINOR
+EM,conus_b2,T4,T4 max BA vs observed p99,1500,163,0,0,FLAG
+EM,conus_b2,T4,T4 max BA vs observed p99.9,1500,78,0,0,MINOR
+EM,conus_b2_gompit,T0,T0 initial-step shock,1500,22,0,0,MINOR
+EM,conus_b2_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+EM,conus_b2_gompit,T1,T1 monotone QMD,562,384,0,938,FLAG
+EM,conus_b2_gompit,T9,T9 BA inversions (>10% step drop),1500,860,0,0,FLAG
+EM,conus_b2_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+EM,conus_b2_gompit,T3,T3 Reineke slope (trajectory OLS),235,70,1234,31,FLAG
+EM,conus_b2_gompit,T4,T4 peak SDI / SDImax,1500,1,0,0,MINOR
+EM,conus_b2_gompit,T4,T4 max BA vs observed p99,1500,72,0,0,MINOR
+EM,conus_b2_gompit,T4,T4 max BA vs observed p99.9,1500,24,0,0,MINOR
+IE,conus_b1,T0,T0 initial-step shock,1500,57,0,0,MINOR
+IE,conus_b1,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+IE,conus_b1,T1,T1 monotone QMD,962,290,0,538,FLAG
+IE,conus_b1,T9,T9 BA inversions (>10% step drop),1500,297,0,0,FLAG
+IE,conus_b1,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+IE,conus_b1,T3,T3 Reineke slope (trajectory OLS),837,445,603,60,FLAG
+IE,conus_b1,T4,T4 peak SDI / SDImax,1500,204,0,0,FLAG
+IE,conus_b1,T4,T4 max BA vs observed p99,1500,774,0,0,FLAG
+IE,conus_b1,T4,T4 max BA vs observed p99.9,1500,591,0,0,FLAG
+IE,conus_b1_gompit,T0,T0 initial-step shock,1500,19,0,0,MINOR
+IE,conus_b1_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+IE,conus_b1_gompit,T1,T1 monotone QMD,853,581,0,647,FLAG
+IE,conus_b1_gompit,T9,T9 BA inversions (>10% step drop),1500,620,0,0,FLAG
+IE,conus_b1_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+IE,conus_b1_gompit,T3,T3 Reineke slope (trajectory OLS),631,75,863,6,FLAG
+IE,conus_b1_gompit,T4,T4 peak SDI / SDImax,1500,57,0,0,MINOR
+IE,conus_b1_gompit,T4,T4 max BA vs observed p99,1500,408,0,0,FLAG
+IE,conus_b1_gompit,T4,T4 max BA vs observed p99.9,1500,217,0,0,FLAG
+IE,conus_b2,T0,T0 initial-step shock,1500,48,0,0,MINOR
+IE,conus_b2,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+IE,conus_b2,T1,T1 monotone QMD,924,271,0,576,FLAG
+IE,conus_b2,T9,T9 BA inversions (>10% step drop),1500,302,0,0,FLAG
+IE,conus_b2,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+IE,conus_b2,T3,T3 Reineke slope (trajectory OLS),744,346,699,57,FLAG
+IE,conus_b2,T4,T4 peak SDI / SDImax,1500,118,0,0,MINOR
+IE,conus_b2,T4,T4 max BA vs observed p99,1500,611,0,0,FLAG
+IE,conus_b2,T4,T4 max BA vs observed p99.9,1500,407,0,0,FLAG
+IE,conus_b2_gompit,T0,T0 initial-step shock,1500,19,0,0,MINOR
+IE,conus_b2_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+IE,conus_b2_gompit,T1,T1 monotone QMD,805,541,0,695,FLAG
+IE,conus_b2_gompit,T9,T9 BA inversions (>10% step drop),1500,764,0,0,FLAG
+IE,conus_b2_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+IE,conus_b2_gompit,T3,T3 Reineke slope (trajectory OLS),555,80,933,12,FLAG
+IE,conus_b2_gompit,T4,T4 peak SDI / SDImax,1500,34,0,0,MINOR
+IE,conus_b2_gompit,T4,T4 max BA vs observed p99,1500,290,0,0,FLAG
+IE,conus_b2_gompit,T4,T4 max BA vs observed p99.9,1500,132,0,0,MINOR
+LS,conus_b1,T0,T0 initial-step shock,1500,0,0,0,PASS
+LS,conus_b1,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+LS,conus_b1,T1,T1 monotone QMD,998,32,0,502,MINOR
+LS,conus_b1,T9,T9 BA inversions (>10% step drop),1500,10,0,0,MINOR
+LS,conus_b1,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+LS,conus_b1,T3,T3 Reineke slope (trajectory OLS),1157,1018,220,123,FLAG
+LS,conus_b1,T4,T4 peak SDI / SDImax,1500,934,0,0,FLAG
+LS,conus_b1,T4,T4 max BA vs observed p99,1500,1206,0,0,FLAG
+LS,conus_b1,T4,T4 max BA vs observed p99.9,1500,1183,0,0,FLAG
+LS,conus_b1_gompit,T0,T0 initial-step shock,1500,24,0,0,MINOR
+LS,conus_b1_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+LS,conus_b1_gompit,T1,T1 monotone QMD,816,454,0,684,FLAG
+LS,conus_b1_gompit,T9,T9 BA inversions (>10% step drop),1500,289,0,0,FLAG
+LS,conus_b1_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+LS,conus_b1_gompit,T3,T3 Reineke slope (trajectory OLS),971,210,414,115,FLAG
+LS,conus_b1_gompit,T4,T4 peak SDI / SDImax,1500,235,0,0,FLAG
+LS,conus_b1_gompit,T4,T4 max BA vs observed p99,1500,1063,0,0,FLAG
+LS,conus_b1_gompit,T4,T4 max BA vs observed p99.9,1500,817,0,0,FLAG
+LS,conus_b2,T0,T0 initial-step shock,1500,0,0,0,PASS
+LS,conus_b2,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+LS,conus_b2,T1,T1 monotone QMD,995,25,0,505,MINOR
+LS,conus_b2,T9,T9 BA inversions (>10% step drop),1500,10,0,0,MINOR
+LS,conus_b2,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+LS,conus_b2,T3,T3 Reineke slope (trajectory OLS),1120,932,119,261,FLAG
+LS,conus_b2,T4,T4 peak SDI / SDImax,1500,746,0,0,FLAG
+LS,conus_b2,T4,T4 max BA vs observed p99,1500,1301,0,0,FLAG
+LS,conus_b2,T4,T4 max BA vs observed p99.9,1500,1177,0,0,FLAG
+LS,conus_b2_gompit,T0,T0 initial-step shock,1500,27,0,0,MINOR
+LS,conus_b2_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+LS,conus_b2_gompit,T1,T1 monotone QMD,820,385,0,680,FLAG
+LS,conus_b2_gompit,T9,T9 BA inversions (>10% step drop),1500,353,0,0,FLAG
+LS,conus_b2_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+LS,conus_b2_gompit,T3,T3 Reineke slope (trajectory OLS),889,150,388,223,FLAG
+LS,conus_b2_gompit,T4,T4 peak SDI / SDImax,1500,149,0,0,MINOR
+LS,conus_b2_gompit,T4,T4 max BA vs observed p99,1500,1065,0,0,FLAG
+LS,conus_b2_gompit,T4,T4 max BA vs observed p99.9,1500,652,0,0,FLAG
+NC,conus_b1,T0,T0 initial-step shock,1500,33,0,0,MINOR
+NC,conus_b1,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+NC,conus_b1,T1,T1 monotone QMD,1239,292,0,261,FLAG
+NC,conus_b1,T9,T9 BA inversions (>10% step drop),1500,397,0,0,FLAG
+NC,conus_b1,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+NC,conus_b1,T3,T3 Reineke slope (trajectory OLS),1464,952,0,36,FLAG
+NC,conus_b1,T4,T4 peak SDI / SDImax,0,0,0,1500,NOT EVALUATED
+NC,conus_b1,T4,T4 max BA vs observed p99,0,0,0,1500,NOT EVALUATED
+NC,conus_b1,T4,T4 max BA vs observed p99.9,0,0,0,1500,NOT EVALUATED
+NC,conus_b1_gompit,T0,T0 initial-step shock,1500,165,0,0,FLAG
+NC,conus_b1_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+NC,conus_b1_gompit,T1,T1 monotone QMD,1146,497,0,354,FLAG
+NC,conus_b1_gompit,T9,T9 BA inversions (>10% step drop),1500,782,0,0,FLAG
+NC,conus_b1_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+NC,conus_b1_gompit,T3,T3 Reineke slope (trajectory OLS),1491,1080,0,9,FLAG
+NC,conus_b1_gompit,T4,T4 peak SDI / SDImax,0,0,0,1500,NOT EVALUATED
+NC,conus_b1_gompit,T4,T4 max BA vs observed p99,0,0,0,1500,NOT EVALUATED
+NC,conus_b1_gompit,T4,T4 max BA vs observed p99.9,0,0,0,1500,NOT EVALUATED
+NC,conus_b2,T0,T0 initial-step shock,1500,28,0,0,MINOR
+NC,conus_b2,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+NC,conus_b2,T1,T1 monotone QMD,1210,324,0,290,FLAG
+NC,conus_b2,T9,T9 BA inversions (>10% step drop),1500,543,0,0,FLAG
+NC,conus_b2,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+NC,conus_b2,T3,T3 Reineke slope (trajectory OLS),1430,1025,0,70,FLAG
+NC,conus_b2,T4,T4 peak SDI / SDImax,0,0,0,1500,NOT EVALUATED
+NC,conus_b2,T4,T4 max BA vs observed p99,0,0,0,1500,NOT EVALUATED
+NC,conus_b2,T4,T4 max BA vs observed p99.9,0,0,0,1500,NOT EVALUATED
+NC,conus_b2_gompit,T0,T0 initial-step shock,1500,174,0,0,FLAG
+NC,conus_b2_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+NC,conus_b2_gompit,T1,T1 monotone QMD,1070,545,0,430,FLAG
+NC,conus_b2_gompit,T9,T9 BA inversions (>10% step drop),1500,969,0,0,FLAG
+NC,conus_b2_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+NC,conus_b2_gompit,T3,T3 Reineke slope (trajectory OLS),1488,1174,0,12,FLAG
+NC,conus_b2_gompit,T4,T4 peak SDI / SDImax,0,0,0,1500,NOT EVALUATED
+NC,conus_b2_gompit,T4,T4 max BA vs observed p99,0,0,0,1500,NOT EVALUATED
+NC,conus_b2_gompit,T4,T4 max BA vs observed p99.9,0,0,0,1500,NOT EVALUATED
+NE,conus_b1,T0,T0 initial-step shock,1500,1,0,0,MINOR
+NE,conus_b1,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+NE,conus_b1,T1,T1 monotone QMD,1080,51,0,420,MINOR
+NE,conus_b1,T9,T9 BA inversions (>10% step drop),1500,20,0,0,MINOR
+NE,conus_b1,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+NE,conus_b1,T3,T3 Reineke slope (trajectory OLS),1423,1286,27,50,FLAG
+NE,conus_b1,T4,T4 peak SDI / SDImax,1500,1106,0,0,FLAG
+NE,conus_b1,T4,T4 max BA vs observed p99,1500,1470,0,0,FLAG
+NE,conus_b1,T4,T4 max BA vs observed p99.9,1500,1444,0,0,FLAG
+NE,conus_b2,T0,T0 initial-step shock,1500,0,0,0,PASS
+NE,conus_b2,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+NE,conus_b2,T1,T1 monotone QMD,1118,58,0,382,MINOR
+NE,conus_b2,T9,T9 BA inversions (>10% step drop),1500,12,0,0,MINOR
+NE,conus_b2,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+NE,conus_b2,T3,T3 Reineke slope (trajectory OLS),1368,1167,34,98,FLAG
+NE,conus_b2,T4,T4 peak SDI / SDImax,1500,838,0,0,FLAG
+NE,conus_b2,T4,T4 max BA vs observed p99,1500,1462,0,0,FLAG
+NE,conus_b2,T4,T4 max BA vs observed p99.9,1500,1424,0,0,FLAG
+NE,conus_b2_gompit,T0,T0 initial-step shock,1500,9,0,0,MINOR
+NE,conus_b2_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+NE,conus_b2_gompit,T1,T1 monotone QMD,1072,629,0,428,FLAG
+NE,conus_b2_gompit,T9,T9 BA inversions (>10% step drop),1500,209,0,0,FLAG
+NE,conus_b2_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+NE,conus_b2_gompit,T3,T3 Reineke slope (trajectory OLS),1245,271,214,41,FLAG
+NE,conus_b2_gompit,T4,T4 peak SDI / SDImax,1500,188,0,0,FLAG
+NE,conus_b2_gompit,T4,T4 max BA vs observed p99,1500,1257,0,0,FLAG
+NE,conus_b2_gompit,T4,T4 max BA vs observed p99.9,1500,835,0,0,FLAG
+PN,conus_b1,T0,T0 initial-step shock,1500,116,0,0,MINOR
+PN,conus_b1,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+PN,conus_b1,T1,T1 monotone QMD,895,278,0,605,FLAG
+PN,conus_b1,T9,T9 BA inversions (>10% step drop),1500,451,0,0,FLAG
+PN,conus_b1,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+PN,conus_b1,T3,T3 Reineke slope (trajectory OLS),987,628,421,92,FLAG
+PN,conus_b1,T4,T4 peak SDI / SDImax,1500,209,0,0,FLAG
+PN,conus_b1,T4,T4 max BA vs observed p99,1500,882,0,0,FLAG
+PN,conus_b1,T4,T4 max BA vs observed p99.9,1500,873,0,0,FLAG
+PN,conus_b1_gompit,T0,T0 initial-step shock,1500,7,0,0,MINOR
+PN,conus_b1_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+PN,conus_b1_gompit,T1,T1 monotone QMD,1055,757,0,445,FLAG
+PN,conus_b1_gompit,T9,T9 BA inversions (>10% step drop),1500,628,0,0,FLAG
+PN,conus_b1_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+PN,conus_b1_gompit,T3,T3 Reineke slope (trajectory OLS),824,110,670,6,FLAG
+PN,conus_b1_gompit,T4,T4 peak SDI / SDImax,1500,46,0,0,MINOR
+PN,conus_b1_gompit,T4,T4 max BA vs observed p99,1500,437,0,0,FLAG
+PN,conus_b1_gompit,T4,T4 max BA vs observed p99.9,1500,412,0,0,FLAG
+PN,conus_b2,T0,T0 initial-step shock,1500,99,0,0,MINOR
+PN,conus_b2,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+PN,conus_b2,T1,T1 monotone QMD,916,302,0,584,FLAG
+PN,conus_b2,T9,T9 BA inversions (>10% step drop),1500,489,0,0,FLAG
+PN,conus_b2,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+PN,conus_b2,T3,T3 Reineke slope (trajectory OLS),928,509,442,130,FLAG
+PN,conus_b2,T4,T4 peak SDI / SDImax,1500,69,0,0,MINOR
+PN,conus_b2,T4,T4 max BA vs observed p99,1500,723,0,0,FLAG
+PN,conus_b2,T4,T4 max BA vs observed p99.9,1500,706,0,0,FLAG
+PN,conus_b2_gompit,T0,T0 initial-step shock,1500,5,0,0,MINOR
+PN,conus_b2_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+PN,conus_b2_gompit,T1,T1 monotone QMD,1001,597,0,499,FLAG
+PN,conus_b2_gompit,T9,T9 BA inversions (>10% step drop),1500,651,0,0,FLAG
+PN,conus_b2_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+PN,conus_b2_gompit,T3,T3 Reineke slope (trajectory OLS),738,143,739,23,FLAG
+PN,conus_b2_gompit,T4,T4 peak SDI / SDImax,1500,74,0,0,MINOR
+PN,conus_b2_gompit,T4,T4 max BA vs observed p99,1500,290,0,0,FLAG
+PN,conus_b2_gompit,T4,T4 max BA vs observed p99.9,1500,273,0,0,FLAG
+SN,conus_b1,T0,T0 initial-step shock,1500,0,0,0,PASS
+SN,conus_b1,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+SN,conus_b1,T1,T1 monotone QMD,631,46,0,869,MINOR
+SN,conus_b1,T9,T9 BA inversions (>10% step drop),1500,39,0,0,MINOR
+SN,conus_b1,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+SN,conus_b1,T3,T3 Reineke slope (trajectory OLS),1446,1366,15,39,FLAG
+SN,conus_b1,T4,T4 peak SDI / SDImax,1500,1363,0,0,FLAG
+SN,conus_b1,T4,T4 max BA vs observed p99,1500,1481,0,0,FLAG
+SN,conus_b1,T4,T4 max BA vs observed p99.9,1500,1472,0,0,FLAG
+SN,conus_b2,T0,T0 initial-step shock,1500,0,0,0,PASS
+SN,conus_b2,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+SN,conus_b2,T1,T1 monotone QMD,771,8,0,729,MINOR
+SN,conus_b2,T9,T9 BA inversions (>10% step drop),1500,11,0,0,MINOR
+SN,conus_b2,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+SN,conus_b2,T3,T3 Reineke slope (trajectory OLS),1334,1194,13,153,FLAG
+SN,conus_b2,T4,T4 peak SDI / SDImax,1500,1185,0,0,FLAG
+SN,conus_b2,T4,T4 max BA vs observed p99,1500,1487,0,0,FLAG
+SN,conus_b2,T4,T4 max BA vs observed p99.9,1500,1446,0,0,FLAG
+SN,conus_b2_gompit,T0,T0 initial-step shock,1500,35,0,0,MINOR
+SN,conus_b2_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+SN,conus_b2_gompit,T1,T1 monotone QMD,592,272,0,908,FLAG
+SN,conus_b2_gompit,T9,T9 BA inversions (>10% step drop),1500,262,0,0,FLAG
+SN,conus_b2_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+SN,conus_b2_gompit,T3,T3 Reineke slope (trajectory OLS),1168,517,200,132,FLAG
+SN,conus_b2_gompit,T4,T4 peak SDI / SDImax,1500,239,0,0,FLAG
+SN,conus_b2_gompit,T4,T4 max BA vs observed p99,1500,1235,0,0,FLAG
+SN,conus_b2_gompit,T4,T4 max BA vs observed p99.9,1500,757,0,0,FLAG
+SO,conus_b1,T0,T0 initial-step shock,1500,31,0,0,MINOR
+SO,conus_b1,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+SO,conus_b1,T1,T1 monotone QMD,842,365,0,658,FLAG
+SO,conus_b1,T9,T9 BA inversions (>10% step drop),1500,478,0,0,FLAG
+SO,conus_b1,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+SO,conus_b1,T3,T3 Reineke slope (trajectory OLS),537,158,939,24,FLAG
+SO,conus_b1,T4,T4 peak SDI / SDImax,1500,42,0,0,MINOR
+SO,conus_b1,T4,T4 max BA vs observed p99,1500,383,0,0,FLAG
+SO,conus_b1,T4,T4 max BA vs observed p99.9,1500,143,0,0,MINOR
+SO,conus_b2,T0,T0 initial-step shock,1500,26,0,0,MINOR
+SO,conus_b2,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+SO,conus_b2,T1,T1 monotone QMD,801,420,0,699,FLAG
+SO,conus_b2,T9,T9 BA inversions (>10% step drop),1500,631,0,0,FLAG
+SO,conus_b2,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+SO,conus_b2,T3,T3 Reineke slope (trajectory OLS),421,125,1039,40,FLAG
+SO,conus_b2,T4,T4 peak SDI / SDImax,1500,13,0,0,MINOR
+SO,conus_b2,T4,T4 max BA vs observed p99,1500,249,0,0,FLAG
+SO,conus_b2,T4,T4 max BA vs observed p99.9,1500,60,0,0,MINOR
+SO,conus_b2_gompit,T0,T0 initial-step shock,1500,15,0,0,MINOR
+SO,conus_b2_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+SO,conus_b2_gompit,T1,T1 monotone QMD,606,467,0,894,FLAG
+SO,conus_b2_gompit,T9,T9 BA inversions (>10% step drop),1500,964,0,0,FLAG
+SO,conus_b2_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+SO,conus_b2_gompit,T3,T3 Reineke slope (trajectory OLS),263,53,1220,17,FLAG
+SO,conus_b2_gompit,T4,T4 peak SDI / SDImax,1500,7,0,0,MINOR
+SO,conus_b2_gompit,T4,T4 max BA vs observed p99,1500,85,0,0,MINOR
+SO,conus_b2_gompit,T4,T4 max BA vs observed p99.9,1500,25,0,0,MINOR
+SO,conus_b1_gompit,T0,T0 initial-step shock,1500,14,0,0,MINOR
+SO,conus_b1_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+SO,conus_b1_gompit,T1,T1 monotone QMD,699,497,0,801,FLAG
+SO,conus_b1_gompit,T9,T9 BA inversions (>10% step drop),1500,894,0,0,FLAG
+SO,conus_b1_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+SO,conus_b1_gompit,T3,T3 Reineke slope (trajectory OLS),301,44,1195,4,FLAG
+SO,conus_b1_gompit,T4,T4 peak SDI / SDImax,1500,5,0,0,MINOR
+SO,conus_b1_gompit,T4,T4 max BA vs observed p99,1500,127,0,0,MINOR
+SO,conus_b1_gompit,T4,T4 max BA vs observed p99.9,1500,25,0,0,MINOR
+TT,conus_b1,T0,T0 initial-step shock,1500,60,0,0,MINOR
+TT,conus_b1,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+TT,conus_b1,T1,T1 monotone QMD,683,261,0,817,FLAG
+TT,conus_b1,T9,T9 BA inversions (>10% step drop),1500,662,0,0,FLAG
+TT,conus_b1,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+TT,conus_b1,T3,T3 Reineke slope (trajectory OLS),296,101,1160,44,FLAG
+TT,conus_b1,T4,T4 peak SDI / SDImax,1500,15,0,0,MINOR
+TT,conus_b1,T4,T4 max BA vs observed p99,1500,198,0,0,FLAG
+TT,conus_b1,T4,T4 max BA vs observed p99.9,1500,69,0,0,MINOR
+TT,conus_b1_gompit,T0,T0 initial-step shock,1500,16,0,0,MINOR
+TT,conus_b1_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+TT,conus_b1_gompit,T1,T1 monotone QMD,481,258,0,1019,FLAG
+TT,conus_b1_gompit,T9,T9 BA inversions (>10% step drop),1500,889,0,0,FLAG
+TT,conus_b1_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+TT,conus_b1_gompit,T3,T3 Reineke slope (trajectory OLS),175,50,1300,25,FLAG
+TT,conus_b1_gompit,T4,T4 peak SDI / SDImax,1500,2,0,0,MINOR
+TT,conus_b1_gompit,T4,T4 max BA vs observed p99,1500,80,0,0,MINOR
+TT,conus_b1_gompit,T4,T4 max BA vs observed p99.9,1500,26,0,0,MINOR
+TT,conus_b2,T0,T0 initial-step shock,1500,40,0,0,MINOR
+TT,conus_b2,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+TT,conus_b2,T1,T1 monotone QMD,705,355,0,795,FLAG
+TT,conus_b2,T9,T9 BA inversions (>10% step drop),1500,680,0,0,FLAG
+TT,conus_b2,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+TT,conus_b2,T3,T3 Reineke slope (trajectory OLS),294,59,1157,49,FLAG
+TT,conus_b2,T4,T4 peak SDI / SDImax,1500,3,0,0,MINOR
+TT,conus_b2,T4,T4 max BA vs observed p99,1500,138,0,0,MINOR
+TT,conus_b2,T4,T4 max BA vs observed p99.9,1500,21,0,0,MINOR
+TT,conus_b2_gompit,T0,T0 initial-step shock,1500,11,0,0,MINOR
+TT,conus_b2_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+TT,conus_b2_gompit,T1,T1 monotone QMD,350,222,0,1150,FLAG
+TT,conus_b2_gompit,T9,T9 BA inversions (>10% step drop),1500,979,0,0,FLAG
+TT,conus_b2_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+TT,conus_b2_gompit,T3,T3 Reineke slope (trajectory OLS),161,36,1313,26,FLAG
+TT,conus_b2_gompit,T4,T4 peak SDI / SDImax,1500,2,0,0,MINOR
+TT,conus_b2_gompit,T4,T4 max BA vs observed p99,1500,44,0,0,MINOR
+TT,conus_b2_gompit,T4,T4 max BA vs observed p99.9,1500,7,0,0,MINOR
+UT,conus_b1,T0,T0 initial-step shock,1500,51,0,0,MINOR
+UT,conus_b1,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+UT,conus_b1,T1,T1 monotone QMD,791,281,0,709,FLAG
+UT,conus_b1,T9,T9 BA inversions (>10% step drop),1500,395,0,0,FLAG
+UT,conus_b1,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+UT,conus_b1,T3,T3 Reineke slope (trajectory OLS),147,47,1328,25,FLAG
+UT,conus_b1,T4,T4 peak SDI / SDImax,1500,4,0,0,MINOR
+UT,conus_b1,T4,T4 max BA vs observed p99,1500,84,0,0,MINOR
+UT,conus_b1,T4,T4 max BA vs observed p99.9,1500,23,0,0,MINOR
+UT,conus_b2,T0,T0 initial-step shock,1500,44,0,0,MINOR
+UT,conus_b2,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+UT,conus_b2,T1,T1 monotone QMD,836,336,0,664,FLAG
+UT,conus_b2,T9,T9 BA inversions (>10% step drop),1500,427,0,0,FLAG
+UT,conus_b2,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+UT,conus_b2,T3,T3 Reineke slope (trajectory OLS),127,35,1350,23,FLAG
+UT,conus_b2,T4,T4 peak SDI / SDImax,1500,0,0,0,PASS
+UT,conus_b2,T4,T4 max BA vs observed p99,1500,56,0,0,MINOR
+UT,conus_b2,T4,T4 max BA vs observed p99.9,1500,12,0,0,MINOR
+UT,conus_b2_gompit,T0,T0 initial-step shock,1500,16,0,0,MINOR
+UT,conus_b2_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+UT,conus_b2_gompit,T1,T1 monotone QMD,730,217,0,770,FLAG
+UT,conus_b2_gompit,T9,T9 BA inversions (>10% step drop),1500,499,0,0,FLAG
+UT,conus_b2_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+UT,conus_b2_gompit,T3,T3 Reineke slope (trajectory OLS),111,46,1356,33,FLAG
+UT,conus_b2_gompit,T4,T4 peak SDI / SDImax,1500,0,0,0,PASS
+UT,conus_b2_gompit,T4,T4 max BA vs observed p99,1500,56,0,0,MINOR
+UT,conus_b2_gompit,T4,T4 max BA vs observed p99.9,1500,10,0,0,MINOR
+UT,conus_b1_gompit,T0,T0 initial-step shock,1500,16,0,0,MINOR
+UT,conus_b1_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+UT,conus_b1_gompit,T1,T1 monotone QMD,782,211,0,718,FLAG
+UT,conus_b1_gompit,T9,T9 BA inversions (>10% step drop),1500,450,0,0,FLAG
+UT,conus_b1_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+UT,conus_b1_gompit,T3,T3 Reineke slope (trajectory OLS),119,62,1356,25,FLAG
+UT,conus_b1_gompit,T4,T4 peak SDI / SDImax,1500,0,0,0,PASS
+UT,conus_b1_gompit,T4,T4 max BA vs observed p99,1500,66,0,0,MINOR
+UT,conus_b1_gompit,T4,T4 max BA vs observed p99.9,1500,23,0,0,MINOR
+WC,conus_b1,T0,T0 initial-step shock,1500,19,0,0,MINOR
+WC,conus_b1,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+WC,conus_b1,T1,T1 monotone QMD,1152,522,0,348,FLAG
+WC,conus_b1,T9,T9 BA inversions (>10% step drop),1500,637,0,0,FLAG
+WC,conus_b1,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+WC,conus_b1,T3,T3 Reineke slope (trajectory OLS),935,342,518,47,FLAG
+WC,conus_b1,T4,T4 peak SDI / SDImax,1500,145,0,0,MINOR
+WC,conus_b1,T4,T4 max BA vs observed p99,1500,552,0,0,FLAG
+WC,conus_b1,T4,T4 max BA vs observed p99.9,1500,352,0,0,FLAG
+WC,conus_b2,T0,T0 initial-step shock,1500,16,0,0,MINOR
+WC,conus_b2,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+WC,conus_b2,T1,T1 monotone QMD,1107,571,0,393,FLAG
+WC,conus_b2,T9,T9 BA inversions (>10% step drop),1500,754,0,0,FLAG
+WC,conus_b2,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+WC,conus_b2,T3,T3 Reineke slope (trajectory OLS),802,332,621,77,FLAG
+WC,conus_b2,T4,T4 peak SDI / SDImax,1500,63,0,0,MINOR
+WC,conus_b2,T4,T4 max BA vs observed p99,1500,285,0,0,FLAG
+WC,conus_b2,T4,T4 max BA vs observed p99.9,1500,142,0,0,MINOR
+WC,conus_b2_gompit,T0,T0 initial-step shock,1500,21,0,0,MINOR
+WC,conus_b2_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+WC,conus_b2_gompit,T1,T1 monotone QMD,1002,678,0,498,FLAG
+WC,conus_b2_gompit,T9,T9 BA inversions (>10% step drop),1500,1012,0,0,FLAG
+WC,conus_b2_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+WC,conus_b2_gompit,T3,T3 Reineke slope (trajectory OLS),732,264,720,48,FLAG
+WC,conus_b2_gompit,T4,T4 peak SDI / SDImax,1500,38,0,0,MINOR
+WC,conus_b2_gompit,T4,T4 max BA vs observed p99,1500,163,0,0,FLAG
+WC,conus_b2_gompit,T4,T4 max BA vs observed p99.9,1500,73,0,0,MINOR
+WC,conus_b1_gompit,T0,T0 initial-step shock,1500,25,0,0,MINOR
+WC,conus_b1_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+WC,conus_b1_gompit,T1,T1 monotone QMD,1062,685,0,438,FLAG
+WC,conus_b1_gompit,T9,T9 BA inversions (>10% step drop),1500,929,0,0,FLAG
+WC,conus_b1_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+WC,conus_b1_gompit,T3,T3 Reineke slope (trajectory OLS),892,234,586,22,FLAG
+WC,conus_b1_gompit,T4,T4 peak SDI / SDImax,1500,67,0,0,MINOR
+WC,conus_b1_gompit,T4,T4 max BA vs observed p99,1500,313,0,0,FLAG
+WC,conus_b1_gompit,T4,T4 max BA vs observed p99.9,1500,146,0,0,MINOR
+WS,conus_b1,T0,T0 initial-step shock,1500,25,0,0,MINOR
+WS,conus_b1,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+WS,conus_b1,T1,T1 monotone QMD,885,369,0,615,FLAG
+WS,conus_b1,T9,T9 BA inversions (>10% step drop),1500,740,0,0,FLAG
+WS,conus_b1,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+WS,conus_b1,T3,T3 Reineke slope (trajectory OLS),382,130,1101,17,FLAG
+WS,conus_b1,T4,T4 peak SDI / SDImax,1500,22,0,0,MINOR
+WS,conus_b1,T4,T4 max BA vs observed p99,1500,186,0,0,FLAG
+WS,conus_b1,T4,T4 max BA vs observed p99.9,1500,50,0,0,MINOR
+WS,conus_b2,T0,T0 initial-step shock,1500,21,0,0,MINOR
+WS,conus_b2,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+WS,conus_b2,T1,T1 monotone QMD,835,361,0,665,FLAG
+WS,conus_b2,T9,T9 BA inversions (>10% step drop),1500,837,0,0,FLAG
+WS,conus_b2,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+WS,conus_b2,T3,T3 Reineke slope (trajectory OLS),303,110,1177,20,FLAG
+WS,conus_b2,T4,T4 peak SDI / SDImax,1500,9,0,0,MINOR
+WS,conus_b2,T4,T4 max BA vs observed p99,1500,89,0,0,MINOR
+WS,conus_b2,T4,T4 max BA vs observed p99.9,1500,20,0,0,MINOR
+WS,conus_b2_gompit,T0,T0 initial-step shock,1500,28,0,0,MINOR
+WS,conus_b2_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+WS,conus_b2_gompit,T1,T1 monotone QMD,730,515,0,770,FLAG
+WS,conus_b2_gompit,T9,T9 BA inversions (>10% step drop),1500,1095,0,0,FLAG
+WS,conus_b2_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+WS,conus_b2_gompit,T3,T3 Reineke slope (trajectory OLS),258,94,1231,11,FLAG
+WS,conus_b2_gompit,T4,T4 peak SDI / SDImax,1500,6,0,0,MINOR
+WS,conus_b2_gompit,T4,T4 max BA vs observed p99,1500,62,0,0,MINOR
+WS,conus_b2_gompit,T4,T4 max BA vs observed p99.9,1500,18,0,0,MINOR
+WS,conus_b1_gompit,T0,T0 initial-step shock,1500,19,0,0,MINOR
+WS,conus_b1_gompit,T1,T1 monotone HT_dom,0,0,0,1500,NOT EVALUATED
+WS,conus_b1_gompit,T1,T1 monotone QMD,780,502,0,720,FLAG
+WS,conus_b1_gompit,T9,T9 BA inversions (>10% step drop),1500,951,0,0,FLAG
+WS,conus_b1_gompit,T9,T9 VOL inversions (>10% step drop),0,0,0,1500,NOT EVALUATED
+WS,conus_b1_gompit,T3,T3 Reineke slope (trajectory OLS),304,80,1191,5,FLAG
+WS,conus_b1_gompit,T4,T4 peak SDI / SDImax,1500,11,0,0,MINOR
+WS,conus_b1_gompit,T4,T4 max BA vs observed p99,1500,105,0,0,MINOR
+WS,conus_b1_gompit,T4,T4 max BA vs observed p99.9,1500,13,0,0,MINOR
+ACD,calibrated_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+ACD,calibrated_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+ACD,calibrated_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+ACD,calibrated_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+ACD,calibrated_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+ACD,calibrated_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+ACD,calibrated_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+BM,calibrated_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+BM,calibrated_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+BM,calibrated_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+BM,calibrated_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+BM,calibrated_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+BM,calibrated_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+BM,calibrated_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CA,calibrated_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+CA,calibrated_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+CA,calibrated_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+CA,calibrated_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+CA,calibrated_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+CA,calibrated_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CA,calibrated_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CI,calibrated_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+CI,calibrated_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+CI,calibrated_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+CI,calibrated_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+CI,calibrated_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+CI,calibrated_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CI,calibrated_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CR,calibrated_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+CR,calibrated_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+CR,calibrated_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+CR,calibrated_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,0,0,0,PASS
+CR,calibrated_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+CR,calibrated_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CR,calibrated_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CS,calibrated_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+CS,calibrated_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+CS,calibrated_gompit,T5,T5 Eichhorn VOL~HT site independence,1,0,0,0,PASS
+CS,calibrated_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,0,0,0,PASS
+CS,calibrated_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+CS,calibrated_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CS,calibrated_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+EC,calibrated_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+EC,calibrated_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+EC,calibrated_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+EC,calibrated_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+EC,calibrated_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+EC,calibrated_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+EC,calibrated_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+EM,calibrated_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+EM,calibrated_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+EM,calibrated_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+EM,calibrated_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+EM,calibrated_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+EM,calibrated_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+EM,calibrated_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+IE,calibrated_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+IE,calibrated_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+IE,calibrated_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+IE,calibrated_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+IE,calibrated_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+IE,calibrated_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+IE,calibrated_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+LS,calibrated_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+LS,calibrated_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+LS,calibrated_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+LS,calibrated_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+LS,calibrated_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+LS,calibrated_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+LS,calibrated_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+NE,calibrated_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+NE,calibrated_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+NE,calibrated_gompit,T5,T5 Eichhorn VOL~HT site independence,1,0,0,0,PASS
+NE,calibrated_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+NE,calibrated_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+NE,calibrated_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+NE,calibrated_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+PN,calibrated_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+PN,calibrated_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+PN,calibrated_gompit,T5,T5 Eichhorn VOL~HT site independence,1,0,0,0,PASS
+PN,calibrated_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,0,0,0,PASS
+PN,calibrated_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+PN,calibrated_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+PN,calibrated_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+SN,calibrated_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+SN,calibrated_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+SN,calibrated_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+SN,calibrated_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+SN,calibrated_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+SN,calibrated_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+SN,calibrated_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+SO,calibrated_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+SO,calibrated_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+SO,calibrated_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+SO,calibrated_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,0,0,0,PASS
+SO,calibrated_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+SO,calibrated_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+SO,calibrated_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+TT,calibrated_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+TT,calibrated_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+TT,calibrated_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+TT,calibrated_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+TT,calibrated_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+TT,calibrated_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+TT,calibrated_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+UT,calibrated_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+UT,calibrated_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+UT,calibrated_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+UT,calibrated_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+UT,calibrated_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+UT,calibrated_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+UT,calibrated_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+WC,calibrated_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+WC,calibrated_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+WC,calibrated_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+WC,calibrated_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+WC,calibrated_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+WC,calibrated_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+WC,calibrated_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+WS,calibrated_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+WS,calibrated_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+WS,calibrated_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+WS,calibrated_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+WS,calibrated_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+WS,calibrated_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+WS,calibrated_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+ACD,calibrated_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+ACD,calibrated_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+ACD,calibrated_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+ACD,calibrated_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+ACD,calibrated_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+ACD,calibrated_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+ACD,calibrated_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+BM,calibrated_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+BM,calibrated_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+BM,calibrated_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+BM,calibrated_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+BM,calibrated_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+BM,calibrated_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+BM,calibrated_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CA,calibrated_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+CA,calibrated_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+CA,calibrated_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+CA,calibrated_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+CA,calibrated_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+CA,calibrated_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CA,calibrated_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CI,calibrated_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+CI,calibrated_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+CI,calibrated_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+CI,calibrated_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+CI,calibrated_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+CI,calibrated_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CI,calibrated_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CR,calibrated_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+CR,calibrated_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+CR,calibrated_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+CR,calibrated_native,T6,T6 Sukachev per-tree VOL falls with density,1,0,0,0,PASS
+CR,calibrated_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+CR,calibrated_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CR,calibrated_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CS,calibrated_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+CS,calibrated_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+CS,calibrated_native,T5,T5 Eichhorn VOL~HT site independence,1,0,0,0,PASS
+CS,calibrated_native,T6,T6 Sukachev per-tree VOL falls with density,1,0,0,0,PASS
+CS,calibrated_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+CS,calibrated_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CS,calibrated_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+EC,calibrated_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+EC,calibrated_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+EC,calibrated_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+EC,calibrated_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+EC,calibrated_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+EC,calibrated_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+EC,calibrated_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+EM,calibrated_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+EM,calibrated_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+EM,calibrated_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+EM,calibrated_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+EM,calibrated_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+EM,calibrated_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+EM,calibrated_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+IE,calibrated_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+IE,calibrated_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+IE,calibrated_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+IE,calibrated_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+IE,calibrated_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+IE,calibrated_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+IE,calibrated_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+LS,calibrated_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+LS,calibrated_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+LS,calibrated_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+LS,calibrated_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+LS,calibrated_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+LS,calibrated_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+LS,calibrated_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+NE,calibrated_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+NE,calibrated_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+NE,calibrated_native,T5,T5 Eichhorn VOL~HT site independence,1,0,0,0,PASS
+NE,calibrated_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+NE,calibrated_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+NE,calibrated_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+NE,calibrated_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+PN,calibrated_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+PN,calibrated_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+PN,calibrated_native,T5,T5 Eichhorn VOL~HT site independence,1,0,0,0,PASS
+PN,calibrated_native,T6,T6 Sukachev per-tree VOL falls with density,1,0,0,0,PASS
+PN,calibrated_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+PN,calibrated_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+PN,calibrated_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+SN,calibrated_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+SN,calibrated_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+SN,calibrated_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+SN,calibrated_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+SN,calibrated_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+SN,calibrated_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+SN,calibrated_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+SO,calibrated_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+SO,calibrated_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+SO,calibrated_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+SO,calibrated_native,T6,T6 Sukachev per-tree VOL falls with density,1,0,0,0,PASS
+SO,calibrated_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+SO,calibrated_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+SO,calibrated_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+TT,calibrated_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+TT,calibrated_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+TT,calibrated_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+TT,calibrated_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+TT,calibrated_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+TT,calibrated_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+TT,calibrated_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+UT,calibrated_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+UT,calibrated_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+UT,calibrated_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+UT,calibrated_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+UT,calibrated_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+UT,calibrated_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+UT,calibrated_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+WC,calibrated_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+WC,calibrated_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+WC,calibrated_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+WC,calibrated_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+WC,calibrated_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+WC,calibrated_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+WC,calibrated_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+WS,calibrated_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+WS,calibrated_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+WS,calibrated_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+WS,calibrated_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+WS,calibrated_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+WS,calibrated_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+WS,calibrated_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+AK,conus_b1,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+AK,conus_b1,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+AK,conus_b1,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+AK,conus_b1,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+AK,conus_b1,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+AK,conus_b1,T8,T8 pinned BA plateau,1,0,0,0,PASS
+AK,conus_b1,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+BM,conus_b1,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+BM,conus_b1,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+BM,conus_b1,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+BM,conus_b1,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+BM,conus_b1,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+BM,conus_b1,T8,T8 pinned BA plateau,1,0,0,0,PASS
+BM,conus_b1,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CA,conus_b1,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+CA,conus_b1,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+CA,conus_b1,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+CA,conus_b1,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+CA,conus_b1,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+CA,conus_b1,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CA,conus_b1,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CI,conus_b1,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+CI,conus_b1,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+CI,conus_b1,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+CI,conus_b1,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+CI,conus_b1,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+CI,conus_b1,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CI,conus_b1,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CR,conus_b1,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+CR,conus_b1,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+CR,conus_b1,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+CR,conus_b1,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+CR,conus_b1,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+CR,conus_b1,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CR,conus_b1,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CS,conus_b1,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+CS,conus_b1,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+CS,conus_b1,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+CS,conus_b1,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+CS,conus_b1,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+CS,conus_b1,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CS,conus_b1,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+EC,conus_b1,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+EC,conus_b1,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+EC,conus_b1,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+EC,conus_b1,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+EC,conus_b1,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+EC,conus_b1,T8,T8 pinned BA plateau,1,0,0,0,PASS
+EC,conus_b1,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+EM,conus_b1,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+EM,conus_b1,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+EM,conus_b1,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+EM,conus_b1,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+EM,conus_b1,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+EM,conus_b1,T8,T8 pinned BA plateau,1,0,0,0,PASS
+EM,conus_b1,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+IE,conus_b1,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+IE,conus_b1,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+IE,conus_b1,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+IE,conus_b1,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+IE,conus_b1,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+IE,conus_b1,T8,T8 pinned BA plateau,1,0,0,0,PASS
+IE,conus_b1,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+LS,conus_b1,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+LS,conus_b1,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+LS,conus_b1,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+LS,conus_b1,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+LS,conus_b1,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+LS,conus_b1,T8,T8 pinned BA plateau,1,0,0,0,PASS
+LS,conus_b1,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+NC,conus_b1,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+NC,conus_b1,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+NC,conus_b1,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+NC,conus_b1,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+NC,conus_b1,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+NC,conus_b1,T8,T8 pinned BA plateau,1,0,0,0,PASS
+NC,conus_b1,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+NE,conus_b1,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+NE,conus_b1,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+NE,conus_b1,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+NE,conus_b1,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+NE,conus_b1,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+NE,conus_b1,T8,T8 pinned BA plateau,1,0,0,0,PASS
+NE,conus_b1,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+PN,conus_b1,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+PN,conus_b1,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+PN,conus_b1,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+PN,conus_b1,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+PN,conus_b1,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+PN,conus_b1,T8,T8 pinned BA plateau,1,0,0,0,PASS
+PN,conus_b1,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+SN,conus_b1,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+SN,conus_b1,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+SN,conus_b1,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+SN,conus_b1,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+SN,conus_b1,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+SN,conus_b1,T8,T8 pinned BA plateau,1,0,0,0,PASS
+SN,conus_b1,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+SO,conus_b1,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+SO,conus_b1,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+SO,conus_b1,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+SO,conus_b1,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+SO,conus_b1,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+SO,conus_b1,T8,T8 pinned BA plateau,1,0,0,0,PASS
+SO,conus_b1,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+TT,conus_b1,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+TT,conus_b1,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+TT,conus_b1,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+TT,conus_b1,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+TT,conus_b1,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+TT,conus_b1,T8,T8 pinned BA plateau,1,0,0,0,PASS
+TT,conus_b1,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+UT,conus_b1,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+UT,conus_b1,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+UT,conus_b1,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+UT,conus_b1,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+UT,conus_b1,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+UT,conus_b1,T8,T8 pinned BA plateau,1,0,0,0,PASS
+UT,conus_b1,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+WC,conus_b1,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+WC,conus_b1,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+WC,conus_b1,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+WC,conus_b1,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+WC,conus_b1,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+WC,conus_b1,T8,T8 pinned BA plateau,1,0,0,0,PASS
+WC,conus_b1,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+WS,conus_b1,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+WS,conus_b1,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+WS,conus_b1,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+WS,conus_b1,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+WS,conus_b1,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+WS,conus_b1,T8,T8 pinned BA plateau,1,0,0,0,PASS
+WS,conus_b1,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+AK,conus_b1_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+AK,conus_b1_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+AK,conus_b1_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+AK,conus_b1_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+AK,conus_b1_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+AK,conus_b1_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+AK,conus_b1_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,1,0,0,FLAG (all)
+BM,conus_b1_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+BM,conus_b1_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+BM,conus_b1_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+BM,conus_b1_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+BM,conus_b1_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+BM,conus_b1_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+BM,conus_b1_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CA,conus_b1_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+CA,conus_b1_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+CA,conus_b1_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+CA,conus_b1_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+CA,conus_b1_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+CA,conus_b1_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CA,conus_b1_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CI,conus_b1_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+CI,conus_b1_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+CI,conus_b1_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+CI,conus_b1_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+CI,conus_b1_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+CI,conus_b1_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CI,conus_b1_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CR,conus_b1_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+CR,conus_b1_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+CR,conus_b1_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+CR,conus_b1_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+CR,conus_b1_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+CR,conus_b1_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CR,conus_b1_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CS,conus_b1_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+CS,conus_b1_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+CS,conus_b1_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+CS,conus_b1_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+CS,conus_b1_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+CS,conus_b1_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CS,conus_b1_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+EC,conus_b1_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+EC,conus_b1_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+EC,conus_b1_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+EC,conus_b1_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+EC,conus_b1_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+EC,conus_b1_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+EC,conus_b1_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+EM,conus_b1_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+EM,conus_b1_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+EM,conus_b1_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+EM,conus_b1_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+EM,conus_b1_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+EM,conus_b1_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+EM,conus_b1_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+IE,conus_b1_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+IE,conus_b1_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+IE,conus_b1_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+IE,conus_b1_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+IE,conus_b1_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+IE,conus_b1_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+IE,conus_b1_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+LS,conus_b1_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+LS,conus_b1_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+LS,conus_b1_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+LS,conus_b1_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+LS,conus_b1_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+LS,conus_b1_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+LS,conus_b1_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+NC,conus_b1_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+NC,conus_b1_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+NC,conus_b1_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+NC,conus_b1_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+NC,conus_b1_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+NC,conus_b1_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+NC,conus_b1_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,1,0,0,FLAG (all)
+PN,conus_b1_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+PN,conus_b1_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+PN,conus_b1_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+PN,conus_b1_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+PN,conus_b1_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+PN,conus_b1_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+PN,conus_b1_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+SO,conus_b1_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+SO,conus_b1_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+SO,conus_b1_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+SO,conus_b1_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+SO,conus_b1_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+SO,conus_b1_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+SO,conus_b1_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+TT,conus_b1_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+TT,conus_b1_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+TT,conus_b1_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+TT,conus_b1_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+TT,conus_b1_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+TT,conus_b1_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+TT,conus_b1_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+UT,conus_b1_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+UT,conus_b1_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+UT,conus_b1_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+UT,conus_b1_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+UT,conus_b1_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+UT,conus_b1_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+UT,conus_b1_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+WC,conus_b1_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+WC,conus_b1_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+WC,conus_b1_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+WC,conus_b1_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+WC,conus_b1_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+WC,conus_b1_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+WC,conus_b1_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+WS,conus_b1_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+WS,conus_b1_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+WS,conus_b1_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+WS,conus_b1_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+WS,conus_b1_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+WS,conus_b1_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+WS,conus_b1_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+AK,conus_b2,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+AK,conus_b2,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+AK,conus_b2,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+AK,conus_b2,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+AK,conus_b2,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+AK,conus_b2,T8,T8 pinned BA plateau,1,0,0,0,PASS
+AK,conus_b2,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,1,0,0,FLAG (all)
+BM,conus_b2,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+BM,conus_b2,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+BM,conus_b2,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+BM,conus_b2,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+BM,conus_b2,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+BM,conus_b2,T8,T8 pinned BA plateau,1,0,0,0,PASS
+BM,conus_b2,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CA,conus_b2,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+CA,conus_b2,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+CA,conus_b2,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+CA,conus_b2,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+CA,conus_b2,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+CA,conus_b2,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CA,conus_b2,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CI,conus_b2,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+CI,conus_b2,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+CI,conus_b2,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+CI,conus_b2,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+CI,conus_b2,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+CI,conus_b2,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CI,conus_b2,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CR,conus_b2,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+CR,conus_b2,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+CR,conus_b2,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+CR,conus_b2,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+CR,conus_b2,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+CR,conus_b2,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CR,conus_b2,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CS,conus_b2,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+CS,conus_b2,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+CS,conus_b2,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+CS,conus_b2,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+CS,conus_b2,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+CS,conus_b2,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CS,conus_b2,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+EC,conus_b2,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+EC,conus_b2,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+EC,conus_b2,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+EC,conus_b2,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+EC,conus_b2,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+EC,conus_b2,T8,T8 pinned BA plateau,1,0,0,0,PASS
+EC,conus_b2,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+EM,conus_b2,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+EM,conus_b2,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+EM,conus_b2,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+EM,conus_b2,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+EM,conus_b2,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+EM,conus_b2,T8,T8 pinned BA plateau,1,0,0,0,PASS
+EM,conus_b2,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+IE,conus_b2,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+IE,conus_b2,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+IE,conus_b2,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+IE,conus_b2,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+IE,conus_b2,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+IE,conus_b2,T8,T8 pinned BA plateau,1,0,0,0,PASS
+IE,conus_b2,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+LS,conus_b2,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+LS,conus_b2,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+LS,conus_b2,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+LS,conus_b2,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+LS,conus_b2,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+LS,conus_b2,T8,T8 pinned BA plateau,1,0,0,0,PASS
+LS,conus_b2,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+NC,conus_b2,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+NC,conus_b2,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+NC,conus_b2,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+NC,conus_b2,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+NC,conus_b2,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+NC,conus_b2,T8,T8 pinned BA plateau,1,0,0,0,PASS
+NC,conus_b2,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+NE,conus_b2,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+NE,conus_b2,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+NE,conus_b2,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+NE,conus_b2,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+NE,conus_b2,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+NE,conus_b2,T8,T8 pinned BA plateau,1,0,0,0,PASS
+NE,conus_b2,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+PN,conus_b2,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+PN,conus_b2,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+PN,conus_b2,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+PN,conus_b2,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+PN,conus_b2,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+PN,conus_b2,T8,T8 pinned BA plateau,1,0,0,0,PASS
+PN,conus_b2,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+SN,conus_b2,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+SN,conus_b2,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+SN,conus_b2,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+SN,conus_b2,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+SN,conus_b2,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+SN,conus_b2,T8,T8 pinned BA plateau,1,0,0,0,PASS
+SN,conus_b2,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+SO,conus_b2,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+SO,conus_b2,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+SO,conus_b2,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+SO,conus_b2,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+SO,conus_b2,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+SO,conus_b2,T8,T8 pinned BA plateau,1,0,0,0,PASS
+SO,conus_b2,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+TT,conus_b2,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+TT,conus_b2,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+TT,conus_b2,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+TT,conus_b2,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+TT,conus_b2,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+TT,conus_b2,T8,T8 pinned BA plateau,1,0,0,0,PASS
+TT,conus_b2,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+UT,conus_b2,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+UT,conus_b2,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+UT,conus_b2,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+UT,conus_b2,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+UT,conus_b2,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+UT,conus_b2,T8,T8 pinned BA plateau,1,0,0,0,PASS
+UT,conus_b2,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+WC,conus_b2,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+WC,conus_b2,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+WC,conus_b2,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+WC,conus_b2,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+WC,conus_b2,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+WC,conus_b2,T8,T8 pinned BA plateau,1,0,0,0,PASS
+WC,conus_b2,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+WS,conus_b2,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+WS,conus_b2,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+WS,conus_b2,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+WS,conus_b2,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+WS,conus_b2,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+WS,conus_b2,T8,T8 pinned BA plateau,1,0,0,0,PASS
+WS,conus_b2,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+AK,conus_b2_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+AK,conus_b2_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+AK,conus_b2_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+AK,conus_b2_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+AK,conus_b2_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+AK,conus_b2_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+AK,conus_b2_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,1,0,0,FLAG (all)
+BM,conus_b2_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+BM,conus_b2_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+BM,conus_b2_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+BM,conus_b2_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+BM,conus_b2_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+BM,conus_b2_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+BM,conus_b2_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CA,conus_b2_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+CA,conus_b2_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+CA,conus_b2_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+CA,conus_b2_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+CA,conus_b2_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+CA,conus_b2_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CA,conus_b2_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CI,conus_b2_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+CI,conus_b2_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+CI,conus_b2_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+CI,conus_b2_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+CI,conus_b2_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+CI,conus_b2_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CI,conus_b2_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CR,conus_b2_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+CR,conus_b2_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+CR,conus_b2_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+CR,conus_b2_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+CR,conus_b2_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+CR,conus_b2_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CR,conus_b2_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CS,conus_b2_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+CS,conus_b2_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+CS,conus_b2_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+CS,conus_b2_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+CS,conus_b2_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+CS,conus_b2_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CS,conus_b2_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+EC,conus_b2_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+EC,conus_b2_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+EC,conus_b2_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+EC,conus_b2_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+EC,conus_b2_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+EC,conus_b2_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+EC,conus_b2_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+EM,conus_b2_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+EM,conus_b2_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+EM,conus_b2_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+EM,conus_b2_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+EM,conus_b2_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+EM,conus_b2_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+EM,conus_b2_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+IE,conus_b2_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+IE,conus_b2_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+IE,conus_b2_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+IE,conus_b2_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+IE,conus_b2_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+IE,conus_b2_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+IE,conus_b2_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+LS,conus_b2_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+LS,conus_b2_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+LS,conus_b2_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+LS,conus_b2_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+LS,conus_b2_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+LS,conus_b2_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+LS,conus_b2_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+NC,conus_b2_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+NC,conus_b2_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+NC,conus_b2_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+NC,conus_b2_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+NC,conus_b2_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+NC,conus_b2_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+NC,conus_b2_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+NE,conus_b2_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+NE,conus_b2_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+NE,conus_b2_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+NE,conus_b2_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+NE,conus_b2_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+NE,conus_b2_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+NE,conus_b2_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+PN,conus_b2_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+PN,conus_b2_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+PN,conus_b2_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+PN,conus_b2_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+PN,conus_b2_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+PN,conus_b2_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+PN,conus_b2_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+SN,conus_b2_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+SN,conus_b2_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+SN,conus_b2_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+SN,conus_b2_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+SN,conus_b2_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+SN,conus_b2_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+SN,conus_b2_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+SO,conus_b2_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+SO,conus_b2_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+SO,conus_b2_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+SO,conus_b2_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+SO,conus_b2_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+SO,conus_b2_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+SO,conus_b2_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+TT,conus_b2_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+TT,conus_b2_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+TT,conus_b2_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+TT,conus_b2_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+TT,conus_b2_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+TT,conus_b2_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+TT,conus_b2_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+UT,conus_b2_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+UT,conus_b2_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+UT,conus_b2_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+UT,conus_b2_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+UT,conus_b2_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+UT,conus_b2_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+UT,conus_b2_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+WC,conus_b2_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+WC,conus_b2_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+WC,conus_b2_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+WC,conus_b2_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+WC,conus_b2_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+WC,conus_b2_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+WC,conus_b2_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+WS,conus_b2_gompit,T2,T2 site ordering HT,0,0,0,1,NOT EVALUATED
+WS,conus_b2_gompit,T2,T2 site ordering VOL,0,0,0,1,NOT EVALUATED
+WS,conus_b2_gompit,T5,T5 Eichhorn VOL~HT site independence,0,0,0,1,NOT EVALUATED
+WS,conus_b2_gompit,T6,T6 Sukachev per-tree VOL falls with density,0,0,0,1,NOT EVALUATED
+WS,conus_b2_gompit,T7,T7 yield-density final BA vs initial density,0,0,0,1,NOT EVALUATED
+WS,conus_b2_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+WS,conus_b2_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+ACD,default_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+ACD,default_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+ACD,default_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+ACD,default_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+ACD,default_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+ACD,default_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+ACD,default_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+BM,default_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+BM,default_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+BM,default_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+BM,default_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+BM,default_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+BM,default_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+BM,default_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CA,default_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+CA,default_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+CA,default_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+CA,default_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+CA,default_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+CA,default_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CA,default_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CI,default_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+CI,default_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+CI,default_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+CI,default_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+CI,default_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+CI,default_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CI,default_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CR,default_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+CR,default_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+CR,default_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+CR,default_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,0,0,0,PASS
+CR,default_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+CR,default_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CR,default_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CS,default_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+CS,default_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+CS,default_gompit,T5,T5 Eichhorn VOL~HT site independence,1,0,0,0,PASS
+CS,default_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,0,0,0,PASS
+CS,default_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+CS,default_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CS,default_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+EC,default_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+EC,default_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+EC,default_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+EC,default_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+EC,default_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+EC,default_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+EC,default_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+EM,default_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+EM,default_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+EM,default_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+EM,default_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+EM,default_gompit,T7,T7 yield-density final BA vs initial density,1,0,0,0,PASS
+EM,default_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+EM,default_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+IE,default_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+IE,default_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+IE,default_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+IE,default_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+IE,default_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+IE,default_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+IE,default_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+LS,default_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+LS,default_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+LS,default_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+LS,default_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+LS,default_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+LS,default_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+LS,default_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+NE,default_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+NE,default_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+NE,default_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+NE,default_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,0,0,0,PASS
+NE,default_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+NE,default_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+NE,default_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+PN,default_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+PN,default_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+PN,default_gompit,T5,T5 Eichhorn VOL~HT site independence,1,0,0,0,PASS
+PN,default_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,0,0,0,PASS
+PN,default_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+PN,default_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+PN,default_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+SN,default_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+SN,default_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+SN,default_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+SN,default_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+SN,default_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+SN,default_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+SN,default_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+SO,default_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+SO,default_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+SO,default_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+SO,default_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,0,0,0,PASS
+SO,default_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+SO,default_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+SO,default_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+TT,default_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+TT,default_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+TT,default_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+TT,default_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+TT,default_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+TT,default_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+TT,default_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+UT,default_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+UT,default_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+UT,default_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+UT,default_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+UT,default_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+UT,default_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+UT,default_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+WC,default_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+WC,default_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+WC,default_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+WC,default_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+WC,default_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+WC,default_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+WC,default_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+WS,default_gompit,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+WS,default_gompit,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+WS,default_gompit,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+WS,default_gompit,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+WS,default_gompit,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+WS,default_gompit,T8,T8 pinned BA plateau,1,0,0,0,PASS
+WS,default_gompit,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+ACD,default_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+ACD,default_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+ACD,default_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+ACD,default_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+ACD,default_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+ACD,default_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+ACD,default_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+BM,default_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+BM,default_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+BM,default_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+BM,default_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+BM,default_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+BM,default_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+BM,default_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CA,default_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+CA,default_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+CA,default_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+CA,default_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+CA,default_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+CA,default_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CA,default_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CI,default_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+CI,default_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+CI,default_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+CI,default_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+CI,default_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+CI,default_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CI,default_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CR,default_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+CR,default_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+CR,default_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+CR,default_native,T6,T6 Sukachev per-tree VOL falls with density,1,0,0,0,PASS
+CR,default_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+CR,default_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CR,default_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+CS,default_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+CS,default_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+CS,default_native,T5,T5 Eichhorn VOL~HT site independence,1,0,0,0,PASS
+CS,default_native,T6,T6 Sukachev per-tree VOL falls with density,1,0,0,0,PASS
+CS,default_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+CS,default_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+CS,default_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+EC,default_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+EC,default_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+EC,default_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+EC,default_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+EC,default_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+EC,default_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+EC,default_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+EM,default_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+EM,default_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+EM,default_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+EM,default_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+EM,default_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+EM,default_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+EM,default_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+IE,default_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+IE,default_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+IE,default_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+IE,default_native,T6,T6 Sukachev per-tree VOL falls with density,1,0,0,0,PASS
+IE,default_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+IE,default_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+IE,default_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+LS,default_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+LS,default_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+LS,default_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+LS,default_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+LS,default_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+LS,default_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+LS,default_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+NE,default_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+NE,default_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+NE,default_native,T5,T5 Eichhorn VOL~HT site independence,1,0,0,0,PASS
+NE,default_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+NE,default_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+NE,default_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+NE,default_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+PN,default_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+PN,default_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+PN,default_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+PN,default_native,T6,T6 Sukachev per-tree VOL falls with density,1,0,0,0,PASS
+PN,default_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+PN,default_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+PN,default_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+SN,default_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+SN,default_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+SN,default_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+SN,default_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+SN,default_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+SN,default_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+SN,default_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+SO,default_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+SO,default_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+SO,default_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+SO,default_native,T6,T6 Sukachev per-tree VOL falls with density,1,0,0,0,PASS
+SO,default_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+SO,default_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+SO,default_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+TT,default_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+TT,default_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+TT,default_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+TT,default_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+TT,default_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+TT,default_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+TT,default_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+UT,default_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+UT,default_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+UT,default_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+UT,default_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+UT,default_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+UT,default_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+UT,default_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+WC,default_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+WC,default_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+WC,default_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+WC,default_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+WC,default_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+WC,default_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+WC,default_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS
+WS,default_native,T2,T2 site ordering HT,1,1,0,0,FLAG (all)
+WS,default_native,T2,T2 site ordering VOL,1,1,0,0,FLAG (all)
+WS,default_native,T5,T5 Eichhorn VOL~HT site independence,1,1,0,0,FLAG (all)
+WS,default_native,T6,T6 Sukachev per-tree VOL falls with density,1,1,0,0,FLAG (all)
+WS,default_native,T7,T7 yield-density final BA vs initial density,1,1,0,0,FLAG (all)
+WS,default_native,T8,T8 pinned BA plateau,1,0,0,0,PASS
+WS,default_native,T3b,"T3b frontier slope (rq tau 0.95, pooled limb)",1,0,0,0,PASS

@@ -452,7 +452,9 @@ condition pairs whose initial site index and live basal area fell
 within the cell's bins from the variant's state coverage (Connecticut,
 Maine, Massachusetts, New Hampshire, New York, Rhode Island, and
 Vermont for NE; Maine, New Hampshire, Vermont for ACD), pulled the
-matching tree records from the FIA TREE table, and converted them to
+live tree records of the sampled condition (matched on plot and
+condition) from the FIA TREE table, expanded them to the condition
+acre by dividing TPA_UNADJ by CONDPROP_UNADJ, and converted them to
 the FVS standinit and treeinit format with a fixed canonical
 inventory year of 2000 so that all sampled plots project from the
 same calendar baseline. The synthetic algorithmic stand generator
@@ -478,11 +480,19 @@ Four biological laws were evaluated at year 100:
    snapshots; reported as a design element pending implementation in
    the runner).
 
-The posterior ensemble was summarized at each year into a median and
-95 percent credible band, and the three configurations were compared
-by (i) trajectory overlap, (ii) year 100 basal area divergence as
-percent of default, and (iii) fraction of scenario pairs satisfying
-each Bakuzis law.
+Each posterior draw enters FVS as its own keyword block (per species
+maximum stand density index, diameter growth and mortality
+multipliers) written with the same fixed field formatter as the MAP
+block and derived on the same basis as the MAP multipliers, so the
+draws are centred on MAP. The posterior ensemble was summarized two
+ways that are kept apart: a within-stand parameter band (the 95
+percent band of each stand's 100 draws, as percent of its posterior
+median, then the median across the cell's stands) and the
+between-stand spread (the range of the five stands' MAP values in a
+cell, as percent of their median). The three configurations were
+compared by (i) trajectory overlap, (ii) year 100 basal area
+divergence as percent of default, and (iii) fraction of scenario
+pairs satisfying each Bakuzis law.
 
 Two checks guard the design. A year 0 gate compares each sampled
 stand's engine basal area at the start of the projection against its
@@ -491,7 +501,8 @@ a density class that does not reach the engine is detected rather
 than scored; FIA live tree records with a null expansion factor
 (TPA_UNADJ), which carry no area expansion and contribute nothing to
 the FIA live basal area, are dropped by the stand generator before
-the tree list is written. The default and calibrated MAP trajectories
+the tree list is written, so each stand enters the engine at its
+condition's live basal area. The default and calibrated MAP trajectories
 are then scored with a versioned Bakuzis scorer (fvs-modern
 `validation/bakuzis_stress_v2`) that reports, for each relation, the
 number of trajectories on which it was evaluated alongside the number
@@ -770,112 +781,144 @@ SLURM array of six tasks running both the Northeast (NE) and
 Acadian (ACD) variants, with five real FIA stands per cell in all 36
 cells of both variants and 100 posterior draws per stand in addition
 to the default and calibrated MAP configurations. The density axis
-reaches the engine: median year 0 basal area is 73 to 78, 118 to 123
-and 161 to 165 ft² ac⁻¹ for the 60, 120 and 180 ft² ac⁻¹ classes, and
-295 of the 360 sampled stands (82 percent) enter inside their
-selection bin, most misses being High cells seeding below
-150 ft² ac⁻¹ (31 of 65). An earlier version of this ensemble had
-been seeded with an expansion factor defect that left every cell
-nearly empty; the version reported here also drops FIA records with
-a null expansion factor, which affected 9 of the 360 stand draws and
-left every scorecard count unchanged.
+reaches the engine: median year 0 basal area is 73.5 to 77.5, 122.5
+to 126.5 and 176.5 to 183.0 ft² ac⁻¹ for the 60, 120 and
+180 ft² ac⁻¹ classes, and 358 of the 360 sampled stands enter inside
+their selection bin (one NE High stand at 148 ft² ac⁻¹ and one ACD
+Low stand at 91 ft² ac⁻¹ fall just outside). The stand generator
+keeps only the trees of the sampled FIA condition and expands them
+by 1/CONDPROP_UNADJ, so each stand enters at its condition's live
+basal area. An earlier version of this ensemble matched trees to the
+plot rather than the condition, which on 125 multi-condition stands
+added a neighbouring condition's trees or left a partial condition
+under-stocked. That version also wrote the posterior draws with a
+keyword layout that FVS read as one maximum stand density index for
+every species, overwrote each draw's maximum with the MAP value
+during the run, and derived the draw multipliers on a different basis
+from the MAP set. The ensemble reported here was rerun with all of
+these corrected.
 
-![Figure 8. Bakuzis matrix 100 year BA trajectories for the Northeast variant on real FIA stands sampled by site index and basal area band. Rows are site classes (Low, Medium, High), columns species groups (Spruce Fir, Northern Hardwood, Pine, Oak Pine), one line per density class. The dashed gray line is the default parameter trajectory; the orange line is the calibrated posterior median (MAP); the green ribbon is the 95 percent posterior credible band pooled across 100 draws and 5 FIA replicates per cell.](../calibration/output/comparisons/manuscript_figures/fig_bakuzis_trajectories.png){width=6.5in}
+![Figure 8. Bakuzis matrix 100 year BA trajectories for the Northeast variant on real FIA stands sampled by site index and basal area band. Rows are site classes (Low, Medium, High), columns species groups (Spruce Fir, Northern Hardwood, Pine, Oak Pine), one line per density class. The dashed gray line is the default parameter trajectory; the orange line is the calibrated MAP; the green line and ribbon are the posterior median and the within-stand 95 percent parameter band (each stand's band over its 100 draws, median over the cell's five FIA stands). Stand to stand spread is not in the ribbon; the range of the five stands' MAP values is 42.8 percent of their median at year 100 (median over cells).](../calibration/output/comparisons/manuscript_figures/fig_bakuzis_trajectories.png){width=6.5in}
 
 Figure 8 shows the NE trajectories. On the relations that a real
-stand design can test cleanly, both configurations behave. No
+stand design can test cleanly, both configurations mostly behave. No
 trajectory crosses the stand density index ceiling of the FIA
 fitting data, and the cell median basal area never exceeds
-64.5 m² ha⁻¹ (NE default) over 100 years. Against the NE thresholds
+66.8 m² ha⁻¹ (NE default) over 100 years. Against the NE thresholds
 (basal area 99th percentile 51.3 m² ha⁻¹, 99.9th 62.7 m² ha⁻¹), the
 cell maximum exceeds the 99th percentile in 16 of 36 cells under
-default parameters and 5 under the calibrated MAP, and the 99.9th
-percentile in 3 and 1; in ACD it exceeds the 99th percentile in 12
+default parameters and 7 under the calibrated MAP, and the 99.9th
+percentile in 4 and 1. In ACD it exceeds the 99th percentile in 13
 of 36 cells under both configurations and the 99.9th in none. Of the
-144 default and MAP trajectories, 96 reach a relative density of
-0.55 and none of them falls outside the Reineke window, and the
-pooled self thinning frontier passes in all four variant by
-configuration arms. Height and quadratic mean diameter rise
-monotonically on all 144 trajectories, basal area plateaus where it
-should, and there are no basal area or volume inversions. The
+144 default and MAP trajectories, 105 reach a relative density of
+0.55, and 3 of them fall outside the Reineke window (2 NE default,
+1 NE MAP). The pooled self thinning frontier passes in all four
+variant by configuration arms. Quadratic mean diameter rises
+monotonically on all 144 trajectories and dominant height on 142
+(one ACD trajectory per configuration flags). Basal area plateaus
+where it should, there are no basal area inversions, and one NE MAP
+trajectory has a volume step drop of more than 10 percent. The
 initial step shock flags one to five High density cells per arm,
 dense real stands thinning from above the frontier in the first
 cycle, which we report rather than excuse. Stems retained at year
-100 under default parameters are a median 22 percent (NE) and 18
+100 under default parameters are a median 22 percent (NE) and 15
 percent (ACD) of year 0.
 
-![Figure 9. Year 100 BA divergence (calibrated posterior median minus default, as percent of default) across the 36 Bakuzis cells for the Northeast variant on real FIA stands. Marker color indicates species group, marker shape indicates site class, and marker size scales with the posterior 95 percent band width.](../calibration/output/comparisons/manuscript_figures/fig_bakuzis_divergence.png){width=6in}
+![Figure 9. Year 100 BA divergence (calibrated posterior median minus default, as percent of default) across the 36 Bakuzis cells for the Northeast variant on real FIA stands. Marker color indicates species group, marker shape indicates site class, and marker size scales with the posterior 95 percent band width pooled over draws and the cell's five stands.](../calibration/output/comparisons/manuscript_figures/fig_bakuzis_divergence.png){width=6in}
 
 Figure 9 summarizes year 100 basal area divergence for NE. The
-calibrated MAP sits below the default in every one of the 36 cells,
-by a median 13.9 percent and at most 21.6 percent (Northern Hardwood,
-Medium site, High density: 181 against 231 ft² ac⁻¹). Read with the magnitude test above, the recalibration
-moves long horizon NE stocking toward the observed envelope (cells
-above the FIA 99th percentile fall from 16 to 5). In ACD the two
-configurations are identical in 34 of 36 cells and differ by at most
-1.1 percent. The national catalog runs on 300 FIA stands per variant
-show the same contrast independently: median year 50 basal area
-under the calibrated configuration is 46.5 against 46.6 m² ha⁻¹ for
-the default in ACD, and 36.3 against 42.6 m² ha⁻¹ (15 percent lower)
-in NE.
+calibrated MAP sits below the default in 34 of the 36 cells. The
+absolute divergence has a median of 14.9 percent and a maximum of
+22.5 percent (Northern Hardwood, Medium site, High density: 179
+against 231 ft² ac⁻¹). Read with the magnitude test above, the
+recalibration moves long horizon NE stocking toward the observed
+envelope (cells above the FIA 99th percentile fall from 16 to 7). In
+ACD the two configurations are identical in 33 of 36 cells and
+differ by at most 1.5 percent. The national catalog runs on 300 FIA
+stands per variant show the same contrast independently. Median year
+50 basal area under the calibrated configuration is 46.5 against
+46.6 m² ha⁻¹ for the default in ACD, and 36.5 against 42.6 m² ha⁻¹
+(14 percent lower) in NE.
 
-![Figure 10. Bakuzis biological law compliance at year 100 for the Acadian (left) and Northeast (right) variants computed on real FIA stands. Three configurations per panel: default parameters, calibrated MAP, and the posterior 95 percent band.](../calibration/output/comparisons/manuscript_figures/fig_bakuzis_laws.png){width=6in}
+![Figure 10. Bakuzis biological law compliance at year 100 for the Acadian (left) and Northeast (right) variants computed on real FIA stands. Three configurations per panel: default parameters, calibrated MAP, and the posterior band; the posterior band fractions are computed on medians pooled over draws and stands.](../calibration/output/comparisons/manuscript_figures/fig_bakuzis_laws.png){width=6in}
 
 Figure 10 reports the four law fractions computed by the aggregator.
 Density driven mortality holds in every scenario pair under every
 configuration in both variants. The site ordering of basal area
-(law 2) holds in none, Sukachev's ordering in 0 (ACD) and 8 percent
-(NE) of pairs under the point configurations and 17 percent under
-the posterior band, and the mortality size pattern is not yet
-computed. The versioned scorer agrees: Eichhorn's rule flags in
-every evaluated species group (3 in ACD, 4 in NE), Sukachev in every
-group, yield against initial density in two (default) and three
-(MAP) of four NE groups but none in ACD, and site ordering of height
-in two of four groups per arm. These are the relations that a design
-built on real stands cannot test cleanly. The cells are FIA
-conditions selected on site index and live basal area bins, so the
-site and density classes also differ in stand age, species mix and
-structure, and a comparison of per tree volume or final basal area
-across them at a matched projection year is confounded by the
-selection. On the synthetic 36 cell Northeast matrix run through
-the same engine build, where species, age and structure are held
-fixed by construction, site ordering and Eichhorn's rule pass in
-every species group under both survival models; Sukachev's ordering
-flags there as well, because by year 100 the stands have converged
-on a common carrying capacity and per tree volume no longer falls
-with initial density, so that test is better read at mid rotation.
-We therefore read the site ordering and Eichhorn flags here as a
-property of the stand design rather than evidence against the
-engine, and we report them as flags rather than claim a pass.
+(law 2) holds in none of the ACD pairs, in none of the NE pairs under
+default parameters, and in 8 percent of the NE pairs under the MAP
+and the posterior band. Sukachev's ordering holds in 0 (ACD) and
+8 percent (NE) of pairs under every configuration. The mortality
+size pattern is not yet computed. The versioned scorer agrees:
+- Eichhorn's rule flags in every evaluated species group (3 in ACD,
+  4 in NE).
+- Sukachev's ordering flags in every group.
+- Yield against initial density flags in three of four NE groups
+  under both configurations and in none in ACD.
+- Site ordering of height flags in two of four groups per arm.
 
-![Figure 11. Posterior uncertainty band width as percent of posterior median against projection horizon, for the Northeast variant across species groups and site classes on real FIA stands.](../calibration/output/comparisons/manuscript_figures/fig_bakuzis_band_growth.png){width=6in}
+These are the relations that a design built on real stands cannot
+test cleanly. The cells are FIA conditions selected on site index and
+live basal area bins, so the site and density classes also differ in
+stand age, species mix and structure. A comparison of per tree volume
+or final basal area across them at a matched projection year is
+therefore confounded by the selection. On the synthetic 36 cell
+Northeast matrix run through the same engine build, species, age and
+structure are held fixed by construction, and site ordering and
+Eichhorn's rule pass in every species group under both survival
+models. Sukachev's ordering flags there as well, because by year 100
+the stands have converged on a common carrying capacity and per tree
+volume no longer falls with initial density, so that test is better
+read at mid rotation. We therefore read the site ordering and
+Eichhorn flags here as a property of the stand design rather than
+evidence against the engine, and we report them as flags rather than
+claim a pass.
 
-Figure 11 shows the NE 95 percent credible band through time. On
-real stands the band is wide from the first cycles, because it pools
-five FIA stands per cell as well as 100 parameter draws, and the
-median width stays near half the posterior median throughout (50,
-51 and 46 percent at years 25, 50 and 100; interquartile range 27 to
-66 percent at year 100). ACD is wider, 56 percent at year 100. The
-band pools stand to stand variation within a cell with parameter
-uncertainty, and the two sources are not separated here; a single
-stand projection will usually carry a narrower parametric band.
+![Figure 11. Within-stand posterior parameter band (95 percent band over each stand's 100 draws, as percent of that stand's posterior median, median over the cell's five FIA stands) against projection horizon, for the Northeast variant across species groups and site classes on real FIA stands.](../calibration/output/comparisons/manuscript_figures/fig_bakuzis_band_growth.png){width=6in}
+
+![Figure 12. Parameter uncertainty against stand to stand spread for the Northeast variant, one line per cell: the within-stand 95 percent parameter band (solid, median over the cell's five FIA stands) and the range of the five stands' calibrated MAP values (dashed), both as percent of the median basal area.](../calibration/output/comparisons/manuscript_figures/fig_bakuzis_band_decomposition.png){width=6in}
+
+Figures 11 and 12 separate the two sources of spread that a pooled
+band would mix. The within-stand parameter band is the 95 percent
+band of one stand's 100 posterior draws, which is parametric
+uncertainty alone. It is narrow in NE: the median over the 180 NE
+stands is 3.2, 3.5 and 3.2 percent of the stand's posterior median at
+years 25, 50 and 100 (at year 100 the median over cells of the cell
+medians is 3.1 percent, interquartile range 2.9 to 3.7 percent). In ACD it is near zero (median 0.5 and
+0.4 percent at years 25 and 50, and 0 at year 100). At year 100, 81
+of the 180 ACD stands give the same basal area under all 100 draws,
+although each ACD draw carries its own diameter growth multipliers
+for 20 species and mortality multipliers for 48 and FVS reads them.
+We report that behaviour as observed; the tests run here do not
+explain it. The between-stand spread is far larger. The range of the
+five stands' MAP values in a cell is a median 34.6, 38.1 and
+42.8 percent of their median in NE at years 25, 50 and 100, and 27.6,
+25.5 and 23.5 percent in ACD. Each stand's posterior median equals
+its MAP value (median ratio 1.00 in both variants, 5th to 95th
+percentile 0.99 to 1.00 at year 100). A band pooled over draws and
+stands, 47 percent of the median in NE and 25 percent in ACD at
+year 100, is therefore almost entirely stand to stand variation. For
+a single stand projection the parametric band from these posteriors
+is a few percent of the projected basal area.
 
 The same scorer and gates, applied to FIA stands in every variant
 with fitting data rather than to the NE and ACD factorial, underlie
 the configuration catalog that `fvs2py.catalog.select_config`
-reads: up to 300 FIA plots per variant (4,748 stands across 18
+reads. Up to 300 FIA plots per variant (4,748 stands across 18
 variants) were projected 100 years under default and calibrated MAP
-parameters crossed with native and GOMPIT survival, and an arm is
+parameters crossed with native and GOMPIT survival. An arm is
 admissible when fewer than 5 percent of its stands exceed the FIA
 99.9th percentiles of basal area and stand density index by year 50,
-it self thins inside the Reineke window on at least 90 percent of
-density gated trajectories,
-and keeps median year 50 basal area at or above the FIA median. Seven
-variants have at least one admissible arm (ACD, BM, CS, LS, NE, SN,
-WS) and eleven do not, nearly all on the self thinning axis alone; no
-verdict changes across 144 alternative rules or 500 stand bootstraps.
-The catalog, its stress test and the per variant scorecards are
-archived at Zenodo (10.5281/zenodo.23777723).
+when it self thins inside the Reineke window on at least 90 percent
+of density gated trajectories, and when it keeps median year 50
+basal area at or above the FIA median. Seven variants have at least
+one admissible arm (ACD, BM, CS, LS, NE, SN, WS) and eleven do not,
+nearly all on the self thinning axis alone. No verdict changes
+across 144 alternative rules or 500 stand bootstraps. The calibrated
+arms of the current catalog (version 1.2.0) were rerun after the
+in-process overlay correction above; four verdict fields changed and
+no variant's status did. The catalog, its stress test and the per
+variant scorecards are archived at Zenodo (10.5281/zenodo.23777723).
 
 ## 4.7 Disturbance artifact and the four-arm comparison
 
@@ -1057,18 +1100,25 @@ re-fit.
 Third, the Bakuzis matrix operates as a multi-criteria validation
 framework only when each relation is reported with the number of
 trajectories it was evaluated on. On the real stand ensemble the
-calibrated engine passes the relations that such a design can test
-(no stand density index exceedance, self thinning inside the Reineke
-window on all 96 trajectories that reach the self thinning zone,
-monotone height and diameter, no inversions), and the recalibration
-lowers NE long horizon basal area by a median 13.9 percent, toward
-the observed envelope. The site based relations (Eichhorn, Sukachev,
-yield against density) flag on that design because the FIA cells
-differ in age and composition as well as in site and density; site
-ordering and Eichhorn's rule pass on the synthetic matrix that holds
-those fixed, while Sukachev's ordering is better tested at mid
-rotation than at year 100. The
-practical lesson is that a law-compliance fraction without an
+calibrated engine passes most of the relations that such a design can
+test. No stand density index exceedance occurs, self thinning stays
+inside the Reineke window on 102 of the 105 trajectories that reach
+the self thinning zone, quadratic mean diameter rises monotonically
+everywhere, and basal area has no inversions. The recalibration
+lowers NE long horizon basal area in 34 of 36 cells, by a median
+14.9 percent, toward the observed envelope. The site based relations
+(Eichhorn, Sukachev, yield against density) flag on that design
+because the FIA cells differ in age and composition as well as in
+site and density. Site ordering and Eichhorn's rule pass on the
+synthetic matrix that holds those fixed, while Sukachev's ordering is
+better tested at mid rotation than at year 100. The ensemble also
+shows why the two sources of spread must be reported apart. The
+parametric band of a single stand is about 3 percent of projected
+basal area in NE and near zero in ACD, while the five stands in a
+cell differ by 43 (NE) and 23 (ACD) percent at year 100. A band
+pooled over both reads as parameter uncertainty an order of
+magnitude larger than the posterior supports. The practical lesson
+is that a law-compliance fraction or a credible band without an
 evaluated count and a stated design can mislead in either direction:
 an earlier, under seeded version of this ensemble reported
 compliance fractions for relations that had never been exercised.
@@ -1215,20 +1265,25 @@ Additionally, the Bakuzis matrix results reported here use real FIA
 stands sampled by site index and basal area bin rather than synthetic
 algorithmic stands, which makes the density axis real but confounds
 the site based relations with stand age and composition (Section
-4.6); those relations are reported as flags on this design and are
-tested cleanly only on the synthetic matrix. The factorial covers NE
-and ACD; the national configuration catalog extends the realism
-gates to the 18 variants with FIA fitting data on an unstratified
-FIA stand sample, which supports the magnitude and self thinning
-tests but not the site based ones. The PN, SN and IE runtime keyword
-reader failure that limited an earlier version of this analysis no
-longer occurs on the current build, on which all 18 variants
-completed 100 year projections for the catalog. The catalog's
-thresholds are age censored percentiles of the fitting data, the
-calibrated configuration enters it as a point estimate rather than
-a posterior, and outside NE no per variant near term evidence yet
-separates the native and GOMPIT survival models, so its tie break
-among admissible configurations is simplicity alone.
+4.6). Those relations are reported as flags on this design and are
+tested cleanly only on the synthetic matrix. The posterior band
+reported for one stand reflects only the parameter uncertainty that
+the calibrated posteriors carry, and it is small (about 3 percent of
+NE basal area at year 100). In ACD, 81 of 180 stands give the same
+year 100 basal area under every draw. That behaviour is observed and
+not yet explained, so the ACD parametric band should not be read as
+evidence of certainty. The factorial covers NE and ACD; the national
+configuration catalog extends the realism gates to the 18 variants
+with FIA fitting data on an unstratified FIA stand sample, which
+supports the magnitude and self thinning tests but not the site based
+ones. The PN, SN and IE runtime keyword reader failure that limited
+an earlier version of this analysis no longer occurs on the current
+build, on which all 18 variants completed 100 year projections for
+the catalog. The catalog's thresholds are age censored percentiles of
+the fitting data, the calibrated configuration enters it as a point
+estimate rather than a posterior, and outside NE no per variant near
+term evidence yet separates the native and GOMPIT survival models, so
+its tie break among admissible configurations is simplicity alone.
 
 ## 5.5 Future work
 

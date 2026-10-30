@@ -19,6 +19,7 @@
 13. Over-seeding diagnostic (`diag_overseed.py`, `diag_overseed.csv`): for the failing SN, CS and NE stands the condition's tree sum per condition acre reproduces BALIVE (first case 90.4 against 90.3 ft2 ac-1), so the 1.3 to 1.8 x year-0 excess is inside the engine's year-0 accounting for those stands and is unrelated to relabelled species, sapling share or condition proportion. Next test: run one failing stand with a single cycle and compare the engine tree list at year 0 against the input records.
 14. Shipped under the primary rule (Aaron, October 29, 14:36 EDT). Stress test after shipping (`stress_catalog.R`, job 15990793): 144-cell rule grid and 500-draw stand bootstrap, zero disagreements with the shipped verdicts, 8 of 23 admissible arms and 8 of 49 not-admissible arms labelled FRAGILE; the Reineke tolerance is the only axis that changes recommended variants. No verdict changed.
 15. Over-seeding resolved (October 29, evening). FIA live records with a null TPA_UNADJ (P2A_GRM_FLG = Y) were filled with 6.0 TPA by `fia_stand_generator.build_tree_init`; the engine reproduces its input exactly (`diag_y0/`, jobs 15998331 and 15998396). Generator and runner now drop them and the seed gate carries `n_null_tpa` and a 1 ft² ac⁻¹ absolute floor (PR 129). Catalog regenerated on all 18 variants (array 15998817, finalize 16002593, stress 16003647, scorecards 16003648): 4,748 of 4,748 stands pass the year-0 gate, 3,617 records dropped from 371 stands, zero changes in the 72 arm verdicts, the recommendation table and the stress labels. Deviation 13's next test is closed.
+16. P2A_GRM_FLG (October 30). The field is FIA's periodic to annual growth, removal and mortality flag (FEMC metadata for the FIA TREE table, https://www.uvm.edu/femc/data/archive/project/federal-forest-inventory-analysis-data-for/dataset/tree-level-data-gathered-through-forest/metadata). No FIADB guide reachable from here states that TPA_UNADJ is null for these records (the v4.0 and v6.0 Phase 2 guides fetched truncate before the TREE table), so the null expansion factor is reported as an observed property of the data (3,617 live records in 371 sampled eastern stands, `catalog_seedgate_v5_noid.csv`), not as a documented rule.
 
 ## Discovered unknowns
 
@@ -32,4 +33,4 @@
 
 ## Deferred
 
-- Posterior draws for the catalog arms. Regeneration treatment. Per-variant near-term scorecard. Projector arms rerun on the common stand sample. FIADB confirmation of the P2A_GRM_FLG reading (the record pattern is clear, the manual citation is not yet in hand).
+- Posterior draws for the catalog arms. Regeneration treatment. Per-variant near-term scorecard. Projector arms rerun on the common stand sample.

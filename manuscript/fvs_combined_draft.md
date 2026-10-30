@@ -72,7 +72,7 @@ matrix; FIA remeasurement
 
 - **Name:** fvs-modern
 - **Version described:** 2026.05.3
-- **Repository:** https://github.com/holoros/fvs-modern
+- **Repository:** https://github.com/advanced-forestry-systems/fvs-modern
 - **License:** Dual licensed. Fortran source inherited from the USDA
   Forest Service is CC0-1.0 (public domain); Python, R, and
   deployment tooling added in this work is MIT.
@@ -81,7 +81,7 @@ matrix; FIA remeasurement
   recalibration), and FIA database access for new calibration runs.
 - **Operating systems tested:** Linux (Fedora, RHEL, Ubuntu), macOS
   (Homebrew gfortran), Windows (WSL2 only).
-- **Documentation:** https://github.com/holoros/fvs-modern and
+- **Documentation:** https://github.com/advanced-forestry-systems/fvs-modern and
   CALIBRATION.md in the repository root.
 - **DOI:** [10.5281/zenodo.19802673](https://doi.org/10.5281/zenodo.19802673)
   (this version, v2026.05.3). The Zenodo concept DOI persists across
@@ -1325,7 +1325,7 @@ Calibrated parameter posteriors and the MAGPlot/four-way validation outputs are 
 
 All source code, calibrated parameter files, posterior draw
 archives, continuous integration configuration, and benchmarking
-scripts are available at https://github.com/holoros/fvs-modern under
+scripts are available at https://github.com/advanced-forestry-systems/fvs-modern under
 the dual CC0-1.0 / MIT licensing specified in the repository. The
 specific version described in this paper is v2026.05.3 (April 26,
 2026), archived at Zenodo with DOI

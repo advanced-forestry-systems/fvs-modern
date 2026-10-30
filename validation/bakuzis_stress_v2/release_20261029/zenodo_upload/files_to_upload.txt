@@ -12,10 +12,11 @@ data_dictionary.csv
 ../data/catalog_gates_by_arm.csv
 ../data/stress_by_arm.csv
 ../data/stress_by_variant.csv
+../data/catalog_seedgate_v5_noid.csv
 ../data/scorecard_cells.csv
 ../data/scorecard_index.md
 ../data/fia_variant_thresholds_plot_acd.csv
-../data/2026-10-29_bakuzis-assessment-memo_sections-1-16.md
+../data/2026-10-29_bakuzis-assessment-memo_sections-1-17.md
 ../data/catalog_README.md
 ../data/catalog_implementation-notes.md
 ../code/conus_catalog_runs.py

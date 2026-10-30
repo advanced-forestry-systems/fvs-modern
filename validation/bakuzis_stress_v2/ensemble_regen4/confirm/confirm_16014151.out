@@ -1,0 +1,47 @@
+
+Lmod is automatically replacing "intel/2021.10.0" with "gcc/12.3.0".
+
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) mvapich/4.1
+
+   variant  scenario                  case    y0    yN  ba0  baN  tpaN  tcuftN  spsdi_zero  spsdi_min  n_sdimax_echo  n_mult_echo  fvs_errors
+0       NE         2               default  2000  2100  131  230   375    6093           0     147.00              0            0           0
+1       NE         2  calmap_asrun_overlay  2000  2100  131  206   332    5459          23       0.00             85          142           0
+2       NE         2  calmap_fixed_overlay  2000  2100  131  206   332    5459           0     147.00             85          142           0
+3       NE         2         calmap_kwonly  2000  2100  131  206   332    5459           0     147.00             85          142           0
+4       NE         2         draw481_fixed  2000  2100  131  207   329    5482           0     147.00             85          149           0
+5       NE        14               default  2000  2100   91  195   107    7962           0     147.00              0            0           0
+6       NE        14  calmap_asrun_overlay  2000  2100   91  160    85    6553          23       0.00             85          142           0
+7       NE        14  calmap_fixed_overlay  2000  2100   91  160    85    6553           0     147.00             85          142           0
+8       NE        14         calmap_kwonly  2000  2100   91  160    85    6553           0     147.00             85          142           0
+9       NE        32               default  2000  2100  143  242   117    7908           0     147.00              0            0           0
+10      NE        32  calmap_asrun_overlay  2000  2100  143  190    74    6267          23       0.00             85          142           0
+11      NE        32  calmap_fixed_overlay  2000  2100  143  190    74    6267           0     147.00             85          142           0
+12      NE        32         calmap_kwonly  2000  2100  143  190    74    6267           0     147.00             85          142           0
+13     ACD         2               default  2000  2100  124  231   216    7106           0     280.41              0            0           0
+14     ACD         2  calmap_asrun_overlay  2000  2100  124  231   217    7105           0     280.41              0           68           0
+15     ACD         2  calmap_fixed_overlay  2000  2100  124  231   217    7105           0     280.41              0           68           0
+16     ACD         2         calmap_kwonly  2000  2100  124  231   217    7105           0     280.41              0           68           0
+17     ACD         2         draw481_fixed  2000  2100  124  231   219    7108           0     280.41              0           91           0
+18     ACD        14               default  2000  2100  132  224   116    9129           0     280.41              0            0           0
+19     ACD        14  calmap_asrun_overlay  2000  2100  132  224   116    9132           0     280.41              0           68           0
+20     ACD        14  calmap_fixed_overlay  2000  2100  132  224   116    9132           0     280.41              0           68           0
+21     ACD        14         calmap_kwonly  2000  2100  132  224   116    9132           0     280.41              0           68           0
+22     ACD        32               default  2000  2100  111  195   117    8025           0     280.41              0            0           0
+23     ACD        32  calmap_asrun_overlay  2000  2100  111  195   117    8025           0     280.41              0           68           0
+24     ACD        32  calmap_fixed_overlay  2000  2100  111  195   117    8025           0     280.41              0           68           0
+25     ACD        32         calmap_kwonly  2000  2100  111  195   117    8025           0     280.41              0           68           0
+D1 echo ACD BAIMULT: intended records=43 echoed=43 match=43 distinct echoed values=43 range=(0.8069, 1.2296)
+D1 echo ACD MORTMULT: intended records=48 echoed=48 match=48 distinct echoed values=45 range=(0.12, 8.08)
+D1 echo ACD SDIMAX: intended records=0 echoed=0 match=0 distinct echoed values=0 range=(nan, nan)
+D1 echo NE BAIMULT: intended records=63 echoed=63 match=63 distinct echoed values=63 range=(0.8264, 1.1781)
+D1 echo NE MORTMULT: intended records=86 echoed=86 match=86 distinct echoed values=78 range=(0.21, 10.0)
+D1 echo NE SDIMAX: intended records=85 echoed=85 match=85 distinct echoed values=68 range=(217.0, 799.0)
+CONFIRM_DONE
+D3 stands 360 multi-condition 125
+D3 multi  n=125 new seed/BALIVE q05,med,q95=[0.9797, 0.9999, 1.018] within1pct=104 | old ens_full3 year0/BALIVE q05,med,q95=[0.2497, 0.808, 1.5347]
+D3 single n=235 new seed/BALIVE q05,med,q95=[0.9997, 1.0003, 1.0004] within1pct=235 | old ens_full3 year0/BALIVE q05,med,q95=[0.9955, 0.9998, 1.0052]
+D3 all    n=360 new seed/BALIVE q05,med,q95=[0.9983, 1.0003, 1.0006] within1pct=339 | old ens_full3 year0/BALIVE q05,med,q95=[0.4956, 0.999, 1.1053]
+CONFIRM_DONE
+CONFIRM_JOB_DONE

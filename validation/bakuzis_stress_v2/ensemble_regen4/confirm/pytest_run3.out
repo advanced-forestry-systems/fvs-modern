@@ -1,0 +1,17 @@
+..............                                                           [100%]
+=============================== warnings summary ===============================
+config/tests/test_draws_overlay_standgen.py::test_draw_multiplier_medians_are_centred_on_map[ne]
+  /fs/scratch/PUOM0008/crsfaaron/wt-fix-20261030/config/tests/test_draws_overlay_standgen.py:118: RuntimeWarning: All-NaN slice encountered
+    med = np.nanmedian(np.asarray(S), axis=0)[: base.size]
+
+config/tests/test_draws_overlay_standgen.py::test_draw_keyfile_fields_parse_per_species[acd]
+config/tests/test_draws_overlay_standgen.py::test_draw_and_map_blocks_share_the_formatter[acd]
+  /fs/scratch/PUOM0008/crsfaaron/wt-fix-20261030/config/uncertainty.py:618: UserWarning: BAMAX skipped for variant acd: BAMAX is a stand-level keyword with no species field (initre.f90 option 66 reads only ARRAY(1)), but 30 distinct per-species values were supplied (first five: [130.0, 138.0, 140.0, 146.0, 148.0]). Collapse them to a single stand value, or use SDIMAX, which does take a species index.
+    warnings.warn(f"BAMAX skipped for variant {self.variant}: {exc}")
+
+config/tests/test_draws_overlay_standgen.py::test_draw_and_map_blocks_share_the_formatter[acd]
+  /fs/scratch/PUOM0008/crsfaaron/wt-fix-20261030/config/config_loader.py:1080: UserWarning: BAMAX skipped for variant acd: BAMAX is a stand-level keyword with no species field (initre.f90 option 66 reads only ARRAY(1)), but 30 distinct per-species values were supplied (first five: [130.0, 138.0, 140.0, 146.0, 148.0]). Collapse them to a single stand value, or use SDIMAX, which does take a species index.
+    warnings.warn(f"BAMAX skipped for variant {self.variant}: {exc}")
+
+-- Docs: https://docs.pytest.org/en/stable/warnings.html
+14 passed, 4 warnings in 3.23s

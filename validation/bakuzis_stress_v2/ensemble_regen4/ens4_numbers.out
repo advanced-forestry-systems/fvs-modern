@@ -1,0 +1,326 @@
+
+###### ens_full3 
+seedgate rows 360 inbin 295 (81.9%) min tpa 6 
+   variant density_class med_atba in_bin     n
+    <char>        <char>    <num>  <int> <int>
+1:     ACD          High    161.0     47    60
+2:     ACD           Low     77.5     48    60
+3:     ACD        Medium    122.5     57    60
+4:      NE          High    164.5     41    60
+5:      NE           Low     73.0     48    60
+6:      NE        Medium    117.5     54    60
+populated cells: ACD 36 NE 36 
+
+-- default vs calibrated MAP divergence at year 100 (cell medians; diff_pct_y100 = (cal - def) / def x 100)
+   variant med_abs_diff max_abs_diff n_within1     n identical
+    <char>        <num>        <num>     <int> <int>     <int>
+1:     ACD      0.00000     1.075269        35    36        34
+2:      NE     13.87336    21.645022         0    36         0
+   variant     species_group site_class density_class   def   cal diff_pct_y100
+    <char>            <char>     <char>        <char> <num> <num>         <num>
+1:      NE Northern-Hardwood     Medium          High   231   181     -21.64502
+2:      NE        Spruce-Fir     Medium           Low   241   192     -20.33195
+3:      NE          Oak-Pine       High          High   208   167     -19.71154
+
+-- BA bands at year 25 (percent of median). within = parameter only; between = 5 stands' MAP values; pooled_legacy mixes both (not used)
+Key: <variant>
+   variant within_cellmed_med within_q25 within_q75 between_range_med
+    <char>              <num>      <num>      <num>             <num>
+1:     ACD             0.1712     0.0000      0.527             30.36
+2:      NE             2.7325     0.6939      5.336             47.27
+   between_cv_med stands within_stand_med stands_identical_draws
+            <num>  <int>            <num>                  <int>
+1:          12.93    180            0.000                     94
+2:          19.81    180            2.748                     11
+   post_med_over_map_med post_med_over_map_q05 post_med_over_map_q95
+                   <num>                 <num>                 <num>
+1:                0.7863                0.5706                 1.023
+2:                1.0593                0.9941                 1.232
+   pooled_legacy_med
+               <num>
+1:             52.48
+2:             49.91
+
+-- BA bands at year 50 (percent of median). within = parameter only; between = 5 stands' MAP values; pooled_legacy mixes both (not used)
+Key: <variant>
+   variant within_cellmed_med within_q25 within_q75 between_range_med
+    <char>              <num>      <num>      <num>             <num>
+1:     ACD              0.000     0.0000      0.000             24.20
+2:      NE              1.175     0.6145      2.118             49.72
+   between_cv_med stands within_stand_med stands_identical_draws
+            <num>  <int>            <num>                  <int>
+1:          10.28    180            0.000                    130
+2:          19.52    180            1.216                     22
+   post_med_over_map_med post_med_over_map_q05 post_med_over_map_q95
+                   <num>                 <num>                 <num>
+1:                0.7641                0.4722                 1.030
+2:                1.0081                0.9817                 1.331
+   pooled_legacy_med
+               <num>
+1:             53.52
+2:             50.59
+
+-- BA bands at year 100 (percent of median). within = parameter only; between = 5 stands' MAP values; pooled_legacy mixes both (not used)
+Key: <variant>
+   variant within_cellmed_med within_q25 within_q75 between_range_med
+    <char>              <num>      <num>      <num>             <num>
+1:     ACD              0.000     0.0000      0.000             24.09
+2:      NE              1.108     0.6359      1.732             47.41
+   between_cv_med stands within_stand_med stands_identical_draws
+            <num>  <int>            <num>                  <int>
+1:          9.817    180             0.00                    175
+2:         19.383    180             1.17                     21
+   post_med_over_map_med post_med_over_map_q05 post_med_over_map_q95
+                   <num>                 <num>                 <num>
+1:                0.7494                0.4269                 1.000
+2:                1.0000                0.9600                 1.327
+   pooled_legacy_med
+               <num>
+1:             55.99
+2:             45.92
+
+-- stems retained at year 100 under default (cell medians)
+   variant med_ret100
+    <char>      <num>
+1:     ACD  0.1831624
+2:      NE  0.2167243
+
+-- cell-median BA maximum over 100 years
+   variant         config max_ft2ac max_m2ha
+    <char>         <char>     <num>    <num>
+1:     ACD calibrated_map       260     59.7
+2:      NE calibrated_map       277     63.6
+3:     ACD        default       260     59.7
+4:      NE        default       281     64.5
+
+-- magnitude (T4) and Reineke (T3, T3b) counts from score_ens_full3b/ens_full3_20261029b_scorecard_summary.csv 
+                   arm                                      relation evaluated
+                <char>                                        <char>     <int>
+ 1: ACD_calibrated_map             T3 Reineke slope (trajectory OLS)        27
+ 2: ACD_calibrated_map T3b frontier slope (rq tau 0.95, pooled limb)         4
+ 3: ACD_calibrated_map                     T4 max BA vs observed p99        36
+ 4: ACD_calibrated_map                   T4 max BA vs observed p99.9        36
+ 5: ACD_calibrated_map                          T4 peak SDI / SDImax        36
+ 6:        ACD_default             T3 Reineke slope (trajectory OLS)        28
+ 7:        ACD_default T3b frontier slope (rq tau 0.95, pooled limb)         4
+ 8:        ACD_default                     T4 max BA vs observed p99        36
+ 9:        ACD_default                   T4 max BA vs observed p99.9        36
+10:        ACD_default                          T4 peak SDI / SDImax        36
+11:  NE_calibrated_map             T3 Reineke slope (trajectory OLS)        15
+12:  NE_calibrated_map T3b frontier slope (rq tau 0.95, pooled limb)         4
+13:  NE_calibrated_map                     T4 max BA vs observed p99        36
+14:  NE_calibrated_map                   T4 max BA vs observed p99.9        36
+15:  NE_calibrated_map                          T4 peak SDI / SDImax        36
+16:         NE_default             T3 Reineke slope (trajectory OLS)        26
+17:         NE_default T3b frontier slope (rq tau 0.95, pooled limb)         4
+18:         NE_default                     T4 max BA vs observed p99        36
+19:         NE_default                   T4 max BA vs observed p99.9        36
+20:         NE_default                          T4 peak SDI / SDImax        36
+                   arm                                      relation evaluated
+                <char>                                        <char>     <int>
+    not_evaluated not_applicable flagged        verdict
+            <int>          <int>   <int>         <char>
+ 1:             1              8       0 PASS (partial)
+ 2:             0              0       0           PASS
+ 3:             0              0      12           FLAG
+ 4:             0              0       0           PASS
+ 5:             0              0       0           PASS
+ 6:             0              8       0           PASS
+ 7:             0              0       0           PASS
+ 8:             0              0      12           FLAG
+ 9:             0              0       0           PASS
+10:             0              0       0           PASS
+11:             0             21       0           PASS
+12:             0              0       0           PASS
+13:             0              0       5           FLAG
+14:             0              0       1           FLAG
+15:             0              0       0           PASS
+16:             0             10       0           PASS
+17:             0              0       0           PASS
+18:             0              0      16           FLAG
+19:             0              0       3           FLAG
+20:             0              0       0           PASS
+    not_evaluated not_applicable flagged        verdict
+            <int>          <int>   <int>         <char>
+
+-- Bakuzis law fractions (posterior_band row is computed on the pooled band medians)
+   variant         config law_sukachev_fraction law_eichhorn_fraction
+    <char>         <char>                 <num>                 <num>
+1:     ACD calibrated_map            0.00000000                     0
+2:     ACD        default            0.00000000                     0
+3:     ACD posterior_band            0.16666667                     0
+4:      NE calibrated_map            0.08333333                     0
+5:      NE        default            0.08333333                     0
+6:      NE posterior_band            0.16666667                     0
+   law_density_mortality_fraction law_mortality_size_fraction n_scenarios
+                            <num>                      <lgcl>       <int>
+1:                              1                          NA          36
+2:                              1                          NA          36
+3:                              1                          NA          36
+4:                              1                          NA          36
+5:                              1                          NA          36
+6:                              1                          NA          36
+
+###### ens_full4 
+seedgate rows 360 inbin 358 (99.4%) min tpa 40 
+   variant density_class med_atba in_bin     n
+    <char>        <char>    <num>  <int> <int>
+1:     ACD          High    176.5     60    60
+2:     ACD           Low     77.5     59    60
+3:     ACD        Medium    126.5     60    60
+4:      NE          High    183.0     59    60
+5:      NE           Low     73.5     60    60
+6:      NE        Medium    122.5     60    60
+populated cells: ACD 36 NE 36 
+
+-- default vs calibrated MAP divergence at year 100 (cell medians; diff_pct_y100 = (cal - def) / def x 100)
+   variant med_abs_diff max_abs_diff n_within1     n identical
+    <char>        <num>        <num>     <int> <int>     <int>
+1:     ACD      0.00000     1.538462        35    36        33
+2:      NE     14.88056    22.510823         0    36         0
+   variant     species_group site_class density_class   def   cal diff_pct_y100
+    <char>            <char>     <char>        <char> <num> <num>         <num>
+1:      NE Northern-Hardwood     Medium          High   231   179     -22.51082
+2:      NE          Oak-Pine       High          High   238   187     -21.42857
+3:      NE        Spruce-Fir     Medium           Low   230   183     -20.43478
+
+-- BA bands at year 25 (percent of median). within = parameter only; between = 5 stands' MAP values; pooled_legacy mixes both (not used)
+Key: <variant>
+   variant within_cellmed_med within_q25 within_q75 between_range_med
+    <char>              <num>      <num>      <num>             <num>
+1:     ACD              0.509     0.4045      0.607             27.61
+2:      NE              3.239     2.8114      3.917             34.57
+   between_cv_med stands within_stand_med stands_identical_draws
+            <num>  <int>            <num>                  <int>
+1:          10.88    180           0.4914                     50
+2:          14.30    180           3.2172                      7
+   post_med_over_map_med post_med_over_map_q05 post_med_over_map_q95
+                   <num>                 <num>                 <num>
+1:                     1                0.9931                     1
+2:                     1                0.9936                     1
+   pooled_legacy_med
+               <num>
+1:             27.61
+2:             35.44
+
+-- BA bands at year 50 (percent of median). within = parameter only; between = 5 stands' MAP values; pooled_legacy mixes both (not used)
+Key: <variant>
+   variant within_cellmed_med within_q25 within_q75 between_range_med
+    <char>              <num>      <num>      <num>             <num>
+1:     ACD              0.305      0.000     0.5141             25.51
+2:      NE              3.231      2.857     3.8828             38.13
+   between_cv_med stands within_stand_med stands_identical_draws
+            <num>  <int>            <num>                  <int>
+1:          10.25    180           0.4034                     72
+2:          15.75    180           3.4715                      9
+   post_med_over_map_med post_med_over_map_q05 post_med_over_map_q95
+                   <num>                 <num>                 <num>
+1:                     1                0.9950                     1
+2:                     1                0.9939                     1
+   pooled_legacy_med
+               <num>
+1:             26.50
+2:             41.92
+
+-- BA bands at year 100 (percent of median). within = parameter only; between = 5 stands' MAP values; pooled_legacy mixes both (not used)
+Key: <variant>
+   variant within_cellmed_med within_q25 within_q75 between_range_med
+    <char>              <num>      <num>      <num>             <num>
+1:     ACD              0.000      0.000     0.4657             23.46
+2:      NE              3.126      2.869     3.6831             42.75
+   between_cv_med stands within_stand_med stands_identical_draws
+            <num>  <int>            <num>                  <int>
+1:          9.866    180            0.000                     81
+2:         16.966    180            3.205                     14
+   post_med_over_map_med post_med_over_map_q05 post_med_over_map_q95
+                   <num>                 <num>                 <num>
+1:                     1                0.9953                     1
+2:                     1                0.9936                     1
+   pooled_legacy_med
+               <num>
+1:             24.60
+2:             46.66
+
+-- stems retained at year 100 under default (cell medians)
+   variant med_ret100
+    <char>      <num>
+1:     ACD  0.1485126
+2:      NE  0.2167243
+
+-- cell-median BA maximum over 100 years
+   variant         config max_ft2ac max_m2ha
+    <char>         <char>     <num>    <num>
+1:     ACD calibrated_map       260     59.7
+2:      NE calibrated_map       287     65.9
+3:     ACD        default       260     59.7
+4:      NE        default       291     66.8
+
+-- magnitude (T4) and Reineke (T3, T3b) counts from score_ens_full4b/ens_full4_20261030b_scorecard_summary.csv 
+                   arm                                      relation evaluated
+                <char>                                        <char>     <int>
+ 1: ACD_calibrated_map             T3 Reineke slope (trajectory OLS)        29
+ 2: ACD_calibrated_map T3b frontier slope (rq tau 0.95, pooled limb)         4
+ 3: ACD_calibrated_map                     T4 max BA vs observed p99        36
+ 4: ACD_calibrated_map                   T4 max BA vs observed p99.9        36
+ 5: ACD_calibrated_map                          T4 peak SDI / SDImax        36
+ 6:        ACD_default             T3 Reineke slope (trajectory OLS)        30
+ 7:        ACD_default T3b frontier slope (rq tau 0.95, pooled limb)         4
+ 8:        ACD_default                     T4 max BA vs observed p99        36
+ 9:        ACD_default                   T4 max BA vs observed p99.9        36
+10:        ACD_default                          T4 peak SDI / SDImax        36
+11:  NE_calibrated_map             T3 Reineke slope (trajectory OLS)        17
+12:  NE_calibrated_map T3b frontier slope (rq tau 0.95, pooled limb)         4
+13:  NE_calibrated_map                     T4 max BA vs observed p99        36
+14:  NE_calibrated_map                   T4 max BA vs observed p99.9        36
+15:  NE_calibrated_map                          T4 peak SDI / SDImax        36
+16:         NE_default             T3 Reineke slope (trajectory OLS)        29
+17:         NE_default T3b frontier slope (rq tau 0.95, pooled limb)         4
+18:         NE_default                     T4 max BA vs observed p99        36
+19:         NE_default                   T4 max BA vs observed p99.9        36
+20:         NE_default                          T4 peak SDI / SDImax        36
+                   arm                                      relation evaluated
+                <char>                                        <char>     <int>
+    not_evaluated not_applicable flagged        verdict
+            <int>          <int>   <int>         <char>
+ 1:             1              6       0 PASS (partial)
+ 2:             0              0       0           PASS
+ 3:             0              0      13           FLAG
+ 4:             0              0       0           PASS
+ 5:             0              0       0           PASS
+ 6:             0              6       0           PASS
+ 7:             0              0       0           PASS
+ 8:             0              0      13           FLAG
+ 9:             0              0       0           PASS
+10:             0              0       0           PASS
+11:             0             19       1           FLAG
+12:             0              0       0           PASS
+13:             0              0       7           FLAG
+14:             0              0       1           FLAG
+15:             0              0       0           PASS
+16:             0              7       2           FLAG
+17:             0              0       0           PASS
+18:             0              0      16           FLAG
+19:             0              0       4           FLAG
+20:             0              0       0           PASS
+    not_evaluated not_applicable flagged        verdict
+            <int>          <int>   <int>         <char>
+
+-- Bakuzis law fractions (posterior_band row is computed on the pooled band medians)
+   variant         config law_sukachev_fraction law_eichhorn_fraction
+    <char>         <char>                 <num>                 <num>
+1:     ACD calibrated_map            0.00000000            0.00000000
+2:     ACD        default            0.00000000            0.00000000
+3:     ACD posterior_band            0.00000000            0.00000000
+4:      NE calibrated_map            0.08333333            0.08333333
+5:      NE        default            0.08333333            0.00000000
+6:      NE posterior_band            0.08333333            0.08333333
+   law_density_mortality_fraction law_mortality_size_fraction n_scenarios
+                            <num>                      <lgcl>       <int>
+1:                              1                          NA          36
+2:                              1                          NA          36
+3:                              1                          NA          36
+4:                              1                          NA          36
+5:                              1                          NA          36
+6:                              1                          NA          36
+
+Wrote ens4_numbers_old_vs_new.csv ( 149 rows )

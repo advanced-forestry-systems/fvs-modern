@@ -1,0 +1,86 @@
+
+Lmod is automatically replacing "intel/2021.10.0" with "gcc/12.3.0".
+
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) mvapich/4.1
+
+12
+== seed gate Fri Oct 30 08:57:34 AM EDT 2026
+raw rows 771120 variants ACD,NE configs default,calibrated_map,posterior draws 101 
+
+YEAR-0 SEED GATE (default config, each replicate vs its BALIVE selection bin)
+   variant density_class replicates in_bin zero_stems ba_min ba_med ba_max
+    <char>        <char>      <int>  <int>      <int>  <int>  <num>  <int>
+1:     ACD          High         60     60          0    151  176.5    226
+2:     ACD           Low         60     59          0     50   77.5     91
+3:     ACD        Medium         60     60          0     90  126.5    149
+4:      NE          High         60     59          0    148  183.0    240
+5:      NE           Low         60     60          0     51   73.5     89
+6:      NE        Medium         60     60          0     91  122.5    149
+   variant cells cells_populated
+    <char> <int>           <int>
+1:     ACD    36              36
+2:      NE    36              36
+
+F5 bound: cell-median year-100 BA (ft2/ac) by variant and config:
+   variant         config max_cell_median_ft2ac  m2ha
+    <char>         <char>                 <num> <num>
+1:     ACD calibrated_map                   260  59.7
+2:     ACD        default                   260  59.7
+3:     ACD      posterior                   260  59.7
+4:      NE calibrated_map                   287  65.9
+5:      NE        default                   290  66.6
+6:      NE      posterior                   287  65.9
+== aggregate Fri Oct 30 08:57:38 AM EDT 2026
+2026-10-30 08:58:02,879 [INFO] Wrote per-stand (parameter-only) bands: /fs/scratch/PUOM0008/crsfaaron/bakuzis_v2_20261027/ens_full4_agg/bakuzis_uncertainty_stand_bands.csv (60480 rows)
+2026-10-30 08:58:02,879 [INFO] Wrote cell within-stand band and between-stand MAP spread: /fs/scratch/PUOM0008/crsfaaron/bakuzis_v2_20261027/ens_full4_agg/bakuzis_uncertainty_cell_bands.csv (12096 rows)
+2026-10-30 08:58:03,012 [INFO] Wrote Bakuzis law compliance: /fs/scratch/PUOM0008/crsfaaron/bakuzis_v2_20261027/ens_full4_agg/bakuzis_laws_compliance.csv
+
+Bakuzis law compliance (fraction of scenario pairs that satisfy each law):
+variant         config  law_sukachev_fraction  law_eichhorn_fraction  law_density_mortality_fraction  law_mortality_size_fraction  n_scenarios
+    ACD calibrated_map                   0.00                   0.00                            1.00                          NaN           36
+    ACD        default                   0.00                   0.00                            1.00                          NaN           36
+    ACD posterior_band                   0.00                   0.00                            1.00                          NaN           36
+     NE calibrated_map                   0.08                   0.08                            1.00                          NaN           36
+     NE        default                   0.08                   0.00                            1.00                          NaN           36
+     NE posterior_band                   0.08                   0.08                            1.00                          NaN           36
+total 4577
+drwxr-xr-x  2 crsfaaron PUOM0008    4096 Oct 30 08:58 .
+drwxr-xr-x 33 crsfaaron PUOM0008   16384 Oct 30 08:57 ..
+-rw-r--r--  1 crsfaaron PUOM0008  144017 Oct 30 08:57 bakuzis_benchmark_wide.csv
+-rw-r--r--  1 crsfaaron PUOM0008     403 Oct 30 08:58 bakuzis_laws_compliance.csv
+-rw-r--r--  1 crsfaaron PUOM0008 1969480 Oct 30 08:58 bakuzis_uncertainty_cell_bands.csv
+-rw-r--r--  1 crsfaaron PUOM0008 6081256 Oct 30 08:58 bakuzis_uncertainty_stand_bands.csv
+-rw-r--r--  1 crsfaaron PUOM0008 4505762 Oct 30 08:57 bakuzis_uncertainty_summary_long.csv
+== score (variant thresholds) Fri Oct 30 08:58:03 AM EDT 2026
+Reineke axis: 144 trajectories evaluated, 0 not evaluated, 20 flagged. A zero flag count rests only on the evaluated count.
+Wrote outputs to score_ens_full4
+== rescore with species-group thresholds Fri Oct 30 08:58:23 AM EDT 2026
+Reineke axis: 105 trajectories evaluated, 1 not evaluated, 3 flagged. A zero flag count rests only on the evaluated count.
+Wrote outputs to score_ens_full4b
+== paper 1 figures Fri Oct 30 08:58:44 AM EDT 2026
+2026-10-30 08:58:47,107 [INFO] Wrote paper1_figs_20261030b/fig_bakuzis_trajectories_acd.png
+2026-10-30 08:58:47,708 [INFO] Wrote paper1_figs_20261030b/fig_bakuzis_band_growth_acd.png
+2026-10-30 08:58:48,281 [INFO] Wrote paper1_figs_20261030b/fig_bakuzis_band_decomposition_acd.png
+2026-10-30 08:58:49,624 [INFO] Wrote paper1_figs_20261030b/fig_bakuzis_trajectories.png
+2026-10-30 08:58:50,181 [INFO] Wrote paper1_figs_20261030b/fig_bakuzis_band_growth.png
+2026-10-30 08:58:50,765 [INFO] Wrote paper1_figs_20261030b/fig_bakuzis_band_decomposition.png
+2026-10-30 08:58:51,047 [INFO] Wrote paper1_figs_20261030b/fig_bakuzis_divergence_acd.png
+2026-10-30 08:58:51,304 [INFO] Wrote paper1_figs_20261030b/fig_bakuzis_divergence.png
+2026-10-30 08:58:51,586 [INFO] Wrote paper1_figs_20261030b/fig_bakuzis_laws.png
+2026-10-30 08:58:51,586 [INFO] Done.
+fig_bakuzis_band_decomposition_acd.png
+fig_bakuzis_band_decomposition.png
+fig_bakuzis_band_growth_acd.png
+fig_bakuzis_band_growth.png
+fig_bakuzis_divergence_acd.png
+fig_bakuzis_divergence.png
+fig_bakuzis_laws.png
+fig_bakuzis_trajectories_acd.png
+fig_bakuzis_trajectories.png
+== Section 4.6 numbers Fri Oct 30 08:58:51 AM EDT 2026
+6:                              1                          NA          36
+
+Wrote ens4_numbers_old_vs_new.csv ( 149 rows )
+FINISH4_DONE

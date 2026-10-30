@@ -1,0 +1,14 @@
+ACD baimult d100 n_sp 20 med/MAP median 0.9999 min 0.9930 max 1.0193 within5pct 20
+ACD baimult d500 n_sp 20 med/MAP median 0.9996 min 0.9979 max 1.0045 within5pct 20
+ACD mortmult d100 n_sp 48 med/MAP median 1.0054 min 0.8165 max 1.2317 within5pct 30
+ACD mortmult d500 n_sp 48 med/MAP median 0.9978 min 0.9114 max 1.1208 within5pct 44
+ACD sdimax no calibrated species
+ACD BAIMULT MAP range 0.836-1.129, draw-median(d100) range 0.836-1.151, species with any draw BAIMULT != 1: 56
+NE baimult d100 n_sp 58 med/MAP median 1.0005 min 0.9675 max 1.0139 within5pct 58
+NE baimult d500 n_sp 58 med/MAP median 0.9996 min 0.9919 max 1.0091 within5pct 58
+NE mortmult d100 n_sp 84 med/MAP median 1.0019 min 0.8305 max 1.1752 within5pct 52
+NE mortmult d500 n_sp 84 med/MAP median 0.9977 min 0.9281 max 1.1116 within5pct 77
+NE sdimax d100 n_sp 85 med/MAP median 0.9981 min 0.9867 max 1.0089 within5pct 85
+NE sdimax d500 n_sp 85 med/MAP median 1.0000 min 1.0000 max 1.0000 within5pct 85
+NE BAIMULT MAP range 0.864-1.149, draw-median(d100) range 0.866-1.139, species with any draw BAIMULT != 1: 71
+D4_DONE

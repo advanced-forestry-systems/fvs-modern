@@ -150,4 +150,4 @@ The recurring pattern is volume and basal area drift in southern and western var
 
 ## Figure
 
-![Four-arm out-of-sample bias by metric](fourarm_abcd_20260618.png)
+![Four-arm out-of-sample bias by metric](https://raw.githubusercontent.com/advanced-forestry-systems/fvs-modern/main/diagnostics_2026-06-16/fourarm_abcd_20260618.png)

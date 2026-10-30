@@ -1,0 +1,154 @@
+site_name: fvs-modern
+site_description: User guide and technical reference for fvs-modern, a modernized fork of the USDA Forest Vegetation Simulator with Bayesian calibration.
+site_author: Aaron Weiskittel, University of Maine
+site_url: https://advanced-forestry-systems.github.io/fvs-modern/
+repo_url: https://github.com/advanced-forestry-systems/fvs-modern
+repo_name: advanced-forestry-systems/fvs-modern
+edit_uri: edit/main/docs/
+docs_dir: docs
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: green
+      accent: light green
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: green
+      accent: light green
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+plugins:
+  - search
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+exclude_docs: |
+  requirements.txt
+
+nav:
+  - Home: index.md
+  - Getting started:
+      - Installation: getting-started/installation.md
+      - Quickstart: getting-started/quickstart.md
+  - User guide:
+      - Running projections: user-guide/running-projections.md
+      - Stand inputs: user-guide/stand-inputs.md
+      - Outputs: user-guide/outputs.md
+      - Choosing a configuration: user-guide/choosing-a-configuration.md
+      - Variants: user-guide/variants.md
+      - Uncertainty: user-guide/uncertainty.md
+      - Other interfaces: user-guide/other-interfaces.md
+      - Troubleshooting: user-guide/troubleshooting.md
+  - Technical reference:
+      - Architecture: reference/architecture.md
+      - Building the engine: reference/building-the-engine.md
+      - Configuration files: reference/configuration-files.md
+      - Mortality models: reference/mortality-models.md
+      - Calibration pipeline: reference/calibration-pipeline.md
+      - Validation: reference/validation.md
+      - Testing and CI: reference/testing-and-ci.md
+      - Release process: reference/release-process.md
+      - Contributing: reference/contributing.md
+      - Parameter extraction:
+          - Index: config_index.md
+          - Extraction tool: parameter_extraction.md
+          - generate_fortran.py usage: generate_fortran_usage.md
+      - Upstream and lifecycle:
+          - Update lifecycle: update_lifecycle.md
+          - Upstream change report: upstream_report.md
+          - Modernization roadmap: modernization_roadmap.md
+      - Release notes:
+          - 2026.04.7: release_v2026_04_7_notes.md
+          - 2026.04.6: release_v2026_04_6_notes.md
+          - 2026.04.0: release_v2026_04_notes.md
+  - Archive:
+      - About the archive: archive/index.md
+      - Notes moved from the root:
+          - categories_conus JSON schema: archive/CONUS_BLOCK_SCHEMA.md
+          - FVS-CONUS development notes: archive/CONUS_DEVELOPMENT_NOTES.md
+          - CONUS model specification: archive/CONUS_MODEL_SPECIFICATION.md
+          - FVS-CONUS integration plan: archive/FVS_CONUS_INTEGRATION_PLAN.md
+          - CONUS projection handoff: archive/HANDOFF_CONUS_PROJECTION.md
+          - Disturbance-aware validation: archive/DISTURBANCE_AWARE_VALIDATION.md
+          - Modifier layer re-land (2026-08-26): archive/MODIFIER_RELAND_20260826.md
+          - wt-rescore and wt-htdbh landing (2026-08-26): archive/WT_RESCORE_HTDBH_LANDING_20260826.md
+      - Earlier archive:
+          - Integration test report: archive/INTEGRATION_TEST_REPORT.md
+          - Integration test report v2: archive/INTEGRATION_TEST_REPORT_v2.md
+          - ACD bridge PR description: archive/PR_DESCRIPTION_acd_bridge.md
+          - ACD bridge PR follow-up: archive/PR_FOLLOWUP_acd_calibrated_row.md
+          - Release notes v2026.05.1: archive/RELEASE_NOTES_v2026.05.1.md
+          - Release notes v2026.05.2: archive/RELEASE_NOTES_v2026.05.2.md
+          - Release readiness (2026-04-21): archive/RELEASE_READINESS_2026-04-21.md
+          - Session handoff (2026-05-15): archive/SESSION_HANDOFF_acd-bridge-fix-2026-05-15.md
+      - Assessments and plans:
+          - Comprehensive assessment (2026-03-22): 20260322_fvs_comprehensive-assessment.md
+          - Verification report (2026-03-22): 20260322_verification_report.md
+          - Parameter extraction summary: extraction_summary.md
+          - NVEL integration recommendations: nvel_integration_recommendations.md
+          - History rewrite plan: HISTORY_REWRITE_PLAN.md
+          - Original getting started page: getting_started.md
+      - Program notes (June 2026):
+          - program/20260617_CHARTER_fvs-conus.md
+          - program/20260617_CHARTER_fvs-modern.md
+          - program/20260617_FINALIZATION_both_tracks.md
+          - program/20260617_INTEGRATION_roadmap.md
+          - program/20260617_held_out_validation_result.md
+          - program/20260618_FINALIZATION_report.md
+          - program/20260618_PROGRAM_STATE.md
+          - program/20260618_PROGRAM_STATE_v2.md
+          - program/20260618_acd_adk_ak_calibration_plan.md
+          - program/20260618_acd_ak_calibration_result.md
+          - program/20260618_adk_variant_status.md
+          - program/20260618_armD_result.md
+          - program/20260618_build_regression_report.md
+          - program/20260618_forest_eco_and_refinements.md
+          - program/20260618_forest_eco_coverage.md
+          - program/20260618_fourarm_result.md
+          - program/20260618_fourway_comparison_report.md
+          - program/20260618_fourway_result.md
+          - program/20260618_held_out_density_dependent_result.md
+          - program/20260618_magplot_pairs_result.md
+          - program/20260618_magplot_staging.md
+          - program/20260618_master_results_table.md
+          - program/20260618_mcw_recovery_result.md
+          - program/20260618_release_deposit_runbook.md
+          - program/20260618_routeA_fvs2py_progress.md
+          - program/20260618_species_stress_report.md
+          - program/20260619_AK_calibration_inengine.md
+          - program/20260619_AK_ecoregion_validation.md
+      - CONUS native adoption (June 2026):
+          - conus_native_adoption/20260628_GOMPMC_v2_native_spec.md
+          - conus_native_adoption/20260628_fvs_modern_native_adoption_plan.md
+          - conus_native_adoption/20260629_sdimax_surface_found_and_fixed.md
+          - conus_native_adoption/GREGDGHG_native_hook_spec.md
+          - conus_native_adoption/GREGHTDBH_native_hook_spec.md
+          - conus_native_adoption/GREG_DEPLOYED_FORMS_2026-06-28.md

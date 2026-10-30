@@ -33,7 +33,7 @@ West Coast Forest); the interior ecoregions are contrast groups.
 
 ## RESULT
 
-![AK bias by ecoregion](fig_ak_ecoregion_bias.png)
+*Figure not in the repository: `fig_ak_ecoregion_bias.png` (AK bias by ecoregion).*
 
 | NA Level I ecoregion | n | interval | standing BA bias | BA increment bias | proj dBA | obs dBA (m2/ha) |
 |---|---|---|---|---|---|---|

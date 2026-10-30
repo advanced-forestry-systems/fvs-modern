@@ -28,7 +28,7 @@ summaries) in fvs-conus/output/conus. Reproduce with species_stress.R.
 | Height-diameter | 8 | 0.269 | +30.8% | 1.1 | 0% | species-free adequate (term not identified) |
 | Height to crown base | 8 | 0.132 | +14.1% | 1.1 | 25% | species-free adequate |
 
-![Figure 1. Typical per-species deviation captured by the species-specific term, by component. Green is a well identified species term (sigma_sp mean/sd at least 2); orange is weakly identified.](fig_species_stress.png)
+![Figure 1. Typical per-species deviation captured by the species-specific term, by component. Green is a well identified species term (sigma_sp mean/sd at least 2); orange is weakly identified.](https://raw.githubusercontent.com/advanced-forestry-systems/fvs-modern/main/diagnostics_2026-06-16/fig_species_stress.png)
 
 Reading. The species term earns its place for three components. Mortality carries the largest and best
 identified species signal: a 53 percent per-species spread on the odds, with 78 percent of species credibly

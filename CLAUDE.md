@@ -83,13 +83,16 @@ modernization/        Conversion tooling and conversion reports
 
 ### Root-level documents
 
-Several Markdown design/handoff documents currently live at the repository root
-rather than under `docs/`: `CALIBRATION.md`, `KNOWN_ISSUES.md`, `STOP_CODES.md`,
-`CHANGELOG.md`, and the CONUS-variant set (`CONUS_BLOCK_SCHEMA.md`,
-`CONUS_DEVELOPMENT_NOTES.md`, `CONUS_MODEL_SPECIFICATION.md`,
-`FVS_CONUS_INTEGRATION_PLAN.md`, `HANDOFF_CONUS_PROJECTION.md`). Treat these as
-authoritative for their topics. Consolidating them into `docs/` is a pending
-cleanup; until then, check the root before assuming a topic is undocumented.
+`CALIBRATION.md`, `KNOWN_ISSUES.md`, `STOP_CODES.md` and `CHANGELOG.md` live at
+the repository root; treat these as authoritative for their topics. The
+CONUS-variant set (`CONUS_BLOCK_SCHEMA.md`, `CONUS_DEVELOPMENT_NOTES.md`,
+`CONUS_MODEL_SPECIFICATION.md`, `FVS_CONUS_INTEGRATION_PLAN.md`,
+`HANDOFF_CONUS_PROJECTION.md`), `DISTURBANCE_AWARE_VALIDATION.md` and the dated
+root notes moved to `docs/archive/` on 2026-10-30; the one-off root patch, test
+and Slurm build scripts moved to `scripts/archive/`. The documentation site
+(MkDocs Material, `mkdocs.yml`, sources in `docs/`) is the user guide and
+technical reference; check `docs/archive/` before assuming a topic is
+undocumented.
 
 Note: the working tree may also contain untracked scratch (build artifacts such
 as `*.mod`, generated `perseus_*` figures, a local `package.json` / `node_modules`

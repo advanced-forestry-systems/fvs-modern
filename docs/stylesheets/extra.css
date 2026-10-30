@@ -1,0 +1,10 @@
+/* Wide reference tables: keep identifiers such as arm names on one line and
+   let the table scroll sideways inside its own container instead. */
+.md-typeset table:not([class]) {
+  font-size: 0.68rem;
+}
+.md-typeset table:not([class]) td code,
+.md-typeset table:not([class]) th code {
+  white-space: nowrap;
+  word-break: normal;
+}

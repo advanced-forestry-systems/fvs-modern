@@ -1,0 +1,129 @@
+arm,relation,evaluated,not_evaluated,not_applicable,flagged,verdict
+conus_v2_b1,T0 initial-step shock,4748,0,0,245,FLAG
+conus_v2_b1,T1 monotone HT_dom,4020,728,0,3943,FLAG
+conus_v2_b1,T1 monotone QMD,4748,0,0,175,FLAG
+conus_v2_b1,T2 site ordering HT,0,18,0,0,NOT EVALUATED
+conus_v2_b1,T2 site ordering VOL,0,18,0,0,NOT EVALUATED
+conus_v2_b1,T3 Reineke slope (trajectory OLS),2450,0,2298,894,FLAG
+conus_v2_b1,"T3b frontier slope (rq tau 0.95, pooled limb)",18,0,0,3,FLAG
+conus_v2_b1,T4 max BA vs observed p99,4748,0,0,2091,FLAG
+conus_v2_b1,T4 max BA vs observed p99.9,4748,0,0,1771,FLAG
+conus_v2_b1,T4 peak SDI / SDImax,4748,0,0,1180,FLAG
+conus_v2_b1,T5 Eichhorn VOL~HT site independence,0,18,0,0,NOT EVALUATED
+conus_v2_b1,T6 Sukachev per-tree VOL falls with density,0,18,0,0,NOT EVALUATED
+conus_v2_b1,T7 yield-density final BA vs initial density,0,18,0,0,NOT EVALUATED
+conus_v2_b1,T8 pinned BA plateau,18,0,0,0,PASS
+conus_v2_b1,T9 BA inversions (>10% step drop),4748,0,0,2280,FLAG
+conus_v2_b1,T9 VOL inversions (>10% step drop),4020,728,0,2616,FLAG
+conus_v2_b1_gompit,T0 initial-step shock,4748,0,0,62,FLAG
+conus_v2_b1_gompit,T1 monotone HT_dom,4609,139,0,4564,FLAG
+conus_v2_b1_gompit,T1 monotone QMD,4748,0,0,2586,FLAG
+conus_v2_b1_gompit,T2 site ordering HT,0,18,0,0,NOT EVALUATED
+conus_v2_b1_gompit,T2 site ordering VOL,0,18,0,0,NOT EVALUATED
+conus_v2_b1_gompit,T3 Reineke slope (trajectory OLS),2077,0,2671,91,FLAG
+conus_v2_b1_gompit,"T3b frontier slope (rq tau 0.95, pooled limb)",18,0,0,2,FLAG
+conus_v2_b1_gompit,T4 max BA vs observed p99,4748,0,0,1594,FLAG
+conus_v2_b1_gompit,T4 max BA vs observed p99.9,4748,0,0,1135,FLAG
+conus_v2_b1_gompit,T4 peak SDI / SDImax,4748,0,0,464,FLAG
+conus_v2_b1_gompit,T5 Eichhorn VOL~HT site independence,0,18,0,0,NOT EVALUATED
+conus_v2_b1_gompit,T6 Sukachev per-tree VOL falls with density,0,18,0,0,NOT EVALUATED
+conus_v2_b1_gompit,T7 yield-density final BA vs initial density,0,18,0,0,NOT EVALUATED
+conus_v2_b1_gompit,T8 pinned BA plateau,18,0,0,0,PASS
+conus_v2_b1_gompit,T9 BA inversions (>10% step drop),4748,0,0,4070,FLAG
+conus_v2_b1_gompit,T9 VOL inversions (>10% step drop),4609,139,0,4241,FLAG
+conus_v2_b2,T0 initial-step shock,4748,0,0,206,FLAG
+conus_v2_b2,T1 monotone HT_dom,4609,139,0,4519,FLAG
+conus_v2_b2,T1 monotone QMD,4748,0,0,157,FLAG
+conus_v2_b2,T2 site ordering HT,0,18,0,0,NOT EVALUATED
+conus_v2_b2,T2 site ordering VOL,0,18,0,0,NOT EVALUATED
+conus_v2_b2,T3 Reineke slope (trajectory OLS),2239,2,2507,684,FLAG
+conus_v2_b2,"T3b frontier slope (rq tau 0.95, pooled limb)",18,0,0,0,PASS
+conus_v2_b2,T4 max BA vs observed p99,4748,0,0,1778,FLAG
+conus_v2_b2,T4 max BA vs observed p99.9,4748,0,0,1492,FLAG
+conus_v2_b2,T4 peak SDI / SDImax,4748,0,0,886,FLAG
+conus_v2_b2,T5 Eichhorn VOL~HT site independence,0,18,0,0,NOT EVALUATED
+conus_v2_b2,T6 Sukachev per-tree VOL falls with density,0,18,0,0,NOT EVALUATED
+conus_v2_b2,T7 yield-density final BA vs initial density,0,18,0,0,NOT EVALUATED
+conus_v2_b2,T8 pinned BA plateau,18,0,0,0,PASS
+conus_v2_b2,T9 BA inversions (>10% step drop),4748,0,0,2503,FLAG
+conus_v2_b2,T9 VOL inversions (>10% step drop),4609,139,0,2832,FLAG
+conus_v2_b2_gompit,T0 initial-step shock,4748,0,0,53,FLAG
+conus_v2_b2_gompit,T1 monotone HT_dom,4609,139,0,4586,FLAG
+conus_v2_b2_gompit,T1 monotone QMD,4748,0,0,2895,FLAG
+conus_v2_b2_gompit,T2 site ordering HT,0,18,0,0,NOT EVALUATED
+conus_v2_b2_gompit,T2 site ordering VOL,0,18,0,0,NOT EVALUATED
+conus_v2_b2_gompit,T3 Reineke slope (trajectory OLS),1905,0,2843,146,FLAG
+conus_v2_b2_gompit,"T3b frontier slope (rq tau 0.95, pooled limb)",18,0,0,1,FLAG
+conus_v2_b2_gompit,T4 max BA vs observed p99,4748,0,0,1368,FLAG
+conus_v2_b2_gompit,T4 max BA vs observed p99.9,4748,0,0,754,FLAG
+conus_v2_b2_gompit,T4 peak SDI / SDImax,4748,0,0,281,FLAG
+conus_v2_b2_gompit,T5 Eichhorn VOL~HT site independence,0,18,0,0,NOT EVALUATED
+conus_v2_b2_gompit,T6 Sukachev per-tree VOL falls with density,0,18,0,0,NOT EVALUATED
+conus_v2_b2_gompit,T7 yield-density final BA vs initial density,0,18,0,0,NOT EVALUATED
+conus_v2_b2_gompit,T8 pinned BA plateau,18,0,0,0,PASS
+conus_v2_b2_gompit,T9 BA inversions (>10% step drop),4748,0,0,4192,FLAG
+conus_v2_b2_gompit,T9 VOL inversions (>10% step drop),4609,139,0,4320,FLAG
+conus_v6_b1,T0 initial-step shock,4748,0,0,3557,FLAG
+conus_v6_b1,T1 monotone HT_dom,4609,139,0,3842,FLAG
+conus_v6_b1,T1 monotone QMD,4748,0,0,118,FLAG
+conus_v6_b1,T2 site ordering HT,0,18,0,0,NOT EVALUATED
+conus_v6_b1,T2 site ordering VOL,0,18,0,0,NOT EVALUATED
+conus_v6_b1,T3 Reineke slope (trajectory OLS),12,17,4719,7,FLAG
+conus_v6_b1,"T3b frontier slope (rq tau 0.95, pooled limb)",2,0,16,0,PASS
+conus_v6_b1,T4 max BA vs observed p99,4748,0,0,61,FLAG
+conus_v6_b1,T4 max BA vs observed p99.9,4748,0,0,13,FLAG
+conus_v6_b1,T4 peak SDI / SDImax,4748,0,0,2,FLAG
+conus_v6_b1,T5 Eichhorn VOL~HT site independence,0,18,0,0,NOT EVALUATED
+conus_v6_b1,T6 Sukachev per-tree VOL falls with density,0,18,0,0,NOT EVALUATED
+conus_v6_b1,T7 yield-density final BA vs initial density,0,18,0,0,NOT EVALUATED
+conus_v6_b1,T8 pinned BA plateau,18,0,0,0,PASS
+conus_v6_b1,T9 BA inversions (>10% step drop),4748,0,0,3530,FLAG
+conus_v6_b1,T9 VOL inversions (>10% step drop),4609,139,0,3284,FLAG
+conus_v6_b1_gompit,T0 initial-step shock,4748,0,0,3653,FLAG
+conus_v6_b1_gompit,T1 monotone HT_dom,4609,139,0,3853,FLAG
+conus_v6_b1_gompit,T1 monotone QMD,4748,0,0,402,FLAG
+conus_v6_b1_gompit,T2 site ordering HT,0,18,0,0,NOT EVALUATED
+conus_v6_b1_gompit,T2 site ordering VOL,0,18,0,0,NOT EVALUATED
+conus_v6_b1_gompit,T3 Reineke slope (trajectory OLS),8,1,4739,4,FLAG
+conus_v6_b1_gompit,"T3b frontier slope (rq tau 0.95, pooled limb)",2,0,16,0,PASS
+conus_v6_b1_gompit,T4 max BA vs observed p99,4748,0,0,64,FLAG
+conus_v6_b1_gompit,T4 max BA vs observed p99.9,4748,0,0,13,FLAG
+conus_v6_b1_gompit,T4 peak SDI / SDImax,4748,0,0,2,FLAG
+conus_v6_b1_gompit,T5 Eichhorn VOL~HT site independence,0,18,0,0,NOT EVALUATED
+conus_v6_b1_gompit,T6 Sukachev per-tree VOL falls with density,0,18,0,0,NOT EVALUATED
+conus_v6_b1_gompit,T7 yield-density final BA vs initial density,0,18,0,0,NOT EVALUATED
+conus_v6_b1_gompit,T8 pinned BA plateau,18,0,0,0,PASS
+conus_v6_b1_gompit,T9 BA inversions (>10% step drop),4748,0,0,3626,FLAG
+conus_v6_b1_gompit,T9 VOL inversions (>10% step drop),4609,139,0,3416,FLAG
+conus_v6_b2,T0 initial-step shock,4748,0,0,3550,FLAG
+conus_v6_b2,T1 monotone HT_dom,4609,139,0,3850,FLAG
+conus_v6_b2,T1 monotone QMD,4748,0,0,115,FLAG
+conus_v6_b2,T2 site ordering HT,0,18,0,0,NOT EVALUATED
+conus_v6_b2,T2 site ordering VOL,0,18,0,0,NOT EVALUATED
+conus_v6_b2,T3 Reineke slope (trajectory OLS),12,17,4719,7,FLAG
+conus_v6_b2,"T3b frontier slope (rq tau 0.95, pooled limb)",2,0,16,0,PASS
+conus_v6_b2,T4 max BA vs observed p99,4748,0,0,60,FLAG
+conus_v6_b2,T4 max BA vs observed p99.9,4748,0,0,13,FLAG
+conus_v6_b2,T4 peak SDI / SDImax,4748,0,0,2,FLAG
+conus_v6_b2,T5 Eichhorn VOL~HT site independence,0,18,0,0,NOT EVALUATED
+conus_v6_b2,T6 Sukachev per-tree VOL falls with density,0,18,0,0,NOT EVALUATED
+conus_v6_b2,T7 yield-density final BA vs initial density,0,18,0,0,NOT EVALUATED
+conus_v6_b2,T8 pinned BA plateau,18,0,0,0,PASS
+conus_v6_b2,T9 BA inversions (>10% step drop),4748,0,0,3524,FLAG
+conus_v6_b2,T9 VOL inversions (>10% step drop),4609,139,0,3282,FLAG
+conus_v6_b2_gompit,T0 initial-step shock,4748,0,0,3645,FLAG
+conus_v6_b2_gompit,T1 monotone HT_dom,4609,139,0,3861,FLAG
+conus_v6_b2_gompit,T1 monotone QMD,4748,0,0,405,FLAG
+conus_v6_b2_gompit,T2 site ordering HT,0,18,0,0,NOT EVALUATED
+conus_v6_b2_gompit,T2 site ordering VOL,0,18,0,0,NOT EVALUATED
+conus_v6_b2_gompit,T3 Reineke slope (trajectory OLS),6,1,4741,2,FLAG
+conus_v6_b2_gompit,"T3b frontier slope (rq tau 0.95, pooled limb)",2,0,16,0,PASS
+conus_v6_b2_gompit,T4 max BA vs observed p99,4748,0,0,61,FLAG
+conus_v6_b2_gompit,T4 max BA vs observed p99.9,4748,0,0,13,FLAG
+conus_v6_b2_gompit,T4 peak SDI / SDImax,4748,0,0,2,FLAG
+conus_v6_b2_gompit,T5 Eichhorn VOL~HT site independence,0,18,0,0,NOT EVALUATED
+conus_v6_b2_gompit,T6 Sukachev per-tree VOL falls with density,0,18,0,0,NOT EVALUATED
+conus_v6_b2_gompit,T7 yield-density final BA vs initial density,0,18,0,0,NOT EVALUATED
+conus_v6_b2_gompit,T8 pinned BA plateau,18,0,0,0,PASS
+conus_v6_b2_gompit,T9 BA inversions (>10% step drop),4748,0,0,3621,FLAG
+conus_v6_b2_gompit,T9 VOL inversions (>10% step drop),4609,139,0,3413,FLAG

@@ -1,0 +1,7 @@
+group,stands,rows,rows_missing_one_side,identical_rows_share,max_abs_dBA,max_abs_dTPH,max_abs_dSDI,max_rel_dBA_yr50,stands_yr50_dBA_over_1pct,max_spsdi_zero_inproc,max_spsdi_zero_kwonly,n_species_inproc,n_species_kwonly
+CA,20,420,0,1,0,0,0,0,0,0,0,50,50
+CR,20,420,0,1,0,0,0,0,0,0,0,38,38
+CS,20,420,0,1,0,0,0,0,0,0,0,96,96
+EM,20,420,0,1,0,0,0,0,0,0,0,19,19
+LS,20,420,0,1,0,0,0,0,0,0,0,68,68
+WC,20,420,0,1,0,0,0,0,0,0,0,39,39

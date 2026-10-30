@@ -1,0 +1,25 @@
+arms compared 72 | verdict changes 4 
+    group               arm          field                 v5                v6
+   <char>            <char>         <char>             <char>            <char>
+1:     EM         (variant)    recommended  calibrated_gompit   conus_b2_gompit
+2:     NE calibrated_native stress_verdict FRAGILE admissible STABLE admissible
+3:     WC         (variant)    recommended  calibrated_gompit    default_gompit
+4:     WC calibrated_gompit admissible_alt              FALSE              TRUE
+
+largest year-50 median BA changes (calibrated arms):
+     group               arm med_ba50_v5 med_ba50_v6 d_med_ba50 share_ba999_50_v5 share_ba999_50_v6 share_sdi_50_v5 share_sdi_50_v6 reineke_flag_rate_v5 reineke_flag_rate_v6
+    <char>            <char>       <num>       <num>      <num>             <num>             <num>           <num>           <num>                <num>                <num>
+ 1:     EM calibrated_native        41.8        52.0     10.216           0.10000           0.22333         0.00000         0.00000               0.7681              0.61257
+ 2:     EM calibrated_gompit        24.0        31.2      7.231           0.00000           0.09667         0.00000         0.00000               0.2619              0.13750
+ 3:     WC calibrated_native        72.5        78.6      6.084           0.09292           0.18142         0.01770         0.04867               0.2619              0.65476
+ 4:     WC calibrated_gompit        58.3        61.5      3.214           0.02212           0.03982         0.01770         0.02212               0.1731              0.16949
+ 5:     CS calibrated_gompit        27.5        30.5      2.984           0.00333           0.00333         0.00667         0.01000               0.0455              0.02667
+ 6:     CS calibrated_native        29.2        30.8      1.607           0.00333           0.00333         0.00333         0.00333               0.0109              0.00676
+ 7:     CA calibrated_native        47.3        48.0      0.689           0.00704           0.00704         0.01408         0.01408               0.4348              0.42857
+ 8:     LS calibrated_gompit        32.0        32.6      0.574           0.01333           0.01333         0.01000         0.01000               0.0476              0.04545
+ 9:     TT calibrated_gompit        22.3        21.8     -0.459           0.00704           0.00704         0.00704         0.00704               0.1667              0.16667
+10:     LS calibrated_native        33.3        33.7      0.459           0.03333           0.03333         0.00000         0.00000               0.0735              0.07143
+11:     CA calibrated_gompit        37.8        38.1      0.344           0.00704           0.00704         0.00704         0.00704               0.4091              0.39130
+12:     NE calibrated_native        36.3        36.5      0.230           0.00333           0.00333         0.00333         0.00333               0.0725              0.05405
+
+default arms identical v5 vs v6 (all numeric gate fields): TRUE 

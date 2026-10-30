@@ -1,0 +1,144 @@
+>>> acd native NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 09:38:03,508 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE acd native
+rc=0 Fri Oct 30 09:38:03 AM EDT 2026
+>>> cs native NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:35:35,197 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE cs native
+rc=0 Fri Oct 30 10:35:35 AM EDT 2026
+>>> cs gompit NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:36:00,652 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE cs gompit
+rc=0 Fri Oct 30 10:36:00 AM EDT 2026
+>>> ec native NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:32:07,276 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE ec native
+rc=0 Fri Oct 30 10:32:07 AM EDT 2026
+>>> ec gompit NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:37:08,867 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE ec gompit
+rc=0 Fri Oct 30 10:37:08 AM EDT 2026
+>>> em native NOAUTOES=1 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:35:16,833 wrote 6293 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE em native
+rc=0 Fri Oct 30 10:35:16 AM EDT 2026
+>>> em gompit NOAUTOES=1 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:36:36,864 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE em gompit
+rc=0 Fri Oct 30 10:36:36 AM EDT 2026
+>>> ie native NOAUTOES=1 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:37:24,894 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE ie native
+rc=0 Fri Oct 30 10:37:24 AM EDT 2026
+>>> ie gompit NOAUTOES=1 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:37:31,805 wrote 6291 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE ie gompit
+rc=0 Fri Oct 30 10:37:31 AM EDT 2026
+>>> acd gompit NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 09:38:10,990 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE acd gompit
+rc=0 Fri Oct 30 09:38:11 AM EDT 2026
+>>> ls native NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:37:20,613 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE ls native
+rc=0 Fri Oct 30 10:37:20 AM EDT 2026
+>>> ls gompit NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:36:44,943 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE ls gompit
+rc=0 Fri Oct 30 10:36:45 AM EDT 2026
+>>> ne native NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 09:37:46,500 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE ne native
+rc=0 Fri Oct 30 09:37:46 AM EDT 2026
+>>> ne gompit NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 09:37:47,682 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE ne gompit
+rc=0 Fri Oct 30 09:37:47 AM EDT 2026
+>>> bm native NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:34:14,341 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE bm native
+rc=0 Fri Oct 30 10:34:14 AM EDT 2026
+>>> pn native NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 09:47:56,865 wrote 798 rows; seed gate OK 38 of 38
+CATALOG_TASK_DONE pn native
+rc=0 Fri Oct 30 09:47:56 AM EDT 2026
+>>> pn gompit NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 09:49:17,525 wrote 798 rows; seed gate OK 38 of 38
+CATALOG_TASK_DONE pn gompit
+rc=0 Fri Oct 30 09:49:17 AM EDT 2026
+>>> so native NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:36:35,433 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE so native
+rc=0 Fri Oct 30 10:36:35 AM EDT 2026
+>>> so gompit NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:35:53,383 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE so gompit
+rc=0 Fri Oct 30 10:35:53 AM EDT 2026
+>>> sn native NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:38:29,951 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE sn native
+rc=0 Fri Oct 30 10:38:30 AM EDT 2026
+>>> sn gompit NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:38:13,410 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE sn gompit
+rc=0 Fri Oct 30 10:38:13 AM EDT 2026
+>>> tt native NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:12:40,462 wrote 2982 rows; seed gate OK 142 of 142
+CATALOG_TASK_DONE tt native
+rc=0 Fri Oct 30 10:12:40 AM EDT 2026
+>>> tt gompit NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:03:49,844 wrote 2982 rows; seed gate OK 142 of 142
+CATALOG_TASK_DONE tt gompit
+rc=0 Fri Oct 30 10:03:49 AM EDT 2026
+>>> ut native NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:33:35,555 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE ut native
+rc=0 Fri Oct 30 10:33:35 AM EDT 2026
+>>> ut gompit NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:33:45,388 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE ut gompit
+rc=0 Fri Oct 30 10:33:45 AM EDT 2026
+>>> bm gompit NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:37:01,288 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE bm gompit
+rc=0 Fri Oct 30 10:37:01 AM EDT 2026
+>>> wc native NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:29:10,354 wrote 4746 rows; seed gate OK 226 of 226
+CATALOG_TASK_DONE wc native
+rc=0 Fri Oct 30 10:29:10 AM EDT 2026
+>>> wc gompit NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:23:54,373 wrote 4746 rows; seed gate OK 226 of 226
+CATALOG_TASK_DONE wc gompit
+rc=0 Fri Oct 30 10:23:54 AM EDT 2026
+>>> ws native NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:34:13,084 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE ws native
+rc=0 Fri Oct 30 10:34:13 AM EDT 2026
+>>> ws gompit NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:35:06,202 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE ws gompit
+rc=0 Fri Oct 30 10:35:06 AM EDT 2026
+>>> ca native NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:12:18,867 wrote 2982 rows; seed gate OK 142 of 142
+CATALOG_TASK_DONE ca native
+rc=0 Fri Oct 30 10:12:18 AM EDT 2026
+>>> ca gompit NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:15:56,228 wrote 2982 rows; seed gate OK 142 of 142
+CATALOG_TASK_DONE ca gompit
+rc=0 Fri Oct 30 10:15:56 AM EDT 2026
+>>> ci native NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:36:54,506 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE ci native
+rc=0 Fri Oct 30 10:36:54 AM EDT 2026
+>>> ci gompit NOAUTOES=0 Fri Oct 30 09:51:52 AM EDT 2026
+2026-10-30 10:37:14,693 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE ci gompit
+rc=0 Fri Oct 30 10:37:14 AM EDT 2026
+>>> cr native NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:33:15,769 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE cr native
+rc=0 Fri Oct 30 10:33:15 AM EDT 2026
+>>> cr gompit NOAUTOES=0 Fri Oct 30 09:33:46 AM EDT 2026
+2026-10-30 10:35:53,259 wrote 6300 rows; seed gate OK 300 of 300
+CATALOG_TASK_DONE cr gompit
+rc=0 Fri Oct 30 10:35:53 AM EDT 2026

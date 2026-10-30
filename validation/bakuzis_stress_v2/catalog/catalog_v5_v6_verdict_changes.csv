@@ -1,0 +1,5 @@
+group,arm,field,v5,v6
+EM,(variant),recommended,calibrated_gompit,conus_b2_gompit
+NE,calibrated_native,stress_verdict,FRAGILE admissible,STABLE admissible
+WC,(variant),recommended,calibrated_gompit,default_gompit
+WC,calibrated_gompit,admissible_alt,FALSE,TRUE

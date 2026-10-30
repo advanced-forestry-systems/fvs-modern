@@ -40,7 +40,7 @@ It can also be switched on with the `GOMPMORT` keyword, but the coefficient path
 
 ## The configuration catalog
 
-The catalog is two CSV files in `config/catalog/`, regenerated on October 30, 2026 (the fifth version, merged in PR 137) by the benchmark pipeline under `validation/bakuzis_stress_v2/catalog/` and not to be edited by hand (`config/catalog/README.md`):
+The catalog is two CSV files in `config/catalog/`, regenerated on October 30, 2026 (the fifth version, merged in PR 137, and released as version 1.2.0 of the catalog record) by the benchmark pipeline under `validation/bakuzis_stress_v2/catalog/` and not to be edited by hand (`config/catalog/README.md`):
 
 - `catalog_recommendation_by_variant.csv`: one row per variant with `group`, `recommended`, `status`, `admissible_arms`, `nearterm_evidence`, `rule_sensitive` and `admissible_arms_alt`;
 - `catalog_gates_by_arm.csv`: one row per variant and arm with the gate statistics (`n_traj`, `fia_n_plots`, FIA percentile thresholds, exceedance shares, Reineke diagnostics, `admissible`, `admissible_alt`, `why_not` and others).
@@ -73,7 +73,7 @@ Per arm, `reineke_unknown` is TRUE when too few trajectories reached the relativ
 
 ## Current catalog by variant
 
-The table reproduces `config/catalog/catalog_recommendation_by_variant.csv` as of commit fb4cf10 (catalog fifth version). The last column is what `select_config(variant)` returned for each variant when run against those files.
+The table reproduces `config/catalog/catalog_recommendation_by_variant.csv` as of commit fb4cf10 (catalog fifth version, release 1.2.0). The catalog record is cited by its concept DOI, [10.5281/zenodo.23777723](https://doi.org/10.5281/zenodo.23777723); the 1.2.0 version DOI was not yet published when this page was written. The last column is what `select_config(variant)` returned for each variant when run against those files.
 
 !!! note "Changes in the fifth version (October 30, 2026)"
     The calibrated arms of all 18 variants were rerun after the in-process overlay fix in PR 135 (see [Running projections](running-projections.md#what-the-in-process-overlay-changes)); the default arms were carried over unchanged. According to `config/catalog/README.md`, the least-bad arm named for EM is now `conus_b2_gompit` (was `calibrated_gompit`) and for WC `default_gompit` (was `calibrated_gompit`), both still NOT RECOMMENDED for long horizons; WC `calibrated_gompit` becomes admissible under the alternative rule; and no status and no primary-rule admissibility changed.

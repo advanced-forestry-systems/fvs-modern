@@ -19,10 +19,11 @@ fvs-modern is a community maintained fork of the USDA Forest Vegetation Simulato
 | Find out why a run stopped or looks wrong | [Troubleshooting](user-guide/troubleshooting.md) |
 | Understand how the pieces fit | [Architecture](reference/architecture.md) |
 | Rebuild the configuration catalog | [Validation](reference/validation.md) |
+| See how fvs-modern compares with USDA FVS and fvs-conus on the same stands | [Model run-off](reference/runoff.md) |
 
 ## The configuration catalog
 
-`fvs2py.catalog.select_config(variant)` reads the catalog in `config/catalog/` and returns the arm to run, the `config_version` to pass to `FVS`, and the environment variables to set. The catalog, its stress test and the per-variant scorecards are archived on Zenodo under the concept DOI [10.5281/zenodo.23777723](https://doi.org/10.5281/zenodo.23777723). The current files are the fifth version, regenerated on October 30, 2026; the table is reproduced on [Choosing a configuration](user-guide/choosing-a-configuration.md#current-catalog-by-variant).
+`fvs2py.catalog.select_config(variant)` reads the catalog in `config/catalog/` and returns the arm to run, the `config_version` to pass to `FVS`, and the environment variables to set. The catalog, its stress test and the per-variant scorecards are archived on Zenodo under the concept DOI [10.5281/zenodo.23777723](https://doi.org/10.5281/zenodo.23777723). The current files are the fifth version (catalog release 1.2.0), regenerated on October 30, 2026; the table is reproduced on [Choosing a configuration](user-guide/choosing-a-configuration.md#current-catalog-by-variant).
 
 ## Recent fixes that change results
 

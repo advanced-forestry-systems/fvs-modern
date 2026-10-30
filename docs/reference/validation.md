@@ -19,7 +19,9 @@ All paths are under `validation/bakuzis_stress_v2/`.
 
 The four engine arms are the combinations of `default` or `calibrated` parameters with `native` or `gompit` survival. The gate table also carries rows for `conus_b1` and `conus_b2` arms, which `fvs2py.catalog` describes as projector arms from the fvs-conus pipeline, not run through this engine and listed for comparison only. Their `n_traj` values differ from the engine arms (for example 1,500 against 300 for NE).
 
-The Zenodo record for the catalog work is [10.5281/zenodo.23777723](https://doi.org/10.5281/zenodo.23777723).
+The current catalog tables are released as version 1.2.0 of the catalog record, packaged in `validation/bakuzis_stress_v2/release_20261030/` (PR 140; version 1.1.0 stays in `release_20261029/`). Cite the record by its concept DOI, [10.5281/zenodo.23777723](https://doi.org/10.5281/zenodo.23777723). The version 1.2.0 deposit had not been published on Zenodo when this page was written, so the concept DOI resolves to the latest published version until it is.
+
+A separate, pre-registered comparison of fvs-modern, the fvs-conus projector and unmodified USDA FVS on the same stands is described on [Model run-off (October 2026)](runoff.md).
 
 ## Stand sample and seeding
 
@@ -63,7 +65,7 @@ The catalog tables must be regenerated only through the pipeline; `config/catalo
 1. Build the engine libraries serially (see [Building the engine](building-the-engine.md)), and make sure `config/calibrated/<variant>.json` and `config/greg_mortality_coefficients.csv` are the versions you intend to evaluate. The gompit arms run with `FVS_GOMPIT=1` and `FVS_GOMPIT_COEF` pointing at the coefficient file.
 2. Run `catalog/conus_catalog_runs.py` to project the sampled FIA stands for every variant and arm.
 3. Score the trajectories with `bakuzis_stress_v2.R`.
-4. Apply the gates with `catalog/catalog_gates.R`. The current tables (fifth version, October 30, 2026, PR 137) were produced under `gates_v6/`; that version reran only the calibrated arms, with the overlay fix from PR 135, and carried the default arms over from the fourth version.
+4. Apply the gates with `catalog/catalog_gates.R`. The current tables (fifth version, October 30, 2026, PR 137; catalog release 1.2.0) were produced under `gates_v6/`; that version reran only the calibrated arms, with the overlay fix from PR 135, and carried the default arms over from the fourth version.
 5. Run `catalog/stress_catalog.R` and `catalog/bakuzis_scorecards.R` for the rule stress test and the scorecards.
 6. Copy `catalog_recommendation_by_variant.csv` and `catalog_gates_by_arm.csv` into `config/catalog/` and update `config/catalog/README.md` with the date, version and what changed.
 7. Check the result through the runtime reader:

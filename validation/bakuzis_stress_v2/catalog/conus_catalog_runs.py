@@ -82,7 +82,11 @@ def main():
     ap.add_argument("--seed", type=int, default=20261028)
     ap.add_argument("--seed-tol", type=float, default=0.20)
     ap.add_argument("--out", required=True)
-    ap.add_argument("--configs", default="default,calibrated")
+    ap.add_argument("--configs", default="default,calibrated",
+                    help="comma-separated parameter sets passed to run_scenario; 'calibrated' alone reruns only the "
+                         "calibrated arms (used for the v6 catalog after the 2026-10-30 overlay fix, PR 135)")
+    ap.add_argument("--first", type=int, default=0,
+                    help="run only the first N stands of the seeded sample (0 = all); the sample itself is unchanged")
     a = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 
@@ -119,6 +123,9 @@ def main():
     if smp.empty:
         log.error("no fitting plots assigned to variant %s; nothing to run", v); sys.exit(0)
     log.info("variant %s: %d stands sampled from %d assigned", v, len(smp), (assign["variant"] == v.upper()).sum())
+    if a.first > 0:
+        smp = smp.head(a.first).copy()
+        log.info("--first %d: running the first %d stands of the sample", a.first, len(smp))
     cond, plot, tree = read_state_tables(a.fia_dir, sorted(smp["STATECD"].unique()))
     cond["PLT_CN"] = cond["PLT_CN"].astype(str); tree["PLT_CN"] = tree["PLT_CN"].astype(str)
     if not plot.empty: plot["CN"] = plot["CN"].astype(str)

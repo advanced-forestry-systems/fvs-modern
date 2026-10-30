@@ -91,9 +91,9 @@ def main():
     ax1 = fig.add_subplot(gs[0, :]); ax2 = fig.add_subplot(gs[1, 0]); ax3 = fig.add_subplot(gs[1, 1])
     panel_variants(ax1, g, sv); panel_gates(ax2, g); panel_stability(ax3, sa)
     fig.text(0.07, 0.955, "A configuration catalog for fvs-modern across 18 FVS variants", fontsize=14, fontweight="bold", color=GREEN)
-    fig.text(0.07, 0.925, "4,485 FIA stands x 4 survival and parameter arms x 100 years, gated on the FIA envelope and Reineke self-thinning.", fontsize=8.6, color="#333333")
+    fig.text(0.07, 0.925, "4,748 FIA stands x 4 survival and parameter arms x 100 years, gated on the FIA envelope and Reineke self-thinning.", fontsize=8.6, color="#333333")
     fig.text(0.07, 0.903, "7 of 18 variants recommended; 0 of 72 verdicts change across 144 rule cells and 500 stand bootstraps.", fontsize=8.6, color="#333333")
-    foot = "Weiskittel, A.R. (2026). CRSF, University of Maine. Catalog shipped under the primary rule, October 29, 2026."
+    foot = "Weiskittel, A.R. (2026). CRSF, University of Maine. Catalog regenerated October 29, 2026 (version 1.1.0)."
     if a.doi: foot += f"  https://doi.org/{a.doi}"
     fig.text(0.07, 0.015, foot, fontsize=7, color=GREY)
     fig.savefig(os.path.join(a.out, "00_fvs-modern_catalog_graphical_abstract.png"), dpi=300); plt.close(fig)

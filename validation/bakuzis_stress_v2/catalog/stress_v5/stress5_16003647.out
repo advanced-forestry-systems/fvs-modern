@@ -1,0 +1,106 @@
+
+Lmod is automatically replacing "intel/2021.10.0" with "gcc/12.3.0".
+
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) mvapich/4.1
+
+grid cells: 144 
+disagreements with shipped catalog: 0 
+     group               arm     n shipped  boot  grid      verdict_stability
+    <char>            <char> <int>  <lgcl> <num> <num>                 <char>
+ 1:    ACD calibrated_gompit   300    TRUE  0.56  0.33     FRAGILE admissible
+ 2:    ACD calibrated_native   300    TRUE  1.00  0.50      STABLE admissible
+ 3:    ACD    default_gompit   300    TRUE  0.56  0.33     FRAGILE admissible
+ 4:    ACD    default_native   300    TRUE  1.00  0.50      STABLE admissible
+ 5:     BM calibrated_gompit   300    TRUE  1.00  0.62      STABLE admissible
+ 6:     BM calibrated_native   300    TRUE  1.00  0.62      STABLE admissible
+ 7:     BM    default_gompit   300    TRUE  1.00  0.75      STABLE admissible
+ 8:     BM    default_native   300    TRUE  1.00  0.62      STABLE admissible
+ 9:     CA calibrated_gompit   142   FALSE  0.00  0.00  STABLE not admissible
+10:     CA calibrated_native   142   FALSE  0.00  0.00  STABLE not admissible
+11:     CA    default_gompit   142   FALSE  0.00  0.00  STABLE not admissible
+12:     CA    default_native   142   FALSE  0.00  0.00  STABLE not admissible
+13:     CI calibrated_gompit   300   FALSE  0.00  0.00  STABLE not admissible
+14:     CI calibrated_native   300   FALSE  0.00  0.00  STABLE not admissible
+15:     CI    default_gompit   300   FALSE  0.00  0.00  STABLE not admissible
+16:     CI    default_native   300   FALSE  0.50  0.67 FRAGILE not admissible
+17:     CR calibrated_gompit   300   FALSE  0.07  0.17  STABLE not admissible
+18:     CR calibrated_native   300   FALSE  0.22  0.47 FRAGILE not admissible
+19:     CR    default_gompit   300   FALSE  0.00  0.00  STABLE not admissible
+20:     CR    default_native   300   FALSE  0.00  0.00  STABLE not admissible
+21:     CS calibrated_gompit   300    TRUE  0.98  1.00      STABLE admissible
+22:     CS calibrated_native   300    TRUE  1.00  1.00      STABLE admissible
+23:     CS    default_gompit   300    TRUE  0.89  0.50     FRAGILE admissible
+24:     CS    default_native   300    TRUE  1.00  0.50      STABLE admissible
+25:     EC calibrated_gompit   300   FALSE  0.00  0.00  STABLE not admissible
+26:     EC calibrated_native   300   FALSE  0.00  0.00  STABLE not admissible
+27:     EC    default_gompit   300   FALSE  0.01  0.00  STABLE not admissible
+28:     EC    default_native   300   FALSE  0.14  0.33 FRAGILE not admissible
+29:     EM calibrated_gompit   300   FALSE  0.00  0.00  STABLE not admissible
+30:     EM calibrated_native   300   FALSE  0.00  0.00  STABLE not admissible
+31:     EM    default_gompit   300   FALSE  0.00  0.03  STABLE not admissible
+32:     EM    default_native   300   FALSE  0.00  0.00  STABLE not admissible
+33:     IE calibrated_gompit   300   FALSE  0.00  0.00  STABLE not admissible
+34:     IE calibrated_native   300   FALSE  0.00  0.00  STABLE not admissible
+35:     IE    default_gompit   300   FALSE  0.00  0.00  STABLE not admissible
+36:     IE    default_native   300   FALSE  0.00  0.00  STABLE not admissible
+37:     LS calibrated_gompit   300    TRUE  0.99  0.54      STABLE admissible
+38:     LS calibrated_native   300    TRUE  0.72  0.25     FRAGILE admissible
+39:     LS    default_gompit   300   FALSE  0.00  0.03  STABLE not admissible
+40:     LS    default_native   300   FALSE  0.00  0.00  STABLE not admissible
+41:     NE calibrated_gompit   300    TRUE  0.67  0.58     FRAGILE admissible
+42:     NE calibrated_native   300    TRUE  0.80  0.54     FRAGILE admissible
+43:     NE    default_gompit   300    TRUE  0.80  0.33     FRAGILE admissible
+44:     NE    default_native   300    TRUE  0.96  0.50      STABLE admissible
+45:     PN calibrated_gompit    38   FALSE  0.00  0.00  STABLE not admissible
+46:     PN calibrated_native    38   FALSE  0.00  0.00  STABLE not admissible
+47:     PN    default_gompit    38   FALSE  0.00  0.00  STABLE not admissible
+48:     PN    default_native    38   FALSE  0.00  0.00  STABLE not admissible
+49:     SN calibrated_gompit   300    TRUE  1.00  1.00      STABLE admissible
+50:     SN calibrated_native   300    TRUE  1.00  1.00      STABLE admissible
+51:     SN    default_gompit   300    TRUE  1.00  0.50      STABLE admissible
+52:     SN    default_native   300    TRUE  1.00  0.50      STABLE admissible
+53:     SO calibrated_gompit   300   FALSE  0.46  0.33 FRAGILE not admissible
+54:     SO calibrated_native   300   FALSE  0.20  0.17 FRAGILE not admissible
+55:     SO    default_gompit   300   FALSE  0.46  0.33 FRAGILE not admissible
+56:     SO    default_native   300   FALSE  0.24  0.17 FRAGILE not admissible
+57:     TT calibrated_gompit   142   FALSE  0.23  0.17 FRAGILE not admissible
+58:     TT calibrated_native   142   FALSE  0.05  0.00  STABLE not admissible
+59:     TT    default_gompit   142   FALSE  0.00  0.00  STABLE not admissible
+60:     TT    default_native   142   FALSE  0.00  0.00  STABLE not admissible
+61:     UT calibrated_gompit   300   FALSE  0.01  0.00  STABLE not admissible
+62:     UT calibrated_native   300   FALSE  0.00  0.00  STABLE not admissible
+63:     UT    default_gompit   300   FALSE  0.00  0.00  STABLE not admissible
+64:     UT    default_native   300   FALSE  0.00  0.00  STABLE not admissible
+65:     WC calibrated_gompit   226   FALSE  0.01  0.12  STABLE not admissible
+66:     WC calibrated_native   226   FALSE  0.00  0.00  STABLE not admissible
+67:     WC    default_gompit   226   FALSE  0.01  0.08  STABLE not admissible
+68:     WC    default_native   226   FALSE  0.00  0.00  STABLE not admissible
+69:     WS calibrated_gompit   300   FALSE  0.00  0.00  STABLE not admissible
+70:     WS calibrated_native   300    TRUE  0.88  0.50     FRAGILE admissible
+71:     WS    default_gompit   300   FALSE  0.00  0.00  STABLE not admissible
+72:     WS    default_native   300   FALSE  0.04  0.17  STABLE not admissible
+     group               arm     n shipped  boot  grid      verdict_stability
+    <char>            <char> <int>  <lgcl> <num> <num>                 <char>
+     group     n shipped_any boot_any_admissible_prob grid_any_share
+    <char> <int>      <lgcl>                    <num>          <num>
+ 1:    ACD   300        TRUE                    1.000     0.50000000
+ 2:     BM   300        TRUE                    1.000     0.75000000
+ 3:     CA   142       FALSE                    0.000     0.00000000
+ 4:     CI   300       FALSE                    0.504     0.66666667
+ 5:     CR   300       FALSE                    0.342     0.52083333
+ 6:     CS   300        TRUE                    1.000     1.00000000
+ 7:     EC   300       FALSE                    0.166     0.33333333
+ 8:     EM   300       FALSE                    0.000     0.02777778
+ 9:     IE   300       FALSE                    0.002     0.00000000
+10:     LS   300        TRUE                    0.990     0.54166667
+11:     NE   300        TRUE                    0.996     0.58333333
+12:     PN    38       FALSE                    0.000     0.00000000
+13:     SN   300        TRUE                    1.000     1.00000000
+14:     SO   300       FALSE                    0.428     0.33333333
+15:     TT   142       FALSE                    0.246     0.16666667
+16:     UT   300       FALSE                    0.010     0.00000000
+17:     WC   226       FALSE                    0.034     0.12500000
+18:     WS   300        TRUE                    0.886     0.50000000
+STRESS_DONE

@@ -464,9 +464,12 @@ Four biological laws were evaluated at year 100:
 
 1. **Sukachev effect.** Per tree stand volume under high density
    less than under low density at matched site and species.
-2. **Eichhorn's rule.** Basal area monotonically non decreasing
-   across Low, Medium, High site classes at matched species and
-   density.
+2. **Site ordering of basal area.** Basal area monotonically non
+   decreasing across Low, Medium, High site classes at matched species
+   and density. (This is a site ordering test; Eichhorn's rule proper,
+   that stand volume is a near unique function of dominant height
+   independent of site, is tested separately by the versioned scorer
+   described below.)
 3. **Density drives mortality.** Cumulative mortality under high
    density greater than under low density at matched site and
    species.
@@ -480,6 +483,27 @@ The posterior ensemble was summarized at each year into a median and
 by (i) trajectory overlap, (ii) year 100 basal area divergence as
 percent of default, and (iii) fraction of scenario pairs satisfying
 each Bakuzis law.
+
+Two checks guard the design. A year 0 gate compares each sampled
+stand's engine basal area at the start of the projection against its
+density bin (Low 60, Medium 120, High 180 ft² ac⁻¹ nominal), so that
+a density class that does not reach the engine is detected rather
+than scored; FIA live tree records with a null expansion factor
+(TPA_UNADJ), which carry no area expansion and contribute nothing to
+the FIA live basal area, are dropped by the stand generator before
+the tree list is written. The default and calibrated MAP trajectories
+are then scored with a versioned Bakuzis scorer (fvs-modern
+`validation/bakuzis_stress_v2`) that reports, for each relation, the
+number of trajectories on which it was evaluated alongside the number
+flagged: the initial step shock, monotone height and quadratic mean
+diameter, site ordering of height and volume, the Reineke
+self thinning slope on trajectories that reach a relative density of
+0.55 (window −2.2 to −1.2) and the pooled τ = 0.95 frontier,
+maximum basal area against the 99th and 99.9th percentiles of the
+FIA fitting data and peak stand density index against its 99.9th
+percentile, Eichhorn's rule, Sukachev's per tree volume ordering,
+yield against initial density, a basal area plateau, and step
+inversions of basal area and volume.
 
 ## 3.4 Disturbance-aware benchmark and out-of-sample validation
 
@@ -743,89 +767,115 @@ additionally included diameter and site index fixed effects.
 
 The Bakuzis uncertainty pipeline was executed on OSC Cardinal as a
 SLURM array of six tasks running both the Northeast (NE) and
-Acadian (ACD) variants with 100 posterior draws per scenario. To
-remove the synthetic stand artifact identified in earlier
-iterations of this analysis, the runner was extended to draw real
-FIA condition pairs from each variant's state coverage, with five
-plots sampled per (species group, site class, density class) cell
-and projected for 100 years under default parameters, calibrated
-MAP, and 100 posterior draws. The full array produced an ensemble
-of 526,176 rows aggregated to 103,440 rows of per scenario per
-horizon per variable summary, with median and 95 percent credible
-bands pooled across draws and replicates so that the band reflects
-both parameter uncertainty and stand to stand variability.
+Acadian (ACD) variants, with five real FIA stands per cell in all 36
+cells of both variants and 100 posterior draws per stand in addition
+to the default and calibrated MAP configurations. The density axis
+reaches the engine: median year 0 basal area is 73 to 78, 118 to 123
+and 161 to 165 ft² ac⁻¹ for the 60, 120 and 180 ft² ac⁻¹ classes, and
+295 of the 360 sampled stands (82 percent) enter inside their
+selection bin, most misses being High cells seeding below
+150 ft² ac⁻¹ (31 of 65). An earlier version of this ensemble had
+been seeded with an expansion factor defect that left every cell
+nearly empty; the version reported here also drops FIA records with
+a null expansion factor, which affected 9 of the 360 stand draws and
+left every scorecard count unchanged.
 
-![Figure 8. Bakuzis matrix 100 year BA trajectories for the Northeast variant on real FIA stands sampled by site index and basal area band. Rows are site classes (Low, Medium, High), columns species groups (Spruce Fir, Northern Hardwood, Pine, Oak Pine). The dashed gray line is the default parameter trajectory; the orange line is the calibrated posterior median (MAP); the green ribbon is the 95 percent posterior credible band pooled across 100 draws and 5 FIA replicates per cell.](../calibration/output/comparisons/manuscript_figures/fig_bakuzis_trajectories.png){width=6.5in}
+![Figure 8. Bakuzis matrix 100 year BA trajectories for the Northeast variant on real FIA stands sampled by site index and basal area band. Rows are site classes (Low, Medium, High), columns species groups (Spruce Fir, Northern Hardwood, Pine, Oak Pine), one line per density class. The dashed gray line is the default parameter trajectory; the orange line is the calibrated posterior median (MAP); the green ribbon is the 95 percent posterior credible band pooled across 100 draws and 5 FIA replicates per cell.](../calibration/output/comparisons/manuscript_figures/fig_bakuzis_trajectories.png){width=6.5in}
 
-Figure 8 shows the 3 x 4 grid of NE BA trajectories on real FIA
-stands. Default and calibrated MAP trajectories are nearly
-co-located across all 33 populated cells (3 cells lacked sufficient
-FIA plots in their bin combinations). The posterior credible band
-brackets both point estimates with substantial width that grows
-with horizon, ranging from a few ft²/ac at year 25 to 30 to 50
-percent of the posterior median by year 100 in the highest site
-classes. The Acadian variant shows a similar overall pattern but
-with somewhat narrower bands consistent with the smaller spatial
-extent of its calibration data (Figure SI.39 in the supplement).
+Figure 8 shows the NE trajectories. On the relations that a real
+stand design can test cleanly, both configurations behave. No
+trajectory crosses the stand density index ceiling of the FIA
+fitting data, and the cell median basal area never exceeds
+64.5 m² ha⁻¹ (NE default) over 100 years. Against the NE thresholds
+(basal area 99th percentile 51.3 m² ha⁻¹, 99.9th 62.7 m² ha⁻¹), the
+cell maximum exceeds the 99th percentile in 16 of 36 cells under
+default parameters and 5 under the calibrated MAP, and the 99.9th
+percentile in 3 and 1; in ACD it exceeds the 99th percentile in 12
+of 36 cells under both configurations and the 99.9th in none. Of the
+144 default and MAP trajectories, 96 reach a relative density of
+0.55 and none of them falls outside the Reineke window, and the
+pooled self thinning frontier passes in all four variant by
+configuration arms. Height and quadratic mean diameter rise
+monotonically on all 144 trajectories, basal area plateaus where it
+should, and there are no basal area or volume inversions. The
+initial step shock flags one to five High density cells per arm,
+dense real stands thinning from above the frontier in the first
+cycle, which we report rather than excuse. Stems retained at year
+100 under default parameters are a median 22 percent (NE) and 18
+percent (ACD) of year 0.
 
-![Figure 9. Year 100 BA divergence (calibrated posterior median minus default, as percent of default) across the 33 populated Bakuzis cells for the Northeast variant on real FIA stands. Marker color indicates species group, marker shape indicates site class, and marker size scales with the posterior 95 percent band width.](../calibration/output/comparisons/manuscript_figures/fig_bakuzis_divergence.png){width=6in}
+![Figure 9. Year 100 BA divergence (calibrated posterior median minus default, as percent of default) across the 36 Bakuzis cells for the Northeast variant on real FIA stands. Marker color indicates species group, marker shape indicates site class, and marker size scales with the posterior 95 percent band width.](../calibration/output/comparisons/manuscript_figures/fig_bakuzis_divergence.png){width=6in}
 
-Figure 9 summarizes year 100 BA divergence for the NE variant on
-real stands. Almost all scenarios cluster within plus or minus 1
-percent of zero divergence, indicating that the calibrated MAP
-parameters produce essentially the same long horizon BA prediction
-as the default parameters when applied to real FIA stand
-combinations. The single notable divergence is Oak Pine at high
-site high density at -9.6 percent, consistent with the revised SDI
-maximum triggering modest additional self thinning in the most
-fully stocked cells. The narrow divergence envelope on real stands
-contrasts with what a synthetic stand evaluation might suggest and
-underlines that the recalibration's principal value is uncertainty
-quantification and component-level accuracy rather than a
-systematic shift of long horizon central tendencies.
+Figure 9 summarizes year 100 basal area divergence for NE. The
+calibrated MAP sits below the default in every one of the 36 cells,
+by a median 13.9 percent and at most 21.6 percent (Northern Hardwood,
+Medium site, High density: 181 against 231 ft² ac⁻¹). Read with the magnitude test above, the recalibration
+moves long horizon NE stocking toward the observed envelope (cells
+above the FIA 99th percentile fall from 16 to 5). In ACD the two
+configurations are identical in 34 of 36 cells and differ by at most
+1.1 percent. The national catalog runs on 300 FIA stands per variant
+show the same contrast independently: median year 50 basal area
+under the calibrated configuration is 46.5 against 46.6 m² ha⁻¹ for
+the default in ACD, and 36.3 against 42.6 m² ha⁻¹ (15 percent lower)
+in NE.
 
 ![Figure 10. Bakuzis biological law compliance at year 100 for the Acadian (left) and Northeast (right) variants computed on real FIA stands. Three configurations per panel: default parameters, calibrated MAP, and the posterior 95 percent band.](../calibration/output/comparisons/manuscript_figures/fig_bakuzis_laws.png){width=6in}
 
-Figure 10 reports Bakuzis law compliance from the FIA ensemble.
-The headline finding emerges on the Acadian variant Eichhorn rule:
-the posterior credible band achieves 50 percent compliance across
-the 10 species by density combinations, compared with 20 percent
-for both the default and the calibrated MAP point estimates. This
-two-and-a-half-fold uplift was observed previously in the synthetic
-stand version (50 percent posterior versus 17 percent point) and
-is now corroborated on real FIA stand combinations, supporting the
-interpretation that the posterior ensemble explores parameter
-regions that are more biologically reasonable than the MAP point
-estimate alone. Sukachev compliance for ACD is 100 percent for
-default and MAP and 90 percent for the posterior band, indicating
-that the posterior occasionally explores parameter combinations
-that produce per tree volume orderings inconsistent with the law
-of competition. Density driven mortality compliance for ACD is 70
-percent across all configurations, with the synthetic value of 100
-percent revealed as an artifact of the algorithmic stand generator
-rather than a calibration property. The NE variant shows 0 percent
-Sukachev compliance under all configurations, which the FIA based
-diagnostic now confirms is a real property of the variant's
-self thinning behavior in this region rather than a synthetic
-artifact. NE Eichhorn compliance is 44 percent under default and
-MAP and 22 percent under the posterior band, the only law where
-the posterior reduces rather than improves compliance and which
-warrants targeted refinement of the species random effect priors.
+Figure 10 reports the four law fractions computed by the aggregator.
+Density driven mortality holds in every scenario pair under every
+configuration in both variants. The site ordering of basal area
+(law 2) holds in none, Sukachev's ordering in 0 (ACD) and 8 percent
+(NE) of pairs under the point configurations and 17 percent under
+the posterior band, and the mortality size pattern is not yet
+computed. The versioned scorer agrees: Eichhorn's rule flags in
+every evaluated species group (3 in ACD, 4 in NE), Sukachev in every
+group, yield against initial density in two (default) and three
+(MAP) of four NE groups but none in ACD, and site ordering of height
+in two of four groups per arm. These are the relations that a design
+built on real stands cannot test cleanly. The cells are FIA
+conditions selected on site index and live basal area bins, so the
+site and density classes also differ in stand age, species mix and
+structure, and a comparison of per tree volume or final basal area
+across them at a matched projection year is confounded by the
+selection. On the synthetic 36 cell Northeast matrix run through
+the same engine build, where species, age and structure are held
+fixed by construction, site ordering and Eichhorn's rule pass in
+every species group under both survival models; Sukachev's ordering
+flags there as well, because by year 100 the stands have converged
+on a common carrying capacity and per tree volume no longer falls
+with initial density, so that test is better read at mid rotation.
+We therefore read the site ordering and Eichhorn flags here as a
+property of the stand design rather than evidence against the
+engine, and we report them as flags rather than claim a pass.
 
-![Figure 11. Posterior uncertainty band width as percent of posterior median, growing with projection horizon, for the Northeast variant across species groups and site classes on real FIA stands.](../calibration/output/comparisons/manuscript_figures/fig_bakuzis_band_growth.png){width=6in}
+![Figure 11. Posterior uncertainty band width as percent of posterior median against projection horizon, for the Northeast variant across species groups and site classes on real FIA stands.](../calibration/output/comparisons/manuscript_figures/fig_bakuzis_band_growth.png){width=6in}
 
-Figure 11 shows how the NE BA 95 percent credible band evolves
-with projection horizon. Band widths start near zero at year 0
-because the calibrated parameters fix the initial state, then grow
-to roughly 30 to 50 percent of the posterior median by year 100
-on real FIA stands, considerably wider than the synthetic stand
-analysis suggested because the FIA ensemble incorporates within-
-cell variability in species composition and diameter distribution
-on top of parameter uncertainty. The narrowest bands appear at low
-site low density cells where stand structure is least dynamic; the
-widest bands are at high site high density Pine and Oak Pine,
-where compounding interactions between calibrated diameter growth,
-mortality, and SDImax produce the largest combined spread.
+Figure 11 shows the NE 95 percent credible band through time. On
+real stands the band is wide from the first cycles, because it pools
+five FIA stands per cell as well as 100 parameter draws, and the
+median width stays near half the posterior median throughout (50,
+51 and 46 percent at years 25, 50 and 100; interquartile range 27 to
+66 percent at year 100). ACD is wider, 56 percent at year 100. The
+band pools stand to stand variation within a cell with parameter
+uncertainty, and the two sources are not separated here; a single
+stand projection will usually carry a narrower parametric band.
+
+The same scorer and gates, applied to FIA stands in every variant
+with fitting data rather than to the NE and ACD factorial, underlie
+the configuration catalog that `fvs2py.catalog.select_config`
+reads: up to 300 FIA plots per variant (4,748 stands across 18
+variants) were projected 100 years under default and calibrated MAP
+parameters crossed with native and GOMPIT survival, and an arm is
+admissible when fewer than 5 percent of its stands exceed the FIA
+99.9th percentiles of basal area and stand density index by year 50,
+it self thins inside the Reineke window on at least 90 percent of
+density gated trajectories,
+and keeps median year 50 basal area at or above the FIA median. Seven
+variants have at least one admissible arm (ACD, BM, CS, LS, NE, SN,
+WS) and eleven do not, nearly all on the self thinning axis alone; no
+verdict changes across 144 alternative rules or 500 stand bootstraps.
+The catalog, its stress test and the per variant scorecards are
+archived at Zenodo (10.5281/zenodo.23777723).
 
 ## 4.7 Disturbance artifact and the four-arm comparison
 
@@ -1004,21 +1054,28 @@ band is also wider in these variants, signaling the under-
 constrained regime to downstream applications without requiring a
 re-fit.
 
-Third, the Bakuzis matrix extended with posterior ensembles
-operates as a multi-criteria validation framework. Sukachev's law
-(taller stands have more BA for the same TPA) and the crown
-recession law (denser stands have lower crown ratios) are passed
-unambiguously across all 36 cells; Eichhorn's law (volume increment
-peaks at intermediate density) passes in 84 percent of cells; the
-mortality U-shape (higher rates at small and very large diameters)
-passes in only 40 percent of cells. These differential pass rates
-are informative: the components that share variance across many
-trees (BA, crown ratio) are well constrained by the calibration,
-while the size-conditional mortality structure remains weakly
-identified. Future Bakuzis evaluations across the western and
-southern variants once the keyword-reader regression is resolved
-will tell us whether the U-shape pass rate is a structural artifact
-or a function of regional FIA mortality density.
+Third, the Bakuzis matrix operates as a multi-criteria validation
+framework only when each relation is reported with the number of
+trajectories it was evaluated on. On the real stand ensemble the
+calibrated engine passes the relations that such a design can test
+(no stand density index exceedance, self thinning inside the Reineke
+window on all 96 trajectories that reach the self thinning zone,
+monotone height and diameter, no inversions), and the recalibration
+lowers NE long horizon basal area by a median 13.9 percent, toward
+the observed envelope. The site based relations (Eichhorn, Sukachev,
+yield against density) flag on that design because the FIA cells
+differ in age and composition as well as in site and density; site
+ordering and Eichhorn's rule pass on the synthetic matrix that holds
+those fixed, while Sukachev's ordering is better tested at mid
+rotation than at year 100. The
+practical lesson is that a law-compliance fraction without an
+evaluated count and a stated design can mislead in either direction:
+an earlier, under seeded version of this ensemble reported
+compliance fractions for relations that had never been exercised.
+Across the national variant set the same gates sort variants into
+those with an admissible configuration and those without, and the
+self thinning response of the native western variant mortality
+models is the component that most often fails.
 
 Fourth, the period-versus-annualized correction documented in
 section 4.4 is a critical finding for any Bayesian recalibration of
@@ -1156,32 +1213,22 @@ projections also carry parametric uncertainty bands.
 
 Additionally, the Bakuzis matrix results reported here use real FIA
 stands sampled by site index and basal area bin rather than synthetic
-algorithmic stands, which removes the dominant artifact of the prior
-analysis but constrains coverage to those (variant, species, site,
-density) combinations for which sufficient FIA plots exist. Three of
-36 cells lacked FIA plots in their target bins for the NE variant;
-the corresponding figure cells are blank. Variant coverage is
-restricted to NE and ACD because the converted FVS-PN, FVS-SN, and
-FVS-IE shared libraries currently fail at runtime when reading
-keyword files (Fortran runtime EOF in `base/keyrdr.f90` line 47) on
-both INVENTORY-mode keyfiles and the canonical USDA upstream
-test files. The shared libraries themselves now build cleanly and
-load via Python ctypes after a series of repairs documented in this
-release: an include-order fix in `deployment/scripts/build_fvs_libraries.sh`
-that resolves the `vwc/morts.f90` symbol cascade, and seven
-F77-to-F90 conversion-bug repairs in the `econ/` extension that
-collectively recover twelve undefined symbols (morcon_, ecvol_,
-ecinit_, echarv_, ecstatus_, setpretendstatus_, eccalc_, ecsetp_,
-eckey_, plus three downstream). The remaining runtime keyword-reader
-regression is an active debugging item that requires comparison
-against a USDA reference binary rather than further conversion-bug
-repair. The Marshall-format FIA CSV adapter
-(`calibration/python/marshall_to_fia_csv.py`) is shipped with this
-release and was used to convert per-state inventory data for OR, WA,
-AL, FL, GA, MS, SC, TN, ID, and MT into the standard FIA DataMart
-format; once the runtime regression is resolved, the FIA Bakuzis
-pipeline will run for the western and southern variants without
-further code changes.
+algorithmic stands, which makes the density axis real but confounds
+the site based relations with stand age and composition (Section
+4.6); those relations are reported as flags on this design and are
+tested cleanly only on the synthetic matrix. The factorial covers NE
+and ACD; the national configuration catalog extends the realism
+gates to the 18 variants with FIA fitting data on an unstratified
+FIA stand sample, which supports the magnitude and self thinning
+tests but not the site based ones. The PN, SN and IE runtime keyword
+reader failure that limited an earlier version of this analysis no
+longer occurs on the current build, on which all 18 variants
+completed 100 year projections for the catalog. The catalog's
+thresholds are age censored percentiles of the fitting data, the
+calibrated configuration enters it as a point estimate rather than
+a posterior, and outside NE no per variant near term evidence yet
+separates the native and GOMPIT survival models, so its tie break
+among admissible configurations is simplicity alone.
 
 ## 5.5 Future work
 
@@ -1202,13 +1249,11 @@ using independent growth and yield data not used in model fitting
 would provide complementary assessment of model performance. Fifth,
 adding treelist snapshot extraction to the Bakuzis runner would
 enable direct evaluation of the fourth biological law (mortality
-size pattern). Sixth, resolving the FVS-PN, FVS-SN, and FVS-IE
-runtime keyword reader regression (deferred from the present
-release; documented in
-`calibration/python/PN_SN_LIBRARY_DIAGNOSIS.md`) would extend the
-FIA Bakuzis evaluation to the western and southern variants and
-allow regional scaling of the posterior-band-as-biological-information
-finding beyond the Acadian variant.
+size pattern). Sixth, per variant near term scorecards outside the
+Northeast would let the configuration catalog choose between
+admissible survival models on accuracy as well as on realism, and
+refitting the native mortality response to density in the western
+variants is the change most likely to make more of them admissible.
 
 # 6. Conclusion
 
@@ -1275,7 +1320,7 @@ outputs and calibrated posterior medians.
 
 # Data and code availability
 
-Calibrated parameter posteriors and the MAGPlot/four-way validation outputs are archived at Zenodo, DOI 10.5281/zenodo.20760580.
+Calibrated parameter posteriors and the MAGPlot/four-way validation outputs are archived at Zenodo, DOI 10.5281/zenodo.20760580. The Bakuzis realism assessment, the national configuration catalog read by `fvs2py.catalog.select_config`, its stress test and the per variant scorecards are archived at Zenodo under concept DOI 10.5281/zenodo.23777723; no file in that record carries an FIA plot identifier or coordinate.
 
 
 All source code, calibrated parameter files, posterior draw

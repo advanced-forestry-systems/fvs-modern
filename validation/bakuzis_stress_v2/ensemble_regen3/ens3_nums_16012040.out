@@ -1,0 +1,115 @@
+
+Lmod is automatically replacing "intel/2021.10.0" with "gcc/12.3.0".
+
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) mvapich/4.1
+
+
+###### ens_full 
+seedgate rows 360 inbin 296 (82.2%) min tpa 6 
+   variant density_class med_atba
+    <char>        <char>    <num>
+1:     ACD          High    161.0
+2:     ACD           Low     77.5
+3:     ACD        Medium    122.5
+4:      NE          High    165.0
+5:      NE           Low     73.5
+6:      NE        Medium    117.5
+    variant density_class  below     N
+     <char>        <char> <lgcl> <int>
+ 1:     ACD          High   TRUE    12
+ 2:     ACD          High  FALSE     1
+ 3:     ACD           Low  FALSE     6
+ 4:     ACD           Low   TRUE     6
+ 5:     ACD        Medium   TRUE     2
+ 6:     ACD        Medium  FALSE     1
+ 7:      NE          High   TRUE    17
+ 8:      NE           Low  FALSE     5
+ 9:      NE           Low   TRUE     7
+10:      NE        Medium   TRUE     6
+11:      NE        Medium  FALSE     1
+populated cells: ACD 36 NE 36 
+   variant med_abs_diff max_abs_diff n_within1     n identical
+    <char>        <num>        <num>     <int> <int>     <int>
+1:     ACD      0.00000      0.00000        36    36        36
+2:      NE     13.88966     21.64502         0    36         0
+   variant     species_group site_class density_class   def   cal diff_pct_y100
+    <char>            <char>     <char>        <char> <num> <num>         <num>
+1:      NE Northern-Hardwood     Medium          High   231   181     -21.64502
+2:      NE        Spruce-Fir     Medium           Low   241   192     -20.33195
+3:      NE        Spruce-Fir     Medium          High   236   191     -19.06780
+   variant band_pct_med band_pct_q25 band_pct_q75
+    <char>        <num>        <num>        <num>
+1:     ACD     55.98652     40.35125     80.31732
+2:      NE     45.81854     25.05530     65.60096
+   variant   band25   band50  band100
+    <char>    <num>    <num>    <num>
+1:     ACD 52.48459 53.51891 55.98652
+2:      NE 49.91256 50.58827 45.81854
+   variant med_ret100
+    <char>      <num>
+1:     ACD  0.1831624
+2:      NE  0.2167243
+   variant         config max_ft2ac max_m2ha
+    <char>         <char>     <num>    <num>
+1:     ACD calibrated_map       260     59.7
+2:      NE calibrated_map       277     63.6
+3:     ACD        default       260     59.7
+4:      NE        default       281     64.5
+5:     ACD posterior_band       239     54.9
+6:      NE posterior_band       278     63.8
+
+###### ens_full3 
+seedgate rows 360 inbin 295 (81.9%) min tpa 6 
+   variant density_class med_atba
+    <char>        <char>    <num>
+1:     ACD          High    161.0
+2:     ACD           Low     77.5
+3:     ACD        Medium    122.5
+4:      NE          High    164.5
+5:      NE           Low     73.0
+6:      NE        Medium    117.5
+    variant density_class  below     N
+     <char>        <char> <lgcl> <int>
+ 1:     ACD          High   TRUE    12
+ 2:     ACD          High  FALSE     1
+ 3:     ACD           Low  FALSE     6
+ 4:     ACD           Low   TRUE     6
+ 5:     ACD        Medium   TRUE     2
+ 6:     ACD        Medium  FALSE     1
+ 7:      NE          High   TRUE    19
+ 8:      NE           Low  FALSE     5
+ 9:      NE           Low   TRUE     7
+10:      NE        Medium   TRUE     6
+populated cells: ACD 36 NE 36 
+   variant med_abs_diff max_abs_diff n_within1     n identical
+    <char>        <num>        <num>     <int> <int>     <int>
+1:     ACD      0.00000     1.075269        35    36        34
+2:      NE     13.87336    21.645022         0    36         0
+   variant     species_group site_class density_class   def   cal diff_pct_y100
+    <char>            <char>     <char>        <char> <num> <num>         <num>
+1:      NE Northern-Hardwood     Medium          High   231   181     -21.64502
+2:      NE        Spruce-Fir     Medium           Low   241   192     -20.33195
+3:      NE          Oak-Pine       High          High   208   167     -19.71154
+   variant band_pct_med band_pct_q25 band_pct_q75
+    <char>        <num>        <num>        <num>
+1:     ACD     55.98652     40.35125     80.77187
+2:      NE     45.92084     27.06057     65.60096
+   variant   band25   band50  band100
+    <char>    <num>    <num>    <num>
+1:     ACD 52.48459 53.51891 55.98652
+2:      NE 49.91256 50.58827 45.92084
+   variant med_ret100
+    <char>      <num>
+1:     ACD  0.1831624
+2:      NE  0.2167243
+   variant         config max_ft2ac max_m2ha
+    <char>         <char>     <num>    <num>
+1:     ACD calibrated_map       260     59.7
+2:      NE calibrated_map       277     63.6
+3:     ACD        default       260     59.7
+4:      NE        default       281     64.5
+5:     ACD posterior_band       239     54.9
+6:      NE posterior_band       278     63.8
+NUMS_DONE

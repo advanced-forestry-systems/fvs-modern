@@ -87,7 +87,7 @@ def load_fia_conditions(
 
     Returns columns: STATECD, COUNTYCD, PLOT, INVYR, COND_STATUS_CD,
     SICOND, SIBASE, BALIVE, FORTYPCD, STDAGE, ASPECT, SLOPE, ELEV,
-    PLT_CN. Missing files are skipped.
+    PLT_CN, CONDID, CONDPROP_UNADJ. Missing files are skipped.
     """
     states = VARIANT_STATES.get(variant.lower(), ())
     frames = []
@@ -103,6 +103,7 @@ def load_fia_conditions(
                 "STATECD", "COUNTYCD", "PLOT", "INVYR",
                 "COND_STATUS_CD", "SICOND", "SIBASE", "BALIVE",
                 "FORTYPCD", "STDAGE", "ASPECT", "SLOPE", "ELEV", "PLT_CN",
+                "CONDID", "CONDPROP_UNADJ",
             ),
             low_memory=False,
         )
@@ -135,7 +136,7 @@ def load_fia_trees(
             tree_csv,
             usecols=lambda c: c
             in (
-                "PLT_CN", "STATECD", "COUNTYCD", "PLOT", "SUBP", "TREE",
+                "PLT_CN", "CONDID", "STATECD", "COUNTYCD", "PLOT", "SUBP", "TREE",
                 "STATUSCD", "SPCD", "DIA", "HT", "CR", "TPA_UNADJ",
                 "DAMTYP1", "DECAYCD", "STANDING_DEAD_CD",
             ),
@@ -255,6 +256,37 @@ def build_tree_init(
     return out
 
 
+def condition_trees(trees: pd.DataFrame, cond_row: pd.Series) -> pd.DataFrame:
+    """Trees of one FIA condition, expanded to the condition acre.
+
+    The sampled unit is a condition (its SICOND and BALIVE place it in a
+    Bakuzis cell), so its tree list must be that condition's trees only, and
+    TPA_UNADJ (per plot acre) must be divided by CONDPROP_UNADJ to give trees
+    per condition acre, which is how FIA defines BALIVE. Before 2026-10-30 the
+    trees were matched by plot only and not expanded, so on a multi-condition
+    plot a condition received the other conditions' trees and a partial
+    condition was seeded at CONDPROP_UNADJ x its density (D3; 125 of the 360
+    NE/ACD Paper 1 ensemble stands). Mirrors the catalog runner
+    validation/bakuzis_stress_v2/catalog/conus_catalog_runs.py. Records with a
+    null TPA_UNADJ pass through untouched and are dropped by build_tree_init.
+    """
+    if trees is None or trees.empty:
+        return pd.DataFrame() if trees is None else trees.copy()
+    t = trees.loc[trees["PLT_CN"] == cond_row["PLT_CN"]]
+    condid = cond_row.get("CONDID", np.nan)
+    if "CONDID" in t.columns and pd.notna(condid):
+        t = t.loc[t["CONDID"] == int(condid)]
+    t = t.copy()
+    cp = cond_row.get("CONDPROP_UNADJ", np.nan)
+    try:
+        cp = float(cp)
+    except (TypeError, ValueError):
+        cp = np.nan
+    if np.isfinite(cp) and cp > 0 and "TPA_UNADJ" in t.columns:
+        t["TPA_UNADJ"] = t["TPA_UNADJ"] / cp
+    return t
+
+
 def _variant_region(variant: str) -> int:
     table = {"ne": 9, "acd": 9, "pn": 6, "sn": 8, "ie": 1}
     return table.get(variant.lower(), 9)
@@ -300,7 +332,7 @@ def generate_real_stand(
     out = []
     for i, row in sample.iterrows():
         stand_id = f"FIA{int(row['PLT_CN']) % 1_000_000:06d}"
-        this_trees = trees.loc[trees["PLT_CN"] == row["PLT_CN"]].copy()
+        this_trees = condition_trees(trees, row)
         stand_df = build_stand_init(row, stand_id, variant)
         tree_df = build_tree_init(this_trees, stand_id)
         out.append((stand_df, tree_df, row))
@@ -314,6 +346,7 @@ __all__ = [
     "generate_real_stand",
     "load_fia_conditions",
     "load_fia_trees",
+    "condition_trees",
     "build_stand_init",
     "build_tree_init",
 ]

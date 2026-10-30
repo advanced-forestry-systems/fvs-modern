@@ -71,6 +71,7 @@ class UncertaintyEngine:
         config_dir: Optional[str | Path] = None,
         draws_path: Optional[str | Path] = None,
         seed: Optional[int] = None,
+        calibration_dir: Optional[str | Path] = None,
     ):
         """Initialize the uncertainty engine.
 
@@ -79,8 +80,16 @@ class UncertaintyEngine:
             config_dir: Path to config directory containing calibrated/ subdir
             draws_path: Direct path to a draws JSON file (overrides config_dir)
             seed: Random seed for reproducible draw sequences
+            calibration_dir: calibration/ root holding output/variants/<v>/ and
+                data/equation_availability_full.csv (default: the sibling of
+                config_dir), used to put draws on the MAP multiplier basis
         """
         self.variant = variant.lower()
+        self._config_dir = (Path(config_dir) if config_dir is not None
+                            else Path(__file__).parent)
+        self._calibration_dir_override = calibration_dir
+        self._cal_config: dict[str, Any] | None = None
+        self._ln_sdi_ref: np.ndarray | None = None
         self._rng = np.random.default_rng(seed)
 
         if draws_path is not None:
@@ -373,165 +382,118 @@ class UncertaintyEngine:
             return result
         return None
 
+    def _calibration_dir(self) -> Path:
+        """calibration/ root next to the config directory (multipliers.R inputs)."""
+        if self._calibration_dir_override is not None:
+            return Path(self._calibration_dir_override)
+        return self._config_dir.parent / "calibration"
+
+    def _calibrated_config(self) -> dict[str, Any]:
+        """The calibrated (MAP) config: SDICON, FIAJSP, BAMAX, maxsp."""
+        if self._cal_config is None:
+            from config.config_loader import FvsConfigLoader
+            self._cal_config = FvsConfigLoader(
+                self.variant, version="calibrated", config_dir=self._config_dir,
+            ).config
+        return self._cal_config
+
+    @staticmethod
+    def _ln_sdimax_draw(sd_params: dict[str, Any], fia: list, maxsp: int) -> np.ndarray:
+        """Per-slot ln SDImax of one stand_density draw at the centred qmd:
+        Intercept + r_SPCD[code,Intercept]; population Intercept where the
+        species has no random effect."""
+        from config.calibration_multipliers import spcd_effects
+        icpt = sd_params.get("Intercept")
+        out = np.full(maxsp, np.nan)
+        if icpt is None:
+            return out
+        eff, other = spcd_effects(sd_params)
+        for i in range(min(maxsp, len(fia))):
+            code = fia[i]
+            if code is not None and code in eff:
+                out[i] = icpt + eff[code]
+            elif np.isfinite(other):
+                out[i] = icpt + other
+            else:
+                out[i] = icpt
+        return out
+
+    def _ln_sdimax_reference(self, fia: list, maxsp: int) -> np.ndarray:
+        """Posterior median of the per-slot ln SDImax over every stored draw."""
+        if self._ln_sdi_ref is None:
+            if self._draws_data is None:
+                self._load_draws()
+            sd = self._draws_data.get("draws", {}).get("stand_density", [])
+            if not sd:
+                self._ln_sdi_ref = np.full(maxsp, np.nan)
+            else:
+                mat = np.vstack([
+                    self._ln_sdimax_draw(
+                        {k: (v[0] if isinstance(v, list) and len(v) == 1 else v)
+                         for k, v in d.items()}, fia, maxsp)
+                    for d in sd[: self._n_draws]
+                ])
+                self._ln_sdi_ref = np.nanmedian(mat, axis=0)
+        return self._ln_sdi_ref
+
     def compute_multipliers_for_draw(
         self,
         draw: dict[str, dict[str, float]],
-        default_config: dict[str, Any],
+        default_config: Optional[dict[str, Any]] = None,
     ) -> dict[str, np.ndarray]:
-        """Compute FVS multipliers from a posterior draw.
+        """Per-species FVS adjustments for one posterior draw, on the MAP basis.
 
-        Translates raw posterior parameter values into the multiplicative
-        adjustments that FVS uses internally (GROWMULT, MORTMULT, HTGMULT,
-        SDIMAX). This mirrors the logic in FvsConfigLoader but operates on
-        a single draw rather than the posterior median.
+        BAIMULT, MORTMULT and HTGMULT come from
+        config.calibration_multipliers.multipliers_from_params, the Python port
+        of calibration/R/multipliers.R that also reproduces the shipped MAP
+        calibration_multipliers block from the posterior medians, so a draw and
+        MAP use one function and one basis (D4, 2026-10-30). BAIMULT is the
+        diameter-growth scale sqrt(dds), exactly as generate_keywords applies to
+        the MAP dds_multiplier.
 
-        Handles two posterior parameterization styles:
-          - Stan non centered: mu_b0 + sigma_b0 * z_b0[i] (diameter growth)
-          - brms random effects: b_Intercept + r_SPCD[code,Intercept] (mortality,
-            stand density) or b_a_Intercept + r_SPCD__a[code,Intercept] (height)
+        SDImax: the MAP SDICON (or R5SDI/R4SDI/FMSDI/SDIDEF) value is a blend
+        of quantile-regression and Bayesian estimates, so it cannot be rebuilt
+        from one draw. Each draw instead perturbs MAP multiplicatively by the
+        posterior deviation of that species' ln SDImax from its posterior
+        median, sdi = MAP * exp(ln_sdi_draw - median(ln_sdi)), which centres the
+        draws on MAP and keeps the posterior spread. Species whose MAP value is
+        missing (the NA entries) are NaN here and are never written, so FVS keeps
+        its own default for them, as it does under the MAP keyword block.
 
-        FIA species codes in the random effects are mapped to FVS species indices
-        using the FIAJSP array from the variant config.
-
-        Args:
-            draw: Parameter draw from get_draw() or sample_draw()
-            default_config: The default (uncalibrated) config dictionary
+        default_config is accepted for backward compatibility and not used.
 
         Returns:
-            Dictionary with keys: growth_mult, mort_mult, hg_mult, sdi_values
+            Dict with growth_mult (BAIMULT), mort_mult, hg_mult and, when the
+            calibrated config carries an SDI vector, sdi_values (NaN = skip).
         """
-        result = {}
-        default_cats = default_config.get("categories", {})
-        maxsp = default_config.get("maxsp", 0)
-        if maxsp == 0:
-            sp_defs = default_cats.get("species_definitions", {})
-            nsp = sp_defs.get("NSP", [])
-            maxsp = int(nsp[0]) if nsp else 108
+        from config.calibration_multipliers import (
+            baimult_from_dds, config_maxsp, fia_codes, multipliers_from_params,
+        )
+        from config.config_loader import FvsConfigLoader
 
-        fia_to_fvs = self._build_fia_to_fvs_map(default_config)
+        cal = self._calibrated_config()
+        fia = fia_codes(cal)
+        maxsp = config_maxsp(cal)
+        m = multipliers_from_params(draw, cal, self.variant, self._calibration_dir())
+        result = {
+            "growth_mult": baimult_from_dds(m["dds_multiplier"]),
+            "mort_mult": m["mort_multiplier"],
+            "hg_mult": m["htg_multiplier"],
+        }
 
-        # ---- Growth multiplier from diameter growth intercept shift ----
-        if "diameter_growth" in draw:
-            dg_params = draw["diameter_growth"]
-            default_growth = default_cats.get("growth", {})
-
-            # Try hierarchical Stan parameterization first (z_b0)
-            cal_b0 = self._reconstruct_hierarchical_intercepts(
-                dg_params, "mu_b0", "z_b0", maxsp, fia_to_fvs
+        map_sdi = FvsConfigLoader._find_sdi_param(cal.get("categories", {}))
+        if map_sdi is not None and "stand_density" in draw:
+            base = np.array(
+                [np.nan if (v is None or isinstance(v, str)) else float(v) for v in map_sdi],
+                dtype=np.float64,
             )
-            # Fall back to simple indexed form
-            if cal_b0 is None:
-                cal_b0 = self._extract_species_vector(dg_params, "b0")
-
-            # Get default intercepts: try B0, then B1, then WEIBB1
-            def_b0_arr = None
-            for bname in ("B0", "B1", "WEIBB1"):
-                if bname in default_growth:
-                    def_b0_arr = default_growth[bname]
-                    break
-
-            if cal_b0 is not None and def_b0_arr is not None:
-                def_b0 = np.array(def_b0_arr, dtype=np.float64)
-                n = min(len(cal_b0), len(def_b0))
-                cal_b0 = cal_b0[:n]
-                def_b0 = def_b0[:n]
-
-                with np.errstate(invalid="ignore"):
-                    multipliers = np.where(
-                        def_b0 != 0,
-                        np.sqrt(np.clip(np.exp(cal_b0 - def_b0), 0.1, 10.0)),
-                        1.0,
-                    )
-                result["growth_mult"] = multipliers
-
-        # ---- Mortality multiplier from mortality intercept shift ----
-        if "mortality" in draw:
-            mort_params = draw["mortality"]
-            default_mort = default_cats.get("mortality", {})
-
-            # Try brms hierarchical (b_Intercept + r_SPCD[code,Intercept])
-            cal_b0 = self._reconstruct_hierarchical_intercepts(
-                mort_params, "b_Intercept", "r_SPCD", maxsp, fia_to_fvs
-            )
-            # Fall back to simple indexed
-            if cal_b0 is None:
-                cal_b0 = self._extract_species_vector(mort_params, "b_Intercept")
-            if cal_b0 is None:
-                cal_b0 = self._extract_species_vector(mort_params, "b0")
-
-            def_b0_name = None
-            for name in ("MORT_B0", "B0", "MRT_B0"):
-                if name in default_mort:
-                    def_b0_name = name
-                    break
-
-            if cal_b0 is not None and def_b0_name is not None:
-                def_b0 = np.array(default_mort[def_b0_name], dtype=np.float64)
-                n = min(len(cal_b0), len(def_b0))
-
-                with np.errstate(invalid="ignore"):
-                    odds_ratio = np.where(
-                        def_b0[:n] != 0,
-                        np.exp(cal_b0[:n] - def_b0[:n]),
-                        1.0,
-                    )
-                result["mort_mult"] = np.clip(odds_ratio, 0.1, 10.0)
-
-        # ---- Height growth multiplier ----
-        # Draws may use "height_diameter" or "height_increment" key
-        hg_key = None
-        for k in ("height_increment", "height_diameter"):
-            if k in draw:
-                hg_key = k
-                break
-
-        if hg_key is not None:
-            hg_params = draw[hg_key]
-            for cat_name in ("height_diameter", "height_growth", "growth"):
-                hg_def = default_cats.get(cat_name, {})
-                for b0_name in ("HD_A", "HGLD", "HG_B0"):
-                    if b0_name in hg_def:
-                        # Try brms double underscore notation (r_SPCD__a)
-                        cal_vals = self._reconstruct_brms_intercepts_double(
-                            hg_params, "b_a_Intercept", "a", maxsp, fia_to_fvs
-                        )
-                        if cal_vals is None:
-                            cal_vals = self._extract_species_vector(hg_params, "b1")
-
-                        if cal_vals is not None:
-                            def_vals = np.array(hg_def[b0_name], dtype=np.float64)
-                            n = min(len(cal_vals), len(def_vals))
-                            with np.errstate(divide="ignore", invalid="ignore"):
-                                mult = np.where(
-                                    def_vals[:n] != 0,
-                                    cal_vals[:n] / def_vals[:n],
-                                    1.0,
-                                )
-                            result["hg_mult"] = np.clip(mult, 0.1, 10.0)
-                            break
-                if "hg_mult" in result:
-                    break
-
-        # ---- SDI max values from stand density ----
-        if "stand_density" in draw:
-            sdi_params = draw["stand_density"]
-
-            # Try brms hierarchical: b_Intercept + r_SPCD[code,Intercept]
-            # The stand density intercept is ln(SDImax), so exponentiate
-            sdi_intercepts = self._reconstruct_hierarchical_intercepts(
-                sdi_params, "b_Intercept", "r_SPCD", maxsp, fia_to_fvs
-            )
-            if sdi_intercepts is not None:
-                # Intercepts are on log scale; convert to SDI values
-                sdi_vals = np.exp(sdi_intercepts)
-                # Clip to reasonable range (100 to 2000)
-                result["sdi_values"] = np.clip(sdi_vals, 100, 2000)
-            else:
-                # Fall back to direct sdimax values
-                sdi_vals = self._extract_species_vector(sdi_params, "sdimax")
-                if sdi_vals is not None:
-                    result["sdi_values"] = sdi_vals
-
+            base = np.where(base > 0, base, np.nan)
+            n = min(base.size, maxsp)
+            ln_draw = self._ln_sdimax_draw(draw["stand_density"], fia, maxsp)[:n]
+            ln_ref = self._ln_sdimax_reference(fia, maxsp)[:n]
+            dev = ln_draw - ln_ref
+            dev = np.where(np.isfinite(dev), dev, 0.0)
+            result["sdi_values"] = base[:n] * np.exp(dev)
         return result
 
     def apply_draw_to_fvs(
@@ -584,8 +546,15 @@ class UncertaintyEngine:
 
         if "sdi_values" in multipliers:
             try:
-                arr = self._pad_array(multipliers["sdi_values"], maxsp, fill=0)
-                fvs_instance.set_species_attr("spsdi", arr)
+                # Never write 0 (or NaN) for a species without a value: keep
+                # whatever FVS already holds for it (D2, 2026-10-30).
+                cur = np.asarray(fvs_instance.get_species_attr("spsdi"),
+                                 dtype=np.float64).copy()
+                vals = np.asarray(multipliers["sdi_values"], dtype=np.float64)
+                n = min(cur.size, vals.size)
+                ok = np.isfinite(vals[:n]) & (vals[:n] > 0)
+                cur[:n][ok] = vals[:n][ok]
+                fvs_instance.set_species_attr("spsdi", cur)
                 applied["spsdi"] = True
             except Exception as e:
                 logger.warning(f"Could not apply SDI values: {e}")
@@ -596,60 +565,65 @@ class UncertaintyEngine:
     def generate_keywords_for_draw(
         self,
         draw: dict[str, dict[str, float]],
-        default_config: dict[str, Any],
+        default_config: Optional[dict[str, Any]] = None,
         draw_idx: int = 0,
+        include_comments: bool = True,
     ) -> str:
         """Generate FVS keywords for a specific posterior draw.
 
-        Produces a keyword block suitable for insertion into any FVS keyfile.
-        This is the microfvs/standalone pathway for uncertainty propagation.
+        Records are written by the same formatters FvsConfigLoader.
+        generate_keywords uses for the MAP block (10-column keyword field, then
+        10-column numeric fields; SDIMAX species in field 1 and value in field
+        2; MORTMULT, BAIMULT and HTGMULT as scheduled activities with a blank
+        date in field 1). Before 2026-10-30 this method padded every keyword to
+        16 columns, so FVS read field 1 of SDIMAX as blank (all species), each
+        species index landed in the SDI field, and the last record (108) won for
+        every species in every draw (D1).
+
+        Stand-level keywords that are not posterior quantities (BAMAX) are
+        copied from the MAP block so that a draw differs from MAP only in its
+        drawn parameters.
 
         Args:
             draw: Parameter draw from get_draw()
-            default_config: Default config dictionary
+            default_config: accepted for backward compatibility, not used
             draw_idx: Draw index (for comment annotation)
+            include_comments: write '!!' comment lines
 
         Returns:
             FVS keyword string
         """
-        lines = [
-            f"!! Uncertainty draw {draw_idx} for variant {self.variant.upper()}",
-            "!!",
-        ]
+        import warnings
+        from config.config_loader import FvsConfigLoader
 
-        multipliers = self.compute_multipliers_for_draw(draw, default_config)
+        c = include_comments
+        lines = []
+        if c:
+            lines += [f"!! Uncertainty draw {draw_idx} for variant {self.variant.upper()}", "!!"]
 
-        # SDI max
-        if "sdi_values" in multipliers:
-            lines.append("!! SDI max (posterior draw)")
-            for i, val in enumerate(multipliers["sdi_values"]):
-                if val > 0:
-                    lines.append(f"SDIMAX          {i + 1:10d}{val:10.1f}")
+        mult = self.compute_multipliers_for_draw(draw)
+        cal = self._calibrated_config()
 
-        # Mortality multipliers
-        if "mort_mult" in multipliers:
-            lines.append("!! Mortality multipliers (posterior draw)")
-            for i, mult in enumerate(multipliers["mort_mult"]):
-                if abs(mult - 1.0) > 0.01:
-                    lines.append(
-                        f"MORTMULT        {i + 1:10d}{mult:10.4f}       0.0     999.0"
-                    )
+        sdi = mult.get("sdi_values")
+        emit_sdimax = bool(cal.get("_emit_sdimax", True))
+        if sdi is not None and emit_sdimax:
+            vals = [None if not np.isfinite(v) else float(v) for v in sdi]
+            lines.append(FvsConfigLoader._format_sdimax_keywords(vals, c))
 
-        # Growth multipliers
-        if "growth_mult" in multipliers:
-            lines.append("!! Growth multipliers (posterior draw)")
-            for i, mult in enumerate(multipliers["growth_mult"]):
-                if abs(mult - 1.0) > 0.01:
-                    lines.append(f"BAIMULT         {i + 1:10d}{mult:10.4f}")
+        bamax = FvsConfigLoader._find_bamax_param(cal.get("categories", {}))
+        if bamax is not None:
+            try:
+                lines.append(FvsConfigLoader._format_bamax_keywords(bamax, c))
+            except ValueError as exc:
+                warnings.warn(f"BAMAX skipped for variant {self.variant}: {exc}")
 
-        # Height growth multipliers
-        if "hg_mult" in multipliers:
-            lines.append("!! Height growth multipliers (posterior draw)")
-            for i, mult in enumerate(multipliers["hg_mult"]):
-                if abs(mult - 1.0) > 0.01:
-                    lines.append(f"HTGMULT         {i + 1:10d}{mult:10.4f}")
+        lines.append(FvsConfigLoader._format_mortmult_keywords(mult["mort_mult"], c))
+        lines.append(FvsConfigLoader._format_baimult_keywords(mult["growth_mult"], c))
+        if np.any(np.abs(mult["hg_mult"] - 1.0) > 0.01):
+            lines.append(FvsConfigLoader._format_htgmult_keywords(mult["hg_mult"], c))
 
-        return "\n".join(lines)
+        return "\n".join(x for x in lines if x)
+
 
     # =========================================================================
     # Ensemble Summarization

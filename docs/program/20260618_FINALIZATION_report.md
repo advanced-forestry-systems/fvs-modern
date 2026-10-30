@@ -44,7 +44,7 @@ emulation (C) does not help at the median and runs worse than default on BA, QMD
 arm D tracks B and inherits little from C. The hypothesis that the growth signal stacks with the density
 layer is not supported by these medians.
 
-![Figure 1. Four-arm median absolute bias by metric, FVS engine, out-of-sample, 21 variants.](fig_fourarm_byarm.png)
+![Figure 1. Four-arm median absolute bias by metric, FVS engine, out-of-sample, 21 variants.](https://raw.githubusercontent.com/advanced-forestry-systems/fvs-modern/main/diagnostics_2026-06-16/fig_fourarm_byarm.png)
 
 Caveat: arm C is a per-species BAIMULT proxy for the fvs-conus equations, not the equations themselves; it
 captures the diameter-growth level effect only. A fair arm C and D require the true equations in the
@@ -70,7 +70,7 @@ cr (n small) over-corrects and is the documented exception; the cross-variant pa
 result. Density-dependent recruitment removed the earlier fixed-rate failure (the Southern out-of-sample
 TPH over-correction of +16.1 became +1.4).
 
-![Figure 2. QMD bias by variant, out-of-sample, default versus calibrated, with 95 percent bootstrap CIs.](fig_qmd_oos.png)
+![Figure 2. QMD bias by variant, out-of-sample, default versus calibrated, with 95 percent bootstrap CIs.](https://raw.githubusercontent.com/advanced-forestry-systems/fvs-modern/main/diagnostics_2026-06-16/fig_qmd_oos.png)
 
 ## 4. brms max SDI coverage per variant
 
@@ -99,7 +99,7 @@ informed by more than one variant). Douglas-fir collapses from five disagreeing 
 Weiskittel 2010 is the recommended source there. Remaining step: emit the consensus coefficients into the
 engine competition term and the fvs-conus crown component.
 
-![Figure 3. Cross-variant maximum crown width spread at 20 in DBH by species; dot is the consensus mean.](fig_mcw_spread.png)
+![Figure 3. Cross-variant maximum crown width spread at 20 in DBH by species; dot is the consensus mean.](https://raw.githubusercontent.com/advanced-forestry-systems/fvs-modern/main/diagnostics_2026-06-16/fig_mcw_spread.png)
 
 ## 6. In-engine injection (Route A): diagnosed, fix path confirmed
 

@@ -15,8 +15,8 @@ Start-here doc for a fresh session. Everything below is committed to GitHub PR #
 ## The CONUS projection blocker + fix (the important part)
 
 - The standinit `ENTIRE_FVS_STANDINIT_PLOT.csv` keys stands by the **15-digit FVS
-  `STAND_CN`** (e.g. 750085992290487), NOT the FIA `PLT_CN`.
-- The raw DataMart `<ST>_TREE.csv` uses a short `PLT_CN` (e.g. 11839) and does not
+  `STAND_CN`** (example value removed when this note was archived), NOT the FIA `PLT_CN`.
+- The raw DataMart `<ST>_TREE.csv` uses a short `PLT_CN` (example value removed when this note was archived) and does not
   contain the standinit stands -> the old harness matched ~0.7% of stands.
 - The correct tree lists are the **FVS-native `<ST>_FVS_TREEINIT_PLOT.csv`**,
   bundled inside each state's DataMart `<ST>_CSV.zip`. MT and TX both join the

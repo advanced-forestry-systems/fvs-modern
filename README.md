@@ -3,6 +3,9 @@
 [![CI](https://github.com/holoros/fvs-modern/actions/workflows/ci.yml/badge.svg)](https://github.com/holoros/fvs-modern/actions/workflows/ci.yml)
 [![Docker](https://github.com/holoros/fvs-modern/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/holoros/fvs-modern/actions/workflows/docker-publish.yml)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19802673.svg)](https://doi.org/10.5281/zenodo.19802673)
+[![Documentation](https://img.shields.io/badge/docs-advanced--forestry--systems.github.io-2e7d32)](https://advanced-forestry-systems.github.io/fvs-modern/)
+
+**Documentation:** [advanced-forestry-systems.github.io/fvs-modern](https://advanced-forestry-systems.github.io/fvs-modern/) (source in [`docs/index.md`](docs/index.md); the same pages read on GitHub).
 
 A community maintained fork of the USDA Forest Vegetation Simulator, modernized for contemporary computing environments and designed for ease of deployment, variant creation, and calibration.
 
@@ -169,20 +172,9 @@ fvs-modern includes two Python interfaces that make FVS accessible without touch
 
 ### fvs2py (ctypes wrapper)
 
-Load any variant as a shared library and drive projections from Python with full access to tree lists, summary tables, and calibrated parameters:
+Load any variant as a shared library and drive projections from Python. For a worked example (build a library, write a keyword file, call `load_keyfile()` and `run()`, read `fvs.summary`), see the [Quickstart](docs/getting-started/quickstart.md); [Running projections](docs/user-guide/running-projections.md) documents the `FVS` class, including the calibrated overlay and the current limits of per-tree attribute access.
 
-```python
-from fvs2py import FVS
-
-fvs = FVS("lib/FVSne.so", config_version="calibrated")
-fvs.set_cmdline("--keywordfile=stand.key")
-fvs.run()
-
-summary = fvs.summary          # pandas DataFrame: year, TPA, BA, volume
-trees   = fvs.tree_attributes  # per-tree DBH, height, crown ratio
-```
-
-Uncertainty estimation is built in. Pass `uncertainty=True` to sample from the Bayesian posterior and produce ensemble projections with credible intervals. See `deployment/fvs2py/` for the full API.
+Uncertainty estimation is built in. Pass `uncertainty=True` to sample from the Bayesian posterior and produce ensemble projections with credible intervals; see [Uncertainty](docs/user-guide/uncertainty.md). See `deployment/fvs2py/` for the full API.
 
 ### microfvs (REST API)
 

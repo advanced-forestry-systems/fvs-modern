@@ -42,6 +42,7 @@ CONFIG_LABELS = {
     "default": "Default parameters",
     "calibrated_map": "Calibrated MAP",
     "posterior_band": "Calibrated posterior (95% band)",
+    "within_band": "Posterior, within-stand 95% band (median over stands)",
 }
 SITE_ORDER = ["Low", "Medium", "High"]
 SPECIES_ORDER = ["Spruce-Fir", "Northern-Hardwood", "Pine", "Oak-Pine"]
@@ -57,7 +58,20 @@ def add_horizon(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def plot_trajectory_bands(summary: pd.DataFrame, outpath: str,
-                           variant: str = "NE") -> None:
+                           variant: str = "NE",
+                           cell_bands: "pd.DataFrame | None" = None) -> None:
+    """BA trajectories by cell. With cell_bands (from the aggregator's
+    bakuzis_uncertainty_cell_bands.csv) the ribbon is the within-stand
+    parameter band (median over the cell's FIA stands of each stand's
+    2.5 to 97.5 percent posterior quantiles) and the posterior line is the
+    median of the stands' posterior medians; between-stand spread of the MAP
+    values is not in the ribbon and is reported in the caption and in the
+    band decomposition figure. Without cell_bands the legacy pooled band
+    (draws x stands) is drawn and the caption says so."""
+    within = None
+    if cell_bands is not None:
+        within = cell_bands.loc[(cell_bands["variable"] == "atba") & (cell_bands["variant"] == variant)].copy()
+        within["horizon_yr"] = within["year"] - within.groupby("scenario")["year"].transform("min")
     ba = summary.loc[
         (summary["variable"] == "atba") & (summary["variant"] == variant)
     ].copy()
@@ -80,19 +94,27 @@ def plot_trajectory_bands(summary: pd.DataFrame, outpath: str,
                 ].sort_values(["config", "horizon_yr"])
                 if sub.empty:
                     continue
-                # Ribbon for posterior band
-                post = sub.loc[sub["config"] == "posterior_band"]
-                if not post.empty and "q025" in post.columns and "q975" in post.columns:
-                    ax.fill_between(
-                        post["horizon_yr"].to_numpy(), post["q025"].to_numpy(), post["q975"].to_numpy(),
-                        color=CONFIG_COLORS["posterior_band"], alpha=0.22,
-                    )
+                # Ribbon: within-stand parameter band when available, else legacy pooled band
+                if within is not None:
+                    w = within.loc[(within["site_class"] == site) & (within["species_group"] == sp)
+                                   & (within["density_class"] == dens)].sort_values("horizon_yr")
+                    if not w.empty:
+                        ax.fill_between(w["horizon_yr"].to_numpy(), w["within_q025_med"].to_numpy(),
+                                        w["within_q975_med"].to_numpy(), color=CONFIG_COLORS["posterior_band"], alpha=0.30)
+                        ax.plot(w["horizon_yr"].to_numpy(), w["within_q500_med"].to_numpy(),
+                                color=CONFIG_COLORS["posterior_band"], lw=0.9, alpha=0.9)
+                else:
+                    post = sub.loc[sub["config"] == "posterior_band"]
+                    if not post.empty and "q025" in post.columns and "q975" in post.columns:
+                        ax.fill_between(
+                            post["horizon_yr"].to_numpy(), post["q025"].to_numpy(), post["q975"].to_numpy(),
+                            color=CONFIG_COLORS["posterior_band"], alpha=0.22,
+                        )
                 # Lines per config
                 for config, ls in [
                     ("default", "--"),
                     ("calibrated_map", "-"),
-                    ("posterior_band", "-"),
-                ]:
+                ] + ([] if within is not None else [("posterior_band", "-")]):
                     g = sub.loc[sub["config"] == config]
                     if g.empty:
                         continue
@@ -117,16 +139,25 @@ def plot_trajectory_bands(summary: pd.DataFrame, outpath: str,
         Line2D([0], [0], color=CONFIG_COLORS["calibrated_map"], lw=1.8,
                label=CONFIG_LABELS["calibrated_map"]),
         Line2D([0], [0], color=CONFIG_COLORS["posterior_band"], lw=1.8,
-               label=CONFIG_LABELS["posterior_band"]),
+               label=CONFIG_LABELS["within_band" if within is not None else "posterior_band"]),
     ]
     fig.legend(
         handles=handles, loc="lower center", ncol=len(handles),
         frameon=False, fontsize=10, bbox_to_anchor=(0.5, -0.01),
     )
+    if within is not None:
+        last = within[within["horizon_yr"] == within["horizon_yr"].max()]
+        cap = ("Ribbon: within-stand parameter band (median over the cell's FIA stands of each stand's 95 percent "
+               f"posterior band); median width at year {int(last['horizon_yr'].max())} = "
+               f"{last['within_band_pct_med'].median():.1f} percent of the posterior median.\n"
+               "Between-stand spread is not in the ribbon: the range of the stands' MAP values is "
+               f"{last['map_range_pct'].median():.1f} percent of their median (median over cells).")
+    else:
+        cap = ("Ribbon: 95 percent band pooled over posterior draws and FIA stands (parameter and stand "
+               "variation combined)")
     fig.suptitle(
-        f"Bakuzis matrix ({variant}): 100 year BA trajectories with parametric uncertainty\n"
-        "Ribbon is 95 percent posterior credible band around the calibrated median",
-        fontsize=12, y=0.99,
+        f"Bakuzis matrix ({variant}): 100 year BA trajectories with parametric uncertainty\n" + cap,
+        fontsize=11, y=1.0,
     )
     fig.tight_layout(rect=[0, 0.03, 1, 0.96])
     fig.savefig(outpath, dpi=200, bbox_inches="tight")
@@ -251,8 +282,35 @@ def plot_laws(laws: pd.DataFrame, outpath: str) -> None:
     logger.info(f"Wrote {outpath}")
 
 
+def plot_band_decomposition(cell_bands: pd.DataFrame, outpath: str, variant: str = "NE") -> None:
+    """Within-stand parameter band vs between-stand MAP spread, BA, per cell."""
+    ba = cell_bands.loc[(cell_bands["variable"] == "atba") & (cell_bands["variant"] == variant)].copy()
+    if ba.empty:
+        return
+    ba["horizon_yr"] = ba["year"] - ba.groupby("scenario")["year"].transform("min")
+    fig, axes = plt.subplots(2, 2, figsize=(11, 8), sharex=True, sharey=True)
+    for ax, sp in zip(axes.flat, SPECIES_ORDER):
+        sub = ba[ba["species_group"] == sp]
+        for scen, g in sub.groupby("scenario"):
+            g = g.sort_values("horizon_yr")
+            ax.plot(g["horizon_yr"].to_numpy(), g["within_band_pct_med"].to_numpy(), color=CONFIG_COLORS["posterior_band"], lw=0.9, alpha=0.7)
+            ax.plot(g["horizon_yr"].to_numpy(), g["map_range_pct"].to_numpy(), color=CONFIG_COLORS["calibrated_map"], lw=0.9, alpha=0.7, ls="--")
+        ax.set_title(sp, fontsize=11); ax.set_xlabel("Projection year"); ax.set_ylabel("BA spread (% of median)")
+        ax.grid(alpha=0.3)
+    axes[0, 1].legend(handles=[
+        Line2D([0], [0], color=CONFIG_COLORS["posterior_band"], lw=2, label="Within-stand 95% parameter band (median over stands)"),
+        Line2D([0], [0], color=CONFIG_COLORS["calibrated_map"], lw=2, ls="--", label="Between-stand range of MAP values"),
+    ], loc="upper left", fontsize=8, frameon=False)
+    fig.suptitle(f"Parameter uncertainty vs stand-to-stand spread ({variant}), one line per cell", fontsize=12, y=0.99)
+    fig.tight_layout(rect=[0, 0, 1, 0.96])
+    fig.savefig(outpath, dpi=200, bbox_inches="tight")
+    plt.close(fig)
+    logger.info(f"Wrote {outpath}")
+
+
 def plot_band_growth(summary: pd.DataFrame, outpath: str,
-                      variant: str = "NE") -> None:
+                      variant: str = "NE",
+                      cell_bands: "pd.DataFrame | None" = None) -> None:
     ba = summary.loc[
         (summary["variable"] == "atba")
         & (summary["config"] == "posterior_band")
@@ -261,8 +319,15 @@ def plot_band_growth(summary: pd.DataFrame, outpath: str,
     if ba.empty:
         logger.warning(f"No posterior rows for variant {variant}; skipping band growth")
         return
-    ba = add_horizon(ba)
-    ba["band_pct"] = 100 * (ba["q975"] - ba["q025"]) / ba["median"].replace(0, np.nan)
+    ylab = "BA 95% band width (% of median), pooled draws x stands"
+    if cell_bands is not None:
+        ba = cell_bands.loc[(cell_bands["variable"] == "atba") & (cell_bands["variant"] == variant)].copy()
+        ba["horizon_yr"] = ba["year"] - ba.groupby("scenario")["year"].transform("min")
+        ba["band_pct"] = ba["within_band_pct_med"]
+        ylab = "BA within-stand 95% band (% of median)"
+    else:
+        ba = add_horizon(ba)
+        ba["band_pct"] = 100 * (ba["q975"] - ba["q025"]) / ba["median"].replace(0, np.nan)
 
     fig, axes = plt.subplots(2, 2, figsize=(11, 8), sharex=True, sharey=True)
     palette = {"Low": "#1b9e77", "Medium": "#d95f02", "High": "#7570b3"}
@@ -277,7 +342,7 @@ def plot_band_growth(summary: pd.DataFrame, outpath: str,
                 )
         ax.set_title(sp, fontsize=11)
         ax.set_xlabel("Projection year")
-        ax.set_ylabel("BA 95% band width (% of median)")
+        ax.set_ylabel(ylab, fontsize=9)
         ax.grid(alpha=0.3)
     site_handles = [
         Line2D([0], [0], color=palette[s], lw=2, label=f"{s} site")
@@ -310,6 +375,11 @@ def main():
         default="calibration/output/bakuzis/bakuzis_laws_compliance.csv",
     )
     parser.add_argument(
+        "--cell-bands", type=str, default=None,
+        help="bakuzis_uncertainty_cell_bands.csv from the aggregator; when given the ribbon is the "
+             "within-stand parameter band (default: <summary dir>/bakuzis_uncertainty_cell_bands.csv if present)",
+    )
+    parser.add_argument(
         "--outdir", type=str,
         default="calibration/output/comparisons/manuscript_figures",
     )
@@ -319,6 +389,10 @@ def main():
 
     summary = pd.read_csv(args.summary)
     summary = add_horizon(summary)
+    cb_path = args.cell_bands or os.path.join(os.path.dirname(args.summary), "bakuzis_uncertainty_cell_bands.csv")
+    cell_bands = pd.read_csv(cb_path) if os.path.exists(cb_path) else None
+    if cell_bands is None:
+        logger.warning("No cell bands file; ribbons show the legacy pooled (draws x stands) band")
 
     # Render per-variant trajectory and band-growth figures for every
     # variant present in the summary. Filenames carry the variant
@@ -330,13 +404,16 @@ def main():
         plot_trajectory_bands(
             summary,
             os.path.join(args.outdir, f"fig_bakuzis_trajectories{suffix}.png"),
-            variant=v,
+            variant=v, cell_bands=cell_bands,
         )
         plot_band_growth(
             summary,
             os.path.join(args.outdir, f"fig_bakuzis_band_growth{suffix}.png"),
-            variant=v,
+            variant=v, cell_bands=cell_bands,
         )
+        if cell_bands is not None:
+            plot_band_decomposition(
+                cell_bands, os.path.join(args.outdir, f"fig_bakuzis_band_decomposition{suffix}.png"), variant=v)
 
     if os.path.exists(args.bench):
         bench = pd.read_csv(args.bench)

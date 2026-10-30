@@ -396,10 +396,14 @@ def run_scenario(
         lib_path = os.path.join(FVS_LIB_DIR, f"FVS{variant.lower()}.so")
         if os.path.exists(lib_path):
             from fvs2py import FVS
+            # Only the MAP arm gets the in-process calibrated overlay. A posterior
+            # draw carries its own SDIMAX/MORTMULT/BAIMULT keyword block; the
+            # overlay (applied at stop point 7, after keywords are read) used to
+            # overwrite the draw's SDImax with MAP (D2, 2026-10-30).
             fvs = FVS(
                 lib_path=lib_path,
                 config_version=(
-                    "calibrated" if config_version in ("calibrated", "posterior") else "default"
+                    "calibrated" if config_version == "calibrated" else "default"
                 ),
                 config_dir=CONFIG_DIR,
             )

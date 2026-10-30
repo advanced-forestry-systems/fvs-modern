@@ -95,6 +95,79 @@ def resolve_inputs(args) -> list[str]:
 # Aggregation
 # ---------------------------------------------------------------------------
 
+def _add_horizon(df: pd.DataFrame) -> pd.DataFrame:
+    """Years since each run's own start, on the 5-year grid, as 2000 + horizon
+    (the same alignment summarize_ensemble applies)."""
+    df = df.copy()
+    keys = ["variant", "scenario", "replicate", "config", "draw_id"]
+    h = df["year"] - df.groupby(keys, dropna=False)["year"].transform("min")
+    df["horizon_yr"] = (h / 5).round().astype(int) * 5
+    df["year"] = 2000 + df["horizon_yr"]
+    return df
+
+
+def summarize_stand_bands(df: pd.DataFrame, lo: float = 0.025, hi: float = 0.975):
+    """Parameter-only (within-stand) bands, kept separate from stand spread.
+
+    Returns (stand_bands, cell_bands).
+
+    stand_bands: one row per variant x cell x FIA stand (replicate) x year x
+    variable, with the 2.5/50/97.5 percent quantiles of that stand's posterior
+    draws (parameter uncertainty only), its default and calibrated MAP values,
+    and band_pct = 100 * (q975 - q025) / q500.
+
+    cell_bands: one row per cell x year x variable with
+      within_*      the within-stand band summarised across the cell's stands
+                    (median of the stand quantiles and of band_pct; min and max
+                    of band_pct)
+      map_*         between-stand spread of the stands' calibrated MAP values
+                    (median, min, max, range_pct = 100 * (max - min) / median, sd)
+      default_median, n_stands
+    The two are never pooled.
+    """
+    if "replicate" not in df.columns:
+        df = df.assign(replicate=1)
+    vars_present = [v for v in CORE_VARS if v in df.columns]
+    d = _add_horizon(df)
+    sk = ["variant", "scenario", "species_group", "site_class", "density_class", "replicate", "year"]
+    rows = []
+    for var in vars_present:
+        post = d[d["config"] == "posterior"].groupby(sk, dropna=False)[var]
+        b = pd.DataFrame({
+            "n_draws": post.count(),
+            "post_q025": post.quantile(lo),
+            "post_q500": post.median(),
+            "post_q975": post.quantile(hi),
+        })
+        for cfg, col in (("calibrated_map", "map"), ("default", "default")):
+            b[col] = d[d["config"] == cfg].groupby(sk, dropna=False)[var].median()
+        b = b.reset_index()
+        b["variable"] = var
+        rows.append(b)
+    stand = pd.concat(rows, ignore_index=True)
+    stand["band_width"] = stand["post_q975"] - stand["post_q025"]
+    stand["band_pct"] = 100 * stand["band_width"] / stand["post_q500"].replace(0, np.nan)
+
+    ck = ["variant", "scenario", "species_group", "site_class", "density_class", "year", "variable"]
+    g = stand.groupby(ck, dropna=False)
+    cell = pd.DataFrame({
+        "n_stands": g["replicate"].nunique(),
+        "within_q025_med": g["post_q025"].median(),
+        "within_q500_med": g["post_q500"].median(),
+        "within_q975_med": g["post_q975"].median(),
+        "within_band_pct_med": g["band_pct"].median(),
+        "within_band_pct_min": g["band_pct"].min(),
+        "within_band_pct_max": g["band_pct"].max(),
+        "map_median": g["map"].median(),
+        "map_min": g["map"].min(),
+        "map_max": g["map"].max(),
+        "map_sd": g["map"].std(),
+        "default_median": g["default"].median(),
+    }).reset_index()
+    cell["map_range_pct"] = 100 * (cell["map_max"] - cell["map_min"]) / cell["map_median"].replace(0, np.nan)
+    return stand, cell
+
+
 def summarize_ensemble(df: pd.DataFrame, quantiles: list[float]) -> pd.DataFrame:
     """Collapse posterior draws (and FIA replicates) into quantile bands.
 
@@ -196,6 +269,11 @@ def summarize_ensemble(df: pd.DataFrame, quantiles: list[float]) -> pd.DataFrame
             )
         tmp["variable"] = var
         tmp["config"] = "posterior_band"
+        # Kept for backward compatibility. This band pools the 100 draws of
+        # every FIA stand in the cell, so it mixes parameter uncertainty with
+        # stand-to-stand differences. For the parameter-only band use
+        # bakuzis_uncertainty_stand_bands.csv / _cell_bands.csv.
+        tmp["band_basis"] = "pooled_draws_x_stands"
         pieces.append(tmp)
 
     post_long = pd.concat(pieces, ignore_index=True)
@@ -403,6 +481,15 @@ def main():
     bench_path = os.path.join(args.output_dir, "bakuzis_benchmark_wide.csv")
     benchmark.to_csv(bench_path, index=False)
     logger.info(f"Wrote benchmarking table: {bench_path} ({len(benchmark)} rows)")
+
+    if "posterior" in set(df["config"].unique()):
+        stand_bands, cell_bands = summarize_stand_bands(df)
+        sp = os.path.join(args.output_dir, "bakuzis_uncertainty_stand_bands.csv")
+        cp = os.path.join(args.output_dir, "bakuzis_uncertainty_cell_bands.csv")
+        stand_bands.to_csv(sp, index=False)
+        cell_bands.to_csv(cp, index=False)
+        logger.info(f"Wrote per-stand (parameter-only) bands: {sp} ({len(stand_bands)} rows)")
+        logger.info(f"Wrote cell within-stand band and between-stand MAP spread: {cp} ({len(cell_bands)} rows)")
 
     laws = evaluate_bakuzis_laws(summary)
     laws_path = os.path.join(args.output_dir, "bakuzis_laws_compliance.csv")

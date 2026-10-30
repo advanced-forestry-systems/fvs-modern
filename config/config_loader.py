@@ -957,19 +957,23 @@ class FvsConfigLoader:
         sdi_param = self._find_sdi_param(cats)
         if sdi_param is not None:
             try:
-                # Replace 'NA' strings with 0 before conversion
-                cleaned = [0.0 if isinstance(v, str) else v for v in sdi_param]
-                arr = np.array(cleaned, dtype=np.float64)
-                # Pad or trim to match variant's maxspecies
-                dims = fvs_instance.dims
-                maxsp = dims.get("maxspecies", len(arr))
-                if len(arr) < maxsp:
-                    arr = np.pad(arr, (0, maxsp - len(arr)), constant_values=0)
-                elif len(arr) > maxsp:
-                    arr = arr[:maxsp]
+                # Species whose calibrated SDImax is missing ('NA', None, NaN or
+                # <= 0) are skipped: FVS keeps the value it already holds for
+                # them. Before 2026-10-30 they were written as 0 (D2).
+                cal = np.array(
+                    [np.nan if (v is None or isinstance(v, str)) else float(v)
+                     for v in sdi_param], dtype=np.float64)
+                arr = np.asarray(fvs_instance.get_species_attr("spsdi"),
+                                 dtype=np.float64).copy()
+                n = min(arr.size, cal.size)
+                ok = np.isfinite(cal[:n]) & (cal[:n] > 0)
+                arr[:n][ok] = cal[:n][ok]
                 fvs_instance.set_species_attr("spsdi", arr)
                 applied["spsdi"] = True
-                logger.info(f"Applied calibrated SDI max for {self.variant}")
+                logger.info(
+                    f"Applied calibrated SDI max for {self.variant}: "
+                    f"{int(ok.sum())} species set, {int(n - ok.sum())} kept at FVS value"
+                )
             except Exception as e:
                 logger.warning(f"Could not apply SDI max: {e}")
                 applied["spsdi"] = False
@@ -1129,7 +1133,8 @@ class FvsConfigLoader:
             return None
         return np.where(np.isnan(arr), 1.0, arr)
 
-    def _format_sdimax_keywords(self, values: list, comments: bool) -> str:
+    @staticmethod
+    def _format_sdimax_keywords(values: list, comments: bool) -> str:
         """Format SDIMAX keyword block."""
         lines = []
         if comments:
@@ -1142,7 +1147,8 @@ class FvsConfigLoader:
                 lines.append(f"{'SDIMAX':<10}{i + 1:10d}{val:10.1f}")  # fixed: 10-col keyword (was SDIMAX+10 spaces, misaligned fields)
         return "\n".join(lines)
 
-    def _format_bamax_keywords(self, values: list, comments: bool) -> str:
+    @staticmethod
+    def _format_bamax_keywords(values: list, comments: bool) -> str:
         """Format BAMAX keyword block.
 
         COLUMN LAYOUT, read out of src-converted/vbase/initre.f90 option 66
@@ -1198,7 +1204,8 @@ class FvsConfigLoader:
         lines.append(f"{'BAMAX':<10}{distinct[0]:10.1f}")
         return "\n".join(lines)
 
-    def _format_mortmult_keywords(self, multipliers: np.ndarray, comments: bool) -> str:
+    @staticmethod
+    def _format_mortmult_keywords(multipliers: np.ndarray, comments: bool) -> str:
         """Format MORTMULT keyword block."""
         lines = []
         if comments:
@@ -1227,8 +1234,9 @@ class FvsConfigLoader:
                 )
         return "\n".join(lines)
 
+    @staticmethod
     def _format_scheduled_multiplier(
-        self, keyword: str, multipliers, comments: bool, header: str
+        keyword: str, multipliers, comments: bool, header: str
     ) -> str:
         """Emit a scheduled per-species multiplier keyword block.
 
@@ -1292,22 +1300,24 @@ class FvsConfigLoader:
                 lines.append("!! " + msg[len("[config_loader] "):])
         return "\n".join(lines)
 
-    def _format_baimult_keywords(self, multipliers: np.ndarray, comments: bool) -> str:
+    @staticmethod
+    def _format_baimult_keywords(multipliers: np.ndarray, comments: bool) -> str:
         """Format BAIMULT (diameter growth multiplier) keyword block.
 
         See _format_scheduled_multiplier for the column layout and its proof.
         """
-        return self._format_scheduled_multiplier(
+        return FvsConfigLoader._format_scheduled_multiplier(
             "BAIMULT", multipliers, comments,
             "!! Diameter growth multipliers (calibrated / default)",
         )
 
-    def _format_htgmult_keywords(self, multipliers: np.ndarray, comments: bool) -> str:
+    @staticmethod
+    def _format_htgmult_keywords(multipliers: np.ndarray, comments: bool) -> str:
         """Format HTGMULT (height growth multiplier) keyword block.
 
         See _format_scheduled_multiplier for the column layout and its proof.
         """
-        return self._format_scheduled_multiplier(
+        return FvsConfigLoader._format_scheduled_multiplier(
             "HTGMULT", multipliers, comments,
             "!! Height growth multipliers (calibrated / default)",
         )
@@ -1451,7 +1461,8 @@ class FvsConfigLoader:
     # Internal Helpers
     # =========================================================================
 
-    def _find_sdi_param(self, cats: dict) -> list | None:
+    @staticmethod
+    def _find_sdi_param(cats: dict) -> list | None:
         """Find the SDI maximum parameter (varies by variant)."""
         site_cats = cats.get("site_index", {})
         other_cats = cats.get("other", {})
@@ -1462,7 +1473,8 @@ class FvsConfigLoader:
                 return all_cats[name]
         return None
 
-    def _find_bamax_param(self, cats: dict) -> list | None:
+    @staticmethod
+    def _find_bamax_param(cats: dict) -> list | None:
         """Find the BAMAX parameter (varies by variant)."""
         site_cats = cats.get("site_index", {})
         other_cats = cats.get("other", {})

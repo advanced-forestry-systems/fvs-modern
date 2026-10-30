@@ -613,9 +613,9 @@ ratio change R squared averaged 0.23 under the v1 delta model and
 percent relative improvement that holds across all 25 variants;
 the v2 specification is consistent with the inherently bounded
 nature of crown ratio as a level rather than as a change. The
-largest gains accrued to the western and arid variants — UT, EM,
+largest gains accrued to the western and arid variants: UT, EM,
 CR, KT, and AK each saw v2 R squared above 0.60 (relative
-improvements ranging from 237 to 346 percent) — confirming that
+improvements ranging from 237 to 346 percent), confirming that
 the bounded Beta likelihood is particularly informative where
 inter-tree crown ratio variance is high and the v1 normal-on-delta
 specification was furthest from the response support. Figure 6a
@@ -665,6 +665,14 @@ strongest improvements appeared in the Alaska variant (BA R squared
 Pacific Northwest (0.642 versus 0.554), where species composition
 and topographic effects are most pronounced.
 
+In a pre-registered run-off on the 4,748 catalog stands
+(`validation/runoff_20261030/`), fvs-modern with default parameters
+and native mortality reproduced the basal area and stem counts of
+unmodified USDA FVS (commit b183c10f) on every stand over 100 years
+in 15 of 18 variants, the exceptions being WS (99.98 percent of
+stand-year rows identical), SN (56 percent identical) and ACD, which
+USDA FVS cannot build and therefore ran on its NE library.
+
 Table 1. FIA national benchmark results summary (19 variants).
 
 | Metric | Default | Calibrated | Change |
@@ -708,7 +716,7 @@ p_period)^(1/years)` and re-fitting, projected trajectories are
 realistic across all 25 variants (mean final BA 74.9 ft²/ac, SD
 18.7; 25 of 25 stands above the 30 ft²/ac realism floor; mean BA
 growth 0.294 ft²/ac/yr). Figure 5a shows three side-by-side 100-year
-BA trajectories — default, period-level fit, and annualized fit — on
+BA trajectories (default, period-level fit, and annualized fit) on
 a representative NE stand: the period-level trajectory plummets
 below 20 ft²/ac by year 30 while default and annualized agree on
 the long-run envelope. The annualized correction is a foundational
@@ -719,7 +727,7 @@ in annual steps.
 ![Figure 5a. 100-year basal area trajectories for the Northeast variant under three configurations: default FVS parameters (gray), period-level calibrated posterior (red, demonstrating the catastrophic collapse from applying a five-year mortality rate in one step), and annualized calibrated posterior (blue, the corrected specification used throughout the rest of the paper). The annualized fit preserves the calibration benefit on shorter horizons while restoring biological realism over 100 years.](../calibration/output/comparisons/manuscript_figures/fig_ba_3scenarios.png){width=6.5in}
 
 Figure 5b extends the comparison across all six stand state
-variables — BA, TPA, QMD, SDI, mean DBH, top height — for the
+variables (BA, TPA, QMD, SDI, mean DBH, top height) for the
 calibrated annualized model versus default, again on the NE
 representative stand. Calibrated trajectories track or slightly
 exceed default across the first 30 to 50 years, then diverge
@@ -1138,7 +1146,7 @@ input data are identical), but the projection consequences are
 profound. We document the fix because we expect this pattern to
 arise in other Bayesian forest model recalibrations that use FIA or
 analogous remeasurement data, and the failure mode is not visible in
-the fit diagnostics — it surfaces only at projection time.
+the fit diagnostics and surfaces only at projection time.
 
 Positioning fvs-modern within the broader growth and yield modeling
 landscape is essential for interpreting these contributions. Joo et

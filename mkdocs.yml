@@ -73,7 +73,9 @@ nav:
       - Configuration files: reference/configuration-files.md
       - Mortality models: reference/mortality-models.md
       - Calibration pipeline: reference/calibration-pipeline.md
-      - Validation: reference/validation.md
+      - Validation:
+          - Catalog and gates: reference/validation.md
+          - Model run-off (October 2026): reference/runoff.md
       - Testing and CI: reference/testing-and-ci.md
       - Release process: reference/release-process.md
       - Contributing: reference/contributing.md

@@ -208,13 +208,13 @@ def plot_laws(laws: pd.DataFrame, outpath: str) -> None:
         return
     law_cols = [c for c in laws.columns if c.startswith("law_")]
     pretty = {
-        "law_sukachev_fraction": "Sukachev\n(competition reduces per tree)",
-        "law_eichhorn_fraction": "Eichhorn\n(site quality increases BA)",
-        "law_density_mortality_fraction": "Density drives mortality",
-        "law_mortality_size_fraction": "Mortality size pattern",
+        "law_sukachev_fraction": "Sukachev\n(per-tree volume\nfalls with density)",
+        "law_eichhorn_fraction": "Site ordering\nof BA",
+        "law_density_mortality_fraction": "Density drives\nmortality",
+        "law_mortality_size_fraction": "Mortality size\npattern\n(not computed)",
     }
     variants = laws["variant"].unique()
-    fig, axes = plt.subplots(1, len(variants), figsize=(5 * len(variants), 5),
+    fig, axes = plt.subplots(1, len(variants), figsize=(6 * len(variants), 5.2),
                              sharey=True, squeeze=False)
     configs = ["default", "calibrated_map", "posterior_band"]
     width = 0.27
@@ -235,12 +235,12 @@ def plot_laws(laws: pd.DataFrame, outpath: str) -> None:
             )
         ax.set_xticks(x)
         ax.set_xticklabels([pretty.get(c, c) for c in law_cols],
-                           fontsize=9)
+                           fontsize=8.5, linespacing=1.1)
         ax.set_ylim(0, 1.05)
         ax.set_title(v)
         ax.set_ylabel("Fraction of scenario pairs satisfying law")
         ax.grid(axis="y", alpha=0.3)
-    axes[0, -1].legend(loc="lower right", fontsize=9, frameon=False)
+    axes[0, -1].legend(loc="upper left", fontsize=9, frameon=False)
     fig.suptitle(
         "Bakuzis biological law compliance at year 100",
         fontsize=13, y=0.98,

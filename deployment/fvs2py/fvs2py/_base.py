@@ -382,19 +382,29 @@ class FVS(FvsCore):
         dims = self.dims
         if dims[STR_NCYCLES] == 0:
             return None
+        # fvsSummary fills integer summary(22) per call (src-converted/base/apisubs.f90),
+        # so every row must hold 22 integers; SUMMARY_COLS names all 22.
         summary = np.zeros(
             dtype=np.intc,
             shape=(dims[STR_NCYCLES] + 1, len(SUMMARY_COLS)),
         )
+        maxrow = ct.c_int(0)
+        maxcol = ct.c_int(0)
         for i in range(dims[STR_NCYCLES] + 1):
             self._fvsSummary(
                 summary[i],
                 ct.c_int(i + 1),  # icycle
                 ct.c_int(dims[STR_NCYCLES]),  # ncycles
-                ct.c_int(0),  # maxrow
-                ct.c_int(0),  # maxcol
+                maxrow,  # set by the engine to maxcy1
+                maxcol,  # set by the engine to the row width (22)
                 ct.c_int(0),  # rtncode
             )
+            if maxcol.value != len(SUMMARY_COLS):
+                msg = (
+                    f"fvsSummary reports {maxcol.value} summary columns but fvs2py "
+                    f"names {len(SUMMARY_COLS)}; the library and fvs2py disagree."
+                )
+                raise RuntimeError(msg)
 
         empty_years = (summary == 0).all(axis=1)
         return pd.DataFrame(
@@ -427,6 +437,12 @@ class FVS(FvsCore):
         self.keyfile_path = Path(os.path.abspath(keywordfile))
         with open(self.keyfile_path) as f:
             self.keyfile = f.read()
+
+        # The calibrated or custom overlay is applied once per keyword file: the first
+        # run() after each load_keyfile() stops at point 7 and applies it. Before
+        # October 30, 2026 the flag was never reset, so a second keyword file loaded
+        # into the same object ran with default parameters.
+        self._config_applied = False
 
         cmdline = f"--keywordfile={self.keyfile_path}"
         nch = len(cmdline)
@@ -576,10 +592,14 @@ class FVS(FvsCore):
                 raise ValueError(msg)
             buf[:ntrees] = src
 
+        # fvsTreeAttr(name, nch, action, ntrees, attr, rtnCode) takes six arguments
+        # (src-converted/base/apisubs.f90). Before October 30, 2026 fvs2py passed five,
+        # without ntrees, so every call shifted the pointers and crashed the process.
         self._fvsTreeAttr.argtypes = [
             ct.POINTER(ct.c_char),  # attr name
             ct.POINTER(ct.c_int),  # number of characters in attr name
             ct.POINTER(ct.c_char),  # action ('get' or 'set')
+            ct.POINTER(ct.c_int),  # ntrees, must equal the engine's live tree count
             np.ctypeslib.ndpointer(
                 np.float64, ndim=1, flags=STR_C_CONTIGUOUS
             ),  # per-tree array
@@ -592,6 +612,7 @@ class FVS(FvsCore):
             ct.c_char_p(attr.encode()),
             ct.c_int(len(attr)),
             ct.c_char_p(action.encode()),
+            ct.c_int(ntrees),
             buf,
             rtncode,
         )
@@ -599,7 +620,15 @@ class FVS(FvsCore):
             if rtncode.value == 1:
                 msg = f"{attr} not found among tree attributes"
                 raise NameError(msg)
-            raise RuntimeError(f"fvsTreeAttr returned code {rtncode.value} for '{attr}'")
+            reasons = {
+                2: "ntrees is greater than the engine's maximum tree count",
+                3: "ntrees does not equal the engine's live tree count at this stop point",
+                4: "the attribute name is empty or longer than 10 characters",
+            }
+            raise RuntimeError(
+                f"fvsTreeAttr returned code {rtncode.value} for '{attr}': "
+                f"{reasons.get(rtncode.value, 'unknown return code')}"
+            )
 
         return buf[:ntrees].copy() if action == FvsAttributeAccessor.GET else None
 
@@ -689,9 +718,10 @@ class FVS(FvsCore):
     ) -> None:
         """Runs FVS.
 
-        If config_version was set to 'calibrated' at initialization, the
-        calibrated parameters will be applied automatically after reading
-        inventory data (stop point 7) on the first call to run().
+        If config_version was set to 'calibrated' (or 'custom') at
+        initialization, the overlay is applied automatically after reading
+        inventory data (stop point 7) on the first call to run() after each
+        load_keyfile(), so every keyword file loaded into the object gets it.
 
         Note that stopping after the simulation of each stand in a simulation is
         done even when no stop request has been scheduled (that is, FVS will

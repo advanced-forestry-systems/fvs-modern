@@ -3,10 +3,53 @@ from __future__ import annotations
 import ctypes as ct
 import logging
 import os
+import warnings
+import weakref
 from pathlib import Path
 
 from fvs2py.common import load_dll, unload_dll
 from fvs2py.constants import NEEDED_ROUTINES
+
+
+class SharedEngineWarning(RuntimeWarning):
+    """A second live FVS object was created on a library another live object holds.
+
+    ctypes opens a library path once per process, so the two objects share one
+    engine (one set of Fortran COMMON blocks). Their simulations, species
+    attributes and stop points interfere, and load_keyfile() cannot reset an
+    engine that another handle still holds open. Set the environment variable
+    FVS2PY_SHARED_ENGINE=error to raise instead of warning, or =ignore to silence.
+    """
+
+
+# One live owner per resolved library path in this process (October 30, 2026).
+_LIVE_ENGINES: dict[str, weakref.ref] = {}
+
+
+def _check_and_register(owner, lib_path: Path) -> None:
+    key = os.path.realpath(lib_path)
+    ref = _LIVE_ENGINES.get(key)
+    other = ref() if ref is not None else None
+    if other is not None and other is not owner and getattr(other, "_lib", None) is not None:
+        mode = os.environ.get("FVS2PY_SHARED_ENGINE", "warn").strip().lower()
+        msg = (
+            f"Another live FVS object already holds {key}. Both objects share one engine, "
+            "so their runs interfere and load_keyfile() cannot reset it. Call close() on "
+            "the first object (or let it be garbage collected) before creating a second, "
+            "reuse one object for successive keyword files, or run stands in separate processes."
+        )
+        if mode == "error":
+            raise RuntimeError(msg)
+        if mode != "ignore":
+            warnings.warn(msg, SharedEngineWarning, stacklevel=4)
+    _LIVE_ENGINES[key] = weakref.ref(owner)
+
+
+def _unregister(owner, lib_path: Path) -> None:
+    key = os.path.realpath(lib_path)
+    ref = _LIVE_ENGINES.get(key)
+    if ref is not None and ref() is owner:
+        del _LIVE_ENGINES[key]
 
 
 class FvsCore:
@@ -125,6 +168,7 @@ class FvsCore:
         if self._lib:
             logging.debug("Unloading existing library.")
             self._unload_fvs()
+        _check_and_register(self, self.lib_path)
         self._lib = load_dll(self.lib_path)
         return
 
@@ -132,6 +176,17 @@ class FvsCore:
         if self._lib:
             unload_dll(self._lib)
             self._lib = None
+            _unregister(self, self.lib_path)
         else:
             logging.debug("No library to unload.")
+        return
+
+    def close(self) -> None:
+        """Release the engine library held by this object.
+
+        After close() another FVS object on the same library can be created
+        without a SharedEngineWarning. The object cannot run again until a new
+        object is constructed.
+        """
+        self._unload_fvs()
         return

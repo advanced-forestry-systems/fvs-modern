@@ -7,11 +7,15 @@
 !  cannot regulate density). Gompit owns mortality for species that carry a
 !  fitted row; unfit species keep FVS native background mortality.
 !
-!  Model (per species), annual hazard with a cycle-length exposure:
-!      eta = b0 + b1*(cr+0.01)^b2 + b3*cch^b4
-!      H   = exp(eta)                       (annual hazard)
-!      S   = exp(-H * FINT)                 (period survival, FINT = cycle yrs)
+!  Model (per species), as GOMPSURV computes it:
+!      eta   = b0 + b1*(cr+0.01)^b2 + b3*cch^b4 + b5*ln(max(dbh,0.1))
+!      S_yr  = 1 - exp(-exp(eta) * GMORTMULT)   (annual survival; HZ in GOMPSURV)
+!      S     = S_yr ** FINT                     (survival over the cycle, FINT = cycle yrs)
 !      trees killed = PROB * (1 - S)
+!  This annual form is not the period form exp(-exp(eta)*FINT) written in the
+!  fitting script (calibration/R/35_fit_greg_mortality_cch.R) and in
+!  calibration/python/greg_mortality.py; confirm which framing the coefficients
+!  are on before refitting them or comparing engine output with the Python code.
 !
 !  cch is crown closure at the subject tree's tip, recomputed each cycle from
 !  the live treelist by an ORGANON crown-closure port (GOMPCCH), then mapped
@@ -143,7 +147,10 @@ WRITE(JOSTND,*) 'GOMPMORT enabled: ', NG, ' fitted species read, ', &
      NGOMP, ' matched to this variant.'
 !
 ! Read universal hazard multiplier and survival floor from env vars.
-! FVS_GOMP_MORTMULT (default 1.0): scales annual hazard; 0.5 halves mortality.
+! FVS_GOMP_MORTMULT (default 1.0): multiplies exp(eta) inside the annual survival
+!   1 - exp(-exp(eta)*MORTMULT), so annual mortality becomes m**MORTMULT where m is
+!   the unscaled annual mortality: values above 1 lower mortality, values below 1
+!   raise it (0.5 gives the square root of m, not half of it).
 ! FVS_GOMP_SFLOOR   (default 0.0=off): hard floor on annual survival for ALL trees.
 GMORTMULT = 1.0
 CALL GETENV('FVS_GOMP_MORTMULT', CVAL)
@@ -160,8 +167,9 @@ END
 
 
 SUBROUTINE GOMPSURV(ISPC, CR, CCHV, FINTL, SURV, DBHV)
-!  Period survival for one tree of FVS species ISPC. Caller guarantees
-!  GHAVE(ISPC). Returns SURV in (0,1].
+!  Survival over one cycle of FINTL years for one tree of FVS species ISPC:
+!  annual survival 1 - exp(-exp(eta)*GMORTMULT) raised to FINTL. Caller
+!  guarantees GHAVE(ISPC). Returns SURV in [0,1].
 IMPLICIT NONE
 INCLUDE 'PRGPRM.f90'
 INCLUDE 'GOMPMC.f90'
@@ -183,7 +191,7 @@ ENDIF
 ETA = B0 + B1*(CRC+0.01)**B2 + B3*CTERM + B5*LOG(MAX(DBHV,0.1))
 IF (ETA.GT.30.0)  ETA = 30.0
 IF (ETA.LT.-30.0) ETA = -30.0
-HZ = 1.0 - EXP(-EXP(ETA) * GMORTMULT)   ! GOMPIT annual survival; GMORTMULT scales hazard
+HZ = 1.0 - EXP(-EXP(ETA) * GMORTMULT)   ! annual survival (named HZ historically); GMORTMULT multiplies exp(eta)
 SURV = MAX(0.0,MIN(1.0,HZ)) ** FINTL   ! compound annual survival over the cycle
 !
 ! Universal survival floor: apply to ALL trees when GSFLOOR > 0.

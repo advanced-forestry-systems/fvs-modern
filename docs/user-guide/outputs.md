@@ -33,8 +33,8 @@ The units follow the engine's own summary table header ("SUMMARY STATISTICS (PER
 
 There is one row per cycle boundary, so a run of N cycles gives N + 1 rows; rows not yet simulated (all zero) are dropped. In a row where no trees were removed, `atba`, `atccf` and `attopht` hold the values at the start of the period, because the engine only distinguishes before and after treatment when there is a removal.
 
-!!! warning "Two summary columns are not returned"
-    The engine's summary array has 22 columns per cycle; the last two are sawlog cubic volume and sawlog cubic volume removed. `fvsSummary` copies all 22 (`src-converted/base/apisubs.f90`, `integer :: summary(22)`), but `fvs2py` allocates 20 integers per row and names 20 columns. The sawlog columns are therefore not available from `FVS.summary`, and each call writes the last row's two extra integers past the end of the array it allocated. Read sawlog volumes from the main output listing or from database output.
+!!! success "Fixed in PR 143 (October 30, 2026)"
+    The engine's summary array has 22 columns per cycle; the last two are sawlog cubic volume and sawlog cubic volume removed. `fvsSummary` copies all 22 (`src-converted/base/apisubs.f90`, `integer :: summary(22)`). Before this fix `fvs2py` allocated 20 integers per row, so it dropped the sawlog columns and wrote the last row's two extra integers past the end of its array. `FVS.summary` now returns all 22 columns: the 20 above, then `scuft` (sawlog cubic volume, ft³ ac⁻¹) and `rscuft` (sawlog cubic volume removed). It raises `RuntimeError` if the library reports a different row width. On 5 NE and 5 ACD stands the first 20 columns are identical before and after the fix.
 
 Volume columns depend on the volume equations compiled into the library. In the documentation build, which lacked the NVEL `.for` sources, all volume columns were zero; see the note on the [Quickstart](../getting-started/quickstart.md) page.
 

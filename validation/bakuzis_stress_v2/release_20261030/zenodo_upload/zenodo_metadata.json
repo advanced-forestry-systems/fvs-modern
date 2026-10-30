@@ -1,0 +1,43 @@
+{
+  "metadata": {
+    "upload_type": "dataset",
+    "title": "A configuration catalog for fvs-modern across the FVS variants of the conterminous United States: Bakuzis admissibility gates, stress test, and selector",
+    "version": "1.2.0",
+    "publication_date": "2026-10-30",
+    "language": "eng",
+    "access_right": "open",
+    "license": "cc-by-4.0",
+    "creators": [
+      {
+        "name": "Weiskittel, Aaron R.",
+        "affiliation": "Center for Research on Sustainable Forests, University of Maine",
+        "orcid": "0000-0003-2534-4478"
+      }
+    ],
+    "description": "<p>The fvs-modern configuration catalog answers one question per Forest Vegetation Simulator (FVS) variant: which survival model (native mortality or GOMPIT crown closure survival) and which parameter set (fvs-modern default or Bayesian calibrated MAP) stays inside the FIA fitting envelope and obeys Reineke self-thinning over 50 and 100 year projections. For each of 18 variants, up to 300 FIA plots (4,748 stands in all) were projected 100 years under all four arms, gated by a pre-registered rule repaired after a blind red team, and stress tested against 144 alternative rules and 500 stand bootstraps. Seven variants have an admissible fvs-modern arm (ACD, BM, CS, LS, NE, SN, WS), eleven do not (CA, CI, CR, EC, EM, IE, PN, SO, TT, UT, WC), nearly all on the self-thinning axis alone; no verdict changes under the stress test, and seven admissible and eight not admissible arms are labelled fragile. The record carries the catalog tables as shipped in fvs-modern config/catalog/ (main fb4cf10d), the stress tables, every Bakuzis relation cell per variant and arm, the scripts that produced them, the selector, a technical report, a presentation, and a graphical abstract (00_fvs-modern_catalog_graphical_abstract.png). No FIA plot identifier or coordinate appears in any file. Version 1.1.0 (October 29, 2026, evening): the catalog was regenerated after FIA live records with a null TPA_UNADJ, which the stand generator had filled with 6.0 trees per acre, were found to be the cause of the year zero seeding failures; with them dropped all 4,748 sampled stands pass the year zero gate (4,485 before) and no arm verdict, variant recommendation or stability label changed. Version 1.2.0 (October 30, 2026): the calibrated arms of all 18 variants were rerun after a defect was found in the in-process calibrated overlay, which wrote a maximum stand density index of 0 for species without a calibrated value and so changed calibrated trajectories in CA, CR, CS, EM, LS and WC (fvs-modern pull request 135); the default arms are not affected and were carried over. Four verdict fields changed: the least bad arm named for EM is now projector b2 GOMPIT (was calibrated GOMPIT) and for WC default GOMPIT (was calibrated GOMPIT), both still not recommended; WC calibrated GOMPIT is admissible under the alternative Reineke rule; and NE calibrated native moves from fragile to stable admissible. No status and no primary rule verdict changed; seven admissible and eight not admissible arms are now labelled fragile.</p>",
+    "keywords": [
+      "Forest Vegetation Simulator",
+      "fvs-modern",
+      "growth and yield",
+      "Bakuzis matrix",
+      "Reineke",
+      "self-thinning",
+      "FIA",
+      "model validation",
+      "configuration catalog"
+    ],
+    "communities": [
+      {
+        "identifier": "forestry"
+      }
+    ],
+    "related_identifiers": [
+      {
+        "identifier": "https://github.com/advanced-forestry-systems/fvs-modern/tree/fb4cf10d",
+        "relation": "isSupplementTo",
+        "resource_type": "software"
+      }
+    ],
+    "default_preview": "00_fvs-modern_catalog_graphical_abstract.png"
+  }
+}

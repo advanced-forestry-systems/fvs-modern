@@ -1,0 +1,88 @@
+file,column,description,units
+catalog_gates_by_arm.csv,arm,"projection arm: default_native, default_gompit, calibrated_native, calibrated_gompit (fvs-modern engine) or conus_b1, conus_b1_gompit, conus_b2, conus_b2_gompit (fvs-conus projector, comparison only)",
+catalog_gates_by_arm.csv,group,FVS variant code,
+catalog_gates_by_arm.csv,n_traj,seed passing stands scored (engine arms) or projector stands,count
+catalog_gates_by_arm.csv,fia_n_plots,FIA fitting plots behind the variant thresholds,count
+catalog_gates_by_arm.csv,ba_p999,FIA plot level basal area 99.9th percentile,m2 ha-1
+catalog_gates_by_arm.csv,ba_p99,FIA plot level basal area 99th percentile,m2 ha-1
+catalog_gates_by_arm.csv,ba_p50,FIA plot level basal area median,m2 ha-1
+catalog_gates_by_arm.csv,sdi_p999,FIA plot level stand density index 99.9th percentile,trees ha-1
+catalog_gates_by_arm.csv,x_ba999_50,stands with basal area above ba_p999 by year 50,count
+catalog_gates_by_arm.csv,x_ba999_100,same by year 100,count
+catalog_gates_by_arm.csv,x_ba99_50,stands above ba_p99 by year 50,count
+catalog_gates_by_arm.csv,x_ba99_100,same by year 100,count
+catalog_gates_by_arm.csv,x_sdi_50,stands above sdi_p999 by year 50,count
+catalog_gates_by_arm.csv,x_sdi_100,same by year 100,count
+catalog_gates_by_arm.csv,med_peak_ba100,median of per stand peak basal area over 100 years,m2 ha-1
+catalog_gates_by_arm.csv,med_peak_sdi100,median of per stand peak SDI over 100 years,trees ha-1
+catalog_gates_by_arm.csv,med_ba0,median year 0 basal area,m2 ha-1
+catalog_gates_by_arm.csv,med_ba50,median year 50 basal area (stocking lower bound),m2 ha-1
+catalog_gates_by_arm.csv,med_stem_ret50,median share of year 0 stems retained at year 50,proportion
+catalog_gates_by_arm.csv,share_peak_below_p50,share of stands whose 100 year peak basal area is below ba_p50,proportion
+catalog_gates_by_arm.csv,share_ba999_50,x_ba999_50 / n_traj,proportion
+catalog_gates_by_arm.csv,share_ba999_100,x_ba999_100 / n_traj,proportion
+catalog_gates_by_arm.csv,share_ba99_50,x_ba99_50 / n_traj,proportion
+catalog_gates_by_arm.csv,share_ba99_100,x_ba99_100 / n_traj,proportion
+catalog_gates_by_arm.csv,share_sdi_50,x_sdi_50 / n_traj,proportion
+catalog_gates_by_arm.csv,share_sdi_100,x_sdi_100 / n_traj,proportion
+catalog_gates_by_arm.csv,wil_ba999_50,Wilson 95 percent upper bound of share_ba999_50,proportion
+catalog_gates_by_arm.csv,wil_sdi_50,Wilson 95 percent upper bound of share_sdi_50,proportion
+catalog_gates_by_arm.csv,reineke_eval,trajectories evaluated for the Reineke slope above relative density 0.55,count
+catalog_gates_by_arm.csv,reineke_flag,evaluated trajectories flagged (slope outside -1.2 to -2.2),count
+catalog_gates_by_arm.csv,reineke_na,trajectories not evaluated (below the density gate),count
+catalog_gates_by_arm.csv,reineke_slope_med,median within stand slope of log stems on log quadratic mean diameter among evaluated trajectories,dimensionless
+catalog_gates_by_arm.csv,reineke_flag_rate,reineke_flag / reineke_eval,proportion
+catalog_gates_by_arm.csv,reineke_eval_share,reineke_eval / n_traj,proportion
+catalog_gates_by_arm.csv,seed_n,stands sampled for the variant,count
+catalog_gates_by_arm.csv,seed_ok_share,share of sampled stands passing the year 0 seed gate,proportion
+catalog_gates_by_arm.csv,run_fail_share,share of sampled stands whose projection failed,proportion
+catalog_gates_by_arm.csv,calibrated_distinct,calibrated arm trajectories differ from the default arm (TRUE/FALSE; NA for default and projector arms),
+catalog_gates_by_arm.csv,reineke_unknown,TRUE when reineke_eval < 10 (NOT TESTED),
+catalog_gates_by_arm.csv,admissible,primary rule verdict,
+catalog_gates_by_arm.csv,reineke_flag_wil,Wilson 95 percent upper bound of reineke_flag_rate,proportion
+catalog_gates_by_arm.csv,admissible_alt,alternative rule verdict (Reineke Wilson upper bound < 25 percent on at least 30 evaluated),
+catalog_gates_by_arm.csv,why_not,gates failed under the primary rule,
+catalog_gates_by_arm.csv,threshold_n,"FIA plots behind the threshold; p99.9 is the sample maximum below 1,000",count
+catalog_gates_by_arm.csv,simplicity,"tie break rank, lower is simpler",rank
+catalog_recommendation_by_variant.csv,group,FVS variant code,
+catalog_recommendation_by_variant.csv,recommended,"recommended arm, or the least bad arm when none is admissible",
+catalog_recommendation_by_variant.csv,status,"RECOMMENDED, NOT RECOMMENDED for long horizons (least-bad arm named), NOT EVALUATED, INSUFFICIENT SAMPLE",
+catalog_recommendation_by_variant.csv,admissible_arms,semicolon list of admissible arms under the primary rule,
+catalog_recommendation_by_variant.csv,nearterm_evidence,per variant near term evidence used as a tie break,
+catalog_recommendation_by_variant.csv,rule_sensitive,TRUE when the admissible sets differ between the primary and alternative rules,
+catalog_recommendation_by_variant.csv,admissible_arms_alt,admissible arms under the alternative rule,
+fia_variant_thresholds_plot_acd.csv,variant,"FVS variant code (ACD copies NE, an assumption)",
+fia_variant_thresholds_plot_acd.csv,N,FIA fitting plots,count
+fia_variant_thresholds_plot_acd.csv,ba_p50,basal area median,m2 ha-1
+fia_variant_thresholds_plot_acd.csv,ba_p90,basal area 90th percentile,m2 ha-1
+fia_variant_thresholds_plot_acd.csv,ba_p99,basal area 99th percentile,m2 ha-1
+fia_variant_thresholds_plot_acd.csv,ba_p999,basal area 99.9th percentile,m2 ha-1
+fia_variant_thresholds_plot_acd.csv,sdi_p999_ha,SDI 99.9th percentile,trees ha-1
+scorecard_cells.csv,group,FVS variant code,
+scorecard_cells.csv,arm,projection arm,
+scorecard_cells.csv,rel,relation code T0 to T9,
+scorecard_cells.csv,relation,relation name,
+scorecard_cells.csv,evaluated,trajectories or groups evaluated,count
+scorecard_cells.csv,flagged,evaluated units flagged,count
+scorecard_cells.csv,not_applicable,units not applicable,count
+scorecard_cells.csv,not_evaluated,units not evaluated,count
+scorecard_cells.csv,verdict,"PASS, MINOR, FLAG, NOT EVALUATED",
+stress_by_arm.csv,arm,engine arm,
+stress_by_arm.csv,group,FVS variant code,
+stress_by_arm.csv,n,seed passing stands,count
+stress_by_arm.csv,grid_admissible_share,share of 144 rule grid cells admitting the arm,proportion
+stress_by_arm.csv,shipped,primary rule recomputed in the stress script,
+stress_by_arm.csv,admissible_h100,verdict with a 100 year horizon,
+stress_by_arm.csv,admissible_p99,verdict with the p99 basal area ceiling,
+stress_by_arm.csv,admissible_tol03,verdict with a 3 percent exceedance tolerance,
+stress_by_arm.csv,admissible_rk25,verdict with a 25 percent Reineke flag tolerance,
+stress_by_arm.csv,admissible_rkmin30,verdict with at least 30 evaluated trajectories required,
+stress_by_arm.csv,boot_admissible_prob,share of 500 stand bootstrap resamples in which the arm is admissible,proportion
+stress_by_arm.csv,shipped_catalog,admissible column of the shipped catalog,
+stress_by_arm.csv,agrees_with_catalog,shipped == shipped_catalog,
+stress_by_arm.csv,verdict_stability,"STABLE or FRAGILE, admissible or not admissible",
+stress_by_variant.csv,group,FVS variant code,
+stress_by_variant.csv,n,seed passing stands,count
+stress_by_variant.csv,shipped_any,at least one admissible engine arm under the shipped rule,
+stress_by_variant.csv,boot_any_admissible_prob,share of 500 resamples with at least one admissible engine arm,proportion
+stress_by_variant.csv,grid_any_share,share of 144 rule cells with at least one admissible engine arm,proportion

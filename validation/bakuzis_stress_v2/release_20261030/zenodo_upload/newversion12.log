@@ -1,0 +1,34 @@
+newversion 201 
+draft id 23814198 state unsubmitted submitted False inherited files 40
+removed catalog_seedgate_v5_noid.csv 204
+removed 2026-10-29_bakuzis-assessment-memo_sections-1-17.md 204
+put 00_fvs-modern_catalog_graphical_abstract.png 201 True
+put README.md 201 True
+put CITATION.cff 201 True
+put 2026-10-29_fvs-modern-catalog-report_DRAFT.pdf 201 True
+put 2026-10-29_fvs-modern-catalog-report_DRAFT.docx 201 True
+put 2026-10-29_fvs-modern-catalog-report_DRAFT.md 201 True
+put 2026-10-29_fvs-modern-catalog-deck_DRAFT.pdf 201 True
+put 2026-10-29_fvs-modern-catalog-deck_DRAFT.pptx 201 True
+put catalog_recommendation_by_variant.csv 201 True
+put catalog_gates_by_arm.csv 201 True
+put stress_by_arm.csv 201 True
+put stress_by_variant.csv 201 True
+put catalog_seedgate_v6_noid.csv 201 True
+put scorecard_cells.csv 201 True
+put scorecard_index.md 201 True
+put 2026-10-30_bakuzis-assessment-memo_sections-1-18.md 201 True
+put conus_catalog_runs.py 201 True
+put concat_catalog_v6.R 201 True
+put release_figures.py 201 True
+put build_deck_pptx.py 201 True
+put fig_variant_stability.png 201 True
+put fig_gate_space.png 201 True
+put fig_arm_stability.png 201 True
+put check_deposit.py 201 True
+put files_to_upload.txt 201 True
+put zenodo_metadata.json 201 True
+put RUNBOOK.md 201 True
+metadata PUT 200 ok
+files 41 manifest 41 missing [] extra [] mismatch [] state unsubmitted submitted False version 1.2.0 reserved {'doi': '10.5281/zenodo.23814198', 'recid': 23814198}
+edit URL https://zenodo.org/deposit/23814198

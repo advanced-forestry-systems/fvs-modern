@@ -1,0 +1,65 @@
+arm,relation,evaluated,not_evaluated,not_applicable,flagged,verdict
+ACD_calibrated_map,T0 initial-step shock,36,0,0,5,FLAG
+ACD_calibrated_map,T1 monotone HT_dom,36,0,0,1,FLAG
+ACD_calibrated_map,T1 monotone QMD,36,0,0,0,PASS
+ACD_calibrated_map,T2 site ordering HT,4,0,0,2,FLAG
+ACD_calibrated_map,T2 site ordering VOL,4,0,0,4,FLAG (all)
+ACD_calibrated_map,T3 Reineke slope (trajectory OLS),36,0,0,4,FLAG
+ACD_calibrated_map,"T3b frontier slope (rq tau 0.95, pooled limb)",4,0,0,0,PASS
+ACD_calibrated_map,T4 max BA vs observed p99,0,36,0,0,NOT EVALUATED
+ACD_calibrated_map,T4 max BA vs observed p99.9,0,36,0,0,NOT EVALUATED
+ACD_calibrated_map,T4 peak SDI / SDImax,0,36,0,0,NOT EVALUATED
+ACD_calibrated_map,T5 Eichhorn VOL~HT site independence,3,1,0,3,FLAG (all)
+ACD_calibrated_map,T6 Sukachev per-tree VOL falls with density,4,0,0,4,FLAG (all)
+ACD_calibrated_map,T7 yield-density final BA vs initial density,4,0,0,0,PASS
+ACD_calibrated_map,T8 pinned BA plateau,4,0,0,0,PASS
+ACD_calibrated_map,T9 BA inversions (>10% step drop),36,0,0,0,PASS
+ACD_calibrated_map,T9 VOL inversions (>10% step drop),36,0,0,0,PASS
+ACD_default,T0 initial-step shock,36,0,0,5,FLAG
+ACD_default,T1 monotone HT_dom,36,0,0,1,FLAG
+ACD_default,T1 monotone QMD,36,0,0,0,PASS
+ACD_default,T2 site ordering HT,4,0,0,2,FLAG
+ACD_default,T2 site ordering VOL,4,0,0,4,FLAG (all)
+ACD_default,T3 Reineke slope (trajectory OLS),36,0,0,4,FLAG
+ACD_default,"T3b frontier slope (rq tau 0.95, pooled limb)",4,0,0,0,PASS
+ACD_default,T4 max BA vs observed p99,0,36,0,0,NOT EVALUATED
+ACD_default,T4 max BA vs observed p99.9,0,36,0,0,NOT EVALUATED
+ACD_default,T4 peak SDI / SDImax,0,36,0,0,NOT EVALUATED
+ACD_default,T5 Eichhorn VOL~HT site independence,3,1,0,3,FLAG (all)
+ACD_default,T6 Sukachev per-tree VOL falls with density,4,0,0,4,FLAG (all)
+ACD_default,T7 yield-density final BA vs initial density,4,0,0,0,PASS
+ACD_default,T8 pinned BA plateau,4,0,0,0,PASS
+ACD_default,T9 BA inversions (>10% step drop),36,0,0,0,PASS
+ACD_default,T9 VOL inversions (>10% step drop),36,0,0,0,PASS
+NE_calibrated_map,T0 initial-step shock,36,0,0,5,FLAG
+NE_calibrated_map,T1 monotone HT_dom,36,0,0,0,PASS
+NE_calibrated_map,T1 monotone QMD,36,0,0,0,PASS
+NE_calibrated_map,T2 site ordering HT,4,0,0,2,FLAG
+NE_calibrated_map,T2 site ordering VOL,4,0,0,4,FLAG (all)
+NE_calibrated_map,T3 Reineke slope (trajectory OLS),36,0,0,5,FLAG
+NE_calibrated_map,"T3b frontier slope (rq tau 0.95, pooled limb)",4,0,0,3,FLAG
+NE_calibrated_map,T4 max BA vs observed p99,0,36,0,0,NOT EVALUATED
+NE_calibrated_map,T4 max BA vs observed p99.9,0,36,0,0,NOT EVALUATED
+NE_calibrated_map,T4 peak SDI / SDImax,0,36,0,0,NOT EVALUATED
+NE_calibrated_map,T5 Eichhorn VOL~HT site independence,4,0,0,4,FLAG (all)
+NE_calibrated_map,T6 Sukachev per-tree VOL falls with density,4,0,0,4,FLAG (all)
+NE_calibrated_map,T7 yield-density final BA vs initial density,4,0,0,3,FLAG
+NE_calibrated_map,T8 pinned BA plateau,4,0,0,0,PASS
+NE_calibrated_map,T9 BA inversions (>10% step drop),36,0,0,0,PASS
+NE_calibrated_map,T9 VOL inversions (>10% step drop),36,0,0,1,FLAG
+NE_default,T0 initial-step shock,36,0,0,1,FLAG
+NE_default,T1 monotone HT_dom,36,0,0,0,PASS
+NE_default,T1 monotone QMD,36,0,0,0,PASS
+NE_default,T2 site ordering HT,4,0,0,2,FLAG
+NE_default,T2 site ordering VOL,4,0,0,3,FLAG
+NE_default,T3 Reineke slope (trajectory OLS),36,0,0,7,FLAG
+NE_default,"T3b frontier slope (rq tau 0.95, pooled limb)",4,0,0,1,FLAG
+NE_default,T4 max BA vs observed p99,0,36,0,0,NOT EVALUATED
+NE_default,T4 max BA vs observed p99.9,0,36,0,0,NOT EVALUATED
+NE_default,T4 peak SDI / SDImax,0,36,0,0,NOT EVALUATED
+NE_default,T5 Eichhorn VOL~HT site independence,4,0,0,4,FLAG (all)
+NE_default,T6 Sukachev per-tree VOL falls with density,4,0,0,4,FLAG (all)
+NE_default,T7 yield-density final BA vs initial density,4,0,0,3,FLAG
+NE_default,T8 pinned BA plateau,4,0,0,0,PASS
+NE_default,T9 BA inversions (>10% step drop),36,0,0,0,PASS
+NE_default,T9 VOL inversions (>10% step drop),36,0,0,0,PASS

@@ -1,0 +1,234 @@
+SDIMAX             1     655.3
+SDIMAX             2     383.0
+SDIMAX             3     423.0
+SDIMAX             4     511.2
+SDIMAX             5     415.5
+SDIMAX             6     456.1
+SDIMAX             7     433.7
+SDIMAX             8     459.6
+SDIMAX             9     411.2
+SDIMAX            10     446.1
+SDIMAX            11     262.1
+SDIMAX            12     510.7
+SDIMAX            13     799.4
+SDIMAX            14     351.2
+SDIMAX            15     372.6
+SDIMAX            16     421.5
+SDIMAX            17     545.2
+SDIMAX            18     556.8
+SDIMAX            22     286.3
+SDIMAX            23     326.3
+SDIMAX            24     301.2
+SDIMAX            25     372.6
+SDIMAX            26     345.1
+SDIMAX            27     333.2
+SDIMAX            29     357.4
+SDIMAX            30     373.3
+SDIMAX            31     343.3
+SDIMAX            33     333.2
+SDIMAX            34     252.2
+SDIMAX            35     273.1
+SDIMAX            36     299.1
+SDIMAX            37     317.9
+SDIMAX            38     294.3
+SDIMAX            39     272.8
+SDIMAX            40     334.9
+SDIMAX            41     435.8
+SDIMAX            42     378.0
+SDIMAX            43     334.7
+SDIMAX            44     291.6
+SDIMAX            45     429.4
+SDIMAX            46     364.2
+SDIMAX            47     393.9
+SDIMAX            48     305.3
+SDIMAX            49     329.4
+SDIMAX            50     328.2
+SDIMAX            51     257.0
+SDIMAX            52     335.0
+SDIMAX            53     682.1
+SDIMAX            54     376.0
+SDIMAX            55     305.1
+SDIMAX            59     380.0
+SDIMAX            60     307.3
+SDIMAX            63     262.2
+SDIMAX            64     328.8
+SDIMAX            65     216.8
+SDIMAX            67     358.1
+SDIMAX            68     301.3
+SDIMAX            69     330.0
+SDIMAX            70     426.3
+SDIMAX            71     517.9
+SDIMAX            73     277.5
+SDIMAX            74     421.0
+SDIMAX            77     375.5
+SDIMAX            79     228.2
+SDIMAX            81     517.9
+SDIMAX            82     517.9
+SDIMAX            83     226.3
+SDIMAX            84     764.2
+SDIMAX            85     359.5
+SDIMAX            88     328.0
+SDIMAX            89     289.7
+SDIMAX            90     270.4
+SDIMAX            91     235.0
+SDIMAX            92     330.6
+SDIMAX            93     354.5
+SDIMAX            94     553.7
+SDIMAX            96     292.4
+SDIMAX            97     268.0
+SDIMAX            98     270.5
+SDIMAX            99     235.8
+SDIMAX           100     263.1
+SDIMAX           101     283.1
+SDIMAX           105     290.9
+SDIMAX           106     263.9
+SDIMAX           108     327.1
+MORTMULT                     1    1.8953       0.0     999.0
+MORTMULT                     2    0.2602       0.0     999.0
+MORTMULT                     3    2.1229       0.0     999.0
+MORTMULT                     4    0.6523       0.0     999.0
+MORTMULT                     5    0.7607       0.0     999.0
+MORTMULT                     6    2.1131       0.0     999.0
+MORTMULT                     8    0.4478       0.0     999.0
+MORTMULT                     9    0.7918       0.0     999.0
+MORTMULT                    10    0.2830       0.0     999.0
+MORTMULT                    11    1.9066       0.0     999.0
+MORTMULT                    12    0.7230       0.0     999.0
+MORTMULT                    13    0.8376       0.0     999.0
+MORTMULT                    14    1.3899       0.0     999.0
+MORTMULT                    16    0.5703       0.0     999.0
+MORTMULT                    19    0.2497       0.0     999.0
+MORTMULT                    20    1.4350       0.0     999.0
+MORTMULT                    21    2.1852       0.0     999.0
+MORTMULT                    22    0.4599       0.0     999.0
+MORTMULT                    24    1.0289       0.0     999.0
+MORTMULT                    26    0.6221       0.0     999.0
+MORTMULT                    27    0.7784       0.0     999.0
+MORTMULT                    28    0.7332       0.0     999.0
+MORTMULT                    29    0.5067       0.0     999.0
+MORTMULT                    30    0.9267       0.0     999.0
+MORTMULT                    31    1.0735       0.0     999.0
+MORTMULT                    32    2.7711       0.0     999.0
+MORTMULT                    33    1.9478       0.0     999.0
+MORTMULT                    34    2.7882       0.0     999.0
+MORTMULT                    36    0.4328       0.0     999.0
+MORTMULT                    38    1.2837       0.0     999.0
+MORTMULT                    39    0.6863       0.0     999.0
+MORTMULT                    40    2.5873       0.0     999.0
+MORTMULT                    42    1.8245       0.0     999.0
+MORTMULT                    43    0.8643       0.0     999.0
+MORTMULT                    44    3.6144       0.0     999.0
+MORTMULT                    46    0.2456       0.0     999.0
+MORTMULT                    47    0.6037       0.0     999.0
+MORTMULT                    48    0.2254       0.0     999.0
+MORTMULT                    49    4.9733       0.0     999.0
+MORTMULT                    50    1.6884       0.0     999.0
+MORTMULT                    51    0.2148       0.0     999.0
+MORTMULT                    52    2.8033       0.0     999.0
+MORTMULT                    54    0.8925       0.0     999.0
+MORTMULT                    55    1.1843       0.0     999.0
+MORTMULT                    56    0.6936       0.0     999.0
+MORTMULT                    57    0.6718       0.0     999.0
+MORTMULT                    58    1.6310       0.0     999.0
+MORTMULT                    60    6.0745       0.0     999.0
+MORTMULT                    61    0.4008       0.0     999.0
+MORTMULT                    62    2.9419       0.0     999.0
+MORTMULT                    63    1.0772       0.0     999.0
+MORTMULT                    64    1.3904       0.0     999.0
+MORTMULT                    65    0.2709       0.0     999.0
+MORTMULT                    66    3.3612       0.0     999.0
+MORTMULT                    67    0.4695       0.0     999.0
+MORTMULT                    68    1.4675       0.0     999.0
+MORTMULT                    69    1.9004       0.0     999.0
+MORTMULT                    70    0.8674       0.0     999.0
+MORTMULT                    73    0.2139       0.0     999.0
+MORTMULT                    75    1.4213       0.0     999.0
+MORTMULT                    76    1.8769       0.0     999.0
+MORTMULT                    77    0.3113       0.0     999.0
+MORTMULT                    78    0.5388       0.0     999.0
+MORTMULT                    79    0.3261       0.0     999.0
+MORTMULT                    80    0.6253       0.0     999.0
+MORTMULT                    82    0.4069       0.0     999.0
+MORTMULT                    85    0.5581       0.0     999.0
+MORTMULT                    86    0.6752       0.0     999.0
+MORTMULT                    87    3.0860       0.0     999.0
+MORTMULT                    88    0.5096       0.0     999.0
+MORTMULT                    89    0.3650       0.0     999.0
+MORTMULT                    90    1.5837       0.0     999.0
+MORTMULT                    91    0.4912       0.0     999.0
+MORTMULT                    92    3.0977       0.0     999.0
+MORTMULT                    93    0.4462       0.0     999.0
+MORTMULT                    96   10.0000       0.0     999.0
+MORTMULT                    97    3.1055       0.0     999.0
+MORTMULT                    99    3.0088       0.0     999.0
+MORTMULT                   100    4.7549       0.0     999.0
+MORTMULT                   101    0.5747       0.0     999.0
+MORTMULT                   102    0.3599       0.0     999.0
+MORTMULT                   103    4.1658       0.0     999.0
+MORTMULT                   104    1.7418       0.0     999.0
+MORTMULT                   105    1.7092       0.0     999.0
+MORTMULT                   106    2.4643       0.0     999.0
+MORTMULT                   108    1.1477       0.0     999.0
+BAIMULT                      1    0.9770
+BAIMULT                      2    0.8264
+BAIMULT                      3    1.0379
+BAIMULT                      5    1.1350
+BAIMULT                      6    0.9071
+BAIMULT                      8    0.9572
+BAIMULT                      9    1.1344
+BAIMULT                     10    1.1553
+BAIMULT                     12    0.8719
+BAIMULT                     13    1.0633
+BAIMULT                     14    1.0241
+BAIMULT                     16    0.9402
+BAIMULT                     22    1.0842
+BAIMULT                     24    1.0286
+BAIMULT                     26    1.0321
+BAIMULT                     27    0.9761
+BAIMULT                     29    1.1361
+BAIMULT                     30    1.0418
+BAIMULT                     31    1.0187
+BAIMULT                     33    0.8684
+BAIMULT                     34    0.8594
+BAIMULT                     38    1.0441
+BAIMULT                     39    0.9796
+BAIMULT                     40    0.9292
+BAIMULT                     42    1.0229
+BAIMULT                     43    0.9822
+BAIMULT                     44    0.9864
+BAIMULT                     46    1.1390
+BAIMULT                     47    1.0432
+BAIMULT                     48    0.9528
+BAIMULT                     49    1.0561
+BAIMULT                     50    1.1781
+BAIMULT                     52    1.1004
+BAIMULT                     54    1.1037
+BAIMULT                     55    0.9625
+BAIMULT                     60    1.1261
+BAIMULT                     63    0.9255
+BAIMULT                     64    0.9518
+BAIMULT                     65    1.0367
+BAIMULT                     67    1.1414
+BAIMULT                     69    1.0772
+BAIMULT                     73    1.1187
+BAIMULT                     75    0.9687
+BAIMULT                     77    0.9494
+BAIMULT                     79    1.0296
+BAIMULT                     82    1.0642
+BAIMULT                     83    0.8376
+BAIMULT                     85    0.9691
+BAIMULT                     86    1.0298
+BAIMULT                     89    0.9704
+BAIMULT                     90    0.8976
+BAIMULT                     91    0.9664
+BAIMULT                     93    0.9185
+BAIMULT                     96    1.0575
+BAIMULT                     97    0.9630
+BAIMULT                     99    1.0182
+BAIMULT                    101    0.9841
+BAIMULT                    102    0.9583
+BAIMULT                    103    0.9642
+BAIMULT                    104    1.0312
+BAIMULT                    105    0.8796
+BAIMULT                    106    0.9190
+BAIMULT                    108    0.9783

@@ -1,0 +1,7 @@
+variant,config,law_sukachev_fraction,law_eichhorn_fraction,law_density_mortality_fraction,law_mortality_size_fraction,n_scenarios
+ACD,calibrated_map,0.0,0.0,1.0,,36
+ACD,default,0.0,0.0,1.0,,36
+ACD,posterior_band,0.0,0.0,1.0,,36
+NE,calibrated_map,0.08333333333333333,0.08333333333333333,1.0,,36
+NE,default,0.08333333333333333,0.0,1.0,,36
+NE,posterior_band,0.08333333333333333,0.08333333333333333,1.0,,36

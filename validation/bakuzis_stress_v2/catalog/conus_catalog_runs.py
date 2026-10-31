@@ -63,7 +63,7 @@ def read_state_tables(fia_dir, states):
         pc = os.path.join(fia_dir, f"{ab}_COND.csv"); pp = os.path.join(fia_dir, f"{ab}_PLOT.csv"); pt = os.path.join(fia_dir, f"{ab}_TREE.csv")
         if not (os.path.exists(pc) and os.path.exists(pt)):
             log.warning("missing FIA tables for %s", ab); continue
-        cond.append(pd.read_csv(pc, usecols=lambda c: c in ("PLT_CN", "CONDID", "COND_STATUS_CD", "SICOND", "SIBASE", "SISP", "BALIVE", "FORTYPCD", "STDAGE", "ASPECT", "SLOPE", "ELEV", "STATECD", "COUNTYCD", "CONDPROP_UNADJ"), low_memory=False))
+        cond.append(pd.read_csv(pc, usecols=lambda c: c in ("PLT_CN", "CONDID", "COND_STATUS_CD", "SICOND", "SIBASE", "SISP", "BALIVE", "FORTYPCD", "STDAGE", "ASPECT", "SLOPE", "ELEV", "STATECD", "COUNTYCD", "CONDPROP_UNADJ", "MICRPROP_UNADJ", "SUBPPROP_UNADJ", "MACRPROP_UNADJ"), low_memory=False))
         if os.path.exists(pp):
             plot.append(pd.read_csv(pp, usecols=lambda c: c in ("CN", "LAT", "LON", "STATECD", "COUNTYCD", "PLOT", "INVYR"), low_memory=False))
         tree.append(pd.read_csv(pt, usecols=lambda c: c in ("PLT_CN", "CONDID", "STATUSCD", "SPCD", "DIA", "HT", "CR", "TPA_UNADJ"), low_memory=False))
@@ -152,8 +152,8 @@ def main():
         blanks = [k for k in ("STDAGE", "ASPECT", "SLOPE", "ELEV", "SICOND") if pd.isna(c.get(k, np.nan))]
         c = {k: (None if (isinstance(val, float) and np.isnan(val)) else val) for k, val in c.to_dict().items()}
         # Trees of this condition only (no all-plot fallback: that is what put SN and CS stands at 1.25 to 1.64 x
-        # BALIVE on October 29), expanded to the condition acre by CONDPROP_UNADJ, which is how BALIVE is defined
-        # (sum of BA x TPA_UNADJ / CONDPROP_UNADJ) and why partial conditions seeded at exactly 0.75 x before.
+        # BALIVE on October 29), expanded to the condition acre by the condition share of each tree's own plot
+        # size (BA x TPA_UNADJ / MICRPROP_UNADJ, SUBPPROP_UNADJ or MACRPROP_UNADJ), which is how BALIVE is defined.
         t = tree[(tree["PLT_CN"] == cn) & (tree["CONDID"] == condid)]
         # Live records with a null TPA_UNADJ (P2A_GRM_FLG = Y: trees carried from the prior periodic
         # inventory for growth, removal and mortality only, on legacy subplot numbers) contribute nothing
@@ -164,7 +164,16 @@ def main():
             gate.append(dict(variant=v.upper(), arm=a.arm, plt_cn=cn, status="NO_TREES")); continue
         condprop = c.get("CONDPROP_UNADJ")
         condprop = float(condprop) if condprop is not None and float(condprop) > 0 else 1.0
-        t = t.copy(); t["TPA_UNADJ"] = t["TPA_UNADJ"] / condprop
+        # D5 (2026-10-30): expand each tree by the condition share of its own plot size (MICRPROP_UNADJ for
+        # microplot trees, SUBPPROP_UNADJ for subplot trees, MACRPROP_UNADJ for macroplot trees), the FIA BALIVE
+        # definition; dividing every tree by CONDPROP_UNADJ left 263 of 972 multi-condition stands more than 2%
+        # off BALIVE. Same helper as calibration/python/fia_stand_generator.py.
+        from fia_stand_generator import condition_expansion_divisor
+        # A tree whose TPA_UNADJ fits no plot size (within 1 percent) falls back to CONDPROP_UNADJ and is logged.
+        div, n_no_size, n_no_prop = condition_expansion_divisor(t["TPA_UNADJ"].to_numpy(), c, return_counts=True)
+        if n_no_size or n_no_prop:
+            print(f"{v.upper()} {a.arm} C{i + 1:04d}: {n_no_size} trees fit no plot size, {n_no_prop} lack a plot-size proportion; CONDPROP_UNADJ used", flush=True)
+        t = t.copy(); t["TPA_UNADJ"] = t["TPA_UNADJ"] / div
         sid = f"C{i + 1:04d}"
         try:
             sdf = build_stand_init(c, sid, v)

@@ -1,0 +1,21 @@
+group,recommended_v6,status_v6,admissible_arms_v6,recommended_v8,status_v8,admissible_arms_v8
+ACD,default_native,RECOMMENDED,default_native; default_gompit; calibrated_native; calibrated_gompit,default_native,RECOMMENDED,default_native; default_gompit; calibrated_native; calibrated_gompit
+AK,"",NOT EVALUATED (no FIA thresholds for this variant),"","",NOT EVALUATED (no FIA thresholds for this variant),""
+BM,default_native,RECOMMENDED,default_native; default_gompit; calibrated_native; calibrated_gompit,default_native,RECOMMENDED,default_native; default_gompit; calibrated_native; calibrated_gompit
+CA,calibrated_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),"",calibrated_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),""
+CI,calibrated_native,NOT RECOMMENDED for long horizons (least-bad arm named),"",calibrated_native,NOT RECOMMENDED for long horizons (least-bad arm named),""
+CR,calibrated_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),"",calibrated_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),""
+CS,default_native,RECOMMENDED,default_native; default_gompit; calibrated_native; calibrated_gompit,default_native,RECOMMENDED,default_native; default_gompit; calibrated_native; calibrated_gompit
+EC,calibrated_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),"",calibrated_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),""
+EM,conus_b2_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),"",conus_b2_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),""
+IE,calibrated_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),"",calibrated_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),""
+LS,calibrated_native,RECOMMENDED,calibrated_native; calibrated_gompit,calibrated_native,RECOMMENDED,calibrated_native; calibrated_gompit
+NC,"",NOT EVALUATED (no FIA thresholds for this variant),"","",NOT EVALUATED (no FIA thresholds for this variant),""
+NE,default_gompit,RECOMMENDED,default_native; default_gompit; calibrated_native; calibrated_gompit,default_gompit,RECOMMENDED,default_native; default_gompit; calibrated_native; calibrated_gompit
+PN,calibrated_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),"",calibrated_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),""
+SN,default_native,RECOMMENDED,default_native; default_gompit; calibrated_native; calibrated_gompit,default_native,RECOMMENDED,default_native; default_gompit; calibrated_native; calibrated_gompit
+SO,calibrated_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),"",calibrated_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),""
+TT,conus_b2_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),"",conus_b2_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),""
+UT,calibrated_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),"",calibrated_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),""
+WC,default_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),"",default_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),""
+WS,calibrated_native,RECOMMENDED,calibrated_native,calibrated_native,RECOMMENDED,calibrated_native

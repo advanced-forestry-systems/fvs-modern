@@ -289,3 +289,31 @@ def test_aggregator_keeps_within_stand_band_separate_from_stand_spread():
     pb = pooled[(pooled["config"] == "posterior_band") & (pooled["variable"] == "atba") & (pooled["year"] == 2005)].iloc[0]
     assert pb["band_basis"] == "pooled_draws_x_stands"
     assert 100 * (pb["q975"] - pb["q025"]) / pb["median"] > 60   # the legacy band mixes in the stand spread
+
+
+def test_condition_expansion_uses_the_plot_size_proportions():
+    """D5: microplot, subplot and macroplot trees are expanded by MICRPROP_UNADJ, SUBPPROP_UNADJ and
+    MACRPROP_UNADJ; a missing proportion falls back to CONDPROP_UNADJ."""
+    import fia_stand_generator as g
+    cond = pd.Series(dict(PLT_CN=7, CONDID=2, CONDPROP_UNADJ=0.5, MICRPROP_UNADJ=0.25, SUBPPROP_UNADJ=0.5, MACRPROP_UNADJ=np.nan))
+    trees = pd.DataFrame(dict(PLT_CN=[7, 7, 7, 7], CONDID=[2, 2, 2, 1], DIA=[2.0, 8.0, 30.0, 8.0], TPA_UNADJ=[74.965, 6.018, 0.999, 6.018]))
+    t = g.condition_trees(trees, cond)
+    assert len(t) == 3
+    np.testing.assert_allclose(t["TPA_UNADJ"].to_numpy(), [74.965 / 0.25, 6.018 / 0.5, 0.999 / 0.5])
+
+
+def test_condition_expansion_fallbacks():
+    """D5 review: a TPA_UNADJ that fits no annual plot size (within 1 percent), a zero proportion and a
+    missing CONDPROP_UNADJ each fall back as documented, and the fallbacks are counted."""
+    import fia_stand_generator as g
+    cond = dict(CONDPROP_UNADJ=0.4, MICRPROP_UNADJ=0.0, SUBPPROP_UNADJ=0.6, MACRPROP_UNADJ=0.8)
+    # 75.5 is 0.7 percent from the microplot value (fits; MICRPROP 0 falls back), 3.0 and 80.0 fit no size
+    tpa = [75.5, 6.018, 0.9997, 3.0, 80.0, np.nan]
+    div, n_no_size, n_no_prop = g.condition_expansion_divisor(tpa, cond, return_counts=True)
+    np.testing.assert_allclose(div, [0.4, 0.6, 0.8, 0.4, 0.4, 0.4])
+    assert (n_no_size, n_no_prop) == (2, 1)
+    # missing CONDPROP_UNADJ: unfitted trees and missing proportions are divided by 1
+    div = g.condition_expansion_divisor([74.965, 6.018, 3.0], dict(MICRPROP_UNADJ=np.nan, SUBPPROP_UNADJ=0.5))
+    np.testing.assert_allclose(div, [1.0, 0.5, 1.0])
+    div = g.condition_expansion_divisor([6.018], dict(CONDPROP_UNADJ=None, SUBPPROP_UNADJ=0.0))
+    np.testing.assert_allclose(div, [1.0])

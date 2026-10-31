@@ -912,8 +912,9 @@ the draws differ in timing and stem count (year 100 stem counts differ
 among draws in 80 of the 81 stands) rather than in final basal area.
 In a three stand check a diameter growth multiplier of 1.5 changed
 year 100 basal area by at most 1 ft² ac⁻¹, while an all-species
-maximum stand density index of 150 or 600 moved one stand from 178 to
-107 or 278 ft² ac⁻¹. The between-stand spread is far larger. The range of the
+maximum stand density index of 150 or 600 moved all three stands from
+178 to 197 ft² ac⁻¹ under the MAP parameters to 84 to 107 or 219 to
+278 ft² ac⁻¹. The between-stand spread is far larger. The range of the
 five stands' MAP values in a cell is a median 34.6, 39.0 and
 42.8 percent of their median in NE at years 25, 50 and 100, and 27.6,
 27.1 and 23.9 percent in ACD. Each stand's posterior median equals

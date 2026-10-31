@@ -152,8 +152,8 @@ def main():
         blanks = [k for k in ("STDAGE", "ASPECT", "SLOPE", "ELEV", "SICOND") if pd.isna(c.get(k, np.nan))]
         c = {k: (None if (isinstance(val, float) and np.isnan(val)) else val) for k, val in c.to_dict().items()}
         # Trees of this condition only (no all-plot fallback: that is what put SN and CS stands at 1.25 to 1.64 x
-        # BALIVE on October 29), expanded to the condition acre by CONDPROP_UNADJ, which is how BALIVE is defined
-        # (sum of BA x TPA_UNADJ / CONDPROP_UNADJ) and why partial conditions seeded at exactly 0.75 x before.
+        # BALIVE on October 29), expanded to the condition acre by the condition share of each tree's own plot
+        # size (BA x TPA_UNADJ / MICRPROP_UNADJ, SUBPPROP_UNADJ or MACRPROP_UNADJ), which is how BALIVE is defined.
         t = tree[(tree["PLT_CN"] == cn) & (tree["CONDID"] == condid)]
         # Live records with a null TPA_UNADJ (P2A_GRM_FLG = Y: trees carried from the prior periodic
         # inventory for growth, removal and mortality only, on legacy subplot numbers) contribute nothing
@@ -169,7 +169,11 @@ def main():
         # definition; dividing every tree by CONDPROP_UNADJ left 263 of 972 multi-condition stands more than 2%
         # off BALIVE. Same helper as calibration/python/fia_stand_generator.py.
         from fia_stand_generator import condition_expansion_divisor
-        t = t.copy(); t["TPA_UNADJ"] = t["TPA_UNADJ"] / condition_expansion_divisor(t["TPA_UNADJ"].to_numpy(), c)
+        # A tree whose TPA_UNADJ fits no plot size (within 1 percent) falls back to CONDPROP_UNADJ and is logged.
+        div, n_no_size, n_no_prop = condition_expansion_divisor(t["TPA_UNADJ"].to_numpy(), c, return_counts=True)
+        if n_no_size or n_no_prop:
+            print(f"{v.upper()} {a.arm} C{i + 1:04d}: {n_no_size} trees fit no plot size, {n_no_prop} lack a plot-size proportion; CONDPROP_UNADJ used", flush=True)
+        t = t.copy(); t["TPA_UNADJ"] = t["TPA_UNADJ"] / div
         sid = f"C{i + 1:04d}"
         try:
             sdf = build_stand_init(c, sid, v)

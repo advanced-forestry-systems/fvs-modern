@@ -4,11 +4,11 @@ da73c74e76202a288b82a053321a2362  ./a_acd_band/a_keyword_echo.csv
 774a66281030e94188764ddb307f467e  ./a_acd_band/a_treelists_cycles.csv
 8ab25d00a4b56bd66858f452dfb39eba  ./a_acd_band/scan_draw_spread.slurm
 1d37be4c8912b5fa45d08c3d529aea0d  ./a_acd_band/yr100_draw_spread_by_stand.csv
-c9cbd7acc183cd02cf24a3970ebe5ab8  ./b_plotsize/b_expansion.py
-45f01ce877181c16dc453bf265c110d3  ./b_plotsize/b_expansion_report.txt
-0fbc6e6393564549894ac6dd349efa84  ./b_plotsize/b_expansion.slurm
-8dbc9bf57565fd74c356b64f09c1fee6  ./b_plotsize/catalog_expansion_check.csv
-3fcfb0057954cca80655e89354995787  ./b_plotsize/ensemble_expansion_check.csv
+53a4f300c37a4fbcc7399c4e67df2c60  ./b_plotsize/b_expansion.py
+3ca719bf8da75b2b5e07254562ccf394  ./b_plotsize/b_expansion_report.txt
+137ea8e2276594490e4d7e291832b004  ./b_plotsize/b_expansion.slurm
+4cb0f948c7f675cff01355b86292a5d4  ./b_plotsize/catalog_expansion_check.csv
+5fbf1ab040849850e46a25b2183a428c  ./b_plotsize/ensemble_expansion_check.csv
 768f5d62e505eb6a5934e6e101781136  ./catalog_rerun/catalog_20261030v8_scorecard_summary.csv
 ca62ae6176e10daab7befe4818ce1d1f  ./catalog_rerun/catalog_gates_by_arm_v8.csv
 fbaae5ea711a0ca62f21203da702f5e5  ./catalog_rerun/catalog_recommendation_by_variant_v8.csv
@@ -31,4 +31,4 @@ f16c17e3e2717a571b893dbf2c04a85c  ./ensemble_rerun/ens5_year0_change.csv
 b92c86d5dedf292fac9bb9fa83553459  ./ensemble_rerun/ens_full5_seedgate.csv
 e190f1fdc0b4b52b557eafaa584b416f  ./ensemble_rerun/finish_ensemble5.slurm
 acc0dad03b8de2ff78288f182de9beec  ./ensemble_rerun/seedgate_full5.R
-4ec297eb2facb585c37309c786471d3b  ./README.md
+90a33af868d86a4cb9f9b4f959759290  ./README.md

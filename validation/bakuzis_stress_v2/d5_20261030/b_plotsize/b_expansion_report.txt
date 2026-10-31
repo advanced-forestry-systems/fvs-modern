@@ -2,16 +2,24 @@
   r_condprop: multi-cond median 1.0000 q05 0.9797 q95 1.0177 min 0.932 max 1.147; off by >2%: 14; single-cond off by >2%: 0
   r_plotsize: multi-cond median 1.0000 q05 1.0000 q95 1.0000 min 1.000 max 1.000; off by >2%: 0; single-cond off by >2%: 0
   stands whose seeded BA moves >2% when switching to plot-size expansion: 14 of 360 (3.89%); max |change| 12.80%
+  fallback trees: no plot size 949 in 19 stands (2 multi-cond); no proportion 0 in 0 stands (0 multi-cond); stands whose BA differs shipped vs threshold rule by >1e-9: 0 (multi-cond 0), max |diff| 0%
+  multi-cond r_plotsize exactly 1 within 1e-4: 125 of 125
   multi-cond stands where SUBPPROP != CONDPROP: 0; MICRPROP != CONDPROP: 59
+
 == ensemble NE: stands 180, multi-condition 66
   r_condprop: multi-cond median 1.0000 q05 0.9801 q95 1.0176 min 0.939 max 1.147; off by >2%: 7; single-cond off by >2%: 0
   r_plotsize: multi-cond median 1.0000 q05 1.0000 q95 1.0000 min 1.000 max 1.000; off by >2%: 0; single-cond off by >2%: 0
   stands whose seeded BA moves >2% when switching to plot-size expansion: 7 of 180 (3.89%); max |change| 12.80%
+  fallback trees: no plot size 419 in 8 stands (2 multi-cond); no proportion 0 in 0 stands (0 multi-cond); stands whose BA differs shipped vs threshold rule by >1e-9: 0 (multi-cond 0), max |diff| 0%
+  multi-cond r_plotsize exactly 1 within 1e-4: 66 of 66
   multi-cond stands where SUBPPROP != CONDPROP: 0; MICRPROP != CONDPROP: 33
+
 == ensemble ACD: stands 180, multi-condition 59
   r_condprop: multi-cond median 1.0000 q05 0.9794 q95 1.0138 min 0.932 max 1.027; off by >2%: 7; single-cond off by >2%: 0
   r_plotsize: multi-cond median 1.0000 q05 1.0000 q95 1.0000 min 1.000 max 1.000; off by >2%: 0; single-cond off by >2%: 0
   stands whose seeded BA moves >2% when switching to plot-size expansion: 7 of 180 (3.89%); max |change| 7.25%
+  fallback trees: no plot size 530 in 11 stands (0 multi-cond); no proportion 0 in 0 stands (0 multi-cond); stands whose BA differs shipped vs threshold rule by >1e-9: 0 (multi-cond 0), max |diff| 0%
+  multi-cond r_plotsize exactly 1 within 1e-4: 59 of 59
   multi-cond stands where SUBPPROP != CONDPROP: 0; MICRPROP != CONDPROP: 26
 catalog acd done
 catalog bm done
@@ -31,10 +39,13 @@ catalog tt done
 catalog ut done
 catalog wc done
 catalog ws done
+
 == catalog all variants: stands 4748, multi-condition 972
   r_condprop: multi-cond median 1.0000 q05 0.9417 q95 1.0600 min 0.797 max 1.177; off by >2%: 263; single-cond off by >2%: 0
   r_plotsize: multi-cond median 1.0000 q05 1.0000 q95 1.0000 min 1.000 max 1.000; off by >2%: 0; single-cond off by >2%: 0
   stands whose seeded BA moves >2% when switching to plot-size expansion: 266 of 4748 (5.60%); max |change| 25.45%
+  fallback trees: no plot size 4714 in 231 stands (1 multi-cond); no proportion 2 in 2 stands (0 multi-cond); stands whose BA differs shipped vs threshold rule by >1e-9: 0 (multi-cond 0), max |diff| 0%
+  multi-cond r_plotsize exactly 1 within 1e-4: 971 of 972
   multi-cond stands where SUBPPROP != CONDPROP: 330; MICRPROP != CONDPROP: 534
            n  multi  moved  max_abs_change
 variant                                   

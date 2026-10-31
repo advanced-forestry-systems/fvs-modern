@@ -17,12 +17,14 @@ keyword failure.
 * `src-converted/acd/morts.f90` applies the mortality multiplier only to the
   background rate (line 522, `IF(RIP .EQ. RN) X=1.0`), which governs a stand
   below 55 percent of its maximum SDI. Under GOMPIT the multiplier is dropped
-  (lines 524 to 527; `vls/morts.f90` lines 600 to 604).
+  (lines 524 to 529;
+  `vls/morts.f90` lines 599 to 608).
 * The ACD posterior has no SDIMAX term, so every draw approaches the same
   density ceiling. In a three stand probe (`a_runs_summary.csv`) BAIMULT 1.5
-  changed year 100 basal area by at most 1 ft2/ac, MORTMULT 2 changed nothing,
-  and an all-species SDIMAX of 150 or 600 moved one stand from 178 to 107 or
-  278 ft2/ac.
+  changed year 100 basal area by at most 1 ft2/ac, MORTMULT 2 changed no
+  stand's year 100 basal area, and an all-species SDIMAX of 150 or 600 moved
+  all three stands from 178 to 197 ft2/ac under the MAP parameters to 84 to
+  107 or 219 to 278 ft2/ac.
 
 The rerun ensemble (below) still has 81 of 180 ACD stands and 14 of 180 NE
 stands with a zero year 100 band.
@@ -31,12 +33,30 @@ stands with a zero year 100 band.
 
 The stand generator and the catalog runner expanded every tree by
 1/CONDPROP_UNADJ. FIA live basal area (BALIVE) expands microplot, subplot and
-macroplot trees by the condition's share of that plot size (MICRPROP_UNADJ for
-TPA_UNADJ > 50, MACRPROP_UNADJ for TPA_UNADJ < 2, SUBPPROP_UNADJ otherwise).
-`condition_expansion_divisor()` in `calibration/python/fia_stand_generator.py`
-now does this, falling back to CONDPROP_UNADJ and then 1, and the catalog
-runner imports it. With the fix the ratio to BALIVE is 1.0000 on all 125
-ensemble and all 972 catalog multi-condition stands (`b_expansion_report.txt`).
+macroplot trees by the condition's share of that plot size (MICRPROP_UNADJ,
+SUBPPROP_UNADJ, MACRPROP_UNADJ). `condition_expansion_divisor()` in
+`calibration/python/fia_stand_generator.py` now does this, and the catalog
+runner imports it. A tree is assigned to a plot size only when its TPA_UNADJ
+is within 1 percent of 74.965, 6.018 or 0.9997; a tree that fits none, or
+whose proportion is missing, is divided by CONDPROP_UNADJ (then 1) and
+counted (`return_counts=True`; `condition_trees` logs a warning and the
+catalog runner prints a line).
+
+`b_expansion.py` calls the shipped function (review rerun, October 30, 2026,
+after PR 144 review). Ratio of seeded BA to BALIVE on the multi-condition
+stands: 125 of 125 ensemble and 971 of 972 catalog stands within 1e-4 of 1,
+and the remaining catalog stand at 1.00012 (BALIVE 0.55 ft2/ac, so a
+rounding residual; the CONDPROP expansion gives the same value). Fallback
+counts (`n_no_plot_size`, `n_no_proportion` in the check files):
+
+* Ensemble: 949 trees in 19 of 360 stands fit no plot size (2 of them
+  multi-condition); 0 trees lack a proportion.
+* Catalog: 4,714 trees in 231 of 4,748 stands fit no plot size (1
+  multi-condition); 2 trees in 2 stands lack a proportion (single-condition).
+* In all three multi-condition stands with fallback trees CONDPROP_UNADJ
+  equals SUBPPROP_UNADJ and MICRPROP_UNADJ, and no stand's seeded basal area
+  differs from the first D5 rule (TPA_UNADJ above 50 micro, below 2 macro):
+  `shipped_vs_threshold_pct` is 0 on every row, so the reruns below stand.
 
 | Sample | Off BALIVE by >2% before | Stands moved >2% | Largest move |
 |---|---|---|---|

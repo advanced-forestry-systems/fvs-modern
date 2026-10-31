@@ -300,7 +300,20 @@ def test_condition_expansion_uses_the_plot_size_proportions():
     t = g.condition_trees(trees, cond)
     assert len(t) == 3
     np.testing.assert_allclose(t["TPA_UNADJ"].to_numpy(), [74.965 / 0.25, 6.018 / 0.5, 0.999 / 0.5])
-    # BALIVE as FIA defines it (per-size proportions) is reproduced exactly
-    ba = (0.005454154 * t["DIA"] ** 2 * t["TPA_UNADJ"]).sum()
-    ref = 0.005454154 * (2.0 ** 2 * 74.965 / 0.25 + 8.0 ** 2 * 6.018 / 0.5 + 30.0 ** 2 * 0.999 / 0.5)
-    assert abs(ba / ref - 1) < 1e-12
+
+
+def test_condition_expansion_fallbacks():
+    """D5 review: a TPA_UNADJ that fits no annual plot size (within 1 percent), a zero proportion and a
+    missing CONDPROP_UNADJ each fall back as documented, and the fallbacks are counted."""
+    import fia_stand_generator as g
+    cond = dict(CONDPROP_UNADJ=0.4, MICRPROP_UNADJ=0.0, SUBPPROP_UNADJ=0.6, MACRPROP_UNADJ=0.8)
+    # 75.5 is 0.7 percent from the microplot value (fits; MICRPROP 0 falls back), 3.0 and 80.0 fit no size
+    tpa = [75.5, 6.018, 0.9997, 3.0, 80.0, np.nan]
+    div, n_no_size, n_no_prop = g.condition_expansion_divisor(tpa, cond, return_counts=True)
+    np.testing.assert_allclose(div, [0.4, 0.6, 0.8, 0.4, 0.4, 0.4])
+    assert (n_no_size, n_no_prop) == (2, 1)
+    # missing CONDPROP_UNADJ: unfitted trees and missing proportions are divided by 1
+    div = g.condition_expansion_divisor([74.965, 6.018, 3.0], dict(MICRPROP_UNADJ=np.nan, SUBPPROP_UNADJ=0.5))
+    np.testing.assert_allclose(div, [1.0, 0.5, 1.0])
+    div = g.condition_expansion_divisor([6.018], dict(CONDPROP_UNADJ=None, SUBPPROP_UNADJ=0.0))
+    np.testing.assert_allclose(div, [1.0])

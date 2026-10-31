@@ -103,7 +103,7 @@ def load_fia_conditions(
                 "STATECD", "COUNTYCD", "PLOT", "INVYR",
                 "COND_STATUS_CD", "SICOND", "SIBASE", "BALIVE",
                 "FORTYPCD", "STDAGE", "ASPECT", "SLOPE", "ELEV", "PLT_CN",
-                "CONDID", "CONDPROP_UNADJ",
+                "CONDID", "CONDPROP_UNADJ", "MICRPROP_UNADJ", "SUBPPROP_UNADJ", "MACRPROP_UNADJ",
             ),
             low_memory=False,
         )
@@ -256,19 +256,47 @@ def build_tree_init(
     return out
 
 
+def condition_expansion_divisor(tpa_unadj, cond_row) -> np.ndarray:
+    """Per-tree divisor that turns TPA_UNADJ (per plot acre) into trees per condition acre.
+
+    FIA expands each tree by the share of ITS OWN plot size that the condition occupies: microplot
+    trees (TPA_UNADJ 74.965) by MICRPROP_UNADJ, subplot trees (6.018) by SUBPPROP_UNADJ and macroplot
+    trees (0.999) by MACRPROP_UNADJ. CONDPROP_UNADJ is the share of the PROP_BASIS plot only, so dividing
+    every tree by it (D3, 2026-10-30) left multi-condition stands at 0.80 to 1.18 of FIA BALIVE whenever a
+    condition boundary cut the microplot (or the macroplot) differently from the subplot. With the per-size
+    proportions the seeded BA equals BALIVE on all 125 multi-condition Paper 1 ensemble stands and all 972
+    multi-condition catalog stands (D5, 2026-10-30). The plot size is identified from TPA_UNADJ (above 50:
+    microplot; below 2: macroplot; otherwise subplot); a missing or non-positive proportion falls back to
+    CONDPROP_UNADJ, and a missing CONDPROP_UNADJ to 1.
+    """
+    tpa = np.asarray(tpa_unadj, dtype=float)
+    def prop(name):
+        try:
+            v = float(cond_row.get(name, np.nan))
+        except (TypeError, ValueError):
+            v = np.nan
+        return v if np.isfinite(v) and v > 0 else np.nan
+    cp = prop("CONDPROP_UNADJ")
+    cp = 1.0 if not np.isfinite(cp) else cp
+    micr, subp, macr = (prop(n) for n in ("MICRPROP_UNADJ", "SUBPPROP_UNADJ", "MACRPROP_UNADJ"))
+    div = np.where(tpa > 50, micr, np.where(tpa < 2, macr, subp))
+    return np.where(np.isfinite(div), div, cp)
+
+
 def condition_trees(trees: pd.DataFrame, cond_row: pd.Series) -> pd.DataFrame:
     """Trees of one FIA condition, expanded to the condition acre.
 
     The sampled unit is a condition (its SICOND and BALIVE place it in a
     Bakuzis cell), so its tree list must be that condition's trees only, and
-    TPA_UNADJ (per plot acre) must be divided by CONDPROP_UNADJ to give trees
-    per condition acre, which is how FIA defines BALIVE. Before 2026-10-30 the
-    trees were matched by plot only and not expanded, so on a multi-condition
-    plot a condition received the other conditions' trees and a partial
-    condition was seeded at CONDPROP_UNADJ x its density (D3; 125 of the 360
-    NE/ACD Paper 1 ensemble stands). Mirrors the catalog runner
-    validation/bakuzis_stress_v2/catalog/conus_catalog_runs.py. Records with a
-    null TPA_UNADJ pass through untouched and are dropped by build_tree_init.
+    TPA_UNADJ (per plot acre) must be expanded to trees per condition acre,
+    which is how FIA defines BALIVE. Before 2026-10-30 the trees were matched
+    by plot only and not expanded (D3; 125 of the 360 NE/ACD Paper 1 ensemble
+    stands). The first D3 fix divided every tree by CONDPROP_UNADJ; FIA
+    expands each tree by the condition share of its own plot size (micro,
+    sub or macroplot), see condition_expansion_divisor (D5). Mirrors the
+    catalog runner validation/bakuzis_stress_v2/catalog/conus_catalog_runs.py.
+    Records with a null TPA_UNADJ pass through untouched and are dropped by
+    build_tree_init.
     """
     if trees is None or trees.empty:
         return pd.DataFrame() if trees is None else trees.copy()
@@ -277,13 +305,8 @@ def condition_trees(trees: pd.DataFrame, cond_row: pd.Series) -> pd.DataFrame:
     if "CONDID" in t.columns and pd.notna(condid):
         t = t.loc[t["CONDID"] == int(condid)]
     t = t.copy()
-    cp = cond_row.get("CONDPROP_UNADJ", np.nan)
-    try:
-        cp = float(cp)
-    except (TypeError, ValueError):
-        cp = np.nan
-    if np.isfinite(cp) and cp > 0 and "TPA_UNADJ" in t.columns:
-        t["TPA_UNADJ"] = t["TPA_UNADJ"] / cp
+    if "TPA_UNADJ" in t.columns and len(t):
+        t["TPA_UNADJ"] = t["TPA_UNADJ"] / condition_expansion_divisor(t["TPA_UNADJ"].to_numpy(), cond_row)
     return t
 
 

@@ -1,0 +1,26 @@
+== scorer  : rows 64  differing rows:
+Key: <arm, relation>
+          arm                          relation evaluated_4 evaluated_5 flagged_4 flagged_5 verdict_4 verdict_5
+       <char>                            <char>       <int>       <int>     <int>     <int>    <char>    <char>
+1: NE_default T3 Reineke slope (trajectory OLS)          36          36         7         8      FLAG      FLAG
+== scorer b : rows 64  differing rows:
+Key: <arm, relation>
+Empty data.table (0 rows and 8 cols): arm,relation,evaluated_4,evaluated_5,flagged_4,flagged_5...
+ens_full4 : NE cells MAP below default 34 of 36 ; NE |div| median 14.9 max 22.5 at Northern-Hardwood Medium High 179 vs 231 ; ACD identical cells 33 max |div| 1.54 
+   variant density_class med_ba0 inbin     n
+    <char>        <char>   <num> <int> <int>
+1:     ACD          High   176.5    60    60
+2:      NE          High   183.0    59    60
+3:     ACD           Low    77.5    59    60
+4:      NE           Low    73.5    60    60
+5:     ACD        Medium   126.5    60    60
+6:      NE        Medium   122.5    60    60
+ens_full5 : NE cells MAP below default 34 of 36 ; NE |div| median 14.9 max 22.5 at Northern-Hardwood Medium High 179 vs 231 ; ACD identical cells 33 max |div| 1.54 
+   variant density_class med_ba0 inbin     n
+    <char>        <char>   <num> <int> <int>
+1:     ACD          High   174.5    60    60
+2:      NE          High   183.0    60    60
+3:     ACD           Low    77.5    60    60
+4:      NE           Low    73.0    60    60
+5:     ACD        Medium   126.5    60    60
+6:      NE        Medium   122.5    60    60

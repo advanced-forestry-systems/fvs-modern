@@ -289,3 +289,18 @@ def test_aggregator_keeps_within_stand_band_separate_from_stand_spread():
     pb = pooled[(pooled["config"] == "posterior_band") & (pooled["variable"] == "atba") & (pooled["year"] == 2005)].iloc[0]
     assert pb["band_basis"] == "pooled_draws_x_stands"
     assert 100 * (pb["q975"] - pb["q025"]) / pb["median"] > 60   # the legacy band mixes in the stand spread
+
+
+def test_condition_expansion_uses_the_plot_size_proportions():
+    """D5: microplot, subplot and macroplot trees are expanded by MICRPROP_UNADJ, SUBPPROP_UNADJ and
+    MACRPROP_UNADJ; a missing proportion falls back to CONDPROP_UNADJ."""
+    import fia_stand_generator as g
+    cond = pd.Series(dict(PLT_CN=7, CONDID=2, CONDPROP_UNADJ=0.5, MICRPROP_UNADJ=0.25, SUBPPROP_UNADJ=0.5, MACRPROP_UNADJ=np.nan))
+    trees = pd.DataFrame(dict(PLT_CN=[7, 7, 7, 7], CONDID=[2, 2, 2, 1], DIA=[2.0, 8.0, 30.0, 8.0], TPA_UNADJ=[74.965, 6.018, 0.999, 6.018]))
+    t = g.condition_trees(trees, cond)
+    assert len(t) == 3
+    np.testing.assert_allclose(t["TPA_UNADJ"].to_numpy(), [74.965 / 0.25, 6.018 / 0.5, 0.999 / 0.5])
+    # BALIVE as FIA defines it (per-size proportions) is reproduced exactly
+    ba = (0.005454154 * t["DIA"] ** 2 * t["TPA_UNADJ"]).sum()
+    ref = 0.005454154 * (2.0 ** 2 * 74.965 / 0.25 + 8.0 ** 2 * 6.018 / 0.5 + 30.0 ** 2 * 0.999 / 0.5)
+    assert abs(ba / ref - 1) < 1e-12

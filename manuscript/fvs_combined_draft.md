@@ -453,8 +453,11 @@ within the cell's bins from the variant's state coverage (Connecticut,
 Maine, Massachusetts, New Hampshire, New York, Rhode Island, and
 Vermont for NE; Maine, New Hampshire, Vermont for ACD), pulled the
 live tree records of the sampled condition (matched on plot and
-condition) from the FIA TREE table, expanded them to the condition
-acre by dividing TPA_UNADJ by CONDPROP_UNADJ, and converted them to
+condition) from the FIA TREE table, expanded each tree to the
+condition acre by the condition's share of the tree's own plot size
+(MICRPROP_UNADJ, SUBPPROP_UNADJ or MACRPROP_UNADJ for microplot,
+subplot and macroplot trees, the expansion behind FIA live basal
+area), and converted them to
 the FVS standinit and treeinit format with a fixed canonical
 inventory year of 2000 so that all sampled plots project from the
 same calendar baseline. The synthetic algorithmic stand generator
@@ -789,22 +792,24 @@ SLURM array of six tasks running both the Northeast (NE) and
 Acadian (ACD) variants, with five real FIA stands per cell in all 36
 cells of both variants and 100 posterior draws per stand in addition
 to the default and calibrated MAP configurations. The density axis
-reaches the engine: median year 0 basal area is 73.5 to 77.5, 122.5
-to 126.5 and 176.5 to 183.0 ft² ac⁻¹ for the 60, 120 and
-180 ft² ac⁻¹ classes, and 358 of the 360 sampled stands enter inside
-their selection bin (one NE High stand at 148 ft² ac⁻¹ and one ACD
-Low stand at 91 ft² ac⁻¹ fall just outside). The stand generator
-keeps only the trees of the sampled FIA condition and expands them
-by 1/CONDPROP_UNADJ, so each stand enters at its condition's live
-basal area. An earlier version of this ensemble matched trees to the
+reaches the engine: median year 0 basal area is 73.0 to 77.5, 122.5
+to 126.5 and 174.5 to 183.0 ft² ac⁻¹ for the 60, 120 and
+180 ft² ac⁻¹ classes, and all 360 sampled stands enter inside
+their selection bin. The stand generator keeps only the trees of the
+sampled FIA condition and expands each tree by the condition's share
+of its own plot size (microplot, subplot or macroplot), so each stand
+enters at its condition's live basal area. An earlier version of this ensemble matched trees to the
 plot rather than the condition, which on 125 multi-condition stands
 added a neighbouring condition's trees or left a partial condition
 under-stocked. That version also wrote the posterior draws with a
 keyword layout that FVS read as one maximum stand density index for
 every species, overwrote each draw's maximum with the MAP value
 during the run, and derived the draw multipliers on a different basis
-from the MAP set. The ensemble reported here was rerun with all of
-these corrected.
+from the MAP set. A first correction expanded every tree by the whole-plot condition
+proportion (CONDPROP_UNADJ), which left 14 of the 125 multi-condition
+stands more than 2 percent off their live basal area where a condition
+boundary crossed the microplot differently from the subplot. The
+ensemble reported here was rerun with all of these corrected.
 
 ![Figure 8. Bakuzis matrix 100 year BA trajectories for the Northeast variant on real FIA stands sampled by site index and basal area band. Rows are site classes (Low, Medium, High), columns species groups (Spruce Fir, Northern Hardwood, Pine, Oak Pine), one line per density class. The dashed gray line is the default parameter trajectory; the orange line is the calibrated MAP; the green line and ribbon are the posterior median and the within-stand 95 percent parameter band (each stand's band over its 100 draws, median over the cell's five FIA stands). Stand to stand spread is not in the ribbon; the range of the five stands' MAP values is 42.8 percent of their median at year 100 (median over cells).](../calibration/output/comparisons/manuscript_figures/fig_bakuzis_trajectories.png){width=6.5in}
 
@@ -858,6 +863,7 @@ default parameters, and in 8 percent of the NE pairs under the MAP
 and the posterior band. Sukachev's ordering holds in 0 (ACD) and
 8 percent (NE) of pairs under every configuration. The mortality
 size pattern is not yet computed. The versioned scorer agrees:
+
 - Eichhorn's rule flags in every evaluated species group (3 in ACD,
   4 in NE).
 - Sukachev's ordering flags in every group.
@@ -892,19 +898,28 @@ band of one stand's 100 posterior draws, which is parametric
 uncertainty alone. It is narrow in NE: the median over the 180 NE
 stands is 3.2, 3.5 and 3.2 percent of the stand's posterior median at
 years 25, 50 and 100 (at year 100 the median over cells of the cell
-medians is 3.1 percent, interquartile range 2.9 to 3.7 percent). In ACD it is near zero (median 0.5 and
+medians is 3.2 percent, interquartile range 2.9 to 3.7 percent). In ACD it is near zero (median 0.5 and
 0.4 percent at years 25 and 50, and 0 at year 100). At year 100, 81
 of the 180 ACD stands give the same basal area under all 100 draws,
 although each ACD draw carries its own diameter growth multipliers
 for 20 species and mortality multipliers for 48 and FVS reads them.
-We report that behaviour as observed; the tests run here do not
-explain it. The between-stand spread is far larger. The range of the
-five stands' MAP values in a cell is a median 34.6, 38.1 and
+This is a property of the variant rather than a keyword failure: the
+ACD mortality routine applies the mortality multiplier only to
+background mortality, which governs a stand below 55 percent of its
+maximum stand density index, and the ACD posterior carries no maximum
+density term, so every draw approaches the same density ceiling and
+the draws differ in timing and stem count (year 100 stem counts differ
+among draws in 80 of the 81 stands) rather than in final basal area.
+In a three stand check a diameter growth multiplier of 1.5 changed
+year 100 basal area by at most 1 ft² ac⁻¹, while an all-species
+maximum stand density index of 150 or 600 moved one stand from 178 to
+107 or 278 ft² ac⁻¹. The between-stand spread is far larger. The range of the
+five stands' MAP values in a cell is a median 34.6, 39.0 and
 42.8 percent of their median in NE at years 25, 50 and 100, and 27.6,
-25.5 and 23.5 percent in ACD. Each stand's posterior median equals
+27.1 and 23.9 percent in ACD. Each stand's posterior median equals
 its MAP value (median ratio 1.00 in both variants, 5th to 95th
 percentile 0.99 to 1.00 at year 100). A band pooled over draws and
-stands, 47 percent of the median in NE and 25 percent in ACD at
+stands, 47 percent of the median in NE and 26 percent in ACD at
 year 100, is therefore almost entirely stand to stand variation. For
 a single stand projection the parametric band from these posteriors
 is a few percent of the projected basal area.
@@ -925,7 +940,10 @@ nearly all on the self thinning axis alone. No verdict changes
 across 144 alternative rules or 500 stand bootstraps. The calibrated
 arms of the current catalog (version 1.2.0) were rerun after the
 in-process overlay correction above; four verdict fields changed and
-no variant's status did. The catalog, its stress test and the per
+no variant's status did. Rerunning all four arms with the per plot
+size tree expansion above, which moves the starting basal area of 266
+of the 4,748 stands by more than 2 percent, changed no verdict, no
+recommended arm and no variant's status. The catalog, its stress test and the per
 variant scorecards are archived at Zenodo (10.5281/zenodo.23777723).
 
 ## 4.7 Disturbance artifact and the four-arm comparison

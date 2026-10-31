@@ -219,3 +219,7 @@ All paths are on OSC Cardinal under `/fs/scratch/PUOM0008/crsfaaron/bakuzis_v2_2
 ![Figure 2. Share of stands whose maximum basal area exceeds the FIA plot p99.9 within 50 years, with Wilson 95% intervals. Dashed line 5%, dotted line 10%.](figures/fig_b_longterm_ba_exceedance.png){width=100%}
 
 ![Figure 3. Decision map. Blue with W marks the pre-registered winner, light blue the other admissible arms, and orange the variants with no admissible arm. fvs-conus v6 is excluded.](figures/fig_c_decision_map.png){width=100%}
+
+## Addendum, October 30, 2026: stand seeding and D5
+
+The run-off seeded its stands with the catalog runner as it stood on October 30. That runner expanded each condition's trees by CONDPROP_UNADJ alone. FIA computes BALIVE with the condition's share of each plot size (MICRPROP_UNADJ, SUBPPROP_UNADJ, MACRPROP_UNADJ), and fvs-modern pull request 144 corrects the expansion to match (defect D5). Under the corrected expansion, 266 of the 4,748 catalog stands (5.6 percent) seed more than 2 percent differently. The catalog rerun on all four arms with it (catalog v8) changed no primary rule verdict, recommended arm or status. The run-off's conclusions are therefore expected to hold, but its per-stand numbers would shift slightly if the run-off were rerun with the corrected seeding. Memo Section 19 (`validation/bakuzis_stress_v2/20261027_fvs-modern_fvs-conus_bakuzis_assessment.md`) gives the details.

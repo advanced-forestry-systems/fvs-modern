@@ -1,0 +1,21 @@
+group,recommended,status,admissible_arms,nearterm_evidence,rule_sensitive,admissible_arms_alt
+ACD,default_native,RECOMMENDED,default_native; default_gompit; calibrated_native; calibrated_gompit,none per variant,FALSE,default_native; default_gompit; calibrated_native; calibrated_gompit
+BM,default_native,RECOMMENDED,default_native; default_gompit; calibrated_native; calibrated_gompit,none per variant,TRUE,default_native; default_gompit; calibrated_native; calibrated_gompit; conus_b1_gompit; conus_b2_gompit
+CA,calibrated_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),"",none per variant,TRUE,conus_b1_gompit
+CI,calibrated_native,NOT RECOMMENDED for long horizons (least-bad arm named),"",none per variant,TRUE,default_native
+CR,calibrated_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),"",none per variant,TRUE,calibrated_native; conus_b1_gompit
+CS,default_native,RECOMMENDED,default_native; default_gompit; calibrated_native; calibrated_gompit,none per variant,FALSE,default_native; default_gompit; calibrated_native; calibrated_gompit
+EC,calibrated_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),"",none per variant,TRUE,conus_b1_gompit
+EM,conus_b2_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),"",none per variant,FALSE,""
+IE,calibrated_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),"",none per variant,FALSE,""
+LS,calibrated_native,RECOMMENDED,calibrated_native; calibrated_gompit,none per variant,FALSE,calibrated_native; calibrated_gompit
+NE,default_gompit,RECOMMENDED,default_native; default_gompit; calibrated_native; calibrated_gompit,Paper 2 NE cohort (stocking),FALSE,default_native; default_gompit; calibrated_native; calibrated_gompit
+PN,calibrated_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),"",none per variant,FALSE,""
+SN,default_native,RECOMMENDED,default_native; default_gompit; calibrated_native; calibrated_gompit,none per variant,FALSE,default_native; default_gompit; calibrated_native; calibrated_gompit
+SO,calibrated_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),"",none per variant,TRUE,conus_b1_gompit
+TT,conus_b2_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),"",none per variant,FALSE,""
+UT,calibrated_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),"",none per variant,FALSE,""
+WC,default_gompit,NOT RECOMMENDED for long horizons (least-bad arm named),"",none per variant,FALSE,""
+WS,calibrated_native,RECOMMENDED,calibrated_native,none per variant,TRUE,default_native; calibrated_native
+AK,"",NOT EVALUATED (no FIA thresholds for this variant),"",none per variant,FALSE,""
+NC,"",NOT EVALUATED (no FIA thresholds for this variant),"",none per variant,FALSE,""

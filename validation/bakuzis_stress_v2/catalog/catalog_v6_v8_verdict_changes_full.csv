@@ -1,0 +1,6 @@
+group,arm,field,v6,v8
+WC,(variant),admissible_arms_alt,default_gompit; calibrated_gompit,""
+WC,(variant),rule_sensitive,TRUE,FALSE
+WC,calibrated_gompit,admissible_alt,TRUE,FALSE
+WC,default_gompit,admissible_alt,TRUE,FALSE
+WS,calibrated_native,stress_verdict,FRAGILE admissible,STABLE admissible

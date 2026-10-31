@@ -36,16 +36,43 @@ def load_dll(dll_path: str | os.PathLike) -> ct.CDLL:
     return dll
 
 
+_DLCLOSE = None
+
+
+def _dlclose() -> ct._FuncPointer:
+    """Return the process's dlclose.
+
+    Looked up in the global namespace (glibc 2.34 and later keep it in libc), then in
+    libdl.so.2 (older glibc). Before October 30, 2026 it was looked up on the FVS
+    library handle, which fails on glibc older than 2.34 because the FVS libraries
+    do not list libdl as a dependency.
+    """
+    global _DLCLOSE
+    if _DLCLOSE is None:
+        try:
+            func = ct.CDLL(None).dlclose
+        except AttributeError:
+            try:
+                func = ct.CDLL("libdl.so.2").dlclose
+            except (OSError, AttributeError) as e:
+                msg = f"dlclose not found in the process or in libdl.so.2: {e}"
+                raise RuntimeError(msg) from e
+        func.argtypes = (ct.c_void_p,)
+        func.restype = ct.c_int
+        _DLCLOSE = func
+    return _DLCLOSE
+
+
 def unload_dll(dll: ct.CDLL) -> None:
     """Unloads a Dynamic Link Library.
+
+    Drops one reference to the library; the library leaves the process when its
+    last reference is closed.
 
     Args:
         dll: the loaded DLL.
     """
-    close_func = dll.dlclose
-    close_func.argtypes = (ct.c_void_p,)
-    close_func.restype = ct.c_int
-    result = close_func(dll._handle)
+    result = _dlclose()(dll._handle)
     if result != 0:
         msg = f"Failed to unload DLL: {result}"
         raise RuntimeError(msg)

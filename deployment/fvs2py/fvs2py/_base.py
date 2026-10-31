@@ -439,9 +439,10 @@ class FVS(FvsCore):
             self.keyfile = f.read()
 
         # The calibrated or custom overlay is applied once per keyword file: the first
-        # run() after each load_keyfile() stops at point 7 and applies it. Before
-        # October 30, 2026 the flag was never reset, so a second keyword file loaded
-        # into the same object ran with default parameters.
+        # run() after each load_keyfile() stops at point 7 of the first stand in the
+        # file and applies it there. Later stands in the same file are not overlaid
+        # again. Before October 30, 2026 the flag was never reset, so a second keyword
+        # file loaded into the same object ran with default parameters.
         self._config_applied = False
 
         cmdline = f"--keywordfile={self.keyfile_path}"
@@ -699,16 +700,27 @@ class FVS(FvsCore):
             )
             return result
 
+        # Failures are logged at ERROR (WARNING before October 30, 2026): run()
+        # continues without the overlay, so a silent fallback to default
+        # parameters must be visible.
         except ImportError:
-            logging.warning(
-                "config_loader not found. Install fvs-modern or add config/ to PYTHONPATH."
+            logging.error(
+                "config_loader not found; the run continues WITHOUT the "
+                f"{self._config_version} overlay. Install fvs-modern or add the "
+                "repository root to PYTHONPATH."
             )
             return {}
         except FileNotFoundError as e:
-            logging.warning(f"Config file not found: {e}")
+            logging.error(
+                f"Config file not found; the run continues WITHOUT the "
+                f"{self._config_version} overlay: {e}"
+            )
             return {}
         except Exception as e:
-            logging.warning(f"Could not apply calibrated config: {e}")
+            logging.error(
+                f"Could not apply {self._config_version} config; the run continues "
+                f"WITHOUT the overlay: {e}"
+            )
             return {}
 
     def run(
@@ -719,9 +731,15 @@ class FVS(FvsCore):
         """Runs FVS.
 
         If config_version was set to 'calibrated' (or 'custom') at
-        initialization, the overlay is applied automatically after reading
-        inventory data (stop point 7) on the first call to run() after each
-        load_keyfile(), so every keyword file loaded into the object gets it.
+        initialization, the overlay is applied once per keyword file: the first
+        call to run() after each load_keyfile() stops at point 7 of the first
+        stand in that file (after its inventory is read, before missing values
+        are imputed) and applies the overlay there. Later stands in a multi-stand
+        keyword file are not overlaid again, so whether they keep the overlay
+        depends on what the engine re-initializes between stands. Put one stand
+        in each keyword file when every stand must get the overlay. If the
+        overlay cannot be applied, the failure is logged at ERROR and the run
+        continues without it.
 
         Note that stopping after the simulation of each stand in a simulation is
         done even when no stop request has been scheduled (that is, FVS will

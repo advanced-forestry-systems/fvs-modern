@@ -3,6 +3,8 @@ from __future__ import annotations
 import ctypes as ct
 import logging
 import os
+import sys
+import threading
 import warnings
 import weakref
 from pathlib import Path
@@ -23,33 +25,76 @@ class SharedEngineWarning(RuntimeWarning):
 
 
 # One live owner per resolved library path in this process (October 30, 2026).
+# A reentrant lock: a finalizer (_release) can run during garbage collection
+# triggered inside a locked section of the same thread.
 _LIVE_ENGINES: dict[str, weakref.ref] = {}
+_LIVE_ENGINES_LOCK = threading.RLock()
+
+
+def _is_internal_frame(frame) -> bool:
+    name = frame.f_globals.get("__name__", "") or ""
+    if name == "fvs2py.tests" or name.startswith("fvs2py.tests."):
+        return False
+    return name == "fvs2py" or name.startswith("fvs2py.")
+
+
+def _external_stacklevel() -> int:
+    """stacklevel for a warnings.warn() issued in the caller: the first frame outside fvs2py."""
+    frame = sys._getframe(1)  # the function that will call warnings.warn
+    level = 1
+    while frame is not None and _is_internal_frame(frame):
+        frame = frame.f_back
+        level += 1
+    return level if frame is not None else 1
 
 
 def _check_and_register(owner, lib_path: Path) -> None:
     key = os.path.realpath(lib_path)
-    ref = _LIVE_ENGINES.get(key)
-    other = ref() if ref is not None else None
-    if other is not None and other is not owner and getattr(other, "_lib", None) is not None:
-        mode = os.environ.get("FVS2PY_SHARED_ENGINE", "warn").strip().lower()
-        msg = (
-            f"Another live FVS object already holds {key}. Both objects share one engine, "
-            "so their runs interfere and load_keyfile() cannot reset it. Call close() on "
-            "the first object (or let it be garbage collected) before creating a second, "
-            "reuse one object for successive keyword files, or run stands in separate processes."
-        )
-        if mode == "error":
-            raise RuntimeError(msg)
-        if mode != "ignore":
-            warnings.warn(msg, SharedEngineWarning, stacklevel=4)
-    _LIVE_ENGINES[key] = weakref.ref(owner)
+    msg = None
+    with _LIVE_ENGINES_LOCK:
+        ref = _LIVE_ENGINES.get(key)
+        other = ref() if ref is not None else None
+        if other is not None and other is not owner and getattr(other, "_lib", None) is not None:
+            mode = os.environ.get("FVS2PY_SHARED_ENGINE", "warn").strip().lower()
+            msg = (
+                f"Another live FVS object already holds {key}. Both objects share one engine, "
+                "so their runs interfere and load_keyfile() cannot reset it. Call close() on "
+                "the first object (or let it be garbage collected) before creating a second, "
+                "reuse one object for successive keyword files, or run stands in separate processes."
+            )
+            if mode == "error":
+                raise RuntimeError(msg)
+            if mode == "ignore":
+                msg = None
+        _LIVE_ENGINES[key] = weakref.ref(owner)
+    if msg is not None:
+        warnings.warn(msg, SharedEngineWarning, stacklevel=_external_stacklevel())
 
 
 def _unregister(owner, lib_path: Path) -> None:
     key = os.path.realpath(lib_path)
-    ref = _LIVE_ENGINES.get(key)
-    if ref is not None and ref() is owner:
-        del _LIVE_ENGINES[key]
+    with _LIVE_ENGINES_LOCK:
+        ref = _LIVE_ENGINES.get(key)
+        obj = ref() if ref is not None else None
+        if ref is not None and (obj is owner or obj is None):
+            del _LIVE_ENGINES[key]
+
+
+def _release(lib_path: str, lib: ct.CDLL) -> None:
+    """Finalizer of a garbage-collected FvsCore: close its library handle.
+
+    When no other handle holds the library, it leaves the process, so the next
+    object on that path loads a fresh engine (fresh COMMON blocks). Never raises.
+    """
+    try:
+        unload_dll(lib)
+    except Exception as e:  # a finalizer must not raise
+        logging.error(f"fvs2py: could not unload {lib_path} for a collected FVS object: {e}")
+    key = os.path.realpath(lib_path)
+    with _LIVE_ENGINES_LOCK:
+        ref = _LIVE_ENGINES.get(key)
+        if ref is not None and ref() is None:
+            del _LIVE_ENGINES[key]
 
 
 class FvsCore:
@@ -63,6 +108,7 @@ class FvsCore:
         """
         self.lib_path: Path = Path(os.path.abspath(lib_path))
         self._lib: ct.CDLL | None = None
+        self._finalizer: weakref.finalize | None = None
         self.variant: str = (
             os.path.basename(self.lib_path)
             .split(".")[0]
@@ -169,10 +215,22 @@ class FvsCore:
             logging.debug("Unloading existing library.")
             self._unload_fvs()
         _check_and_register(self, self.lib_path)
-        self._lib = load_dll(self.lib_path)
+        lib = load_dll(self.lib_path)
+        self._lib = lib
+        # ctypes never closes a library, so before October 30, 2026 a collected
+        # object left its engine loaded and the next object silently inherited its
+        # state. The finalizer closes the handle when the object is collected. It is
+        # skipped at interpreter exit (atexit False): the process is ending and
+        # unloading a Fortran library during shutdown buys nothing.
+        self._finalizer = weakref.finalize(self, _release, str(self.lib_path), lib)
+        self._finalizer.atexit = False
         return
 
     def _unload_fvs(self) -> None:
+        fin = getattr(self, "_finalizer", None)
+        if fin is not None:
+            fin.detach()
+            self._finalizer = None
         if self._lib:
             unload_dll(self._lib)
             self._lib = None
@@ -186,7 +244,7 @@ class FvsCore:
 
         After close() another FVS object on the same library can be created
         without a SharedEngineWarning. The object cannot run again until a new
-        object is constructed.
+        object is constructed. Garbage collection of the object does the same.
         """
         self._unload_fvs()
         return

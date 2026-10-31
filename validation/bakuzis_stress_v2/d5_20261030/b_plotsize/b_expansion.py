@@ -70,7 +70,7 @@ def summarize(d, label):
     print(f"  stands whose seeded BA moves >2% when switching to plot-size expansion: {int((d['ba_change_pct'].abs() > 2).sum())} of {len(d)} ({100 * (d['ba_change_pct'].abs() > 2).mean():.2f}%); max |change| {d['ba_change_pct'].abs().max():.2f}%")
     print(f"  fallback trees: no plot size {int(d['n_no_plot_size'].sum())} in {int((d['n_no_plot_size'] > 0).sum())} stands "
           f"({int((m['n_no_plot_size'] > 0).sum())} multi-cond); no proportion {int(d['n_no_proportion'].sum())} in {int((d['n_no_proportion'] > 0).sum())} stands "
-          f"({int((m['n_no_proportion'] > 0).sum())} multi-cond); stands whose BA differs shipped vs threshold rule by >1e-9: "
+          f"({int((m['n_no_proportion'] > 0).sum())} multi-cond); stands whose BA differs shipped vs threshold rule by >1e-7 percent: "
           f"{int((d['shipped_vs_threshold_pct'].abs() > 1e-7).sum())} (multi-cond {int((m['shipped_vs_threshold_pct'].abs() > 1e-7).sum())}), max |diff| {d['shipped_vs_threshold_pct'].abs().max():.3g}%")
     print(f"  multi-cond r_plotsize exactly 1 within 1e-4: {int(((m['r_plotsize'] - 1).abs() < 1e-4).sum())} of {len(m)}")
     print(f"  multi-cond stands where SUBPPROP != CONDPROP: {int((m['subpprop'] != m['condprop']).sum())}; MICRPROP != CONDPROP: {int((m['micrprop'] != m['condprop']).sum())}")

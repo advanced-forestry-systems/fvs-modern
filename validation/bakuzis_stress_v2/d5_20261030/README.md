@@ -80,10 +80,21 @@ so they are not repeated here.
 ## Catalog rerun (`catalog_rerun/`)
 
 `catalog_runs_v8.slurm` then `finalize_catalog_v8.slurm` (concat, scorer,
-gates, `compare_gates_v6_v8.R`). No verdict field changed
-(`catalog_v6_v8_verdict_changes.csv` has no rows), the recommended arm,
-admissible arms and status of every variant are unchanged (7 RECOMMENDED,
-11 NOT RECOMMENDED, 2 NOT EVALUATED), and the largest change in an admissible
+gates, `compare_gates_v6_v8.R`). No primary-rule
+verdict changed (`catalog_v6_v8_verdict_changes.csv`, which compares the
+primary-rule admissibility, recommended arm and admissible arms, has no rows),
+and the recommended arm, admissible arms and status of every variant are
+unchanged (7 RECOMMENDED, 11 NOT RECOMMENDED, 2 NOT EVALUATED). The full
+comparison, which adds the alternative rule and the stress test (stress v8,
+run for PR 145; `validation/bakuzis_stress_v2/catalog/catalog_v6_v8_verdict_changes_full.csv`
+in PR 145), finds five changed fields: under the alternative rule WC
+default GOMPIT and WC calibrated GOMPIT are no longer admissible, so WC has no
+alternative-rule admissible arm and is no longer rule sensitive, and WS
+calibrated native moved from FRAGILE to STABLE admissible. Stress v8 has 17
+stable admissible, 6 fragile admissible, 41 stable not admissible and 8
+fragile not admissible arms (v6: 16, 7, 41, 8); in both, every primary-rule
+admissible arm is admissible in at least 56 percent of 500 stand bootstraps and
+every other arm in fewer than 50 percent. The largest change in an admissible
 arm's median year 50 basal area is 0.69 m2/ha. Seed-gate rows within 2 percent
 of BALIVE rose from 90.73 to 95.66 percent; all 18,992 rows pass in both.
 

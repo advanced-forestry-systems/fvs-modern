@@ -1,0 +1,21 @@
+# test_concurrent_construction_registers_one_owner, 20 separate pytest runs, October 30, 2026 21:44
+run 1: 1 passed, 11 deselected in 0.04s
+run 2: 1 passed, 11 deselected in 0.04s
+run 3: 1 passed, 11 deselected in 0.04s
+run 4: 1 passed, 11 deselected in 0.04s
+run 5: 1 passed, 11 deselected in 0.04s
+run 6: 1 passed, 11 deselected in 0.04s
+run 7: 1 passed, 11 deselected in 0.04s
+run 8: 1 passed, 11 deselected in 0.04s
+run 9: 1 passed, 11 deselected in 0.04s
+run 10: 1 passed, 11 deselected in 0.04s
+run 11: 1 passed, 11 deselected in 0.04s
+run 12: 1 passed, 11 deselected in 0.04s
+run 13: 1 passed, 11 deselected in 0.04s
+run 14: 1 passed, 11 deselected in 0.04s
+run 15: 1 passed, 11 deselected in 0.04s
+run 16: 1 passed, 11 deselected in 0.04s
+run 17: 1 passed, 11 deselected in 0.04s
+run 18: 1 passed, 11 deselected in 0.04s
+run 19: 1 passed, 11 deselected in 0.04s
+run 20: 1 passed, 11 deselected in 0.04s

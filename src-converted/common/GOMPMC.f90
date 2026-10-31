@@ -25,8 +25,10 @@ LOGICAL LGOMP, LGOMPKW, GHAVE(MAXSP)
 COMMON /GOMPMR/ GB, CCHT
 COMMON /GOMPMI/ NGOMP, GGRP
 COMMON /GOMPML/ LGOMP, LGOMPKW, GHAVE
-!    GMORTMULT -- annual-hazard multiplier (FVS_GOMP_MORTMULT, default 1.0);
-!                 values <1 reduce GOMPIT annual mortality proportionally.
+!    GMORTMULT -- multiplier on exp(eta) in the annual survival
+!                 1 - exp(-exp(eta)*GMORTMULT) (FVS_GOMP_MORTMULT, default 1.0);
+!                 annual mortality becomes m**GMORTMULT, so values >1 lower
+!                 GOMPIT mortality and values <1 raise it.
 !    GSFLOOR   -- universal annual-survival floor applied to ALL trees
 !                 (FVS_GOMP_SFLOOR, default 0.0 = disabled); SURV is floored
 !                 at GSFLOOR**FINTL. Together these two knobs substitute for

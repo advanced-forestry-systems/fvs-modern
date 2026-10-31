@@ -3,10 +3,122 @@ from __future__ import annotations
 import ctypes as ct
 import logging
 import os
+import sys
+import threading
+import warnings
+import weakref
 from pathlib import Path
 
 from fvs2py.common import load_dll, unload_dll
 from fvs2py.constants import NEEDED_ROUTINES
+
+
+class SharedEngineWarning(RuntimeWarning):
+    """A second live FVS object was created on a library another live object holds.
+
+    ctypes opens a library path once per process, so the two objects share one
+    engine (one set of Fortran COMMON blocks). Their simulations, species
+    attributes and stop points interfere, and load_keyfile() cannot reset an
+    engine that another handle still holds open. Set the environment variable
+    FVS2PY_SHARED_ENGINE=error to raise instead of warning, or =ignore to silence.
+    """
+
+
+# One live owner per resolved library path in this process (October 30, 2026).
+# A reentrant lock: a finalizer (_release) can run during garbage collection
+# triggered inside a locked section of the same thread.
+_LIVE_ENGINES: dict[str, weakref.ref] = {}
+_LIVE_ENGINES_LOCK = threading.RLock()
+
+
+def _is_internal_frame(frame) -> bool:
+    name = frame.f_globals.get("__name__", "") or ""
+    if name == "fvs2py.tests" or name.startswith("fvs2py.tests."):
+        return False
+    return name == "fvs2py" or name.startswith("fvs2py.")
+
+
+def _external_stacklevel() -> int:
+    """stacklevel for a warnings.warn() issued in the caller: the first frame outside fvs2py."""
+    frame = sys._getframe(1)  # the function that will call warnings.warn
+    level = 1
+    while frame is not None and _is_internal_frame(frame):
+        frame = frame.f_back
+        level += 1
+    return level if frame is not None else 1
+
+
+def _check_and_register(owner, lib_path: Path) -> None:
+    """Register owner as the live holder of lib_path and load the library for it.
+
+    The conflict check, the registration, load_dll, owner._lib and the finalizer are all
+    set under one lock, so a second constructor in another thread always sees either no
+    owner or an owner whose library is loaded (review of PR 143, October 30, 2026; before,
+    the library was loaded after the lock was released). If load_dll raises, the
+    registration is undone. The warning itself is issued after the lock is released.
+    """
+    key = os.path.realpath(lib_path)
+    msg = None
+    with _LIVE_ENGINES_LOCK:
+        ref = _LIVE_ENGINES.get(key)
+        other = ref() if ref is not None else None
+        if other is not None and other is not owner and getattr(other, "_lib", None) is not None:
+            mode = os.environ.get("FVS2PY_SHARED_ENGINE", "warn").strip().lower()
+            msg = (
+                f"Another live FVS object already holds {key}. Both objects share one engine, "
+                "so their runs interfere and load_keyfile() cannot reset it. Call close() on "
+                "the first object (or let it be garbage collected) before creating a second, "
+                "reuse one object for successive keyword files, or run stands in separate processes."
+            )
+            if mode == "error":
+                raise RuntimeError(msg)
+            if mode == "ignore":
+                msg = None
+        _LIVE_ENGINES[key] = weakref.ref(owner)
+        try:
+            lib = load_dll(lib_path)
+        except BaseException:
+            if _LIVE_ENGINES.get(key) is not None and _LIVE_ENGINES[key]() is owner:
+                del _LIVE_ENGINES[key]
+            raise
+        owner._lib = lib
+        # ctypes never closes a library, so before October 30, 2026 a collected
+        # object left its engine loaded and the next object silently inherited its
+        # state. The finalizer closes the handle when the object is collected. It is
+        # set before the warning is issued, so an object whose construction fails on
+        # the warning (warnings filter "error") still releases its handle. It is
+        # skipped at interpreter exit (atexit False): the process is ending and
+        # unloading a Fortran library during shutdown buys nothing.
+        owner._finalizer = weakref.finalize(owner, _release, str(lib_path), lib)
+        owner._finalizer.atexit = False
+    if msg is not None:
+        warnings.warn(msg, SharedEngineWarning, stacklevel=_external_stacklevel())
+
+
+def _unregister(owner, lib_path: Path) -> None:
+    key = os.path.realpath(lib_path)
+    with _LIVE_ENGINES_LOCK:
+        ref = _LIVE_ENGINES.get(key)
+        obj = ref() if ref is not None else None
+        if ref is not None and (obj is owner or obj is None):
+            del _LIVE_ENGINES[key]
+
+
+def _release(lib_path: str, lib: ct.CDLL) -> None:
+    """Finalizer of a garbage-collected FvsCore: close its library handle.
+
+    When no other handle holds the library, it leaves the process, so the next
+    object on that path loads a fresh engine (fresh COMMON blocks). Never raises.
+    """
+    try:
+        unload_dll(lib)
+    except Exception as e:  # a finalizer must not raise
+        logging.error(f"fvs2py: could not unload {lib_path} for a collected FVS object: {e}")
+    key = os.path.realpath(lib_path)
+    with _LIVE_ENGINES_LOCK:
+        ref = _LIVE_ENGINES.get(key)
+        if ref is not None and ref() is None:
+            del _LIVE_ENGINES[key]
 
 
 class FvsCore:
@@ -20,6 +132,7 @@ class FvsCore:
         """
         self.lib_path: Path = Path(os.path.abspath(lib_path))
         self._lib: ct.CDLL | None = None
+        self._finalizer: weakref.finalize | None = None
         self.variant: str = (
             os.path.basename(self.lib_path)
             .split(".")[0]
@@ -125,13 +238,29 @@ class FvsCore:
         if self._lib:
             logging.debug("Unloading existing library.")
             self._unload_fvs()
-        self._lib = load_dll(self.lib_path)
+        # registers self, loads the library into self._lib and sets self._finalizer
+        _check_and_register(self, self.lib_path)
         return
 
     def _unload_fvs(self) -> None:
+        fin = getattr(self, "_finalizer", None)
+        if fin is not None:
+            fin.detach()
+            self._finalizer = None
         if self._lib:
             unload_dll(self._lib)
             self._lib = None
+            _unregister(self, self.lib_path)
         else:
             logging.debug("No library to unload.")
+        return
+
+    def close(self) -> None:
+        """Release the engine library held by this object.
+
+        After close() another FVS object on the same library can be created
+        without a SharedEngineWarning. The object cannot run again until a new
+        object is constructed. Garbage collection of the object does the same.
+        """
+        self._unload_fvs()
         return

@@ -1,0 +1,14 @@
+# deployment/fvs2py/fvs2py/tests/test_engine_fixes.py, October 30, 2026 21:44, glibc 2.34
+deployment/fvs2py/fvs2py/tests/test_engine_fixes.py::test_summary_cols_match_engine_width PASSED [  8%]
+deployment/fvs2py/fvs2py/tests/test_engine_fixes.py::test_summary_returns_22_columns PASSED [ 16%]
+deployment/fvs2py/fvs2py/tests/test_engine_fixes.py::test_tree_attr_get_and_set_with_six_arguments PASSED [ 25%]
+deployment/fvs2py/fvs2py/tests/test_engine_fixes.py::test_overlay_applied_once_per_keyfile PASSED [ 33%]
+deployment/fvs2py/fvs2py/tests/test_engine_fixes.py::test_second_live_object_on_same_library_warns PASSED [ 41%]
+deployment/fvs2py/fvs2py/tests/test_engine_fixes.py::test_second_live_object_raises_when_strict PASSED [ 50%]
+deployment/fvs2py/fvs2py/tests/test_engine_fixes.py::test_concurrent_construction_registers_one_owner PASSED [ 58%]
+deployment/fvs2py/fvs2py/tests/test_engine_fixes.py::test_failed_load_does_not_leave_a_registration PASSED [ 66%]
+deployment/fvs2py/fvs2py/tests/test_engine_fixes.py::test_reload_and_garbage_collected_object_do_not_warn PASSED [ 75%]
+deployment/fvs2py/fvs2py/tests/test_engine_fixes.py::test_dlclose_comes_from_the_process_not_the_library PASSED [ 83%]
+deployment/fvs2py/fvs2py/tests/test_engine_fixes.py::test_close_and_collection_unload_the_library PASSED [ 91%]
+deployment/fvs2py/fvs2py/tests/test_engine_fixes.py::test_fresh_engine_after_collection_reproduces_run PASSED [100%]
+======================== 12 passed, 1 warning in 1.84s =========================

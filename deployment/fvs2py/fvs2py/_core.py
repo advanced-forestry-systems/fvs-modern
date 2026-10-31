@@ -49,6 +49,14 @@ def _external_stacklevel() -> int:
 
 
 def _check_and_register(owner, lib_path: Path) -> None:
+    """Register owner as the live holder of lib_path and load the library for it.
+
+    The conflict check, the registration, load_dll, owner._lib and the finalizer are all
+    set under one lock, so a second constructor in another thread always sees either no
+    owner or an owner whose library is loaded (review of PR 143, October 30, 2026; before,
+    the library was loaded after the lock was released). If load_dll raises, the
+    registration is undone. The warning itself is issued after the lock is released.
+    """
     key = os.path.realpath(lib_path)
     msg = None
     with _LIVE_ENGINES_LOCK:
@@ -67,6 +75,22 @@ def _check_and_register(owner, lib_path: Path) -> None:
             if mode == "ignore":
                 msg = None
         _LIVE_ENGINES[key] = weakref.ref(owner)
+        try:
+            lib = load_dll(lib_path)
+        except BaseException:
+            if _LIVE_ENGINES.get(key) is not None and _LIVE_ENGINES[key]() is owner:
+                del _LIVE_ENGINES[key]
+            raise
+        owner._lib = lib
+        # ctypes never closes a library, so before October 30, 2026 a collected
+        # object left its engine loaded and the next object silently inherited its
+        # state. The finalizer closes the handle when the object is collected. It is
+        # set before the warning is issued, so an object whose construction fails on
+        # the warning (warnings filter "error") still releases its handle. It is
+        # skipped at interpreter exit (atexit False): the process is ending and
+        # unloading a Fortran library during shutdown buys nothing.
+        owner._finalizer = weakref.finalize(owner, _release, str(lib_path), lib)
+        owner._finalizer.atexit = False
     if msg is not None:
         warnings.warn(msg, SharedEngineWarning, stacklevel=_external_stacklevel())
 
@@ -214,16 +238,8 @@ class FvsCore:
         if self._lib:
             logging.debug("Unloading existing library.")
             self._unload_fvs()
+        # registers self, loads the library into self._lib and sets self._finalizer
         _check_and_register(self, self.lib_path)
-        lib = load_dll(self.lib_path)
-        self._lib = lib
-        # ctypes never closes a library, so before October 30, 2026 a collected
-        # object left its engine loaded and the next object silently inherited its
-        # state. The finalizer closes the handle when the object is collected. It is
-        # skipped at interpreter exit (atexit False): the process is ending and
-        # unloading a Fortran library during shutdown buys nothing.
-        self._finalizer = weakref.finalize(self, _release, str(self.lib_path), lib)
-        self._finalizer.atexit = False
         return
 
     def _unload_fvs(self) -> None:

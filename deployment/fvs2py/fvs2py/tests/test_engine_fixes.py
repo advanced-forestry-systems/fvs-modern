@@ -210,6 +210,22 @@ def test_concurrent_construction_registers_one_owner(monkeypatch):
 
 
 @needs_lib
+def test_failed_load_does_not_leave_a_registration(monkeypatch):
+    monkeypatch.setenv("FVS2PY_SHARED_ENGINE", "error")
+
+    def broken(path):
+        raise OSError("simulated load failure")
+
+    with monkeypatch.context() as m:
+        m.setattr(_core, "load_dll", broken)
+        with pytest.raises(OSError, match="simulated"):
+            FVS(LIB)
+    assert os.path.realpath(LIB) not in _core._LIVE_ENGINES
+    a = FVS(LIB)  # strict mode: would raise if the failed object were still registered
+    a.close()
+
+
+@needs_lib
 def test_reload_and_garbage_collected_object_do_not_warn(keyfile, monkeypatch):
     monkeypatch.delenv("FVS2PY_SHARED_ENGINE", raising=False)
     with warnings.catch_warnings():

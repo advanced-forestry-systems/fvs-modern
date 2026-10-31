@@ -76,9 +76,9 @@ ok(f"gate 4 SHA-256 written for {len(man)} files at {time.strftime('%Y-%m-%d %H:
 
 # gate 5 producers, verified by reading the scripts
 WRITE = re.compile(r"(?:fwrite|write\.csv|to_csv|write_csv|writeLines|savefig)\s*\(", re.I)
-declared = {"catalog_seedgate_v6_noid.csv": "seed gate rows written by conus_catalog_runs.py (runs_v5 default rows and runs_v6 calibrated rows, concatenated by concat_catalog_v6.R in finalize_catalog_v7.slurm) with the plot identifier column removed before deposit",
+declared = {"catalog_seedgate_v8_noid.csv": "seed gate rows written by conus_catalog_runs.py (runs_v8, all four arms with the plot-size expansion), concatenated by concat_catalog_v8.R in finalize_catalog_v8.slurm, with the plot identifier column removed before deposit",
             "fia_variant_thresholds_plot_acd.csv": "compiled reference table: plot level percentiles of the fvs-conus fitting data, script not deposited (restricted input)",
-            "scorecard_20261029_default_native_selfthinning.png": "bakuzis_scorecards.R", "scorecard_20261029_default_gompit_NE_bakuzis_matrix.png": "bakuzis_scorecards.R"}
+            "scorecard_20261030v8_default_native_selfthinning.png": "bakuzis_stress_v2.R (score_scorecard_v8, Cardinal job 16033493)", "scorecard_20261030v8_default_gompit_NE_bakuzis_matrix.png": "bakuzis_stress_v2.R (score_scorecard_v8, Cardinal job 16033493)"}
 code = {os.path.basename(p): open(p, encoding="utf8", errors="replace").read() for p in man if os.path.splitext(p)[1] in (".R", ".py")}
 for p in man:
     b = os.path.basename(p)

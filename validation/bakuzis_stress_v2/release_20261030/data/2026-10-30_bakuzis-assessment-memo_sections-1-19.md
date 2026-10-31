@@ -206,3 +206,52 @@ The run-off (pull request 139, open). The pre-registered run-off of the four mod
 ## Content inventory, October 30 (sixth revision)
 
 Added: Section 18, covering the four code defects (D1 draw keyword layout, D2 the in-process overlay's zero SDImax and its use on draw runs, D3 the plot-level tree join and missing CONDPROP expansion in the Paper 1 stand generator, D4 the draw multiplier basis), the audit evidence, the fixes and tests (pull request 135), catalog v6 and its four verdict changes, the ens_full4 Paper 1 ensemble with the within-stand and between-stand bands separated, and the run-off headline from pull request 139. Changed: nothing in Sections 1 to 17. Section 17's statement that the October 29 ensemble scorecard counts were unchanged by the null TPA fix still holds for that fix; ens_full4 supersedes those counts. Removed: nothing. The prior version is kept as `_PREV_20261030`.
+
+## 19. D5, the plot-size expansion of condition trees, and catalog v8 (October 30)
+
+D5, the cause. The fix for D3 (Section 18) expanded each condition's trees to the condition acre by dividing TPA_UNADJ by CONDPROP_UNADJ, the condition's share of the whole plot. FIA computes BALIVE with the condition's share of each plot size separately: the microplot for saplings, the subplot for most trees and the macroplot where one is installed. When a condition covers different shares of the microplot and the subplot, CONDPROP_UNADJ over- or under-expands one of the size classes. The catalog runner had used the same CONDPROP-only expansion since October 29.
+
+D5, the fix (pull request 144, open). `condition_expansion_divisor()` in `calibration/python/fia_stand_generator.py` picks the divisor by tree record:
+- MICRPROP_UNADJ for microplot records (TPA_UNADJ above 50);
+- MACRPROP_UNADJ for macroplot records (TPA_UNADJ below 2);
+- SUBPPROP_UNADJ otherwise;
+- CONDPROP_UNADJ and then 1 when the size-specific share is missing.
+
+The catalog runner uses the same function. Seeded basal area over BALIVE is now 1.0000 on all 125 multi-condition ensemble stands and all 972 multi-condition catalog stands. Stands whose seeded basal area moved by more than 2 percent: 14 of the 360 ensemble stands and 266 of the 4,748 catalog stands (5.6 percent). Both were rerun. Source: `validation/bakuzis_stress_v2/d5_20261030/` in pull request 144.
+
+Catalog v8. All four arms of all 18 variants were rerun with D5 on the same sample and seed:
+- runs: array 16023222;
+- concatenation, scoring and gates: 16023294;
+- stress test and scorecards: 16033492 and 16033493, with the same scripts and settings as v6.
+
+Every stand passes the year 0 gate (18,992 seed-gate rows, all OK). Under the primary rule nothing changed:
+- no admissible verdict, recommended arm, status or admissible arm set changed for any variant (7 RECOMMENDED, 11 NOT RECOMMENDED, 2 NOT EVALUATED);
+- no calibrated arm lost its distinctness.
+
+The full comparison (`catalog_v6_v8_verdict_changes_full.csv`) also covers the alternative rule and the stress labels. The first comparison script checked only `admissible`. The full comparison finds five changed fields, none of them a status:
+- WC default GOMPIT and WC calibrated GOMPIT are no longer admissible under the alternative Reineke rule. The Wilson upper bound of their flag rate rose from 0.249 and 0.247 to 0.251, just over the 0.25 limit, so WC is no longer rule sensitive and its alternative admissible set is empty.
+- WS calibrated native moved from fragile to stable admissible. Its bootstrap probability rose from 0.882 to 0.900, which reaches the 0.90 stability threshold.
+
+The stability counts are now 17 stable admissible, 6 fragile admissible, 41 stable not admissible and 8 fragile not admissible. Bootstrap probabilities moved by at most 0.042 (CS default GOMPIT), and grid shares by at most 0.167 (EC default native, 0.33 to 0.17).
+
+Year 50 medians:
+- the largest change in a median year 50 basal area across all 72 engine arms is 0.69 m² ha⁻¹ (PN calibrated GOMPIT, not admissible);
+- among the 23 admissible arms the largest is 0.12 m² ha⁻¹ (BM calibrated native).
+
+Two magnitude numbers quoted in the report moved:
+- the largest SDI p99.9 exceedance at 50 years is now 5.3 percent (WC calibrated native, was 4.9);
+- WC native BA p99.9 exceedance at 50 years is 10 and 19 percent (default and calibrated, was 11 and 18).
+
+`config/catalog/` now carries `gates_v8`, and the stress labels are from `stress_v8`. The Zenodo draft of version 1.2.0 is regenerated from v8.
+
+The run-off and D5. The run-off of pull request 139 seeded its stands with the CONDPROP-only expansion. Under D5, 5.6 percent of the catalog stands seed more than 2 percent differently, and catalog v8 changed no primary-rule verdict or status. The run-off's conclusions are therefore expected to hold, but its per-stand numbers would shift slightly if rerun. A note to that effect is added to `validation/runoff_20261030/README.md` and to the run-off report.
+
+## Content inventory, October 30 (seventh revision)
+
+Added: Section 19, covering:
+- D5, its cause and its fix;
+- catalog v8 with no primary-rule verdict or status change, the alternative-rule change in WC and the WS stability change;
+- the stress test on v8;
+- the run-off note.
+
+Changed: nothing in Sections 1 to 18. Removed: nothing. The prior version is kept as `_PREV_20261030b`.

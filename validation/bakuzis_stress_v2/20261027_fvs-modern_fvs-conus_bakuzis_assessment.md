@@ -211,13 +211,15 @@ Added: Section 18, covering the four code defects (D1 draw keyword layout, D2 th
 
 D5, the cause. The fix for D3 (Section 18) expanded each condition's trees to the condition acre by dividing TPA_UNADJ by CONDPROP_UNADJ, the condition's share of the whole plot. FIA computes BALIVE with the condition's share of each plot size separately: the microplot for saplings, the subplot for most trees and the macroplot where one is installed. When a condition covers different shares of the microplot and the subplot, CONDPROP_UNADJ over- or under-expands one of the size classes. The catalog runner had used the same CONDPROP-only expansion since October 29.
 
-D5, the fix (pull request 144, open). `condition_expansion_divisor()` in `calibration/python/fia_stand_generator.py` picks the divisor by tree record:
+D5, the fix (pull request 144). `condition_expansion_divisor()` in `calibration/python/fia_stand_generator.py` picks the divisor by tree record:
 - MICRPROP_UNADJ for microplot records (TPA_UNADJ above 50);
 - MACRPROP_UNADJ for macroplot records (TPA_UNADJ below 2);
 - SUBPPROP_UNADJ otherwise;
 - CONDPROP_UNADJ and then 1 when the size-specific share is missing.
 
 The catalog runner uses the same function. Seeded basal area over BALIVE is now 1.0000 on all 125 multi-condition ensemble stands and all 972 multi-condition catalog stands. Stands whose seeded basal area moved by more than 2 percent: 14 of the 360 ensemble stands and 266 of the 4,748 catalog stands (5.6 percent). Both were rerun. Source: `validation/bakuzis_stress_v2/d5_20261030/` in pull request 144.
+
+Catalog v8 was produced with this first D5 rule, which assigns plot sizes by TPA_UNADJ thresholds. The rule now shipped (second commit of pull request 144) assigns a tree to the microplot, subplot or macroplot only when its TPA_UNADJ is within 1 percent of 74.965, 6.018 or 0.9997, and falls back to CONDPROP_UNADJ otherwise. Seeded basal area is identical under the two rules on every stand of the Paper 1 ensemble and the catalog sample, so the v8 results stand.
 
 Catalog v8. All four arms of all 18 variants were rerun with D5 on the same sample and seed:
 - runs: array 16023222;

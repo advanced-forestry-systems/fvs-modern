@@ -40,4 +40,4 @@ files_to_upload.txt
 zenodo_metadata.json
 RUNBOOK.md
 upload_to_zenodo.py
-# explicitly not deposited: fia_variant_assignment.csv, catalog_seedgate_*.csv, FVS_StandInit/TreeInit tables, the pairs RDS (FIA plot identifiers); catalog_long_*.csv trajectories (size)
+# explicitly not deposited: fia_variant_assignment.csv, identified seed-gate files, FVS_StandInit/TreeInit tables, the pairs RDS (FIA plot identifiers); catalog_long_*.csv trajectories (size)

@@ -20,18 +20,16 @@
 !    Env var fallback: FVS_GREGCRW=1 + FVS_GREGCRW_COEF=<path>
 !
 !  Shared climate env vars (read by GREGLOADHG; also read by GREGLOADDG for DG):
-!    FVS_GREG_EMT      extreme min temperature (deg C)
-!    FVS_GREG_TD       temperature diff MWMT-MCMT (deg C) -- shared via GTD in /GREGMR/
-!    FVS_GREG_ELEV     stand elevation (feet)
+!    FVS_GREG_DD0, FVS_GREG_TD, FVS_GREG_PPT_SM, FVS_GREG_DD18 -> GPC1, GPC2
+!    FVS_GREG_EMT, FVS_GREG_ELEV are read for logging only
 !    FVS_GREG_CONFDIR  directory holding all config CSVs; default shown below
 !
-!  HG equation (Chapman-Richards ORGANON form, Greg Johnson 2026):
+!  HG equation (Chapman-Richards ORGANON form, Greg Johnson 2026, PC climate form):
 !    dHT_annual = MX * B1 * B2 * CR^B3
-!                 * exp(-B1*HT - B4*CCFL - B8*sqrt(CCH) - B5*ELEV
-!                       + B6*sqrt(TD) + B7*EMT)
+!                 * exp(-B1*HT - B4*CCFL - B5*sqrt(CCH) + B6*PC1 + B7*PC2)
 !                 * (1 - exp(-B1*HT))^(B2-1)
 !    GHG(ISPC,1)=MX, (2)=B1, (3)=B2, (4)=B3, (5)=B4,
-!                (6)=B5, (7)=B6, (8)=B7, (9)=B8
+!                (6)=B5, (7)=B6, (8)=B7, (9) unused
 !
 !  Crown recession equation (Johnson, Marshall, Weiskittel 2026):
 !    delta_htlc = crown_length * (1 - exp(b0 + b1*dHT_annual + b2*cch))
@@ -75,6 +73,12 @@ GEMT = 0.0; GELEV = 0.0
 CALL GETENV('FVS_GREG_EMT',  CVAL); IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GEMT
 CALL GETENV('FVS_GREG_TD',   CVAL); IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GTD
 CALL GETENV('FVS_GREG_ELEV', CVAL); IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GELEV
+GDD0 = 0.0; GPPT_SM = 0.0; GDD18 = 0.0
+CALL GETENV('FVS_GREG_DD0',    CVAL); IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GDD0
+CALL GETENV('FVS_GREG_PPT_SM', CVAL); IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GPPT_SM
+CALL GETENV('FVS_GREG_DD18',   CVAL); IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GDD18
+GPC1 = 0.252*GDD0 + 0.002*GTD - 0.035*GPPT_SM + 0.967*GDD18
+GPC2 = 0.882*GDD0 + 0.015*GTD + 0.420*GPPT_SM - 0.215*GDD18
 !
 !  -- Resolve config directory --
 CALL GETENV('FVS_GREG_CONFDIR', CDIR)
@@ -97,7 +101,7 @@ IF (CPATH.EQ.' ') THEN
   LGREGHG = .FALSE.; RETURN
 ENDIF
 !
-!  -- Read HG coefficient CSV (SPCD, n, B0=MX, B1..B8) --
+!  -- Read HG coefficient CSV (SPCD, n, B0=MX, B1..B7) --
 U = 69
 OPEN(UNIT=U, FILE=CPATH, STATUS='OLD', IOSTAT=IOS)
 IF (IOS.NE.0) THEN
@@ -107,13 +111,13 @@ ENDIF
 READ(U,'(A)',IOSTAT=IOS) LINE      ! skip header
 NG = 0
 110 CONTINUE
-  READ(U,*,IOSTAT=IOS) IFIA, NN, C0, C1, C2, C3, C4, C5, C6, C7, C8
+  READ(U,*,IOSTAT=IOS) IFIA, NN, C0, C1, C2, C3, C4, C5, C6, C7
   IF (IOS.NE.0) GO TO 120
   IF (NG.GE.MXG) GO TO 120
   NG = NG + 1
   GSPCD(NG) = IFIA
   TB(NG,1)=C0; TB(NG,2)=C1; TB(NG,3)=C2; TB(NG,4)=C3; TB(NG,5)=C4
-  TB(NG,6)=C5; TB(NG,7)=C6; TB(NG,8)=C7; TB(NG,9)=C8
+  TB(NG,6)=C5; TB(NG,7)=C6; TB(NG,8)=C7; TB(NG,9)=0.0
   GO TO 110
 120 CONTINUE
 CLOSE(U)
@@ -199,29 +203,28 @@ IF (CPATH.NE.' ') THEN
   ENDIF
 ENDIF
 !
-WRITE(JOSTND,*) 'GREGHG enabled: arm=', IHGDRV, ' EMT=', GEMT, &
-     ' TD=', GTD, ' ELEV=', GELEV
+WRITE(JOSTND,*) 'GREGHG enabled: arm=', IHGDRV, ' PC1=', GPC1, &
+     ' PC2=', GPC2
 RETURN
 END
 
 
 SUBROUTINE GREGHGV(ISPC, HT, CR, CCFL, CCH, HGV)
 !  Annual height increment (ft/yr), Greg Chapman-Richards ORGANON form.
-!  Climate (GEMT, GTD, GELEV) read from /GREGHR/ common loaded by GREGLOADHG.
+!  Climate PCs (GPC1, GPC2) from /GREGMR/ common loaded by GREGLOADHG.
 !  Uses double precision internally to match validated reference.
 IMPLICIT NONE
 INCLUDE 'PRGPRM.f90'
 INCLUDE 'GREGMC.f90'
 INTEGER ISPC
 REAL HT, CR, CCFL, CCH, HGV
-REAL(KIND=8) :: MX,B1,B2,B3,B4,B5,B6,B7,B8,CRP,CCHP,TDP,ARG,HG
+REAL(KIND=8) :: MX,B1,B2,B3,B4,B5,B6,B7,CRP,CCHP,ARG,HG
 MX=GHG(ISPC,1); B1=GHG(ISPC,2); B2=GHG(ISPC,3); B3=GHG(ISPC,4)
-B4=GHG(ISPC,5); B5=GHG(ISPC,6); B6=GHG(ISPC,7); B7=GHG(ISPC,8); B8=GHG(ISPC,9)
+B4=GHG(ISPC,5); B5=GHG(ISPC,6); B6=GHG(ISPC,7); B7=GHG(ISPC,8)
 CRP  = REAL(CR,8);   IF (CRP .LT.1.0D-4) CRP  = 1.0D-4
 CCHP = REAL(CCH,8);  IF (CCHP.LT.0.0D0)  CCHP = 0.0D0
-TDP  = REAL(GTD,8);  IF (TDP .LT.0.0D0)  TDP  = 0.0D0
-ARG  = -B1*REAL(HT,8) - B4*REAL(CCFL,8) - B8*CCHP**0.5D0 &
-       -B5*REAL(GELEV,8) + B6*SQRT(TDP) + B7*REAL(GEMT,8)
+ARG  = -B1*REAL(HT,8) - B4*REAL(CCFL,8) - B5*CCHP**0.5D0 &
+       + B6*REAL(GPC1,8) + B7*REAL(GPC2,8)
 HG   = MX*B1*B2*CRP**B3*EXP(ARG)*(1.0D0-EXP(-B1*REAL(HT,8)))**(B2-1.0D0)
 IF (HG.LT.0.0D0) HG = 0.0D0
 HGV  = REAL(HG)

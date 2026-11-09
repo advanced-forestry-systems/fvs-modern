@@ -1,4 +1,5 @@
-## Greg's ClimateNA-style PC inputs (DD0, DD_18, TD, PPT_sm) as 1991-2020 normals from the
+## Greg's ClimateNA PC inputs as 1991-2020 normals: DD_0 and DD_18 are degree-days BELOW 0 and 18 C
+## (ClimateNA convention, as in Greg's climate_si script), TD = MWMT - MCMT, PPT_sm = Jun-Aug precip. From the
 ## Daymet daily cache built for the Maine FIA covariates (public coordinates, lapse-adjusted
 ## to FIA field elevation with the same monthly lapse rates).
 suppressPackageStartupMessages(library(data.table))
@@ -24,7 +25,7 @@ el <- unique(pl[, .(loc_id, elev_m = ELEV * 0.3048)])[, .SD[1], by = loc_id]
 res <- merge(res, el, by = "loc_id"); res <- merge(res, lap[, .(month, lapse_tmax, lapse_tmin)], by = "month")
 res[, dz := (elev_m - alt) / 1000]
 res[, tmean := ((tmax + lapse_tmax * dz) + (tmin + lapse_tmin * dz)) / 2]
-yr <- res[, .(DD0 = sum(pmax(tmean, 0)), DD_18 = sum(pmax(18 - tmean, 0)),
+yr <- res[, .(DD0 = sum(pmax(0 - tmean, 0)), DD_18 = sum(pmax(18 - tmean, 0)),
               PPT_sm = sum(prcp[month %in% 6:8])), by = .(loc_id, year)][,
           .(DD0 = mean(DD0), DD_18 = mean(DD_18), PPT_sm = mean(PPT_sm)), by = loc_id]
 mt <- res[, .(t = mean(tmean)), by = .(loc_id, month)][, .(TD = max(t) - min(t)), by = loc_id]

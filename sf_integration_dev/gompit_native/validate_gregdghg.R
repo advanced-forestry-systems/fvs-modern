@@ -3,20 +3,21 @@
 # same tree state, and sanity-check that the increments are biologically plausible.
 co_dg <- read.csv("greg_dg_coefficients.csv"); fo_dg <- read.csv("dg_fortran.csv")
 co_hg <- read.csv("greg_hg_coefficients.csv"); fo_hg <- read.csv("hg_fortran.csv")
-dbh<-8; cr<-0.5; ht<-50; bal<-80; ccfl<-120; cch<-0.4; elev<-1500; td<-25; emt<- -15
+dbh<-8; cr<-0.5; ht<-50; bal<-80; ccfl<-120; cch<-0.4; dd0<-1600; td<-28; ppt<-230; dd18<-3500
+pc1<-0.252*dd0+0.002*td-0.035*ppt+0.967*dd18; pc2<-0.882*dd0+0.015*td+0.420*ppt-0.215*dd18
 
 dgf <- function(B0,B1,B2,B3,B4,B5,B6){
-  z <- B0 + B1*log((dbh+1)^2/(cr*ht+1)^B3) + B2*bal^B4/log(dbh+2.7) + B5*elev + B6*emt
+  z <- B0 + B1*log((dbh+1)^2/(cr*ht+1)^B3) + B2*bal^B4/log(dbh+2.7) + B5*pc1 + B6*pc2
   z <- pmin(pmax(z,-30),5); pmax(exp(z),0)
 }
 co_dg$dg_r <- with(co_dg, dgf(B0,B1,B2,B3,B4,B5,B6))
 m <- merge(fo_dg, co_dg[,c("SPCD","dg_r")], by="SPCD"); m$ad <- abs(m$dg - m$dg_r)
 
-hgf <- function(mx,b1,b2,b3,b4,b5,b6,b7,b8){
-  crp<-max(cr,1e-4); cchp<-max(cch,0); tdp<-max(td,0)
-  mx*b1*b2*crp^b3*exp(-b1*ht -b4*ccfl -b8*cchp^0.5 -b5*elev +b6*sqrt(tdp) +b7*emt)*(1-exp(-b1*ht))^(b2-1)
+hgf <- function(mx,b1,b2,b3,b4,b5,b6,b7){
+  crp<-max(cr,1e-4); cchp<-max(cch,0)
+  mx*b1*b2*crp^b3*exp(-b1*ht -b4*ccfl -b5*cchp^0.5 +b6*pc1 +b7*pc2)*(1-exp(-b1*ht))^(b2-1)
 }
-co_hg$hg_r <- pmax(with(co_hg, mapply(hgf,B0,B1,B2,B3,B4,B5,B6,B7,B8)), 0)
+co_hg$hg_r <- pmax(with(co_hg, mapply(hgf,B0,B1,B2,B3,B4,B5,B6,B7)), 0)
 m2 <- merge(fo_hg, co_hg[,c("SPCD","hg_r")], by="SPCD"); m2$ad <- abs(m2$hg - m2$hg_r)
 
 cat(sprintf("DG: n=%d  max|Fortran-R|=%.2e  dg median=%.4f in/yr  range [%.4f, %.4f]\n",

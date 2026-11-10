@@ -8,7 +8,7 @@
 # growth loop, activated by FVS_GOMPIT=1 + FVS_GOMPIT_COEF=<this file>.
 suppressPackageStartupMessages(library(data.table))
 ga <- function(n,d){ m<-grep(paste0("^--",n,"="),commandArgs(TRUE),value=TRUE); if(length(m)) sub(paste0("^--",n,"="),"",m[1]) else d }
-SRC <- ga("src", "/users/PUOM0008/crsfaaron/fvs_remodeling/rds/mort_parm_base_rate_cr_cch.RDS")
+SRC <- ga("src", "/users/PUOM0008/crsfaaron/fvs_remodeling/rds/mort_parm_base_rate_cr_cch2.RDS")
 OUT <- ga("out", "/users/PUOM0008/crsfaaron/fvs-modern/config/greg_mortality_coefficients.csv")
 mo <- as.data.table(readRDS(SRC))
 stopifnot(all(c("SPCD","n","b0","b1","b2","b3","b4") %in% names(mo)))

@@ -2,13 +2,17 @@
 ## conus_eq_projector_greg_par.R -- PARALLEL (mclapply) copy of faithful Greg arm. IDENTICAL eqs/params/forms; only per-stand loop parallelized.
 ## ----------------------------------------------------------------------------------------
 ## Uses Greg Johnson's ACTUAL fitted parameters and ACTUAL equation FORMS:
-##   DG  : ~/fvs_remodeling/rds/dg_parms.RDS  (84 spp; spcd,B0..B6) + est_dg annual loop
+##   DG  : ~/fvs_remodeling/rds/dg_parms.RDS  (spcd,B0..B6) + est_dg annual loop
 ##         dg = exp( B0 + B1*log((dbh+1)^2/(cr*ht+1)^B3) + B2*bal^B4/log(dbh+2.7)
-##                    + B5*elev + B6*EMT )                       [code form is authoritative]
-##   HG  : ~/fvs_remodeling/rds/hg_parms.RDS  (96 spp; spcd,B0=max_height,B1..B8) + est_hg loop
-##         dht = max_height*b1*b2*cr^b3 * exp(-b1*ht -b4*ccfl -b8*cch^0.5 -b5*elev
-##                    +b6*TD^0.5 +b7*EMT) * (1-exp(-b1*ht))^(b2-1)
-##   MORT: ~/fvs_remodeling/rds/mort_parm_base_rate_cr_cch.RDS (92 spp; SPCD,b0..b4) + gompit
+##                    + B5*pc1 + B6*pc2 )                        [code form is authoritative]
+##   HG  : ~/fvs_remodeling/rds/hg_parms.RDS  (spcd,B0=max_height,B1..B7) + est_hg loop
+##         dht = max_height*b1*b2*cr^b3 * exp(-b1*ht -b4*ccfl -b5*cch^0.5
+##                    +b6*pc1 +b7*pc2) * (1-exp(-b1*ht))^(b2-1)
+##         pc1 = 0.252 DD0 + 0.002 TD - 0.035 PPT_sm + 0.967 DD_18
+##         pc2 = 0.882 DD0 + 0.015 TD + 0.420 PPT_sm - 0.215 DD_18
+##         per-stand PC1/PC2 from --pc_lookup (STAND_CN,PC1,PC2) when given, else the
+##         constants --dd0/--td/--ppt_sm/--dd18 (calibration driver defaults).
+##   MORT: ~/fvs_remodeling/rds/mort_parm_base_rate_cr_cch2.RDS (SPCD,b0..b4) + gompit
 ##         P_surv = 1 - exp(-exp( b0 + b1*(cr+0.01)^b2 + b3*cch^b4 ))   (annual loop)
 ##   CROWN CHANGE: Greg's repo has NO fitted crown-change prediction equation (the
 ##         Crown_Change_Equations_for_CONUS.qmd "Proposed Model" section restates the
@@ -46,6 +50,9 @@ TRAITS<-ga("traits",file.path(ROOT,"traits/species_traits.rds"))
 IGLOOK<-ga("ingrowth",file.path(ROOT,"output/comparisons_overstory/intermediate/ingrowth_lookup.rds"))
 GREG_RDS<-ga("greg_rds","/users/PUOM0008/crsfaaron/fvs_remodeling/rds")
 EMT_LOOK<-ga("emt_td",file.path(PROJ,"greg_emt_td_lookup.rds"))
+PC_LOOK<-ga("pc_lookup","")
+PC_DD0<-as.numeric(ga("dd0","1600")); PC_TD<-as.numeric(ga("td","28")); PC_PPT<-as.numeric(ga("ppt_sm","230")); PC_DD18<-as.numeric(ga("dd18","3500"))
+PC1_C<-0.252*PC_DD0+0.002*PC_TD-0.035*PC_PPT+0.967*PC_DD18; PC2_C<-0.882*PC_DD0+0.015*PC_TD+0.420*PC_PPT-0.215*PC_DD18
 CCH_MODULE<-ga("cch_module",file.path(PROJ,"cch_module.R"))
 ## fvs-conus CR-recession (the one non-Greg piece, used to update crown ratio)
 CC<-file.path(ROOT,"output/conus")
@@ -55,7 +62,7 @@ dir.create(OUTD,recursive=TRUE,showWarnings=FALSE)
 FIPS<-c("1"="AL","2"="AK","4"="AZ","5"="AR","6"="CA","8"="CO","9"="CT","10"="DE","12"="FL","13"="GA","16"="ID","17"="IL","18"="IN","19"="IA","20"="KS","21"="KY","22"="LA","23"="ME","24"="MD","25"="MA","26"="MI","27"="MN","28"="MS","29"="MO","30"="MT","31"="NE","32"="NV","33"="NH","34"="NJ","35"="NM","36"="NY","37"="NC","38"="ND","39"="OH","40"="OK","41"="OR","42"="PA","44"="RI","45"="SC","46"="SD","47"="TN","48"="TX","49"="UT","50"="VT","51"="VA","53"="WA","54"="WV","55"="WI","56"="WY")
 cat("==== conus_eq_projector_GREG (faithful Greg fvs_remodeling arm) ====\n")
 cat(sprintf("  variant=%s CONFIG=%s nstands=%s %dx%dyr\n",VARIANT,CONFIG,if(NSTAND>0)NSTAND else "ALL",NCYC,CYCLEN))
-cat("  Greg DG(B0..B6,elev,EMT) + Greg HG(max_ht,b1..b8,ccfl,cch,elev,TD,EMT) + Greg gompit mort(b0..b4,cr,cch).\n")
+cat("  Greg DG(B0..B6,pc1,pc2) + Greg HG(max_ht,b1..b7,ccfl,cch,pc1,pc2) + Greg gompit mort cch2(b0..b4,cr,cch).\n")
 cat("  CR update = fvs-conus CR-recession (Greg has no fitted crown-change eq -- FLAGGED).\n\n")
 for(f in c(PAIRS,TRAITS,IGLOOK,EMT_LOOK,CCH_MODULE,CR_SUM,CR_SP)) if(!file.exists(f)) stop("MISSING: ",f)
 source(CCH_MODULE)
@@ -63,14 +70,14 @@ source(CCH_MODULE)
 ## ----------------------------- GREG PARAMS -----------------------------
 dgP<-as.data.table(readRDS(file.path(GREG_RDS,"dg_parms.RDS")))
 hgP<-as.data.table(readRDS(file.path(GREG_RDS,"hg_parms.RDS")))
-moP<-as.data.table(readRDS(file.path(GREG_RDS,"mort_parm_base_rate_cr_cch.RDS")))
+moP<-as.data.table(readRDS(file.path(GREG_RDS,"mort_parm_base_rate_cr_cch2.RDS")))
 ## dedupe: DG/HG one row per spcd (converged preferred); MORT lowest-nll per SPCD
 dgP<-dgP[order(spcd,-isConv)][!duplicated(spcd)]
 hgP<-hgP[isConv==TRUE][order(spcd)][!duplicated(spcd)]
 moP<-moP[order(SPCD,nll)][!duplicated(SPCD)]
 dg_set<-dgP$spcd; hg_set<-hgP$spcd; mo_set<-moP$SPCD
 DG<-as.list(setNames(lapply(c("B0","B1","B2","B3","B4","B5","B6"),function(c) setNames(dgP[[c]],as.character(dgP$spcd))),c("B0","B1","B2","B3","B4","B5","B6")))
-HG<-as.list(setNames(lapply(c("B0","B1","B2","B3","B4","B5","B6","B7","B8"),function(c) setNames(hgP[[c]],as.character(hgP$spcd))),c("B0","B1","B2","B3","B4","B5","B6","B7","B8")))
+HG<-as.list(setNames(lapply(c("B0","B1","B2","B3","B4","B5","B6","B7"),function(c) setNames(hgP[[c]],as.character(hgP$spcd))),c("B0","B1","B2","B3","B4","B5","B6","B7")))
 MO<-as.list(setNames(lapply(c("b0","b1","b2","b3","b4"),function(c) setNames(moP[[c]],as.character(moP$SPCD))),c("b0","b1","b2","b3","b4")))
 ## softwood / hardwood median mortality fallback (SPCD<300 = conifer convention)
 mo_sw<-moP[SPCD<300]; mo_hw<-moP[SPCD>=300]
@@ -134,6 +141,10 @@ si[is.na(SDImax_brms),SDImax_brms:=600]
 si[,EMT:=EMTv[STAND_CN]]; si[,TD:=TDv[STAND_CN]]
 si[!is.finite(EMT),EMT:=EMT_MED]; si[!is.finite(TD),TD:=TD_MED]
 si[!is.finite(ELEVFT)|ELEVFT<0,ELEVFT:=median(si$ELEVFT[is.finite(si$ELEVFT)&si$ELEVFT>=0],na.rm=TRUE)]
+si[,PC1:=PC1_C]; si[,PC2:=PC2_C]
+if(nzchar(PC_LOOK)){ pcl<-as.data.table(readRDS(PC_LOOK)); i<-match(si$STAND_CN,as.character(pcl$STAND_CN))
+  ok<-!is.na(i); si[ok,PC1:=pcl$PC1[i[ok]]]; si[ok,PC2:=pcl$PC2[i[ok]]]
+  cat(sprintf("  PC lookup coverage=%.1f%%\n",100*mean(ok))) } else cat(sprintf("  PC constants: PC1=%.1f PC2=%.1f (no --pc_lookup)\n",PC1_C,PC2_C))
 cat(sprintf("  standinit stands: %d  EMT/TD coverage=%.1f%%  ELEV median=%.0f ft  EMT med=%.1f TD med=%.1f\n",
   nrow(si),100*mean(is.finite(EMTv[si$STAND_CN])),median(si$ELEVFT,na.rm=TRUE),median(si$EMT),median(si$TD)))
 
@@ -152,18 +163,18 @@ get_state_trees<-function(stcode){
 
 ## ============================ GREG EQUATION KERNELS ============================
 ## DG annual increment (in/yr) at current state. dbh in, cr frac, ht ft, bal ft2/ac, elev ft, emt degC.
-dg_annual<-function(SPCD,dbh,cr,ht,bal,elev,emt){
+dg_annual<-function(SPCD,dbh,cr,ht,bal,pc1,pc2){
   k<-as.character(SPCD)
   B0<-DG$B0[k];B1<-DG$B1[k];B2<-DG$B2[k];B3<-DG$B3[k];B4<-DG$B4[k];B5<-DG$B5[k];B6<-DG$B6[k]
-  z<- B0 + B1*log((dbh+1)^2/(cr*ht+1.0)^B3) + B2*bal^B4/log(dbh+2.7) + B5*elev + B6*emt
+  z<- B0 + B1*log((dbh+1)^2/(cr*ht+1.0)^B3) + B2*bal^B4/log(dbh+2.7) + B5*pc1 + B6*pc2
   z<-pmin(pmax(z,-30),5); g<-exp(z); g[!is.finite(g)]<-0; pmax(g,0)
 }
-## HG annual increment (ft/yr). max_height=B0; ht ft, cr frac, ccfl ft2/ac, cch frac (0-1), elev ft, td, emt.
-hg_annual<-function(SPCD,ht,cr,ccfl,cch,elev,td,emt){
+## HG annual increment (ft/yr). max_height=B0; ht ft, cr frac, ccfl ft2/ac, cch frac (0-1), pc1, pc2.
+hg_annual<-function(SPCD,ht,cr,ccfl,cch,pc1,pc2){
   k<-as.character(SPCD)
-  mx<-HG$B0[k];b1<-HG$B1[k];b2<-HG$B2[k];b3<-HG$B3[k];b4<-HG$B4[k];b5<-HG$B5[k];b6<-HG$B6[k];b7<-HG$B7[k];b8<-HG$B8[k]
+  mx<-HG$B0[k];b1<-HG$B1[k];b2<-HG$B2[k];b3<-HG$B3[k];b4<-HG$B4[k];b5<-HG$B5[k];b6<-HG$B6[k];b7<-HG$B7[k]
   crp<-pmax(cr,1e-4); cchp<-pmax(cch,0)
-  dht<- mx*b1*b2*crp^b3*exp(-b1*ht -b4*ccfl -b8*cchp^0.5 -b5*elev +b6*sqrt(pmax(td,0)) +b7*emt)*(1.0-exp(-b1*ht))^(b2-1.0)
+  dht<- mx*b1*b2*crp^b3*exp(-b1*ht -b4*ccfl -b5*cchp^0.5 +b6*pc1 +b7*pc2)*(1.0-exp(-b1*ht))^(b2-1.0)
   dht[!is.finite(dht)]<-0; pmax(dht,0)
 }
 ## Greg gompit annual survival probability. cr frac, cch frac.
@@ -211,7 +222,7 @@ mk_tl<-function(trows,cov){
   list(SPCD=SPCD,GSPCD=GSPCD,GSPCD_H=GSPCD_H,dbh_in=dbh_in,CR=cr,HT=ht,TPA=TPA,softwood=sw,
        has_dg=has_dg,has_hg=has_hg,has_mo=SPCD %in% mo_set,
        cr_zsp=cr_zsp_v,
-       SDImax=cov$SDImax_brms,EMT=cov$EMT,TD=cov$TD,ELEV=cov$ELEVFT,cspi=NA_real_)
+       SDImax=cov$SDImax_brms,EMT=cov$EMT,TD=cov$TD,ELEV=cov$ELEVFT,PC1=cov$PC1,PC2=cov$PC2,cspi=NA_real_)
 }
 ## competition (mirror v2): BA(ft2/ac), per-tree BAL(ft2/ac), CCFL(ft2/ac of larger trees), SDI, rd
 recompute_comp<-function(tl){
@@ -257,7 +268,7 @@ project_one <- function(ix, spl){
   cov<-si[ix]; st<-FIPS[as.character(cov$STATE)]; inv_year<-cov$INV_YEAR
   tl<-mk_tl(trows,cov); if(is.null(tl)||length(tl$dbh_in)<1) return(NULL)
   tl<-recompute_comp(tl)
-  elev<-tl$ELEV; emt<-tl$EMT; td<-tl$TD
+  pc1<-tl$PC1; pc2<-tl$PC2
   tcw<-tl$TPA; tct<-sum(tcw)
   sfb_dg<-sum(tcw[!tl$has_dg])/tct; sfb_hg<-sum(tcw[!tl$has_hg])/tct; sfb_mo<-sum(tcw[!tl$has_mo])/tct
   fb_dg_n<-sum(tcw[!tl$has_dg]); fb_hg_n<-sum(tcw[!tl$has_hg]); fb_mo_n<-sum(tcw[!tl$has_mo])
@@ -274,8 +285,8 @@ project_one <- function(ix, spl){
     cch<-stand_cch(tl$dbh_in, tl$HT, tl$CR, tl$TPA, gg); tl$cch_last<-cch
     surv_cyc<-rep(1.0,length(tl$dbh_in))
     for(yr in 1:CYCLEN){
-      dgan<-dg_annual(tl$GSPCD, tl$dbh_in, tl$CR, tl$HT, tl$CCFL, elev, emt)
-      hgan<-hg_annual(tl$GSPCD_H, tl$HT, tl$CR, tl$CCFL, cch, elev, td, emt)
+      dgan<-dg_annual(tl$GSPCD, tl$dbh_in, tl$CR, tl$HT, tl$CCFL, pc1, pc2)
+      hgan<-hg_annual(tl$GSPCD_H, tl$HT, tl$CR, tl$CCFL, cch, pc1, pc2)
       psa <-gomp_surv_annual(tl$SPCD, tl$CR, cch)
       tl$dbh_in<-pmin(pmax(tl$dbh_in+dgan,0.1),200)
       tl$HT<-pmin(tl$HT+hgan,400)

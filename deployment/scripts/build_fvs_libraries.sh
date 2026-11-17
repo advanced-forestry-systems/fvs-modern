@@ -408,7 +408,11 @@ for var in "${VARIANTS[@]}"; do
                 esac
             done
             if [ -n "$INTREE_O" ] && [ -n "$BLKDAT_O" ]; then
-                _sz() { nm --defined-only --print-size "$1" 2>/dev/null                         | awk 'tolower($NF) ~ /^conchr_$/ {print $2; exit}'; }
+                # GNU nm prints address, size, type, name for ELF. On PE/COFF
+                # the size column is absent: address, type, name. Comparing
+                # COFF's symbol type (C/D) as a size falsely fails a valid build.
+                _sz() { nm --defined-only --print-size "$1" 2>/dev/null \
+                        | awk 'NF >= 4 && tolower($NF) == "conchr_" && $2 ~ /^[0-9a-fA-F]+$/ {print $2; exit}'; }
                 CONCHR_INTREE=$(_sz "$INTREE_O")
                 CONCHR_BLKDAT=$(_sz "$BLKDAT_O")
                 if [ -n "$CONCHR_INTREE" ] && [ -n "$CONCHR_BLKDAT" ]; then
@@ -427,6 +431,8 @@ for var in "${VARIANTS[@]}"; do
                     else
                         echo "  [CONCHR] OK: sizeof(COMMON /CONCHR/) matches (0x$CONCHR_INTREE) in intree.o and blkdat.o"
                     fi
+                else
+                    echo "  [CONCHR] object symbol size unavailable; source PRGPRM shadow was checked"
                 fi
             fi
 

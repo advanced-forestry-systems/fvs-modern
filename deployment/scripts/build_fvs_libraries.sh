@@ -183,7 +183,19 @@ for var in "${VARIANTS[@]}"; do
         [ -f "$cand" ] && { VAR_PRGPRM="$cand"; break; }
     done
     PRGPRM_SHADOWED=0
-    if [ -n "$VAR_PRGPRM" ] && [ -f "$BASE_PRGPRM" ] && ! cmp -s "$VAR_PRGPRM" "$BASE_PRGPRM"; then
+    # Git Bash runners may have diff but not cmp. Never treat a missing
+    # comparison tool as evidence that these files differ.
+    prgprm_differs() {
+        if command -v cmp >/dev/null 2>&1; then
+            ! cmp -s "$1" "$2"
+        elif command -v diff >/dev/null 2>&1; then
+            ! diff -q "$1" "$2" >/dev/null 2>&1
+        else
+            echo "ERROR: need cmp or diff to compare PRGPRM files" >&2
+            exit 2
+        fi
+    }
+    if [ -n "$VAR_PRGPRM" ] && [ -f "$BASE_PRGPRM" ] && prgprm_differs "$VAR_PRGPRM" "$BASE_PRGPRM"; then
         cp -f "$BASE_PRGPRM" "$BASE_PRGPRM.prgprm_bak"
         cp -f "$VAR_PRGPRM" "$BASE_PRGPRM"
         PRGPRM_SHADOWED=1
@@ -417,10 +429,13 @@ for var in "${VARIANTS[@]}"; do
             # symbols are stubbed, so this never duplicates a real definition. Stubbed routines are
             # ones this variant does not link or call; behavior matches the prior lazy-load.
             SOF="$OUTPUT_DIR/FVS${var}.so"
+            # awk exits successfully when there are no internal undefined
+            # symbols. grep's status 1 previously tripped pipefail here and
+            # aborted the whole build after a successful link (LS on CI).
             UND=$( { nm -u "$SOF" 2>/dev/null || nm -D -u "$SOF" 2>/dev/null; } \
                    | awk "{print \$NF}" | sed "s/^_//" \
-                   | grep -E "^[a-z][a-z0-9_]+_$" \
-                   | grep -vE "^(gfortran|_gfortran|gomp|omp_|gcov)" | sort -u )
+                   | awk '/^[a-z][a-z0-9_]+_$/ && !/^(gfortran|_gfortran|gomp|omp_|gcov)/' \
+                   | sort -u )
             if [ -n "$UND" ]; then
                 ASF="$VARDIR/autostub_${var}.f90"; : > "$ASF"
                 for sym in $UND; do nm0="${sym%_}"; printf "subroutine %s\nend subroutine %s\n" "$nm0" "$nm0" >> "$ASF"; done

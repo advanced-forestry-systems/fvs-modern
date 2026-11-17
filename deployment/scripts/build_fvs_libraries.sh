@@ -414,6 +414,8 @@ for var in "${VARIANTS[@]}"; do
                 if [ -n "$CONCHR_INTREE" ] && [ -n "$CONCHR_BLKDAT" ]; then
                     if [ "$CONCHR_INTREE" != "$CONCHR_BLKDAT" ]; then
                         echo "  [CONCHR] ASSERTION FAILED for $var:"
+                        echo "          raw intree: $(nm --defined-only --print-size "$INTREE_O" 2>/dev/null | grep -i conchr_ | head -1)"
+                        echo "          raw blkdat: $(nm --defined-only --print-size "$BLKDAT_O" 2>/dev/null | grep -i conchr_ | head -1)"
                         echo "          sizeof(COMMON /CONCHR/) differs between objects"
                         echo "          intree.o = 0x$CONCHR_INTREE   blkdat.o = 0x$CONCHR_BLKDAT"
                         echo "          -> base-dir sources built against wrong MAXSP; the .so"

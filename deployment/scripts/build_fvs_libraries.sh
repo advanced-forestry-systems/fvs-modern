@@ -384,7 +384,7 @@ for var in "${VARIANTS[@]}"; do
                 for sl in "$OUTPUT_DIR"/libfvs_stubs*.so; do [ -f "$sl" ] && STUBLINK+=("-l:$(basename "$sl")"); done
                 # Statically bundle the gfortran/gcc runtime so the PE DLL is self-contained
                 # (no libgfortran-5.dll/libgcc/libquadmath dependency at load time).
-                EXTRALINK=(-static-libgfortran -static-libgcc -static-libquadmath -Wl,--enable-auto-import -Wl,--unresolved-symbols=ignore-all) ;;
+                EXTRALINK=(-static-libgfortran -static-libgcc -static-libquadmath -Wl,--enable-auto-import -Wl,--export-all-symbols -Wl,--unresolved-symbols=ignore-all) ;;
             *)
                 EXTRALINK=(-Wl,--unresolved-symbols=ignore-all) ;;
         esac
@@ -392,6 +392,10 @@ for var in "${VARIANTS[@]}"; do
             NOBJ=${#SHLIB_OBJECTS[@]}
             SIZE=$(ls -lh "$OUTPUT_DIR/FVS${var}.so" | awk '{print $5}')
             echo "DONE ($NOBJ objects, $COMPILE_ERRORS skipped, $SIZE)"
+            case "$(uname -s)" in
+                MINGW*|MSYS*|CYGWIN*)
+                    echo "  [win API export] $(nm -D "$OUTPUT_DIR/FVS${var}.so" 2>/dev/null | awk 'tolower($NF) ~ /fvssetcmdline/ {print $NF}' | head -1)" ;;
+            esac
             BUILT=$((BUILT + 1))
 
             # --- post-build CONCHR layout assertion (zero-trees guard) ---------

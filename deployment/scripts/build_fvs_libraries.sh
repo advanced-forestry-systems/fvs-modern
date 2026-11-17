@@ -183,15 +183,20 @@ for var in "${VARIANTS[@]}"; do
         [ -f "$cand" ] && { VAR_PRGPRM="$cand"; break; }
     done
     PRGPRM_SHADOWED=0
-    # Git Bash runners may have diff but not cmp. Never treat a missing
-    # comparison tool as evidence that these files differ.
+    # Minimal MSYS2 runners may have neither cmp nor diff; Python is
+    # installed by the workflow. Never treat a missing comparison tool
+    # as evidence that these files differ.
     prgprm_differs() {
         if command -v cmp >/dev/null 2>&1; then
             ! cmp -s "$1" "$2"
         elif command -v diff >/dev/null 2>&1; then
             ! diff -q "$1" "$2" >/dev/null 2>&1
+        elif command -v python3 >/dev/null 2>&1; then
+            ! python3 -c 'from pathlib import Path; import sys; sys.exit(0 if Path(sys.argv[1]).read_bytes() == Path(sys.argv[2]).read_bytes() else 1)' "$1" "$2"
+        elif command -v python >/dev/null 2>&1; then
+            ! python -c 'from pathlib import Path; import sys; sys.exit(0 if Path(sys.argv[1]).read_bytes() == Path(sys.argv[2]).read_bytes() else 1)' "$1" "$2"
         else
-            echo "ERROR: need cmp or diff to compare PRGPRM files" >&2
+            echo "ERROR: need cmp, diff, or Python to compare PRGPRM files" >&2
             exit 2
         fi
     }

@@ -183,7 +183,24 @@ for var in "${VARIANTS[@]}"; do
         [ -f "$cand" ] && { VAR_PRGPRM="$cand"; break; }
     done
     PRGPRM_SHADOWED=0
-    if [ -n "$VAR_PRGPRM" ] && [ -f "$BASE_PRGPRM" ] && ! cmp -s "$VAR_PRGPRM" "$BASE_PRGPRM"; then
+    # Minimal MSYS2 runners may have neither cmp nor diff; Python is
+    # installed by the workflow. Never treat a missing comparison tool
+    # as evidence that these files differ.
+    prgprm_differs() {
+        if command -v cmp >/dev/null 2>&1; then
+            ! cmp -s "$1" "$2"
+        elif command -v diff >/dev/null 2>&1; then
+            ! diff -q "$1" "$2" >/dev/null 2>&1
+        elif command -v python3 >/dev/null 2>&1; then
+            ! python3 -c 'from pathlib import Path; import sys; sys.exit(0 if Path(sys.argv[1]).read_bytes() == Path(sys.argv[2]).read_bytes() else 1)' "$1" "$2"
+        elif command -v python >/dev/null 2>&1; then
+            ! python -c 'from pathlib import Path; import sys; sys.exit(0 if Path(sys.argv[1]).read_bytes() == Path(sys.argv[2]).read_bytes() else 1)' "$1" "$2"
+        else
+            echo "ERROR: need cmp, diff, or Python to compare PRGPRM files" >&2
+            exit 2
+        fi
+    }
+    if [ -n "$VAR_PRGPRM" ] && [ -f "$BASE_PRGPRM" ] && prgprm_differs "$VAR_PRGPRM" "$BASE_PRGPRM"; then
         cp -f "$BASE_PRGPRM" "$BASE_PRGPRM.prgprm_bak"
         cp -f "$VAR_PRGPRM" "$BASE_PRGPRM"
         PRGPRM_SHADOWED=1
@@ -367,7 +384,7 @@ for var in "${VARIANTS[@]}"; do
                 for sl in "$OUTPUT_DIR"/libfvs_stubs*.so; do [ -f "$sl" ] && STUBLINK+=("-l:$(basename "$sl")"); done
                 # Statically bundle the gfortran/gcc runtime so the PE DLL is self-contained
                 # (no libgfortran-5.dll/libgcc/libquadmath dependency at load time).
-                EXTRALINK=(-static-libgfortran -static-libgcc -static-libquadmath -Wl,--enable-auto-import -Wl,--unresolved-symbols=ignore-all) ;;
+                EXTRALINK=(-static-libgfortran -static-libgcc -static-libquadmath -Wl,--enable-auto-import -Wl,--export-all-symbols -Wl,--unresolved-symbols=ignore-all) ;;
             *)
                 EXTRALINK=(-Wl,--unresolved-symbols=ignore-all) ;;
         esac
@@ -375,6 +392,10 @@ for var in "${VARIANTS[@]}"; do
             NOBJ=${#SHLIB_OBJECTS[@]}
             SIZE=$(ls -lh "$OUTPUT_DIR/FVS${var}.so" | awk '{print $5}')
             echo "DONE ($NOBJ objects, $COMPILE_ERRORS skipped, $SIZE)"
+            case "$(uname -s)" in
+                MINGW*|MSYS*|CYGWIN*)
+                    echo "  [win API export] $(nm -D "$OUTPUT_DIR/FVS${var}.so" 2>/dev/null | awk 'tolower($NF) ~ /fvssetcmdline/ {print $NF}' | head -1)" ;;
+            esac
             BUILT=$((BUILT + 1))
 
             # --- post-build CONCHR layout assertion (zero-trees guard) ---------
@@ -391,12 +412,18 @@ for var in "${VARIANTS[@]}"; do
                 esac
             done
             if [ -n "$INTREE_O" ] && [ -n "$BLKDAT_O" ]; then
-                _sz() { nm --defined-only --print-size "$1" 2>/dev/null                         | awk 'tolower($NF) ~ /^conchr_$/ {print $2; exit}'; }
+                # GNU nm prints address, size, type, name for ELF. On PE/COFF
+                # the size column is absent: address, type, name. Comparing
+                # COFF's symbol type (C/D) as a size falsely fails a valid build.
+                _sz() { nm --defined-only --print-size "$1" 2>/dev/null \
+                        | awk 'NF >= 4 && tolower($NF) == "conchr_" && $2 ~ /^[0-9a-fA-F]+$/ {print $2; exit}'; }
                 CONCHR_INTREE=$(_sz "$INTREE_O")
                 CONCHR_BLKDAT=$(_sz "$BLKDAT_O")
                 if [ -n "$CONCHR_INTREE" ] && [ -n "$CONCHR_BLKDAT" ]; then
                     if [ "$CONCHR_INTREE" != "$CONCHR_BLKDAT" ]; then
                         echo "  [CONCHR] ASSERTION FAILED for $var:"
+                        echo "          raw intree: $(nm --defined-only --print-size "$INTREE_O" 2>/dev/null | grep -i conchr_ | head -1)"
+                        echo "          raw blkdat: $(nm --defined-only --print-size "$BLKDAT_O" 2>/dev/null | grep -i conchr_ | head -1)"
                         echo "          sizeof(COMMON /CONCHR/) differs between objects"
                         echo "          intree.o = 0x$CONCHR_INTREE   blkdat.o = 0x$CONCHR_BLKDAT"
                         echo "          -> base-dir sources built against wrong MAXSP; the .so"
@@ -408,6 +435,8 @@ for var in "${VARIANTS[@]}"; do
                     else
                         echo "  [CONCHR] OK: sizeof(COMMON /CONCHR/) matches (0x$CONCHR_INTREE) in intree.o and blkdat.o"
                     fi
+                else
+                    echo "  [CONCHR] object symbol size unavailable; source PRGPRM shadow was checked"
                 fi
             fi
 
@@ -417,10 +446,13 @@ for var in "${VARIANTS[@]}"; do
             # symbols are stubbed, so this never duplicates a real definition. Stubbed routines are
             # ones this variant does not link or call; behavior matches the prior lazy-load.
             SOF="$OUTPUT_DIR/FVS${var}.so"
+            # awk exits successfully when there are no internal undefined
+            # symbols. grep's status 1 previously tripped pipefail here and
+            # aborted the whole build after a successful link (LS on CI).
             UND=$( { nm -u "$SOF" 2>/dev/null || nm -D -u "$SOF" 2>/dev/null; } \
                    | awk "{print \$NF}" | sed "s/^_//" \
-                   | grep -E "^[a-z][a-z0-9_]+_$" \
-                   | grep -vE "^(gfortran|_gfortran|gomp|omp_|gcov)" | sort -u )
+                   | awk '/^[a-z][a-z0-9_]+_$/ && !/^(gfortran|_gfortran|gomp|omp_|gcov)/' \
+                   | sort -u )
             if [ -n "$UND" ]; then
                 ASF="$VARDIR/autostub_${var}.f90"; : > "$ASF"
                 for sym in $UND; do nm0="${sym%_}"; printf "subroutine %s\nend subroutine %s\n" "$nm0" "$nm0" >> "$ASF"; done

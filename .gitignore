@@ -249,7 +249,7 @@ calibration/slides/*.pptx
 /*.pdf
 
 # Malformed/empty scratch files
-10d}
+10d\}
 
 # IDE and editor files
 .vscode/

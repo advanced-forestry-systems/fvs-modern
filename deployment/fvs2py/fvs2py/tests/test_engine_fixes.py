@@ -173,6 +173,34 @@ def test_second_live_object_on_same_library_warns(monkeypatch):
         c.close()
 
 
+def test_shared_engine_registry_keeps_earlier_live_owner(monkeypatch, tmp_path):
+    """Closing the second owner must not hide a still-live first owner."""
+    class Owner:
+        def __init__(self):
+            self._lib = None
+            self._finalizer = None
+
+    monkeypatch.setattr(_core, "load_dll", lambda path: object())
+    monkeypatch.setattr(_core, "unload_dll", lambda lib: None)
+    path = tmp_path / "mock_engine.so"
+    a, b, c = Owner(), Owner(), Owner()
+    try:
+        with pytest.warns(SharedEngineWarning) as caught:
+            _core._check_and_register(a, path)
+            _core._check_and_register(b, path)
+            b._finalizer.detach()
+            b._lib = None
+            _core._unregister(b, path)
+            _core._check_and_register(c, path)
+        assert len(caught) == 2  # second and third both share a live engine
+    finally:
+        for owner in (a, b, c):
+            if owner._finalizer is not None:
+                owner._finalizer.detach()
+            owner._lib = None
+            _core._unregister(owner, path)
+
+
 @needs_lib
 def test_second_live_object_raises_when_strict(monkeypatch):
     a = FVS(LIB)

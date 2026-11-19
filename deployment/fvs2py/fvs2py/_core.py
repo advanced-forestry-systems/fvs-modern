@@ -24,11 +24,26 @@ class SharedEngineWarning(RuntimeWarning):
     """
 
 
-# One live owner per resolved library path in this process (October 30, 2026).
+# All live owners per resolved library path. A later owner can close while an
+# earlier owner remains live, so retaining only the newest owner loses the
+# shared-engine warning for the next construction.
 # A reentrant lock: a finalizer (_release) can run during garbage collection
 # triggered inside a locked section of the same thread.
-_LIVE_ENGINES: dict[str, weakref.ref] = {}
+_LIVE_ENGINES: dict[str, set[weakref.ReferenceType]] = {}
 _LIVE_ENGINES_LOCK = threading.RLock()
+
+
+def _live_refs(key: str) -> set[weakref.ReferenceType]:
+    """Prune collected or closed owners while holding _LIVE_ENGINES_LOCK."""
+    refs = {
+        ref for ref in _LIVE_ENGINES.get(key, set())
+        if (owner := ref()) is not None and getattr(owner, "_lib", None) is not None
+    }
+    if refs:
+        _LIVE_ENGINES[key] = refs
+    else:
+        _LIVE_ENGINES.pop(key, None)
+    return refs
 
 
 def _is_internal_frame(frame) -> bool:
@@ -60,8 +75,8 @@ def _check_and_register(owner, lib_path: Path) -> None:
     key = os.path.realpath(lib_path)
     msg = None
     with _LIVE_ENGINES_LOCK:
-        ref = _LIVE_ENGINES.get(key)
-        other = ref() if ref is not None else None
+        refs = _live_refs(key)
+        other = next((ref() for ref in refs if ref() is not owner), None)
         if other is not None and other is not owner and getattr(other, "_lib", None) is not None:
             mode = os.environ.get("FVS2PY_SHARED_ENGINE", "warn").strip().lower()
             msg = (
@@ -74,12 +89,15 @@ def _check_and_register(owner, lib_path: Path) -> None:
                 raise RuntimeError(msg)
             if mode == "ignore":
                 msg = None
-        _LIVE_ENGINES[key] = weakref.ref(owner)
+        owner_ref = weakref.ref(owner)
+        refs.add(owner_ref)
+        _LIVE_ENGINES[key] = refs
         try:
             lib = load_dll(lib_path)
         except BaseException:
-            if _LIVE_ENGINES.get(key) is not None and _LIVE_ENGINES[key]() is owner:
-                del _LIVE_ENGINES[key]
+            refs.discard(owner_ref)
+            if not refs:
+                _LIVE_ENGINES.pop(key, None)
             raise
         owner._lib = lib
         # ctypes never closes a library, so before October 30, 2026 a collected
@@ -98,10 +116,9 @@ def _check_and_register(owner, lib_path: Path) -> None:
 def _unregister(owner, lib_path: Path) -> None:
     key = os.path.realpath(lib_path)
     with _LIVE_ENGINES_LOCK:
-        ref = _LIVE_ENGINES.get(key)
-        obj = ref() if ref is not None else None
-        if ref is not None and (obj is owner or obj is None):
-            del _LIVE_ENGINES[key]
+        refs = _LIVE_ENGINES.get(key, set())
+        refs.difference_update({ref for ref in refs if ref() is owner})
+        _live_refs(key)
 
 
 def _release(lib_path: str, lib: ct.CDLL) -> None:
@@ -116,9 +133,7 @@ def _release(lib_path: str, lib: ct.CDLL) -> None:
         logging.error(f"fvs2py: could not unload {lib_path} for a collected FVS object: {e}")
     key = os.path.realpath(lib_path)
     with _LIVE_ENGINES_LOCK:
-        ref = _LIVE_ENGINES.get(key)
-        if ref is not None and ref() is None:
-            del _LIVE_ENGINES[key]
+        _live_refs(key)
 
 
 class FvsCore:

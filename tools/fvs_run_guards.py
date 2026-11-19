@@ -49,6 +49,7 @@ CLI:
 from __future__ import annotations
 
 import argparse
+import math
 import os
 import re
 import sys
@@ -147,8 +148,11 @@ def validate_numcycle(numcycle, maxcyc: int | None = None) -> int:
     if maxcyc is None:
         maxcyc = read_maxcyc()
     try:
-        n = int(numcycle)
-    except (TypeError, ValueError):
+        value = float(numcycle)
+        if isinstance(numcycle, bool) or not math.isfinite(value) or not value.is_integer():
+            raise ValueError
+        n = int(value)
+    except (TypeError, ValueError, OverflowError):
         raise FVSKeywordError(
             "NUMCYCLE is not an integer: %r" % (numcycle,)
         ) from None
@@ -171,12 +175,6 @@ def validate_numcycle(numcycle, maxcyc: int | None = None) -> int:
     return n
 
 
-def _first_int(tail: str):
-    """First integer token on the remainder of a fixed-field keyword line."""
-    m = re.search(r"-?\d+", tail)
-    return int(m.group(0)) if m else None
-
-
 def validate_keyword_file(path: str, maxcyc: int | None = None) -> dict:
     """PRE-SUBMIT guard on a whole .key file, applied before FVS is invoked.
 
@@ -196,9 +194,10 @@ def validate_keyword_file(path: str, maxcyc: int | None = None) -> dict:
         for line in fh:
             m = _NUMCYCLE_RE.match(line)
             if m:
-                v = _first_int(m.group(1))
-                if v is not None:
-                    numcycle = v
+                fields = m.group(1).split()
+                if not fields:
+                    raise FVSKeywordError("NUMCYCLE has no value in %s" % path)
+                numcycle = validate_numcycle(fields[0], maxcyc=maxcyc)
                 continue
             m = _TIMEINT_RE.match(line)
             if m:
@@ -210,8 +209,6 @@ def validate_keyword_file(path: str, maxcyc: int | None = None) -> dict:
                 elif ints:
                     timeint = ints[0]
 
-    if numcycle is not None:
-        validate_numcycle(numcycle, maxcyc=maxcyc)
     if timeint is not None and timeint < 0:
         raise FVSKeywordError(
             "TIMEINT cycle length %d is negative in %s" % (timeint, path)
@@ -301,6 +298,8 @@ def check_run(returncode,
     non-failing warnings so the caller can still log them.
     """
     problems = []
+    if out_path and not os.path.isfile(out_path):
+        problems.append("requested FVS listing is missing: %s" % out_path)
     codes = scan_listing(out_path) if out_path else []
     allow = set(allow_codes)
     fail_sev = set(fail_on_severity)
@@ -343,42 +342,27 @@ def check_run(returncode,
         raise FVSRunError(msg)
 
     return {"returncode": returncode, "out_path": out_path,
-            "fvs_codes": [], "warnings": warnings,
+            "fvs_codes": codes, "warnings": warnings,
             "expected_cycles": expected_cycles,
             "summary_rows": summary_rows, "ok": True}
 
 
 # ---------------------------------------------------------------------------
-# Optional pandas helper (guarded import; the driver env may be minimal)
+# SQLite summary helper
 # ---------------------------------------------------------------------------
 def summary_row_count(db_path: str, table: str = "FVS_Summary2"):
-    """Row count of the summary table, or None if it cannot be read.
-
-    Uses sqlite3 from the standard library.  pandas is used only if available
-    and is never required.
-    """
-    try:
-        import sqlite3
-    except ImportError:  # pragma: no cover
+    """Row count of the summary table, or None if it cannot be read."""
+    if not os.path.isfile(db_path) or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", table):
         return None
     try:
-        con = sqlite3.connect(db_path)
+        import sqlite3
+        con = sqlite3.connect("file:%s?mode=ro" % os.path.abspath(db_path), uri=True)
         try:
             n = con.execute("SELECT COUNT(*) FROM %s" % table).fetchone()[0]
         finally:
             con.close()
         return int(n)
-    except Exception:
-        pass
-    try:  # optional pandas path, guarded
-        import pandas as pd  # noqa: F401
-        import sqlite3
-        con = sqlite3.connect(db_path)
-        try:
-            return int(len(pd.read_sql_query("SELECT * FROM %s" % table, con)))
-        finally:
-            con.close()
-    except Exception:
+    except (OSError, sqlite3.Error):
         return None
 
 
@@ -433,6 +417,9 @@ def _main(argv=None) -> int:
         rows = summary_row_count(args.db)
         if rows is not None:
             print("FVS_Summary2 rows in %s: %d" % (args.db, rows))
+        else:
+            print("POST-RUN FAIL: summary database or FVS_Summary2 is unavailable: %s" % args.db)
+            status = 3
 
     if args.out or args.rc is not None:
         if args.out:

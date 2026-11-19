@@ -38,6 +38,14 @@ DESIGN now specifies a single 1-acre fixed plot (expansion 1.0) so
 PROB values are trees per acre, replacing the 11-plot BAF-40 prism
 design copied from test decks that inflated TPA roughly ninefold.
 
+Reconciled 2026-11-17: Cardinal's staged SPCTRN second-stage species
+resolution and IE habitat-default audit are integrated with GitHub's
+newer config-driven crosswalks. use_spctrn=True resolves FIA codes
+through the variant column of src-converted/vls/spctrn.f90 after the
+calibrated FIAJSP table. Unresolved stems are counted and dropped
+without relabeling. The default remains False for existing callers.
+FVS-SN's location default is the valid district code 80301.
+
 Author: A. Weiskittel
 Date: 2026-04-25
 """
@@ -46,7 +54,10 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import warnings
+from collections import Counter
+from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 
@@ -92,7 +103,7 @@ FIA_TO_FVS_SP = {
 # These are well-known representative national forests for each variant.
 STDINFO_DEFAULTS = {
     "pn": {"forest": 612, "fortyp_default": 201},   # Willamette NF
-    "sn": {"forest": 803, "fortyp_default": 161},   # Talladega NF
+    "sn": {"forest": 80301, "fortyp_default": 161}, # Chattahoochee-Oconee NF, Armuchee District; valid SN district code
     "ie": {"forest": 110, "fortyp_default": 201},   # Idaho Panhandle NF
     "ne": {"forest": 919, "fortyp_default": 504},   # White Mountain NF (919 per ne/blkdat.f90; 902 unrecognised)
     "ls": {"forest": 904, "fortyp_default": 805},   # Huron-Manistee NF; northern hardwoods
@@ -125,7 +136,9 @@ def _variant_crosswalk(variant: str) -> dict:
             warnings.warn(f"inventory_keyfile: could not read crosswalk from {cfg}: {exc}")
             table = None
     if table is None:
-        table = FIA_TO_FVS_SP.get(v, FIA_TO_FVS_SP["pn"])
+        if v not in FIA_TO_FVS_SP:
+            raise KeyError(f"No species crosswalk for FVS variant {variant!r}")
+        table = FIA_TO_FVS_SP[v]
     _XW_CACHE[v] = table
     return table
 
@@ -159,6 +172,100 @@ def filter_mapped_species(spcds, variant: str):
         else:
             dropped[s] += 1
     return keep, dropped
+
+
+# FVS resolves a missed FIAJSP code through the ASPT table in
+# src-converted/vls/spctrn.f90. Parse the Fortran source instead of
+# maintaining a second hand-transcribed species table.
+SPCTRN_SOURCE = Path(__file__).resolve().parents[2] / "src-converted/vls/spctrn.f90"
+SPCTRN_ROW_COUNT = 562
+_SPCTRN_COLUMNS = {"ls": 4, "ne": 5, "sn": 6}
+_SPCTRN_OTHER = {"ls": "OH", "ne": "OH", "sn": "OT"}
+_SPCTRN_RE = re.compile(
+    r"^\s*'([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)'",
+    re.M,
+)
+
+
+@lru_cache(maxsize=1)
+def _spctrn_rows():
+    rows = tuple(tuple(x.strip() for x in row)
+                 for row in _SPCTRN_RE.findall(SPCTRN_SOURCE.read_text()))
+    if len(rows) != SPCTRN_ROW_COUNT:
+        raise RuntimeError(
+            f"SPCTRN has {len(rows)} parsed rows; expected {SPCTRN_ROW_COUNT}"
+        )
+    return rows
+
+
+@lru_cache(maxsize=None)
+def spctrn_table(variant: str) -> dict:
+    """FIA code to FVS alpha code for the variant's SPCTRN column."""
+    v = variant.lower()
+    if v not in _SPCTRN_COLUMNS:
+        raise KeyError(f"SPCTRN has no column for variant {variant!r}")
+    cfg = _CONFIG_DIR / f"{v}.json"
+    if not cfg.exists():
+        raise FileNotFoundError(f"Need calibrated variant config for SPCTRN: {cfg}")
+    definitions = json.loads(cfg.read_text())["categories"]["species_definitions"]
+    valid = {str(x).strip() for x in definitions["JSP"] if str(x).strip()}
+    out = {}
+    for row in _spctrn_rows():
+        if not row[1].isdigit():
+            continue
+        code = int(row[1])
+        if code in out:  # Fortran takes the first row.
+            continue
+        alpha = row[_SPCTRN_COLUMNS[v]]
+        if alpha in valid:
+            out[code] = alpha
+    return out
+
+
+def resolve_fvs_code(spcd: int, variant: str, *,
+                     use_spctrn: bool = True,
+                     other_fallback: bool = False) -> tuple:
+    """Return (FVS alpha, resolution stage), or (None, None)."""
+    v = variant.lower()
+    alpha = fia_to_fvs_code(int(spcd), v, strict=False)
+    if alpha is not None:
+        return alpha, "fiajsp"
+    if use_spctrn and v in _SPCTRN_COLUMNS:
+        alpha = spctrn_table(v).get(int(spcd))
+        if alpha is not None:
+            return alpha, "spctrn"
+        if other_fallback:
+            return _SPCTRN_OTHER[v], "other"
+    return None, None
+
+
+_SPECIES_RESOLUTION_COUNTS = {}
+
+
+def reset_species_resolution_counts() -> None:
+    _SPECIES_RESOLUTION_COUNTS.clear()
+
+
+def get_species_resolution_counts(variant: Optional[str] = None) -> dict:
+    """Return copies of per-variant stand, stage, and dropped-species counts."""
+    def copy_one(c):
+        return {k: (Counter(value) if isinstance(value, Counter) else value)
+                for k, value in c.items()}
+    if variant is None:
+        return {v: copy_one(c) for v, c in _SPECIES_RESOLUTION_COUNTS.items()}
+    return copy_one(_SPECIES_RESOLUTION_COUNTS.get(variant.lower(), {}))
+
+
+IE_DEFAULT_HABITAT_CODE = 260
+_IE_HABITAT_COUNTS = Counter()
+
+
+def reset_ie_habitat_default_counts() -> None:
+    _IE_HABITAT_COUNTS.clear()
+
+
+def get_ie_habitat_default_summary() -> dict:
+    return dict(_IE_HABITAT_COUNTS)
 
 
 def format_tree_record(
@@ -213,6 +320,8 @@ def make_inventory_keyfile(
     inv_year: int = 2000,
     num_cycles: int = 20,
     calibration_keywords: str = "",
+    use_spctrn: bool = False,
+    spctrn_other_fallback: bool = False,
 ) -> str:
     """Generate an FVS keyfile in INVENTORY mode for the given stand.
 
@@ -225,9 +334,36 @@ def make_inventory_keyfile(
     """
     v = variant.lower()
     s = stand_df.iloc[0]
-    forest = STDINFO_DEFAULTS.get(v, STDINFO_DEFAULTS["pn"])["forest"]
-    fortyp_default = STDINFO_DEFAULTS.get(v, STDINFO_DEFAULTS["pn"])["fortyp_default"]
+    if v not in STDINFO_DEFAULTS:
+        raise KeyError(f"No STDINFO defaults for FVS variant {variant!r}")
+    forest = STDINFO_DEFAULTS[v]["forest"]
+    fortyp_default = STDINFO_DEFAULTS[v]["fortyp_default"]
     fortyp = int(s.get("forest_type", fortyp_default) or fortyp_default)
+
+    # Resolve every stem before writing any species code. Never relabel
+    # an unmapped FIA stem as the first species in a fallback table.
+    spcds = [int(x) for x in tree_df["species"]]
+    resolved = [resolve_fvs_code(x, v, use_spctrn=use_spctrn,
+                                 other_fallback=spctrn_other_fallback)
+                for x in spcds]
+    counts = _SPECIES_RESOLUTION_COUNTS.setdefault(v, {
+        "stands": 0, "total_stems": 0, "fiajsp_stems": 0,
+        "spctrn_stems": 0, "other_stems": 0, "dropped_stems": 0,
+        "spctrn_by_spcd": Counter(), "dropped_by_spcd": Counter(),
+    })
+    counts["stands"] += 1
+    counts["total_stems"] += len(spcds)
+    for spcd, (_, stage) in zip(spcds, resolved):
+        counts[f"{stage or 'dropped'}_stems"] += 1
+        if stage == "spctrn":
+            counts["spctrn_by_spcd"][spcd] += 1
+        elif stage is None:
+            counts["dropped_by_spcd"][spcd] += 1
+    kept = [i for i, (alpha, _) in enumerate(resolved) if alpha is not None]
+    if not kept:
+        raise ValueError(f"Stand {stand_id}: no species resolved for FVS variant {v}")
+    tree_df = tree_df.iloc[kept]
+    alphas = [resolved[i][0] for i in kept]
 
     age = float(s.get("age", 40))
     si = float(s.get("site_index", 60))
@@ -235,13 +371,20 @@ def make_inventory_keyfile(
     slope = float(s.get("slope", 15))
     elev_h = float(s.get("elevft", 1000)) / 100.0  # STDINFO wants elev/100
 
-    # STDINFO fields are (forest, habitat/PV code, age, aspect, slope,
-    # elev in 100s of feet). Field 2 is left blank; age goes in field 3.
-    # Site index is carried by a separate SITECODE keyword below.
+    # A real IE habitat code may be supplied by the stand. Without
+    # one, FVS-IE itself defaults to 260 (PSME/PHMA). Track the count.
+    habitat_code = s.get("habitat_code", None) if v == "ie" else None
+    if habitat_code is not None and pd.isna(habitat_code):
+        habitat_code = None
+    habitat_field = " " * 10 if habitat_code is None else f"{int(habitat_code):>10d}"
+    if v == "ie":
+        _IE_HABITAT_COUNTS["total_ie_stands"] += 1
+        if habitat_code is None:
+            _IE_HABITAT_COUNTS["defaulted_stands"] += 1
     stdinfo = (
         "STDINFO   "
         f"{forest:>10.0f}"
-        + " " * 10
+        + habitat_field
         + f"{age:>10.0f}"
         f"{aspect:>10.1f}"
         f"{slope:>10.1f}"
@@ -250,7 +393,7 @@ def make_inventory_keyfile(
 
     # SITECODE: field 1 = site species (first tree record's species),
     # field 2 = site index, field 3 = 1 makes it the site species.
-    site_sp = fia_to_fvs_code(int(tree_df.iloc[0]["species"]), v)
+    site_sp = alphas[0]
     sitecode = (
         "SITECODE  "
         f"{site_sp:>10s}"
@@ -294,9 +437,7 @@ def make_inventory_keyfile(
     # Tree records, one per row of tree_df. tree_count is the TPA the
     # record represents and passes through PROB unchanged under the
     # per-acre DESIGN above.
-    for tree_num, row in enumerate(tree_df.itertuples(), start=1):
-        spcd = int(row.species)
-        sp_code = fia_to_fvs_code(spcd, v)
+    for tree_num, (row, sp_code) in enumerate(zip(tree_df.itertuples(), alphas), start=1):
         tpa = getattr(row, "tree_count", None)
         tpa = 1.0 if tpa is None or pd.isna(tpa) else float(tpa)
         lines.append(
@@ -320,6 +461,13 @@ def make_inventory_keyfile(
 
 __all__ = [
     "fia_to_fvs_code",
+    "resolve_fvs_code",
+    "spctrn_table",
+    "get_species_resolution_counts",
+    "reset_species_resolution_counts",
+    "get_ie_habitat_default_summary",
+    "reset_ie_habitat_default_counts",
+    "IE_DEFAULT_HABITAT_CODE",
     "format_tree_record",
     "make_inventory_keyfile",
     "FIA_TO_FVS_SP",

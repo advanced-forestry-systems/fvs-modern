@@ -79,6 +79,8 @@ CALL GETENV('FVS_GREG_PPT_SM', CVAL); IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) G
 CALL GETENV('FVS_GREG_DD18',   CVAL); IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GDD18
 GPC1 = 0.252*GDD0 + 0.002*GTD - 0.035*GPPT_SM + 0.967*GDD18
 GPC2 = 0.882*GDD0 + 0.015*GTD + 0.420*GPPT_SM - 0.215*GDD18
+GHGCAP = 1.0
+CALL GETENV('FVS_GREGHG_CAP', CVAL); IF (CVAL.NE.' ') READ(CVAL,*,IOSTAT=IOS) GHGCAP
 !
 !  -- Resolve config directory --
 CALL GETENV('FVS_GREG_CONFDIR', CDIR)
@@ -204,7 +206,7 @@ IF (CPATH.NE.' ') THEN
 ENDIF
 !
 WRITE(JOSTND,*) 'GREGHG enabled: arm=', IHGDRV, ' PC1=', GPC1, &
-     ' PC2=', GPC2
+     ' PC2=', GPC2, ' CAP=', GHGCAP
 RETURN
 END
 
@@ -218,15 +220,29 @@ INCLUDE 'PRGPRM.f90'
 INCLUDE 'GREGMC.f90'
 INTEGER ISPC
 REAL HT, CR, CCFL, CCH, HGV
-REAL(KIND=8) :: MX,B1,B2,B3,B4,B5,B6,B7,CRP,CCHP,ARG,HG
+REAL(KIND=8) :: MX,B1,B2,B3,B4,B5,B6,B7,CRP,CCHP,ARG,HG,BASE,HTD,CEIL
 MX=GHG(ISPC,1); B1=GHG(ISPC,2); B2=GHG(ISPC,3); B3=GHG(ISPC,4)
 B4=GHG(ISPC,5); B5=GHG(ISPC,6); B6=GHG(ISPC,7); B7=GHG(ISPC,8)
 CRP  = REAL(CR,8);   IF (CRP .LT.1.0D-4) CRP  = 1.0D-4
 CCHP = REAL(CCH,8);  IF (CCHP.LT.0.0D0)  CCHP = 0.0D0
 ARG  = -B1*REAL(HT,8) - B4*REAL(CCFL,8) - B5*CCHP**0.5D0 &
        + B6*REAL(GPC1,8) + B7*REAL(GPC2,8)
-HG   = MX*B1*B2*CRP**B3*EXP(ARG)*(1.0D0-EXP(-B1*REAL(HT,8)))**(B2-1.0D0)
+HTD  = REAL(HT,8)
+BASE = 1.0D0 - EXP(-B1*HTD)
+!  Guard: a non-positive base raised to a non-integer power is NaN (HT<=0, or a
+!  negative height offset in later forms); return zero growth instead.
+IF (HTD.LE.0.0D0 .OR. BASE.LE.0.0D0) THEN
+  HGV = 0.0; RETURN
+ENDIF
+HG   = MX*B1*B2*CRP**B3*EXP(ARG)*BASE**(B2-1.0D0)
+IF (HG.NE.HG) HG = 0.0D0                       ! NaN from bad coefficients
 IF (HG.LT.0.0D0) HG = 0.0D0
+!  Ceiling: dH/dt of this form never reaches zero, so height is unbounded.
+!  Hold HT+HG at or below GHGCAP*MX (FVS_GREGHG_CAP<=0 disables).
+IF (GHGCAP.GT.0.0) THEN
+  CEIL = REAL(GHGCAP,8)*MX
+  IF (HTD+HG.GT.CEIL) HG = MAX(CEIL-HTD, 0.0D0)
+ENDIF
 HGV  = REAL(HG)
 RETURN
 END

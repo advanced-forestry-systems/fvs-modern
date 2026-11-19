@@ -34,7 +34,7 @@ already importable.
 SPECIES-LIST PROVENANCE  (derived from source, not from memory)
 --------------------------------------------------------------------------
 NE_SPCD / NE_SPCD_TO_ALPHA
-    Source file : /users/PUOM0008/crsfaaron/fvs-modern/src-converted/ne/blkdat.f90
+    Source file : src-converted/ne/blkdat.f90
     DATA JSP    : lines 126-142  (108 internal alpha codes, MAXSP = 108)
     DATA FIAJSP : lines 144-160  (the parallel FIA SPCD crosswalk)
     MAXSP = 108 declared at src-converted/ne/common/PRGPRM.f90:12
@@ -44,7 +44,7 @@ NE_SPCD / NE_SPCD_TO_ALPHA
 
 KNOWN_FIA_SPCD
     Union of the DATA FIAJSP arrays of every FVS variant blkdat.f90 in
-    /users/PUOM0008/crsfaaron/fvs-modern/src-converted/*/blkdat.f90
+    src-converted/*/blkdat.f90
     (24 variants: acd adk ak bm ca ci cr cs ec em ie kt ls nc ne oc op pn sn
     so tt ut wc ws).  248 distinct codes.  This is the "is it a real FIA
     species code" universe.  It is a lower bound on the true FIA SPCD list,
@@ -69,8 +69,7 @@ __all__ = [
     "TREE_ID_MAX_SIGNED32", "MAX_TREES_PER_STAND",
 ]
 
-SPCD_SOURCE_FILE = ("/users/PUOM0008/crsfaaron/fvs-modern/src-converted/ne/"
-                    "blkdat.f90")
+SPCD_SOURCE_FILE = "src-converted/ne/blkdat.f90"
 SPCD_SOURCE_LINES = "JSP 126-142; FIAJSP 144-160"
 
 # --------------------------------------------------------------------------
@@ -414,12 +413,10 @@ def legacy_standid(cn, variant="ne"):
 # ==========================================================================
 # Self-test
 # ==========================================================================
-PLOT_LIST_3321 = ("/fs/scratch/PUOM0008/crsfaaron/balfix_run_20260804/"
-                  "plot_list_3321.csv")
-PLOT_LIST_3321_MD5 = "5f43e67952ab71135b4b159e730dfd77"
+PLOT_LIST_3321 = os.environ.get("FVS_GUARD_PLOT_LIST")  # optional, keep plot identifiers outside the repository
 
 
-def _load_plot_list(path=PLOT_LIST_3321):
+def _load_plot_list(path):
     with open(path) as fh:
         rdr = csv.reader(fh)
         header = next(rdr)
@@ -501,10 +498,10 @@ def _selftest():
     chk("tree_id(3321,9999) fits int32",
         allocate_tree_id(3321, 9999) <= TREE_ID_MAX_SIGNED32, True)
     chk("a 15-digit FIA CN overflows int32",
-        int("107545100010661") > TREE_ID_MAX_SIGNED32, True)
+        int("123456789012345") > TREE_ID_MAX_SIGNED32, True)
 
     # --- Defect B: collision reproduction on the real 3,321 CN list ------
-    if os.path.exists(PLOT_LIST_3321):
+    if PLOT_LIST_3321 and os.path.exists(PLOT_LIST_3321):
         cns = _load_plot_list()
         chk("plot list length", len(cns), 3321)
         legacy = check_standid_collisions(cns, lambda c: legacy_standid(c, "ne"))
@@ -517,8 +514,7 @@ def _selftest():
         chk("new first StandID", new.pairs[0][0], "NE_0000001")
         chk("new last StandID", new.pairs[-1][0], "NE_0003321")
     else:
-        print("SKIP plot-list collision reproduction (%s not readable)"
-              % PLOT_LIST_3321)
+        print("SKIP plot-list collision reproduction (set FVS_GUARD_PLOT_LIST to a readable private CSV)")
 
     n_fail = sum(1 for ok, *_ in results if not ok)
     print("-" * 78)

@@ -256,31 +256,54 @@ def build_tree_init(
     return out
 
 
-def condition_expansion_divisor(tpa_unadj, cond_row) -> np.ndarray:
+# TPA_UNADJ of a tree on each FIA plot size (annual design): microplot 1/(4 x 6.8 ft radius),
+# subplot 1/(4 x 24.0 ft radius), macroplot 1/(4 x 58.9 ft radius).
+PLOT_SIZE_TPA = {"MICRPROP_UNADJ": 74.965, "SUBPPROP_UNADJ": 6.018, "MACRPROP_UNADJ": 0.9997}
+PLOT_SIZE_RTOL = 0.01
+
+
+def condition_expansion_divisor(tpa_unadj, cond_row, return_counts: bool = False):
     """Per-tree divisor that turns TPA_UNADJ (per plot acre) into trees per condition acre.
 
     FIA expands each tree by the share of ITS OWN plot size that the condition occupies: microplot
     trees (TPA_UNADJ 74.965) by MICRPROP_UNADJ, subplot trees (6.018) by SUBPPROP_UNADJ and macroplot
-    trees (0.999) by MACRPROP_UNADJ. CONDPROP_UNADJ is the share of the PROP_BASIS plot only, so dividing
+    trees (0.9997) by MACRPROP_UNADJ. CONDPROP_UNADJ is the share of the PROP_BASIS plot only, so dividing
     every tree by it (D3, 2026-10-30) left multi-condition stands at 0.80 to 1.18 of FIA BALIVE whenever a
     condition boundary cut the microplot (or the macroplot) differently from the subplot. With the per-size
     proportions the seeded BA equals BALIVE on all 125 multi-condition Paper 1 ensemble stands and all 972
-    multi-condition catalog stands (D5, 2026-10-30). The plot size is identified from TPA_UNADJ (above 50:
-    microplot; below 2: macroplot; otherwise subplot); a missing or non-positive proportion falls back to
-    CONDPROP_UNADJ, and a missing CONDPROP_UNADJ to 1.
+    multi-condition catalog stands (D5, 2026-10-30).
+
+    A tree is assigned to a plot size only when its TPA_UNADJ is within PLOT_SIZE_RTOL (1 percent) of that
+    size's value; a tree from another design (periodic or variable-radius plots) fits none and is divided
+    by CONDPROP_UNADJ. A missing or non-positive proportion also falls back to CONDPROP_UNADJ, and a
+    missing or non-positive CONDPROP_UNADJ to 1. With return_counts=True the result is
+    (divisor, n_no_plot_size, n_no_proportion): trees with a finite TPA_UNADJ that fit no plot size, and
+    trees that fit one whose proportion is missing.
     """
     tpa = np.asarray(tpa_unadj, dtype=float)
+
     def prop(name):
         try:
             v = float(cond_row.get(name, np.nan))
         except (TypeError, ValueError):
             v = np.nan
         return v if np.isfinite(v) and v > 0 else np.nan
+
     cp = prop("CONDPROP_UNADJ")
     cp = 1.0 if not np.isfinite(cp) else cp
-    micr, subp, macr = (prop(n) for n in ("MICRPROP_UNADJ", "SUBPPROP_UNADJ", "MACRPROP_UNADJ"))
-    div = np.where(tpa > 50, micr, np.where(tpa < 2, macr, subp))
-    return np.where(np.isfinite(div), div, cp)
+    div = np.full(tpa.shape, np.nan)
+    sized = np.zeros(tpa.shape, dtype=bool)
+    with np.errstate(invalid="ignore"):
+        for name, ref in PLOT_SIZE_TPA.items():
+            hit = np.isfinite(tpa) & (np.abs(tpa / ref - 1.0) <= PLOT_SIZE_RTOL)
+            div = np.where(hit, prop(name), div)
+            sized |= hit
+    out = np.where(np.isfinite(div), div, cp)
+    if return_counts:
+        n_no_size = int((np.isfinite(tpa) & ~sized).sum())
+        n_no_prop = int((sized & ~np.isfinite(div)).sum())
+        return out, n_no_size, n_no_prop
+    return out
 
 
 def condition_trees(trees: pd.DataFrame, cond_row: pd.Series) -> pd.DataFrame:
@@ -306,7 +329,12 @@ def condition_trees(trees: pd.DataFrame, cond_row: pd.Series) -> pd.DataFrame:
         t = t.loc[t["CONDID"] == int(condid)]
     t = t.copy()
     if "TPA_UNADJ" in t.columns and len(t):
-        t["TPA_UNADJ"] = t["TPA_UNADJ"] / condition_expansion_divisor(t["TPA_UNADJ"].to_numpy(), cond_row)
+        div, n_no_size, n_no_prop = condition_expansion_divisor(t["TPA_UNADJ"].to_numpy(), cond_row, return_counts=True)
+        if n_no_size or n_no_prop:
+            logging.getLogger(__name__).warning(
+                "condition %s: %d trees fit no plot size and %d have no plot-size proportion; divided by CONDPROP_UNADJ",
+                condid, n_no_size, n_no_prop)
+        t["TPA_UNADJ"] = t["TPA_UNADJ"] / div
     return t
 
 

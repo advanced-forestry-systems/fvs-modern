@@ -44,7 +44,7 @@ An exit code of 2 does not mean the projection failed. `STOP_CODES.md` records t
 **Causes and fixes.**
 
 1. The configuration could not be loaded. `apply_calibrated_config()` logs a warning (`config_loader not found...`, `Config file not found: ...` or `Could not apply calibrated config: ...`) and returns `{}`, and the run continues with defaults. Put the repository root on `PYTHONPATH`, check that `config/calibrated/<variant>.json` exists, and check the returned dictionary.
-2. It was a second keyword file on the same `FVS` object. The overlay is applied automatically only on the first run of an object. Stop at point 7 and call `apply_calibrated_config()` for each keyword file ([Running projections](running-projections.md)).
+2. It was a second keyword file on the same `FVS` object, run with a version of fvs2py older than PR 143. Those versions applied the overlay automatically only on the first run of an object. The overlay is now applied once per keyword file; on an older version, stop at point 7 and call `apply_calibrated_config()` for each keyword file ([Running projections](running-projections.md)).
 3. The variant's calibration does not touch the quantity you are looking at. The in-process overlay sets only the attributes it can derive (for NE only `spsdi`), and 18 of 25 variants carry unity diameter growth multipliers ([Choosing a configuration](choosing-a-configuration.md)). With the keyword path, a family in which every multiplier is within 0.01 of 1 produces no records and a message on standard error ending `the arm runs on the uncalibrated growth model. This is a calibration content question, not a keyword formatting failure.`
 
 ## Keyword path warnings
@@ -66,9 +66,11 @@ When GOMPIT is active the listing shows `GOMPMORT enabled: <n> fitted species re
 
 ## Crashes (segmentation faults)
 
-**Tree attributes.** `FVS.get_tree_attr`, `FVS.set_tree_attr` and `FVS.tree_table` crash because `fvs2py` passes five arguments to an engine routine that takes six. Do not call them at this commit; write tree lists with the `TREELIST` keyword instead ([Running projections](running-projections.md#tree-lists)).
+**Tree attributes (fixed in PR 143).** Before PR 143, `FVS.get_tree_attr`, `FVS.set_tree_attr` and `FVS.tree_table` crashed because `fvs2py` passed five arguments to an engine routine that takes six. They now pass the live tree count. A `RuntimeError` with return code 3 means the count did not match the engine's at that stop point.
 
-**Two FVS objects on one library.** A second `FVS` object built on the same library file in the same process shares the first one's engine state, and the reload performed by `load_keyfile()` cannot reset a library that another handle still holds. Use one object per library per process.
+**Two FVS objects on one library (detected since PR 143).** A second `FVS` object built on the same library file in the same process shares the first one's engine state, and the reload performed by `load_keyfile()` cannot reset a library that another handle still holds. fvs2py now issues a `SharedEngineWarning` when this happens; set `FVS2PY_SHARED_ENGINE=error` to make it an error. Use one object per library per process, call `close()` on the first object before creating the second, or run stands in separate processes.
+
+**Summary buffer (fixed in PR 143).** Before PR 143, `FVS.summary` allocated 20 integers per row for a routine that writes 22, so the last row's two extra integers went past the end of the array. Whether that overrun contributed to the intermittent crashes noted below was not tested.
 
 !!! warning "Unverified"
     In the documentation build, ordinary runs of the quickstart stand also ended with a segmentation fault inside the engine's main routine in roughly a third to a half of fresh processes, with default, calibrated and custom settings alike; runs that completed gave identical results. That build lacked the SQLite, FOFEM and `apisubsc.c` C sources and the NVEL `.for` files and stubbed 39 unresolved symbols, so the crashes may be an artefact of the incomplete build. Whether a complete build shows them was not checked. If you see intermittent crashes, run each stand in its own process and retry failures.

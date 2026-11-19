@@ -90,4 +90,10 @@ SUMMARY_COLS = (
     "fortyp",
     "sizecls",
     "stkcls",
+    # Columns 21 and 22 of the engine's summary(22) (apisubs.f90 fvsSummary; IOSUM(21) and IOSUM(22)
+    # in vbase/disply.f90): sawlog cubic volume and sawlog cubic volume removed. Before October 30, 2026
+    # fvs2py allocated 20 integers per row, so these were dropped and the last row's two extra integers
+    # were written past the end of the buffer.
+    "scuft",
+    "rscuft",
 )

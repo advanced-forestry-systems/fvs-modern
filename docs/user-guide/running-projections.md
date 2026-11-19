@@ -51,8 +51,8 @@ When `config_version` is `"calibrated"` or `"custom"`, the first `run()` advance
 !!! warning "Calibrated overlay failures are silent"
     If the configuration file cannot be found or imported, `apply_calibrated_config()` logs a warning through the root logger (for example `Config file not found: .../config/calibrated/ne.json`) and returns `{}`. The run then continues with default parameters and nothing in the summary shows it. Check the return value, or configure logging, before relying on a calibrated run.
 
-!!! warning "The overlay is applied automatically only once per FVS object"
-    The flag that records that the overlay was applied is set once and is not reset when `load_keyfile()` reloads the library. A second keyword file loaded into the same `FVS` object therefore runs with default parameters even when `config_version="calibrated"`. In the documentation build, running the quickstart stand twice on one object with a custom configuration gave 172 trees ac⁻¹ and 220 ft² ac⁻¹ in 2125 on the first run and the default 191 and 242 on the second. For every keyword file, stop at point 7 and apply the overlay yourself:
+!!! success "Fixed in PR 143 (October 30, 2026)"
+    The overlay is now applied once per keyword file: `load_keyfile()` resets the flag, so the first `run()` after each `load_keyfile()` stops at point 7 and applies it. Before this fix the flag was set once per `FVS` object and never reset, so a second keyword file loaded into the same object ran with default parameters (in the documentation build, 172 trees ac⁻¹ and 220 ft² ac⁻¹ in 2125 on the first run against the default 191 and 242 on the second). Runs made that way before the fix should be repeated. Applying the overlay yourself at stop point 7 still works and is equivalent:
 
     ```python
     import glob
@@ -70,7 +70,10 @@ When `config_version` is `"calibrated"` or `"custom"`, the first `run()` advance
     With this pattern, and `config_version="custom", custom_config="config/calibrated_sdifix/ne.json"` in place of the calibrated set (which is not in the snapshot used for this page), two successive quickstart runs on one object both gave 172 and 220.
 
 !!! warning "Use one FVS object per library per process"
-    ctypes opens a library path once per process and later loads return the same handle, so two `FVS` objects built on the same file share one engine. `load_keyfile()` closes and reopens the library to reset it, but the reset only happens when no other handle holds the library open. In the documentation build a second `FVS` object on `lib/FVSne.so` inherited the first object's finished simulation. Reuse one object for successive keyword files, or run stands in separate processes.
+    ctypes opens a library path once per process and later loads return the same handle, so two `FVS` objects built on the same file share one engine. `load_keyfile()` closes and reopens the library to reset it, but the reset only happens when no other handle holds the library open. In the documentation build a second `FVS` object on `lib/FVSne.so` inherited the first object's finished simulation. Reuse one object for successive keyword files, call `close()` on an object before creating another on the same library, or run stands in separate processes.
+
+!!! success "Fixed in PR 143 (October 30, 2026)"
+    The state is still shared, but it is now detected. Creating an `FVS` object while another live object holds the same library issues a `fvs2py._core.SharedEngineWarning` naming the library. Set the environment variable `FVS2PY_SHARED_ENGINE=error` to raise `RuntimeError` instead, or `=ignore` to silence it. An object that has been closed (`close()`) or garbage collected no longer counts as live, and either one closes its handle on the library: once no live object holds the library, the next object loads a fresh engine. Before the review fix to PR 143 a collected object left the library loaded, so the common pattern of one `FVS` object per stand inside a function shared engine state silently. On the scripts checked in `validation/fvs2py_fixes_20261030/` (smoke stands, `engine_bakuzis_v2.py`, `confirm_real.py`) the change left every output identical.
 
 ### What the in-process overlay changes
 
@@ -138,10 +141,10 @@ fvs.run()
 
 The class defines `get_tree_attr(attr)`, `set_tree_attr(attr, arr)` and `tree_table(attrs=("id", "species", "dbh", "ht", "dg", "htg", "crwdth"))` for per-tree state, with attribute names `id`, `species`, `dbh`, `dg`, `ht`, `htg`, `crwdth`, `cratio`, `tpa`, `mort`, `plot` and `age`.
 
-!!! warning "Tree attribute access crashes at commit fb4cf10"
-    The engine routine `fvsTreeAttr` takes six arguments (`name, nch, action, ntrees, attr, rtnCode`; `src-converted/base/apisubs.f90`, line 129), but `fvs2py` declares and passes five, without `ntrees` (`_base.py`, lines 579 to 597). Every call to `get_tree_attr`, `set_tree_attr` or `tree_table` therefore passes the wrong pointers, and in the documentation build each one ended the Python process with a segmentation fault. Do not call them until the wrapper is fixed.
+!!! success "Fixed in PR 143 (October 30, 2026)"
+    The engine routine `fvsTreeAttr` takes six arguments (`name, nch, action, ntrees, attr, rtnCode`; `src-converted/base/apisubs.f90`, line 129). Before this fix `fvs2py` declared and passed five, without `ntrees`, and every call to `get_tree_attr`, `set_tree_attr` or `tree_table` ended the process with a segmentation fault. `fvs2py` now passes the live tree count. The engine requires that count to match its own at the stop point, and otherwise returns code 3, which `fvs2py` raises as a `RuntimeError` that says so.
 
-Until then, write tree lists from the keyword file. The `TREELIST` keyword prints them to the main output listing, and with an SQLite output database the `TREELIDB` keyword inside a `DATABASE` block writes them to a table; the benchmark keyword template in `calibration/python/bakuzis_100yr_comparison.py` uses both.
+You can also write tree lists from the keyword file. The `TREELIST` keyword prints them to the main output listing, and with an SQLite output database the `TREELIDB` keyword inside a `DATABASE` block writes them to a table; the benchmark keyword template in `calibration/python/bakuzis_100yr_comparison.py` uses both.
 
 !!! warning "Unverified"
     Database output (`DATABASE`, `DSNOUT`, `SUMMARY`, `TREELIDB`) was not exercised for this page, because the build used to write it lacked the SQLite C sources.

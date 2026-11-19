@@ -1,0 +1,3 @@
+comparison,file_a,file_b,rows_a,rows_b,cols_compared,identical,max_abs_diff,only_in_a,only_in_b
+before_fix_vs_pr143_first_commit,smoke_before.csv,smoke_after.csv,420,420,23,True,0.0,,scuft;rscuft
+first_commit_vs_review_fix,smoke_after.csv,smoke_after_review.csv,420,420,25,True,0.0,,

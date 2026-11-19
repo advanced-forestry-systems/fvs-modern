@@ -30,7 +30,7 @@ GOMPIT replaces native mortality per tree, per cycle, inside the growth loop, fo
 |---|---|
 | `GOMPLOAD` | Called from `MORCON`. Resolves activation once per run, reads the coefficient file, maps rows onto FVS species, reads the two tuning variables. |
 | `GOMPCCH` | Recomputes crown closure at each tree's tip for the current cycle from the live tree list, using an ORGANON SWO crown-width port, and maps it with `CCH = 0.062 + 0.0036 * cch_hat`. |
-| `GOMPSURV(ISPC, CR, CCHV, FINTL, SURV, DBHV)` | Period survival for one tree. |
+| `GOMPSURV(ISPC, CR, CCHV, FINTL, SURV, DBHV)` | Survival of one tree over a cycle of `FINTL` years: annual survival raised to `FINTL`. |
 | `GOMPON` | Hook for the `GOMPMORT` keyword; sets `LGOMPKW`. |
 | `BLOCK DATA GOMPBD` | Initialises `LGOMP`, `LGOMPKW`, `GHAVE`, `NGOMP`, `GGRP`, `GSFLOOR` (0.0) and `GMORTMULT` (1.0). |
 
@@ -58,7 +58,7 @@ Two optional variables tune GOMPIT:
 
 | Variable | Default | Effect |
 |---|---|---|
-| `FVS_GOMP_MORTMULT` | 1.0 | Multiplies the annual hazard term; values of 0 or less reset to 1.0. |
+| `FVS_GOMP_MORTMULT` | 1.0 | Multiplies `exp(eta)` inside the annual survival `1 - exp(-exp(eta) * MORTMULT)`, so annual mortality becomes `m**MORTMULT`: values above 1 lower mortality and values below 1 raise it (0.5 gives the square root of `m`, not half). Values of 0 or less reset to 1.0. |
 | `FVS_GOMP_SFLOOR` | 0.0 (off) | Floor on annual survival for all trees; period survival is floored at `SFLOOR**FINTL`. Values outside 0 to 1 reset to 0. |
 
 `GOMPMC.f90` records that these two substitute for the MORTMULT keyword, which does not reach GOMPIT. In `vls/morts.f90` the GOMPIT branch sets the trees killed directly, and `VARMRT` is skipped when GOMPIT is active.
@@ -77,14 +77,17 @@ The executable lines of `GOMPSURV` are:
 ETA = B0 + B1*(CRC+0.01)**B2 + B3*CTERM + B5*LOG(MAX(DBHV,0.1))
 IF (ETA.GT.30.0)  ETA = 30.0
 IF (ETA.LT.-30.0) ETA = -30.0
-HZ = 1.0 - EXP(-EXP(ETA) * GMORTMULT)   ! GOMPIT annual survival; GMORTMULT scales hazard
+HZ = 1.0 - EXP(-EXP(ETA) * GMORTMULT)   ! annual survival (named HZ historically); GMORTMULT multiplies exp(eta)
 SURV = MAX(0.0,MIN(1.0,HZ)) ** FINTL   ! compound annual survival over the cycle
 ```
 
 `CRC` is crown ratio clamped to 0.0001 to 1, and `CTERM` is `CCHV**B4` for positive crown closure and 0 otherwise. Callers pass the cycle length as `FINTL` and kill `PROB * (1 - SURV)` trees. `vwc/morts.f90` instead calls with `FINTL = 1.0`, sets the native annual rate to `1 - SURV`, and lets its own period conversion apply.
 
-!!! warning "Framing differs between comments and code"
-    The header comment of `gompmort.f90`, the fitting script `calibration/R/35_fit_greg_mortality_cch.R` and `calibration/python/greg_mortality.py` all write period survival as `exp(-exp(eta) * T)`. The executable line above computes annual survival as `1 - exp(-exp(eta) * GMORTMULT)` and raises it to the cycle length. These are different functions of `eta`. Which framing the shipped coefficients are on is not stated in the repository. Treat the code as authoritative for what the engine does, and confirm the framing before fitting new coefficients or comparing engine output with the Python implementation.
+!!! success "Fixed in PR 143 (October 30, 2026)"
+    The comments in `gompmort.f90` and `GOMPMC.f90` now describe what the code computes: annual survival `1 - exp(-exp(eta) * GMORTMULT)` raised to the cycle length, with `FVS_GOMP_MORTMULT` acting as an exponent on annual mortality. Before this fix the header described period survival `exp(-exp(eta) * T)`, and the comments said a multiplier of 0.5 halves mortality, when in fact it raises it. No executable line changed.
+
+!!! warning "Framing differs between the engine and the fitting code"
+    The fitting script `calibration/R/35_fit_greg_mortality_cch.R` and `calibration/python/greg_mortality.py` still write period survival as `exp(-exp(eta) * T)`. The engine computes annual survival `1 - exp(-exp(eta) * GMORTMULT)` raised to the cycle length. These are different functions of `eta`, and the repository does not state which framing the shipped coefficients are on. Treat the engine code as authoritative for what it does, and confirm the framing before fitting new coefficients or comparing engine output with the Python implementation.
 
 ## Choosing between them
 

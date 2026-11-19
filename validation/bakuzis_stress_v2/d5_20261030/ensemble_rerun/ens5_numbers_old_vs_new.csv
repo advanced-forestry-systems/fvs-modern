@@ -1,0 +1,150 @@
+metric,variant,ens_full4,ens_full5
+div_max_abs_pct,ACD,1.53846153846154,1.53846153846154
+div_max_abs_pct,NE,22.5108225108225,22.5108225108225
+div_med_abs_pct,ACD,0,0
+div_med_abs_pct,NE,14.8805628272251,14.8805628272251
+div_n_within1,ACD,35,35
+div_n_within1,NE,0,0
+law_density_mortality_fraction|calibrated_map,ACD,1,1
+law_density_mortality_fraction|calibrated_map,NE,1,1
+law_density_mortality_fraction|default,ACD,1,1
+law_density_mortality_fraction|default,NE,1,1
+law_density_mortality_fraction|posterior_band,ACD,1,1
+law_density_mortality_fraction|posterior_band,NE,1,1
+law_eichhorn_fraction|calibrated_map,ACD,0,0
+law_eichhorn_fraction|calibrated_map,NE,0.0833333333333333,0.0833333333333333
+law_eichhorn_fraction|default,ACD,0,0
+law_eichhorn_fraction|default,NE,0,0
+law_eichhorn_fraction|posterior_band,ACD,0,0
+law_eichhorn_fraction|posterior_band,NE,0.0833333333333333,0.0833333333333333
+law_mortality_size_fraction|calibrated_map,ACD,,
+law_mortality_size_fraction|calibrated_map,NE,,
+law_mortality_size_fraction|default,ACD,,
+law_mortality_size_fraction|default,NE,,
+law_mortality_size_fraction|posterior_band,ACD,,
+law_mortality_size_fraction|posterior_band,NE,,
+law_sukachev_fraction|calibrated_map,ACD,0,0
+law_sukachev_fraction|calibrated_map,NE,0.0833333333333333,0.0833333333333333
+law_sukachev_fraction|default,ACD,0,0
+law_sukachev_fraction|default,NE,0.0833333333333333,0.0833333333333333
+law_sukachev_fraction|posterior_band,ACD,0,0
+law_sukachev_fraction|posterior_band,NE,0.0833333333333333,0.0833333333333333
+max_cell_med_ba_ft2ac_calibrated_map,ACD,260,260
+max_cell_med_ba_ft2ac_calibrated_map,NE,287,287
+max_cell_med_ba_ft2ac_default,ACD,260,260
+max_cell_med_ba_ft2ac_default,NE,291,291
+score_evaluated|T3 Reineke slope (trajectory OLS),ACD_calibrated_map,29,29
+score_evaluated|T3 Reineke slope (trajectory OLS),ACD_default,30,30
+score_evaluated|T3 Reineke slope (trajectory OLS),NE_calibrated_map,17,17
+score_evaluated|T3 Reineke slope (trajectory OLS),NE_default,29,29
+"score_evaluated|T3b frontier slope (rq tau 0.95, pooled limb)",ACD_calibrated_map,4,4
+"score_evaluated|T3b frontier slope (rq tau 0.95, pooled limb)",ACD_default,4,4
+"score_evaluated|T3b frontier slope (rq tau 0.95, pooled limb)",NE_calibrated_map,4,4
+"score_evaluated|T3b frontier slope (rq tau 0.95, pooled limb)",NE_default,4,4
+score_evaluated|T4 max BA vs observed p99,ACD_calibrated_map,36,36
+score_evaluated|T4 max BA vs observed p99,ACD_default,36,36
+score_evaluated|T4 max BA vs observed p99,NE_calibrated_map,36,36
+score_evaluated|T4 max BA vs observed p99,NE_default,36,36
+score_evaluated|T4 max BA vs observed p99.9,ACD_calibrated_map,36,36
+score_evaluated|T4 max BA vs observed p99.9,ACD_default,36,36
+score_evaluated|T4 max BA vs observed p99.9,NE_calibrated_map,36,36
+score_evaluated|T4 max BA vs observed p99.9,NE_default,36,36
+score_evaluated|T4 peak SDI / SDImax,ACD_calibrated_map,36,36
+score_evaluated|T4 peak SDI / SDImax,ACD_default,36,36
+score_evaluated|T4 peak SDI / SDImax,NE_calibrated_map,36,36
+score_evaluated|T4 peak SDI / SDImax,NE_default,36,36
+score_flagged|T3 Reineke slope (trajectory OLS),ACD_calibrated_map,0,0
+score_flagged|T3 Reineke slope (trajectory OLS),ACD_default,0,0
+score_flagged|T3 Reineke slope (trajectory OLS),NE_calibrated_map,1,1
+score_flagged|T3 Reineke slope (trajectory OLS),NE_default,2,2
+"score_flagged|T3b frontier slope (rq tau 0.95, pooled limb)",ACD_calibrated_map,0,0
+"score_flagged|T3b frontier slope (rq tau 0.95, pooled limb)",ACD_default,0,0
+"score_flagged|T3b frontier slope (rq tau 0.95, pooled limb)",NE_calibrated_map,0,0
+"score_flagged|T3b frontier slope (rq tau 0.95, pooled limb)",NE_default,0,0
+score_flagged|T4 max BA vs observed p99,ACD_calibrated_map,13,13
+score_flagged|T4 max BA vs observed p99,ACD_default,13,13
+score_flagged|T4 max BA vs observed p99,NE_calibrated_map,7,7
+score_flagged|T4 max BA vs observed p99,NE_default,16,16
+score_flagged|T4 max BA vs observed p99.9,ACD_calibrated_map,0,0
+score_flagged|T4 max BA vs observed p99.9,ACD_default,0,0
+score_flagged|T4 max BA vs observed p99.9,NE_calibrated_map,1,1
+score_flagged|T4 max BA vs observed p99.9,NE_default,4,4
+score_flagged|T4 peak SDI / SDImax,ACD_calibrated_map,0,0
+score_flagged|T4 peak SDI / SDImax,ACD_default,0,0
+score_flagged|T4 peak SDI / SDImax,NE_calibrated_map,0,0
+score_flagged|T4 peak SDI / SDImax,NE_default,0,0
+seedgate_inbin,ALL,358,360
+stems_retained_y100,ACD,0.148512607411442,0.148512607411442
+stems_retained_y100,NE,0.216724258787642,0.216724258787642
+y025_between_cv_med,ACD,10.8771868529288,11.1831706045411
+y025_between_cv_med,NE,14.3034408388131,14.348190191197
+y025_between_range_med,ACD,27.6134951065357,27.6134951065357
+y025_between_range_med,NE,34.5729521007631,34.5729521007631
+y025_pooled_legacy_med,ACD,27.6134951065357,27.6134951065357
+y025_pooled_legacy_med,NE,35.4395604395604,35.5401640612908
+y025_post_med_over_map_med,ACD,1,1
+y025_post_med_over_map_med,NE,1,1
+y025_post_med_over_map_q05,ACD,0.993101053639847,0.994000410509031
+y025_post_med_over_map_q05,NE,0.993589743589744,0.993583459024635
+y025_post_med_over_map_q95,ACD,1,1
+y025_post_med_over_map_q95,NE,1,1
+y025_stands,ACD,180,180
+y025_stands,NE,180,180
+y025_stands_identical_draws,ACD,50,52
+y025_stands_identical_draws,NE,7,7
+y025_within_cellmed_med,ACD,0.508988240169922,0.508988240169922
+y025_within_cellmed_med,NE,3.23889345948169,3.23889345948169
+y025_within_q25,ACD,0.404486901591627,0.404486901591627
+y025_within_q25,NE,2.81137992831541,2.81137992831541
+y025_within_q75,ACD,0.606984478935699,0.606984478935699
+y025_within_q75,NE,3.91652960526316,3.93663194444444
+y025_within_stand_med,ACD,0.491403457934898,0.491403457934898
+y025_within_stand_med,NE,3.21718130067276,3.21718130067276
+y050_between_cv_med,ACD,10.2487878603508,10.3008358227487
+y050_between_cv_med,NE,15.7497376337924,15.9864860125347
+y050_between_range_med,ACD,25.5139948387829,27.1383911772368
+y050_between_range_med,NE,38.1319432067962,39.0476190476191
+y050_pooled_legacy_med,ACD,26.4986317102912,27.6970503951139
+y050_pooled_legacy_med,NE,41.9176706827309,41.9176706827309
+y050_post_med_over_map_med,ACD,1,1
+y050_post_med_over_map_med,NE,1,1
+y050_post_med_over_map_q05,ACD,0.994992268041237,0.994992268041237
+y050_post_med_over_map_q05,NE,0.993898675097862,0.993825243462925
+y050_post_med_over_map_q95,ACD,1,1
+y050_post_med_over_map_q95,NE,1,1
+y050_stands,ACD,180,180
+y050_stands,NE,180,180
+y050_stands_identical_draws,ACD,72,73
+y050_stands_identical_draws,NE,9,9
+y050_within_cellmed_med,ACD,0.304970129439092,0.190839694656489
+y050_within_cellmed_med,NE,3.23055028462997,3.23055028462997
+y050_within_q25,ACD,0,0
+y050_within_q25,NE,2.85714285714286,2.90674603174602
+y050_within_q75,ACD,0.514149063371861,0.514149063371861
+y050_within_q75,NE,3.88283573552963,3.88283573552963
+y050_within_stand_med,ACD,0.403389775370452,0.403389775370452
+y050_within_stand_med,NE,3.47148345153664,3.47148345153664
+y100_between_cv_med,ACD,9.86646835004121,10.0297687353273
+y100_between_cv_med,NE,16.9660611481308,17.3125008453861
+y100_between_range_med,ACD,23.4623477026961,23.913995925431
+y100_between_range_med,NE,42.7507447864945,42.7507447864945
+y100_pooled_legacy_med,ACD,24.6006175325547,25.9455128205128
+y100_pooled_legacy_med,NE,46.655102749744,46.655102749744
+y100_post_med_over_map_med,ACD,1,1
+y100_post_med_over_map_med,NE,1,1
+y100_post_med_over_map_q05,ACD,0.995323780838907,0.995428455596808
+y100_post_med_over_map_q05,NE,0.993622247200366,0.993706685895125
+y100_post_med_over_map_q95,ACD,1,1
+y100_post_med_over_map_q95,NE,1,1
+y100_stands,ACD,180,180
+y100_stands,NE,180,180
+y100_stands_identical_draws,ACD,81,81
+y100_stands_identical_draws,NE,14,14
+y100_within_cellmed_med,ACD,0,0
+y100_within_cellmed_med,NE,3.12557457039813,3.15295910928491
+y100_within_q25,ACD,0,0
+y100_within_q25,NE,2.86945812807882,2.87590991810736
+y100_within_q75,ACD,0.465659639208868,0.465659639208868
+y100_within_q75,NE,3.68307426597582,3.68307426597582
+y100_within_stand_med,ACD,0,0
+y100_within_stand_med,NE,3.20512820512821,3.21546732837055

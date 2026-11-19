@@ -9,7 +9,7 @@
 
 A community maintained fork of the USDA Forest Vegetation Simulator, modernized for contemporary computing environments and designed for ease of deployment, variant creation, and calibration.
 
-**Status:** Active development, April 2026
+**Status:** Active development, November 2026. The current release gates and open research changes are tracked in [RELEASE_READINESS_2026-11-19.md](RELEASE_READINESS_2026-11-19.md).
 **Origin:** Forked from [USDAForestService/ForestVegetationSimulator](https://github.com/USDAForestService/ForestVegetationSimulator) and [ForestVegetationSimulator-Interface](https://github.com/USDAForestService/ForestVegetationSimulator-Interface)
 **Contact:** Aaron Weiskittel, University of Maine (aaron.weiskittel@maine.edu)
 
@@ -44,10 +44,9 @@ at Zenodo: data DOI [10.5281/zenodo.20760580](https://doi.org/10.5281/zenodo.207
   shared libraries build and load via the CI (`.github/workflows/ci.yml`) and the Docker image
   (`.github/workflows/docker-publish.yml`, the recommended reproducible build).
 - Cross-platform CI (`.github/workflows/cross-platform.yml`) builds and load-tests on Ubuntu, macOS, and
-  Windows (MSYS2/MinGW). **Linux and macOS build and load from source** (the matrix gates on both); a
-  self-contained-library pass stubs the few harmless unresolved internal NVEL symbols so the libraries load on
-  macOS, whose loader cannot defer them. Native-Windows (MSYS2) from-source builds are in progress and tracked
-  in issue #72; Windows users should use WSL2 (Linux) or the Docker image, which are fully supported.
+  Windows (MSYS2/MinGW). The November 2026 `main` checks pass on all three platforms. A
+  self-contained-library pass stubs the few unresolved internal NVEL symbols so the libraries load on macOS,
+  whose loader cannot defer them. WSL2 and Docker remain supported ways to run on Windows.
 - Verification: a default-vs-calibrated FVS-NE projection over 30 years on remeasured stands confirms the
   calibrated configs load and apply (they trim the default basal-area over-prediction by a few percent, the
   expected direction); the standalone regression suite passes 42 of 42.

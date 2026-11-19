@@ -1,4 +1,4 @@
-# Bakuzis scorecards by FVS variant (catalog v6, fifth version (calibrated arms rerun after the overlay fix), October 30, 2026)
+# Bakuzis scorecards by FVS variant (catalog v8, sixth version (D5 plot-size fix, all arms rerun), October 30, 2026)
 
 Projection step 5 yr, Reineke screen qmd_rate 0.10 cm yr-1, relative-density gate 0.55, thresholds from plot-level FIA fitting data by variant. One file per variant; `scorecard_cells.csv` has every cell.
 

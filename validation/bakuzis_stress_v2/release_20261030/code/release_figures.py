@@ -87,15 +87,15 @@ def main():
     g, sa, sv = load(a.data)
     # graphical abstract
     fig = plt.figure(figsize=(8.2, 7.2), dpi=300)
-    gs = fig.add_gridspec(2, 2, height_ratios=[1, 1.15], hspace=0.42, wspace=0.28, left=0.07, right=0.98, top=0.86, bottom=0.08)
+    gs = fig.add_gridspec(2, 2, height_ratios=[1, 1.15], hspace=0.42, wspace=0.28, left=0.07, right=0.98, top=0.86, bottom=0.115)  # bottom raised so panel B's x-axis label clears the footer (2026-10-30)
     ax1 = fig.add_subplot(gs[0, :]); ax2 = fig.add_subplot(gs[1, 0]); ax3 = fig.add_subplot(gs[1, 1])
     panel_variants(ax1, g, sv); panel_gates(ax2, g); panel_stability(ax3, sa)
     fig.text(0.07, 0.955, "A configuration catalog for fvs-modern across 18 FVS variants", fontsize=14, fontweight="bold", color=GREEN)
     fig.text(0.07, 0.925, "4,748 FIA stands x 4 survival and parameter arms x 100 years, gated on the FIA envelope and Reineke self-thinning.", fontsize=8.6, color="#333333")
     fig.text(0.07, 0.903, "7 of 18 variants recommended; 0 of 72 verdicts change across 144 rule cells and 500 stand bootstraps.", fontsize=8.6, color="#333333")
-    foot = "Weiskittel, A.R. (2026). CRSF, University of Maine. Catalog version 1.2.0, October 30, 2026."
+    foot = "Weiskittel, A.R. (2026). CRSF, University of Maine. Catalog version 1.2.0 (catalog v8), October 30, 2026."
     if a.doi: foot += f"  https://doi.org/{a.doi}"
-    fig.text(0.07, 0.015, foot, fontsize=7, color=GREY)
+    fig.text(0.07, 0.012, foot, fontsize=7, color=GREY)
     fig.savefig(os.path.join(a.out, "00_fvs-modern_catalog_graphical_abstract.png"), dpi=300); plt.close(fig)
     # standalone figures for the report and deck
     for fn, f, size in [("fig_variant_stability.png", panel_variants, (8, 3.4)), ("fig_gate_space.png", panel_gates, (5.2, 4.6)), ("fig_arm_stability.png", panel_stability, (5.2, 4.6))]:

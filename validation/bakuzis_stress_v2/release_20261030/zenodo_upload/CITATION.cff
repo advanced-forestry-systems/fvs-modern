@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "Cite the concept DOI 10.5281/zenodo.23777723 (version 1.0.0 is 10.5281/zenodo.23777724; version 1.1.0 is 10.5281/zenodo.23788727; version 1.2.0 reruns the calibrated arms after the overlay fix)."
+message: "Cite the concept DOI 10.5281/zenodo.23777723 (version 1.0.0 is 10.5281/zenodo.23777724; version 1.1.0 is 10.5281/zenodo.23788727; version 1.2.0 is catalog v8, rerun after the overlay and plot-size expansion fixes)."
 title: "A configuration catalog for fvs-modern across the FVS variants of the conterminous United States: Bakuzis admissibility gates, stress test, and selector"
 authors:
   - family-names: Weiskittel

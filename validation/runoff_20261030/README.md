@@ -72,3 +72,7 @@ Inputs not in this folder:
 - The CONUS remeasurement pairs RDS.
 - The FVS-modern worktrees `wt-bakuzis-main` and `wt-fix-20261030`.
 - The fvs-conus projector scripts in `fvs_stress/conus_eq_proj/`.
+
+## Addendum, October 30, 2026: stand seeding and D5
+
+The run-off seeded its stands with the catalog runner as it stood on October 30. That runner expanded each condition's trees by CONDPROP_UNADJ alone. FIA computes BALIVE with the condition's share of each plot size (MICRPROP_UNADJ, SUBPPROP_UNADJ, MACRPROP_UNADJ), and fvs-modern pull request 144 corrects the expansion to match (defect D5). Under the corrected expansion, 266 of the 4,748 catalog stands (5.6 percent) seed more than 2 percent differently. The catalog rerun on all four arms with it (catalog v8) changed no primary rule verdict, recommended arm or status. The run-off's conclusions are therefore expected to hold, but its per-stand numbers would shift slightly if the run-off were rerun with the corrected seeding. Memo Section 19 (`validation/bakuzis_stress_v2/20261027_fvs-modern_fvs-conus_bakuzis_assessment.md`) gives the details.

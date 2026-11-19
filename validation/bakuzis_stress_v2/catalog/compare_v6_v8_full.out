@@ -1,0 +1,11 @@
+engine arms compared 72 | field changes 5 
+    group               arm               field                                v6                v8
+   <char>            <char>              <char>                            <char>            <char>
+1:     WC         (variant) admissible_arms_alt default_gompit; calibrated_gompit                  
+2:     WC         (variant)      rule_sensitive                              TRUE             FALSE
+3:     WC calibrated_gompit      admissible_alt                              TRUE             FALSE
+4:     WC    default_gompit      admissible_alt                              TRUE             FALSE
+5:     WS calibrated_native      stress_verdict                FRAGILE admissible STABLE admissible
+largest |d med_ba50| among admissible arms: 0.115 BM calibrated_native 
+largest |d med_ba50| any engine arm: 0.689 PN calibrated_gompit 
+stability counts v8: FRAGILE admissible 6; FRAGILE not admissible 8; STABLE admissible 17; STABLE not admissible 41 

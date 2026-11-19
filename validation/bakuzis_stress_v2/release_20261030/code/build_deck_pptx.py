@@ -62,7 +62,7 @@ def table(sl, x, y, w, rows, colw=None, size=11):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--fig", default="fig"); ap.add_argument("--sc", required=True); ap.add_argument("--out", required=True); a = ap.parse_args()
     prs = Presentation(); prs.slide_width = W; prs.slide_height = H; blank = prs.slide_layouts[6]
-    src = "Source: fvs-modern main, validation/bakuzis_stress_v2/ (gates_v6, stress_v6) and config/catalog/ (October 30, 2026, catalog version 1.2.0)"
+    src = "Source: fvs-modern main, validation/bakuzis_stress_v2/ (gates_v8, stress_v8) and config/catalog/ (October 30, 2026, catalog version 1.2.0, catalog v8)"
     n = 0
     # 1 title
     sl = prs.slides.add_slide(blank); n += 1
@@ -84,9 +84,9 @@ def main():
     # 3 what was run
     sl = prs.slides.add_slide(blank); n += 1; header(sl, "What was run")
     bullets(sl, Inches(0.5), Inches(1.4), Inches(12.3), Inches(5), [
-        "Stand sample: up to 300 FIA plots per variant from the fvs-conus pairs frame (17 variants; ACD takes NE plots in ME, NH and VT, an assumption). Trees expanded by CONDPROP_UNADJ, species outside the variant relabelled to its other softwood or hardwood code.",
+        "Stand sample: up to 300 FIA plots per variant from the fvs-conus pairs frame (17 variants; ACD takes NE plots in ME, NH and VT, an assumption). Trees expanded by the condition's share of each plot size (MICRPROP, SUBPPROP, MACRPROP_UNADJ), species outside the variant relabelled to its other softwood or hardwood code.",
         "Year zero gate: engine basal area within 20 percent of FIA BALIVE (or 1 ft2 ac-1). The first catalog failed 263 eastern stands; the cause was phantom trees (FIA live records with null TPA_UNADJ filled at 6.0 TPA by the stand generator), fixed October 29, and all 4,748 sampled stands now pass.",
-        "Four engine arms x 100 years at a 5 year step, no regeneration (NOAUTOES in EM and IE), no posterior draws. Cardinal arrays 15976824 and 15984133 after library build 15967530 with the GOMPSURV fix; calibrated arms rerun October 30 (array 16016015) after the overlay fix, default arms carried over.",
+        "Four engine arms x 100 years at a 5 year step, no regeneration (NOAUTOES in EM and IE), no posterior draws. Cardinal arrays 15976824 and 15984133 after library build 15967530 with the GOMPSURV fix; calibrated arms rerun October 30 (array 16016015) after the overlay fix, then all four arms (array 16023222) after the plot-size expansion fix.",
         "Thresholds: plot level FIA percentiles by variant (BA p50, p99, p99.9; SDI p99.9). Age censored, so the 50 year horizon is primary.",
         "Projector arms (fvs-conus b1, b2 by native and GOMPIT) listed for comparison from the October 27 rescore, not on the common sample."], 16)
     footer(sl, n, src)
@@ -101,7 +101,7 @@ def main():
         ["Distinct", "Calibrated trajectories differ from default", "Caught ACD and IE, whose calibrated block never loaded"],
         ["Choice", "Simplest admissible arm (default before calibrated, native before GOMPIT); NE prefers GOMPIT on the Paper 2 near term cohort", "Simplicity is the only tie break outside NE"]],
         colw=[Inches(1.8), Inches(6.5), Inches(4.0)], size=12)
-    text(sl, Inches(0.5), Inches(5.6), Inches(12.3), Inches(1.2), "Alternative Reineke gate (Wilson upper bound < 25 percent on at least 30 evaluated) is carried beside the primary rule in the gate table and flags eight rule sensitive variants. The catalog ships under the primary rule (decision of October 29, 2026) because the alternative admits western arms by declining to test their self-thinning.", 13, color=GREY)
+    text(sl, Inches(0.5), Inches(5.6), Inches(12.3), Inches(1.2), "Alternative Reineke gate (Wilson upper bound < 25 percent on at least 30 evaluated) is carried beside the primary rule in the gate table and flags seven rule sensitive variants. The catalog ships under the primary rule (decision of October 29, 2026) because the alternative admits western arms by declining to test their self-thinning.", 13, color=GREY)
     footer(sl, n, src)
     # 5 red team
     sl = prs.slides.add_slide(blank); n += 1; header(sl, "What the blind red team changed before the catalog shipped")
@@ -120,7 +120,7 @@ def main():
     bullets(sl, Inches(9.0), Inches(1.3), Inches(4.0), Inches(5.5), [
         "RECOMMENDED: ACD, BM, CS, NE, SN (all four arms), LS (calibrated arms), WS (calibrated native).",
         "NOT RECOMMENDED: CA, CI, CR, EC, EM, IE, PN, SO, TT, UT, WC. In eight of them every arm passes magnitude and stocking and fails on Reineke alone.",
-        "Magnitude passes almost everywhere: BA p99.9 exceedance at or below 1.7 percent in 14 of 18 variants, SDI never above 4.9 percent, lower bound passes in every arm.",
+        "Magnitude passes almost everywhere: BA p99.9 exceedance at or below 1.7 percent in 14 of 18 variants, SDI never above 5.3 percent, lower bound passes in every arm.",
         "AK and NC: no fitting plots, NOT EVALUATED."], 13)
     text(sl, Inches(0.4), Inches(4.95), Inches(8.4), Inches(0.5), "Bars: probability of at least one admissible engine arm over 500 stand bootstraps. Points: share of 144 alternative rule cells. Data: stress_by_variant.csv.", 11, color=GREY)
     footer(sl, n, src)
@@ -129,20 +129,20 @@ def main():
     sl.shapes.add_picture(os.path.join(a.fig, "fig_gate_space.png"), Inches(0.5), Inches(1.2), height=Inches(5.8))
     bullets(sl, Inches(7.4), Inches(1.4), Inches(5.6), Inches(5.5), [
         "Green symbols are admissible. Nearly every arm sits under the 5 percent magnitude line; the Reineke axis sorts them.",
-        "Exceptions on magnitude: EM native (22 and 22 percent) and EM GOMPIT (8 and 10), LS default (15 and 10), WC native (11 and 18), PN native (34 and 32 on 38 stands).",
-        "Reineke failures come in two forms: default native arms that do not self-thin (CA, TT, UT, WC, EM, CR: median slopes -0.83 to -1.46, flag rates 27 to 84 percent), and calibrated GOMPIT arms whose median slope is right (-1.57 to -1.90) but dispersed (14 to 39 percent flagged).",
+        "Exceptions on magnitude: EM native (22 and 22 percent) and EM GOMPIT (8 and 10), LS default (15 and 10), WC native (10 and 19), PN native (34 and 32 on 38 stands).",
+        "Reineke failures come in two forms: default native arms that do not self-thin (CA, TT, UT, WC, EM, CR: median slopes -0.83 to -1.46, flag rates 27 to 84 percent), and calibrated GOMPIT arms whose median slope is right (-1.56 to -1.90) but dispersed (14 to 39 percent flagged).",
         "Western samples are thin on the self-thinning limb: 18 to 202 density gated trajectories per variant; SO rests on 17 to 18, TT on 7 to 31."], 13)
     footer(sl, n, src + "; catalog_gates_by_arm.csv")
     # 8 self-thinning figure
     sl = prs.slides.add_slide(blank); n += 1; header(sl, "Self-thinning limb by variant, default native arm")
-    sl.shapes.add_picture(os.path.join(a.sc, "scorecard_20261029_default_native_selfthinning.png"), Inches(0.9), Inches(1.15), height=Inches(5.9))
+    sl.shapes.add_picture(os.path.join(a.sc, "scorecard_20261030v8_default_native_selfthinning.png"), Inches(0.9), Inches(1.15), height=Inches(5.9))
     text(sl, Inches(8.7), Inches(1.4), Inches(4.3), Inches(5), ["Dotted line: Reineke slope -1.605 through the maximum SDI reached in the arm.", "", "ACD, BM, CS, NE, SN, WS run parallel to it. CA, TT, UT, WC and EM run flat: stems hold while diameter grows, which is a mortality model that does not respond to density.", "", "The per variant scorecards (validation/bakuzis_stress_v2/catalog/scorecards/) carry this panel for all four arms with the component attribution."], 14, color=INK)
-    footer(sl, n, "Source: bakuzis_scorecards.R, Cardinal job 16003648 (default arm, unchanged in version 1.2.0)")
+    footer(sl, n, "Source: bakuzis_scorecards.R, Cardinal job 16033493 (catalog v8)")
     # 9 Bakuzis matrix NE
     sl = prs.slides.add_slide(blank); n += 1; header(sl, "The full matrix for one recommended arm: NE, default GOMPIT")
-    sl.shapes.add_picture(os.path.join(a.sc, "scorecard_20261029_default_gompit_NE_bakuzis_matrix.png"), Inches(0.9), Inches(1.15), height=Inches(5.9))
+    sl.shapes.add_picture(os.path.join(a.sc, "scorecard_20261030v8_default_gompit_NE_bakuzis_matrix.png"), Inches(0.9), Inches(1.15), height=Inches(5.9))
     text(sl, Inches(7.7), Inches(1.4), Inches(5.3), Inches(5), ["Nine relations, lower triangle. Site and density classes are within variant terciles of SICOND and BALIVE on real FIA stands, so the site based relations (site ordering, Eichhorn, Sukachev, yield density) are confounded by stand selection and are reported, not gated.", "", "The engine verdicts rest on Reineke (T3, T3b), the magnitude envelope (T4), plateau (T8), inversions (T9) and the initial step shock (T0).", "", "A pass is a failure to falsify, not a confirmation of accuracy."], 14)
-    footer(sl, n, "Source: bakuzis_scorecards.R, Cardinal job 16003648 (default arm, unchanged in version 1.2.0)")
+    footer(sl, n, "Source: bakuzis_scorecards.R, Cardinal job 16033493 (catalog v8)")
     # 10 stress design
     sl = prs.slides.add_slide(blank); n += 1; header(sl, "Stress test after shipping: could the analyst choices have gone another way?")
     table(sl, Inches(0.5), Inches(1.4), Inches(12.3), [
@@ -152,19 +152,19 @@ def main():
         colw=[Inches(4.0), Inches(3.0), Inches(5.3)], size=13)
     bullets(sl, Inches(0.5), Inches(4.4), Inches(12.3), Inches(2.5), [
         "Part B: 500 stand bootstraps per variant under the shipped rule, giving each arm's probability of admissibility and each variant's probability of keeping an admissible engine arm.",
-        "No new engine runs; recomputed from the trajectory level data (stress_catalog.R, Cardinal jobs 15990793, 16003647 and 16016080).",
+        "No new engine runs; recomputed from the trajectory level data (stress_catalog.R, Cardinal jobs 15990793, 16003647, 16016080 and 16033492).",
         "The recomputed primary rule reproduced all 72 shipped verdicts, an independent check of catalog_gates.R."], 15)
     footer(sl, n, src)
     # 11 stress results
-    sl = prs.slides.add_slide(blank); n += 1; header(sl, "No verdict overturned; 7 of 23 admissible and 8 of 49 not admissible arms fragile")
+    sl = prs.slides.add_slide(blank); n += 1; header(sl, "No verdict overturned; 6 of 23 admissible and 8 of 49 not admissible arms fragile")
     sl.shapes.add_picture(os.path.join(a.fig, "fig_arm_stability.png"), Inches(0.4), Inches(1.2), height=Inches(5.5))
     table(sl, Inches(6.8), Inches(1.3), Inches(6.2), [
         ["Fragile admissible arm", "Bootstrap", "Grid share"],
-        ["ACD calibrated GOMPIT", "0.56", "0.33"], ["ACD default GOMPIT", "0.56", "0.33"], ["CS default GOMPIT", "0.89", "0.50"], ["LS calibrated native", "0.75", "0.25"],
-        ["NE calibrated GOMPIT", "0.70", "0.58"], ["NE default GOMPIT", "0.80", "0.33"], ["WS calibrated native", "0.88", "0.50"]],
+        ["ACD calibrated GOMPIT", "0.56", "0.33"], ["ACD default GOMPIT", "0.56", "0.33"], ["CS default GOMPIT", "0.85", "0.50"], ["LS calibrated native", "0.75", "0.25"],
+        ["NE calibrated GOMPIT", "0.70", "0.58"], ["NE default GOMPIT", "0.80", "0.33"]],
         colw=[Inches(3.2), Inches(1.5), Inches(1.5)], size=12)
-    text(sl, Inches(6.8), Inches(4.3), Inches(6.2), Inches(2.5), ["Recommended variants keep an admissible arm in 100 percent of resamples (ACD, BM, CS, NE, SN), 99 (LS), 89 (WS).", "Fragile not admissible: CI default native 0.50, SO four arms 0.20 to 0.46, CR calibrated native 0.22, TT calibrated GOMPIT 0.23, EC default native 0.14; all among the 12 arms a 25 percent Reineke tolerance admits, all below even odds.", "Reineke tolerance is the only axis that changes recommended variants; the p99 ceiling admits three arms anywhere; 100 years drops LS calibrated native only."], 12)
-    footer(sl, n, "Source: stress_by_arm.csv, stress_by_variant.csv (job 16016080)")
+    text(sl, Inches(6.8), Inches(4.3), Inches(6.2), Inches(2.5), ["Recommended variants keep an admissible arm in 100 percent of resamples (ACD, BM, CS, NE, SN), 99 (LS), 92 (WS).", "Fragile not admissible: CI default native 0.50, SO four arms 0.20 to 0.46, CR calibrated native 0.22, TT calibrated GOMPIT 0.23, EC default native 0.13; all among the 12 arms a 25 percent Reineke tolerance admits, all below even odds.", "Reineke tolerance is the only axis that changes recommended variants; the p99 ceiling admits three arms anywhere; 100 years drops LS calibrated native only."], 12)
+    footer(sl, n, "Source: stress_by_arm.csv, stress_by_variant.csv (job 16033492)")
     # 12 selector
     sl = prs.slides.add_slide(blank); n += 1; header(sl, "Using it: fvs2py.catalog.select_config")
     rect(sl, Inches(0.5), Inches(1.4), Inches(6.3), Inches(4.0), RGBColor(0xf3, 0xf1, 0xea))
@@ -194,17 +194,17 @@ def main():
         "Posterior uncertainty: calibrated MAP is a point estimate here; the Paper 1 ensemble gives the band for NE and ACD only.",
         "Regeneration: no arm establishes it, so a 100 year plateau or decline in stems is partly a design choice.",
         "Site based relations are confounded on the unstratified sample; the synthetic 36 cell matrix stays the clean test.",
-        "The year zero failures of the first catalog are explained (null TPA_UNADJ records filled as 6.0 TPA trees) and gone; the regenerated catalog changed no verdict. The October 30 overlay fix changed four verdict fields (EM and WC least bad arm, WC alternative rule, NE stability label) and no status.",
+        "The year zero failures of the first catalog are explained (null TPA_UNADJ records filled as 6.0 TPA trees) and gone; the regenerated catalog changed no verdict. The October 30 overlay fix changed four verdict fields (EM and WC least bad arm, WC alternative rule, NE stability label), and the plot-size expansion fix (v8) changed the WC alternative rule back and the WS stability label; no status changed.",
         "Thresholds are the sample maximum in small variants; the projector b1 GOMPIT arm has no NE or SN rows.",
         "In NE the stable arm is default native (0.96); the shipped GOMPIT preference trades long horizon stability for near term evidence."], 15)
     footer(sl, n, src + "; implementation-notes.md")
     # 14 availability
     sl = prs.slides.add_slide(blank); n += 1; header(sl, "Where everything is")
     bullets(sl, Inches(0.5), Inches(1.4), Inches(12.3), Inches(4), [
-        "GitHub: advanced-forestry-systems/fvs-modern, main (PRs 118 to 137; current catalog in gates_v6). config/catalog/ holds the two tables the selector reads; validation/bakuzis_stress_v2/ holds the memo (Sections 1 to 18), the catalog folder, scorecards, stress test and run index with md5 lists.",
+        "GitHub: advanced-forestry-systems/fvs-modern, main (PRs 118 to 137, 144 and 145; current catalog in gates_v8). config/catalog/ holds the two tables the selector reads; validation/bakuzis_stress_v2/ holds the memo (Sections 1 to 19), the catalog folder, scorecards, stress test and run index with md5 lists.",
         "Zenodo: concept DOI 10.5281/zenodo.23777723 (version 1.0.0 is the first catalog, 1.1.0 the seeding fix, 1.2.0 the overlay fix) carries the tables, scripts, scorecard cells, the technical report and this deck. No FIA plot identifiers or coordinates in any file.",
         "Scripts: conus_catalog_runs.py (engine runs), bakuzis_stress_v2.R (scorer), catalog_gates.R (gates), bakuzis_scorecards.R (per variant scorecards), stress_catalog.R (stress test), fvs2py/catalog.py (selector).",
-        "Cardinal jobs: build 15967530, first runs 15976824 and 15984133, regenerated runs 15998817, finalize 16002593, stress 16003647, scorecards 16003648; version 1.2.0 calibrated reruns 16016015, finalize 16016079, stress 16016080, scorecards 16016081."], 15)
+        "Cardinal jobs: build 15967530, first runs 15976824 and 15984133, regenerated runs 15998817, finalize 16002593, stress 16003647, scorecards 16003648; version 1.2.0: calibrated reruns 16016015, v8 reruns 16023222, finalize 16023294, stress 16033492, scorecards 16033493."], 15)
     rect(sl, Inches(0.5), Inches(5.3), Inches(12.3), Inches(1.0), RGBColor(0xf3, 0xf1, 0xea))
     text(sl, Inches(0.7), Inches(5.4), Inches(12), Inches(0.8), "Aaron R. Weiskittel, Center for Research on Sustainable Forests, University of Maine. aaron.weiskittel@maine.edu", 14, color=GREEN, anchor=MSO_ANCHOR.MIDDLE)
     footer(sl, n, src)

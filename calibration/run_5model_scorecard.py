@@ -76,6 +76,9 @@ _HG_BASE: dict[str, str] = {
     "FVS_GREG_TD":   "28",
     "FVS_GREG_EMT":  "-30",
     "FVS_GREG_ELEV": "1000",
+    "FVS_GREG_DD0": "1600",
+    "FVS_GREG_PPT_SM": "230",
+    "FVS_GREG_DD18": "3500",
 }
 
 _DG_ENV: dict[str, str] = {

@@ -22,6 +22,8 @@
 !    GHAVE_HG  -- .TRUE. for species that carry a fitted Greg HG row.
 !    GMCW      -- GMCW(ISPC,1:6): (1)=FORM,(2:4)=A,B,C,(5)=CWMAX,(6)=DBHMAX.
 !    GHAVE_MCW -- .TRUE. for species that carry a fitted MCW row.
+!    GHGCAP    -- height ceiling multiplier on MX (FVS_GREGHG_CAP, default 1.0; <=0 disables).
+!                 The CR-derivative form has no asymptote, so HT+HG is held at or below GHGCAP*MX.
 !    GEMT/GTD/GELEV -- per-stand climate for HG (EMT deg C, TD deg C, elevation ft).
 !                      GTD is shared with DG (same FVS_GREG_TD env var).
 !
@@ -41,9 +43,9 @@ COMMON /GREGMI/ NGREGDG
 COMMON /GREGML/ LGREGDG, GHAVE_DG
 ! -- HG --
 INTEGER NGREGHG
-REAL    GHG(MAXSP,9), GMCW(MAXSP,6), GEMT, GELEV
+REAL    GHG(MAXSP,9), GMCW(MAXSP,6), GEMT, GELEV, GHGCAP
 LOGICAL LGREGHG, GHAVE_HG(MAXSP), GHAVE_MCW(MAXSP)
-COMMON /GREGHR/ GHG, GMCW, GEMT, GELEV
+COMMON /GREGHR/ GHG, GMCW, GEMT, GELEV, GHGCAP
 COMMON /GREGHC/ NGREGHG
 COMMON /GREGHL/ LGREGHG, GHAVE_HG, GHAVE_MCW
 ! -- Crown recession --

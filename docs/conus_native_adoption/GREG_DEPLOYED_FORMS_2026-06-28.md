@@ -1,5 +1,7 @@
 # Greg Johnson's deployed CONUS DG / HG / mortality forms (recovered 2026-06-28)
 
+> Superseded 9 November 2026: Greg's DG and HG fits use the climate principal component form (B5*pc1 + B6*pc2 for DG; -b5*sqrt(cch) + b6*pc1 + b7*pc2 for HG, B0..B7). The elevation, TD and EMT forms below are historical. Current forms are in src-converted/base/gregdghg.f90 and greghghg.f90, and coefficients are emitted by sf_integration_dev/gompit_native/62i_greg_dghg_csv.R.
+
 This resolves the #28 blocker. The deployed (climate-based) equation algebra was NOT in a C++ file as
 previously assumed. It is implemented, authoritatively, in the Greg projector on Cardinal, and documented in
 the fvs_remodeling PDFs and quarto scripts (and on Google Drive "fvs remodeling").

@@ -1,0 +1,17 @@
+relation,nat,mort,gregDrv,gME_all,gME_grp
+T0 initial-step shock,0,0,0,0,0
+T1 monotone HT_dom,0,0,11,0,0
+T1 monotone QMD,0,0,0,0,0
+T2 site ordering HT,0,0,3,4,4
+T2 site ordering VOL,0,0,4,4,4
+T3 Reineke slope (trajectory OLS),7,4,5,3,3
+"T3b frontier slope (rq tau 0.95, p",0,0,0,0,0
+T4 max BA vs observed p99,0,0,0,0,0
+T4 max BA vs observed p99.9,0,0,0,0,0
+T4 peak SDI / SDImax,0,0,0,0,0
+T5 Eichhorn VOL~HT site independen,0,0,0,0,0
+T6 Sukachev per-tree VOL falls wit,4,4,1,0,0
+T7 yield-density final BA vs initi,0,0,0,0,0
+T8 pinned BA plateau,0,0,2,3,3
+T9 BA inversions (>10% step drop),0,0,0,0,0
+T9 VOL inversions (>10% step drop),0,0,0,0,0

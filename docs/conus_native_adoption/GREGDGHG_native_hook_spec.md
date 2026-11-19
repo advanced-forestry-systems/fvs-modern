@@ -1,5 +1,7 @@
 # GREGDG / GREGHG: native engine hooks for Greg's diameter and height growth (option 1)
 
+> Superseded 9 November 2026: Greg's DG and HG fits use the climate principal component form (B5*pc1 + B6*pc2 for DG; -b5*sqrt(cch) + b6*pc1 + b7*pc2 for HG, B0..B7). The elevation, TD and EMT forms below are historical. Current forms are in src-converted/base/gregdghg.f90 and greghghg.f90, and coefficients are emitted by sf_integration_dev/gompit_native/62i_greg_dghg_csv.R.
+
 Design for wiring Greg's deployed DG and HG into the FVS growth loop, mirroring the working GOMPMORT pattern
 (base/gompmort.f90 + GOMPMC common + env/keyword activation + a one-line substitution in the host
 subroutine). The evaluators below are already unit-validated against the projector (DG to 8e-8, HG to 4e-6;

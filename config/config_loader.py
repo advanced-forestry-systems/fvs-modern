@@ -591,6 +591,93 @@ class FvsConfigLoader:
             eta += coef * float(covariates.get(p, 0.0))
         return eta
 
+    def sf_modifier_fixed_eta(self, component: str, indicators: dict[str, int],
+                              disturbance_decay: float, treatment_decay: float,
+                              traits: Optional[dict[str, float]] = None) -> float:
+        """Return the species-free modifier's fixed-effect eta correction.
+
+        This is the population-level part of the fitted Stan predictor. The
+        caller must supply all eight observed event indicators and both decay
+        envelopes explicitly. Add the result to the component's base eta
+        before its inverse link; do not multiply the final prediction by it.
+        The fitted Level 1 random effect is absent from the JSON bundle.
+        This method does not activate modifiers in a projection by itself.
+        """
+        block = self.config.get("categories_conus_sf_modifier", {}).get(component)
+        if not isinstance(block, dict):
+            raise KeyError(f"No species-free modifier for {component} in {self.variant}")
+        if self.config.get("categories_conus_sf_modifier_validated") is not True:
+            raise RuntimeError(
+                "Species-free modifier source is unvalidated: FIA event-code "
+                "mapping and event-time inputs require correction and refitting"
+            )
+        event_types = ("plant", "fire", "insect", "disease", "wind",
+                       "harvest", "cutting", "siteprep")
+        if not isinstance(indicators, dict) or set(indicators) != set(event_types):
+            raise ValueError(f"Indicators must explicitly contain {event_types}")
+        flags = {}
+        for name in event_types:
+            value = indicators[name]
+            if isinstance(value, bool):
+                flags[name] = int(value)
+            elif isinstance(value, (int, float)) and math.isfinite(value) and value in (0, 1):
+                flags[name] = int(value)
+            else:
+                raise ValueError(f"{name} must be an observed 0/1 indicator")
+        for name, value in (("disturbance_decay", disturbance_decay),
+                            ("treatment_decay", treatment_decay)):
+            if not isinstance(value, (int, float)) or not math.isfinite(value) or not 0 <= value <= 1:
+                raise ValueError(f"{name} must be a finite decay in [0, 1]")
+        if block.get("form") not in ("common", "traitmed"):
+            raise ValueError(f"Unsupported modifier form for {component}")
+        alpha = block.get("alpha", {})
+        if not isinstance(alpha, dict) or set(alpha) != set(event_types):
+            raise ValueError(f"Incomplete alpha vector for {component}")
+        values = [block.get("alpha_0")] + [alpha[name] for name in event_types]
+        if any(not isinstance(x, (int, float)) or not math.isfinite(x) for x in values):
+            raise ValueError(f"Nonfinite modifier coefficient for {component}")
+
+        mediated = set(block.get("trait_mediated_types", [])) if block["form"] == "traitmed" else set()
+        if not mediated.issubset(event_types):
+            raise ValueError("Unknown trait-mediated modifier type")
+        z_traits = []
+        if any(flags[name] for name in mediated):
+            standard = block.get("trait_standardization", {})
+            names = standard.get("trait", [])
+            means = standard.get("scale_mean", [])
+            sds = standard.get("scale_sd", [])
+            if not names or len(names) != block.get("P_trait") or len(means) != len(names) or len(sds) != len(names):
+                raise ValueError("Incomplete modifier trait standardization")
+            if not isinstance(traits, dict) or any(name not in traits for name in names):
+                raise ValueError("Observed traits required for active mediated effect")
+            for name, mean, sd in zip(names, means, sds):
+                value = traits[name]
+                if any(not isinstance(x, (int, float)) or not math.isfinite(x)
+                       for x in (value, mean, sd)) or sd <= 0:
+                    raise ValueError(f"Invalid trait or standardization for {name}")
+                z_traits.append((value - mean) / sd)
+
+        eta = float(block["alpha_0"])
+        gamma = block.get("trait_gamma_alpha", {})
+        for name in event_types:
+            if not flags[name]:
+                continue
+            coef = float(alpha[name])
+            if name in mediated:
+                weights = gamma.get(name)
+                if not isinstance(weights, list) or len(weights) != len(z_traits) or any(
+                    not isinstance(x, (int, float)) or not math.isfinite(x) for x in weights
+                ):
+                    raise ValueError(f"Invalid trait loading for {name}")
+                coef += sum(x * z for x, z in zip(weights, z_traits))
+            decay = (1.0 if name == "plant" else
+                     disturbance_decay if name in ("fire", "insect", "disease", "wind", "harvest")
+                     else treatment_decay)
+            eta += coef * decay
+        if not math.isfinite(eta):
+            raise ValueError("Nonfinite modifier eta")
+        return eta
+
     # =========================================================================
     # fvs2py Integration
     # =========================================================================

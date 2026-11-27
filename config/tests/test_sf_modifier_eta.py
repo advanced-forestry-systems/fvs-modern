@@ -14,10 +14,19 @@ class SpeciesFreeModifierEtaTest(unittest.TestCase):
     def setUpClass(cls):
         cls.loader = FvsConfigLoader("ne", version="conus_sf",
                                      config_dir=Path(__file__).resolve().parents[1])
+        # Exercise the formula in memory only. Current production configs
+        # deliberately lack this provenance gate and cannot be evaluated.
+        cls.loader.config["categories_conus_sf_modifier_validated"] = True
         cls.blocks = cls.loader.config["categories_conus_sf_modifier"]
 
     def flags(self, **active):
         return {name: active.get(name, 0) for name in TYPES}
+
+    def test_production_coefficients_are_blocked_until_refit(self):
+        loader = FvsConfigLoader("ne", version="conus_sf",
+                                 config_dir=Path(__file__).resolve().parents[1])
+        with self.assertRaisesRegex(RuntimeError, "event-code mapping"):
+            loader.sf_modifier_fixed_eta("diameter_growth", self.flags(), 0, 0)
 
     def test_common_form_uses_intercept_and_separate_decay_envelopes(self):
         b = self.blocks["height_growth"]
@@ -64,6 +73,7 @@ class SpeciesFreeModifierEtaTest(unittest.TestCase):
         checked = 0
         for path in configs:
             loader = FvsConfigLoader(path.stem, version="conus_sf", config_dir=root)
+            loader.config["categories_conus_sf_modifier_validated"] = True
             for component, block in loader.config["categories_conus_sf_modifier"].items():
                 traits = None
                 if block["form"] == "traitmed":

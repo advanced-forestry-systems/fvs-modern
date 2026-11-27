@@ -606,6 +606,11 @@ class FvsConfigLoader:
         block = self.config.get("categories_conus_sf_modifier", {}).get(component)
         if not isinstance(block, dict):
             raise KeyError(f"No species-free modifier for {component} in {self.variant}")
+        if self.config.get("categories_conus_sf_modifier_validated") is not True:
+            raise RuntimeError(
+                "Species-free modifier source is unvalidated: FIA event-code "
+                "mapping and event-time inputs require correction and refitting"
+            )
         event_types = ("plant", "fire", "insect", "disease", "wind",
                        "harvest", "cutting", "siteprep")
         if not isinstance(indicators, dict) or set(indicators) != set(event_types):
